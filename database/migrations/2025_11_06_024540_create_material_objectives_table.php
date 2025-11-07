@@ -8,16 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('public_info', function (Blueprint $table) {
+        Schema::create('material_objectives', function (Blueprint $table) {
             $table->id();
-            $table->string('info_key')->unique(); // e.g., 'about_us_text', 'visi', 'misi', 'contact_email'
-            $table->text('info_value')->nullable();
+            $table->foreignId('material_id')->constrained()->cascadeOnDelete();
+            $table->string('description');
+            $table->unsignedInteger('position')->default(0);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('public_info');
+        Schema::dropIfExists('material_objectives');
     }
 };
