@@ -220,3 +220,326 @@ Route::get('/checkout/{slug}', function (string $slug) use ($packages) {
 
     return view('checkout.index', ['package' => $packages[$slug]]);
 })->name('checkout.show');
+
+Route::get('/checkout/{slug}/success', function (string $slug) use ($packages) {
+    if (! array_key_exists($slug, $packages)) {
+        abort(404);
+    }
+
+    return view('checkout.success', ['package' => $packages[$slug]]);
+})->name('checkout.success');
+
+$learningMaterials = [
+    'persamaan-linear' => [
+        'slug' => 'persamaan-linear',
+        'subject' => 'Matematika',
+        'title' => 'Persamaan Linear',
+        'level' => 'SMA IPA',
+        'summary' => 'Pendalaman konsep persamaan linear dua variabel lengkap dengan contoh kontekstual dan latihan terstruktur.',
+        'thumbnail' => 'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=900&q=80',
+        'objectives' => [
+            'Menjabarkan bentuk umum persamaan linear satu dan dua variabel.',
+            'Menggunakan metode subtitusi dan eliminasi pada soal cerita.',
+            'Menganalisis kesalahan umum dan strategi mempercepat pengerjaan.',
+            'Menghubungkan konsep linear dengan model masalah kehidupan nyata.',
+        ],
+        'chapters' => [
+            ['title' => 'Konsep Dasar', 'description' => 'Memahami definisi, notasi, dan representasi grafis persamaan linear.'],
+            ['title' => 'Metode Penyelesaian', 'description' => 'Berlatih eliminasi, subtitusi, dan grafik lengkap dengan simulasi digital.'],
+            ['title' => 'Aplikasi Kontekstual', 'description' => 'Studi kasus finansial, sosial, dan ilmiah yang memanfaatkan model linear.'],
+            ['title' => 'Bank Soal Premium', 'description' => 'Kumpulan 120 soal bertingkat lengkap dengan pembahasan video.'],
+        ],
+    ],
+    'kimia-termokimia' => [
+        'slug' => 'kimia-termokimia',
+        'subject' => 'Kimia',
+        'title' => 'Kimia: Termokimia',
+        'level' => 'SMA IPA',
+        'summary' => 'Pelajari konsep perubahan entalpi, hukum Hess, dan penerapan termokimia pada reaksi sehari-hari.',
+        'thumbnail' => 'https://images.unsplash.com/photo-1559757175-5700dde6756b?auto=format&fit=crop&w=900&q=80',
+        'objectives' => [
+            'Menjelaskan konsep energi dan entalpi reaksi secara kualitatif.',
+            'Menggunakan hukum Hess dan data entalpi standar.',
+            'Menganalisis grafik profil energi untuk reaksi endoterm dan eksoterm.',
+            'Mensimulasikan eksperimen sederhana termokimia di rumah.',
+        ],
+        'chapters' => [
+            ['title' => 'Dasar Termodinamika', 'description' => 'Konsep energi, kerja, dan panas dalam sistem kimia.'],
+            ['title' => 'Hukum Hess', 'description' => 'Latihan menyusun reaksi bertingkat untuk menghitung entalpi.'],
+            ['title' => 'Profil Energi', 'description' => 'Membaca kurva energi dan menentukan sifat reaksi.'],
+            ['title' => 'Praktikum Rumah', 'description' => 'Eksperimen sederhana dengan bahan aman untuk memahami kalorimeter.'],
+        ],
+    ],
+    'bahasa-grammar' => [
+        'slug' => 'bahasa-grammar',
+        'subject' => 'Bahasa Inggris',
+        'title' => 'Grammar Intensif',
+        'level' => 'SMP',
+        'summary' => 'Kuasai struktur kalimat bahasa Inggris melalui praktik interaktif dan evaluasi otomatis.',
+        'thumbnail' => 'https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80',
+        'objectives' => [
+            'Memahami tenses dasar hingga kompleks secara runtut.',
+            'Mengidentifikasi kesalahan umum dalam writing dan speaking.',
+            'Latihan grammar adaptif dengan feedback instan.',
+            'Menyusun paragraf akademik dengan struktur tepat.',
+        ],
+        'chapters' => [
+            ['title' => 'Tenses Fondasi', 'description' => 'Simple, continuous, perfect, dan kombinasi tens yang sering muncul.'],
+            ['title' => 'Sentence Building', 'description' => 'Membangun kalimat majemuk, kompleks, dan voice variations.'],
+            ['title' => 'Error Correction', 'description' => 'Latihan identifikasi dan perbaikan kalimat dalam konteks ujian.'],
+            ['title' => 'Writing Clinic', 'description' => 'Workshop menulis esai pendek dengan rubrik penilaian.'],
+        ],
+    ],
+    'sd-literasi' => [
+        'slug' => 'sd-literasi',
+        'subject' => 'SD Terpadu',
+        'title' => 'Literasi Tematik SD',
+        'level' => 'SD (Kelas 3-4)',
+        'summary' => 'Pendekatan tematik untuk meningkatkan kemampuan literasi dan numerasi dasar siswa SD.',
+        'thumbnail' => 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80',
+        'objectives' => [
+            'Membangun kebiasaan membaca aktif melalui cerita tematik.',
+            'Melatih pemahaman bacaan dengan pertanyaan inferensi.',
+            'Mengintegrasikan numerasi sederhana ke dalam aktivitas literasi.',
+            'Kolaborasi orang tua-siswa melalui lembar aktivitas mingguan.',
+        ],
+        'chapters' => [
+            ['title' => 'Cerita Tematik', 'description' => 'Cerita interaktif dengan audio dan lembar aktivitas.'],
+            ['title' => 'Literasi Visual', 'description' => 'Melatih interpretasi infografis sederhana untuk anak.'],
+            ['title' => 'Numerasi Kontekstual', 'description' => 'Menghubungkan cerita dengan perhitungan sehari-hari.'],
+            ['title' => 'Proyek Mini', 'description' => 'Panduan membuat jurnal keluarga dan presentasi singkat.'],
+        ],
+    ],
+];
+
+$materialCollections = [
+    [
+        'label' => 'Matematika',
+        'accent' => '#37b6ad',
+        'items' => [
+            $learningMaterials['persamaan-linear'],
+        ],
+    ],
+    [
+        'label' => 'Kimia',
+        'accent' => '#5f6af8',
+        'items' => [
+            $learningMaterials['kimia-termokimia'],
+        ],
+    ],
+    [
+        'label' => 'Bahasa',
+        'accent' => '#f1a82e',
+        'items' => [
+            $learningMaterials['bahasa-grammar'],
+        ],
+    ],
+    [
+        'label' => 'SD Terpadu',
+        'accent' => '#8e65d4',
+        'items' => [
+            $learningMaterials['sd-literasi'],
+        ],
+    ],
+];
+
+$quizModules = [
+    'persamaan-linear' => [
+        'slug' => 'persamaan-linear',
+        'subject' => 'Matematika',
+        'title' => 'Quiz Persamaan Linear',
+        'summary' => 'Uji kemampuanmu menyelesaikan soal persamaan linear satu dan dua variabel.',
+        'duration' => '45 Menit',
+        'questions' => 30,
+        'levels' => ['Dasar', 'Menengah', 'Lanjutan'],
+        'takeaways' => [
+            'Analisis pola pengerjaan paling efisien.',
+            'Evaluasi otomatis dengan rekomendasi remedi.',
+            'Pembahasan video untuk soal HOTS.',
+        ],
+        'thumbnail' => 'https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80',
+    ],
+    'kimia-termokimia' => [
+        'slug' => 'kimia-termokimia',
+        'subject' => 'Kimia',
+        'title' => 'Quiz Termokimia',
+        'summary' => 'Tantang pemahaman energi reaksi, perubahan entalpi, dan hukum Hess.',
+        'duration' => '35 Menit',
+        'questions' => 25,
+        'levels' => ['Dasar', 'Menengah'],
+        'takeaways' => [
+            'Latihan menghitung entalpi dengan data tabel.',
+            'Skor langsung dengan grafik kemampuan.',
+            'Saran penguatan materi setelah quiz.',
+        ],
+        'thumbnail' => 'https://images.unsplash.com/photo-1559757175-5700dde6756b?auto=format&fit=crop&w=900&q=80',
+    ],
+    'bahasa-grammar' => [
+        'slug' => 'bahasa-grammar',
+        'subject' => 'Bahasa Inggris',
+        'title' => 'Quiz Grammar Adaptive',
+        'summary' => 'Cek penguasaan grammar dengan soal adaptif dan feedback instan.',
+        'duration' => '30 Menit',
+        'questions' => 28,
+        'levels' => ['Dasar', 'Menengah'],
+        'takeaways' => [
+            'Deteksi kesalahan umum dan koreksi otomatis.',
+            'Simulasi soal TOEFL junior dan AKM.',
+            'Rencana belajar personal untuk grammar.',
+        ],
+        'thumbnail' => 'https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80',
+    ],
+    'sd-literasi' => [
+        'slug' => 'sd-literasi',
+        'subject' => 'SD Terpadu',
+        'title' => 'Quiz Literasi Tematik',
+        'summary' => 'Pertanyaan literasi-numerasi yang menyenangkan untuk siswa SD kelas menengah.',
+        'duration' => '25 Menit',
+        'questions' => 20,
+        'levels' => ['Dasar'],
+        'takeaways' => [
+            'Cerita interaktif dengan pertanyaan pemahaman.',
+            'Skor langsung untuk siswa dan orang tua.',
+            'Saran aktivitas lanjutan di rumah.',
+        ],
+        'thumbnail' => 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80',
+    ],
+];
+
+$quizCollections = [
+    [
+        'label' => 'Matematika',
+        'accent' => '#37b6ad',
+        'items' => [
+            $quizModules['persamaan-linear'],
+        ],
+    ],
+    [
+        'label' => 'Kimia',
+        'accent' => '#5f6af8',
+        'items' => [
+            $quizModules['kimia-termokimia'],
+        ],
+    ],
+    [
+        'label' => 'Bahasa',
+        'accent' => '#f1a82e',
+        'items' => [
+            $quizModules['bahasa-grammar'],
+        ],
+    ],
+    [
+        'label' => 'SD Terpadu',
+        'accent' => '#8e65d4',
+        'items' => [
+            $quizModules['sd-literasi'],
+        ],
+    ],
+];
+
+$studentSchedule = [
+    'highlight' => [
+        'title' => 'Persamaan Linear',
+        'category' => 'Matematika',
+        'date' => 'Selasa, 12 Desember 2023',
+        'time' => '16.00 - 17.30 WIB',
+        'mentor' => 'Ahmad Rizki',
+    ],
+    'upcoming' => [
+        [
+            'title' => 'Grammar Intensive',
+            'category' => 'Bahasa Inggris',
+            'date' => 'Rabu, 13 Desember 2023',
+            'time' => '19.00 - 20.30 WIB',
+            'mentor' => 'Ayu Pratiwi',
+        ],
+        [
+            'title' => 'Kimia: Termokimia',
+            'category' => 'Kimia',
+            'date' => 'Kamis, 14 Desember 2023',
+            'time' => '17.00 - 18.30 WIB',
+            'mentor' => 'Dr. Budi Santoso',
+        ],
+        [
+            'title' => 'Literasi Tematik',
+            'category' => 'SD Terpadu',
+            'date' => 'Sabtu, 16 Desember 2023',
+            'time' => '09.00 - 10.30 WIB',
+            'mentor' => 'Mentor Laila',
+        ],
+    ],
+    'calendar' => [
+        ['label' => 'Sen', 'days' => [27, 4, 11, 18, 25]],
+        ['label' => 'Sel', 'days' => [28, 5, 12, 19, 26]],
+        ['label' => 'Rab', 'days' => [29, 6, 13, 20, 27]],
+        ['label' => 'Kam', 'days' => [30, 7, 14, 21, 28]],
+        ['label' => 'Jum', 'days' => [1, 8, 15, 22, 29]],
+        ['label' => 'Sab', 'days' => [2, 9, 16, 23, 30]],
+        ['label' => 'Min', 'days' => [3, 10, 17, 24, 31]],
+    ],
+    'activeDays' => [5, 7, 12, 13, 14, 16, 22, 29],
+    'mutedCells' => [
+        'Sen' => [27],
+        'Sel' => [28],
+        'Rab' => [29],
+        'Kam' => [30],
+    ],
+];
+
+Route::get('/student/dashboard', function () use ($materialCollections, $learningMaterials, $studentSchedule) {
+    $activePackage = [
+        'title' => 'SD (Kelas 6) - Paket Intensif',
+        'period' => 'Aktif hingga 31 Desember 2023',
+        'status' => 'Berjalan',
+    ];
+
+    $recentMaterials = array_slice(array_values($learningMaterials), 0, 3);
+
+    return view('student.dashboard', [
+        'schedule' => $studentSchedule,
+        'recentMaterials' => $recentMaterials,
+        'activePackage' => $activePackage,
+    ]);
+})->name('student.dashboard');
+
+Route::get('/student/jadwal', function () use ($studentSchedule) {
+    return view('student.schedule', ['schedule' => $studentSchedule]);
+})->name('student.schedule');
+
+Route::get('/student/materi', function () use ($materialCollections) {
+    return view('student.materials.index', ['collections' => $materialCollections]);
+})->name('student.materials');
+
+Route::get('/student/materi/{slug}', function (string $slug) use ($learningMaterials) {
+    if (! array_key_exists($slug, $learningMaterials)) {
+        abort(404);
+    }
+
+    return view('student.materials.show', ['material' => $learningMaterials[$slug]]);
+})->name('student.materials.show');
+
+Route::get('/student/quiz', function () use ($quizCollections) {
+    return view('student.quiz.index', ['collections' => $quizCollections]);
+})->name('student.quiz');
+
+Route::get('/student/quiz/{slug}', function (string $slug) use ($quizModules) {
+    if (! array_key_exists($slug, $quizModules)) {
+        abort(404);
+    }
+
+    return view('student.quiz.show', ['quiz' => $quizModules[$slug]]);
+})->name('student.quiz.show');
+
+Route::get('/student/profile', function () {
+    $profile = [
+        'name' => 'Ahmad Rizki',
+        'email' => 'ahmad.rizki@email.com',
+        'studentId' => 'MC-102938',
+        'phone' => '081234567890',
+        'gender' => 'Laki-laki',
+        'parentName' => 'Budi Santoso',
+        'address' => 'Jl. Melati No. 12, Bandung',
+    ];
+
+    return view('student.profile', ['profile' => $profile]);
+})->name('student.profile');

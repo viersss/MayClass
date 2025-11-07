@@ -358,5 +358,11 @@
                 <p class="copyright">© 2024 MayClass. All rights reserved.</p>
             </div>
         </footer>
+
+        <script>
+            document.querySelector('.confirm-btn')?.addEventListener('click', () => {
+                window.location.href = '{{ route('checkout.success', $package['slug']) }}';
+            });
+        </script>
     </body>
 </html>

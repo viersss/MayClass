@@ -358,7 +358,7 @@
                         </div>
                     </div>
 
-                    <form data-mode="register" method="post" action="#" novalidate>
+                    <form data-mode="register" method="get" action="{{ route('packages.index') }}" novalidate>
                         <div class="two-column">
                             <div class="input-group">
                                 <label for="register-name">Nama Lengkap</label>
@@ -426,7 +426,7 @@
                         </p>
                     </form>
 
-                    <form data-mode="login" method="post" action="#" novalidate>
+                    <form data-mode="login" method="get" action="{{ route('student.dashboard') }}" novalidate>
                         <div class="input-group">
                             <label for="login-email">Email</label>
                             <input id="login-email" type="email" name="email" placeholder="Enter your Email" />
@@ -499,16 +499,14 @@
             if (loginForm) {
                 loginForm.addEventListener('submit', (event) => {
                     event.preventDefault();
-                    window.location.href = '{{ route('packages.index') }}';
+                    window.location.href = '{{ route('student.dashboard') }}';
                 });
             }
 
             if (registerForm) {
                 registerForm.addEventListener('submit', (event) => {
                     event.preventDefault();
-                    setMode('login');
-                    history.replaceState(null, '', '{{ route('login') }}');
-                    loginForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    window.location.href = '{{ route('packages.index') }}';
                 });
             }
         </script>
