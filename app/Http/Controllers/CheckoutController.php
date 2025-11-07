@@ -101,7 +101,7 @@ class CheckoutController extends Controller
             'detail_title' => $package->detail_title,
             'detail_price' => $package->detail_price_label,
             'summary' => $package->summary,
-            'image' => $package->image_url,
+            'image' => $package->image_asset,
             'card_features' => $package->cardFeatures->sortBy('position')->pluck('label')->all(),
             'included' => $package->inclusions->sortBy('position')->pluck('label')->all(),
             'price_numeric' => (int) round($package->price),

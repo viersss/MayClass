@@ -53,7 +53,7 @@ class QuizController extends Controller
                 'slug' => $quiz->slug,
                 'title' => $quiz->title,
                 'summary' => $quiz->summary,
-                'thumbnail' => $quiz->thumbnail_url,
+                'thumbnail' => $quiz->thumbnail_asset,
                 'duration' => $quiz->duration_label,
                 'questions' => $quiz->question_count,
                 'levels' => $quiz->levels->sortBy('position')->pluck('label')->all(),

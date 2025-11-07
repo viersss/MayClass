@@ -17,7 +17,7 @@ class PackageSeeder extends Seeder
                 'card_price_label' => 'Rp 2jt',
                 'detail_title' => 'Paket SD Kelas 1-3',
                 'detail_price_label' => 'Rp 2 jt',
-                'image_url' => 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80',
+                'image_url' => 'package_sd_1_3',
                 'price' => 2000000,
                 'summary' => 'Bangun pondasi akademik yang kuat untuk siswa SD kelas awal melalui pembelajaran tematik dan aktivitas interaktif.',
                 'card_features' => [
@@ -40,7 +40,7 @@ class PackageSeeder extends Seeder
                 'card_price_label' => 'Rp 3jt',
                 'detail_title' => 'Paket SD Kelas 4-6',
                 'detail_price_label' => 'Rp 3 jt',
-                'image_url' => 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=900&q=80',
+                'image_url' => 'package_sd_4_6',
                 'price' => 3000000,
                 'summary' => 'Siapkan siswa untuk ujian akhir SD dengan modul latihan terarah, pemantauan progres, dan sesi klinik soal mingguan.',
                 'card_features' => [
@@ -63,7 +63,7 @@ class PackageSeeder extends Seeder
                 'card_price_label' => 'Rp 3,2jt',
                 'detail_title' => 'Paket SMP Kelas 7-9',
                 'detail_price_label' => 'Rp 3,2 jt',
-                'image_url' => 'https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80',
+                'image_url' => 'package_smp_7_9',
                 'price' => 3200000,
                 'summary' => 'Dukung persiapan AKM dan ujian sekolah dengan kombinasi konsep inti, eksperimen virtual, dan klinik mentoring.',
                 'card_features' => [
@@ -86,7 +86,7 @@ class PackageSeeder extends Seeder
                 'card_price_label' => 'Rp 3,5jt',
                 'detail_title' => 'Paket SMA IPA',
                 'detail_price_label' => 'Rp 3,5 jt',
-                'image_url' => 'https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=900&q=80',
+                'image_url' => 'package_sma_ipa',
                 'price' => 3500000,
                 'summary' => 'Dalami materi STEM dengan eksperimen virtual, sesi pemantapan UTBK, serta klinik soal intensif setiap pekan.',
                 'card_features' => [
@@ -109,7 +109,7 @@ class PackageSeeder extends Seeder
                 'card_price_label' => 'Rp 3,3jt',
                 'detail_title' => 'Paket SMA IPS',
                 'detail_price_label' => 'Rp 3,3 jt',
-                'image_url' => 'https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80',
+                'image_url' => 'package_sma_ips',
                 'price' => 3300000,
                 'summary' => 'Fokus pada pemahaman konsep sosial, ekonomi, dan sejarah melalui studi kasus dan presentasi kolaboratif.',
                 'card_features' => [
@@ -132,7 +132,7 @@ class PackageSeeder extends Seeder
                 'card_price_label' => 'Rp 4jt',
                 'detail_title' => 'Bootcamp Persiapan UTBK',
                 'detail_price_label' => 'Rp 4 jt',
-                'image_url' => 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=900&q=80',
+                'image_url' => 'package_utbk',
                 'price' => 4000000,
                 'summary' => 'Program percepatan UTBK dengan tryout mingguan, klinik pembahasan, dan mentoring strategi penalaran.',
                 'card_features' => [
@@ -155,7 +155,7 @@ class PackageSeeder extends Seeder
                 'card_price_label' => 'Rp 4,5jt',
                 'detail_title' => 'Program Olimpiade Sains',
                 'detail_price_label' => 'Rp 4,5 jt',
-                'image_url' => 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80',
+                'image_url' => 'package_olimpiade',
                 'price' => 4500000,
                 'summary' => 'Pendampingan khusus siswa berprestasi dengan modul penelitian, bimbingan eksperimen, dan coaching nasional.',
                 'card_features' => [
@@ -178,7 +178,7 @@ class PackageSeeder extends Seeder
                 'card_price_label' => 'Rp 2,5jt',
                 'detail_title' => 'Program Pengembangan Karakter',
                 'detail_price_label' => 'Rp 2,5 jt',
-                'image_url' => 'https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80',
+                'image_url' => 'package_karakter',
                 'price' => 2500000,
                 'summary' => 'Kembangkan soft skill siswa melalui modul kepemimpinan, komunikasi, dan manajemen proyek mini.',
                 'card_features' => [

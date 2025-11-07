@@ -44,8 +44,10 @@
             }
 
             .container {
-                width: min(1180px, 92vw);
+                width: 100%;
+                max-width: 1180px;
                 margin: 0 auto;
+                padding: 0 24px;
             }
 
             nav {
@@ -60,7 +62,7 @@
             }
 
             .brand {
-                display: flex;
+                display: inline-flex;
                 align-items: center;
                 gap: 12px;
                 font-weight: 600;
@@ -68,16 +70,10 @@
                 color: var(--primary-dark);
             }
 
-            .brand-badge {
+            .brand img {
                 width: 40px;
                 height: 40px;
-                border-radius: 12px;
-                background: var(--primary);
-                display: grid;
-                place-items: center;
-                color: #ffffff;
-                font-weight: 700;
-                box-shadow: 0 18px 32px rgba(61, 183, 173, 0.25);
+                object-fit: contain;
             }
 
             .nav-links {
@@ -194,9 +190,8 @@
                 content: "";
                 position: absolute;
                 inset: 0;
-                background: url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80')
-                    center/cover;
-                opacity: 0.25;
+                background: url("{{ \App\Support\ImageRepository::url('dashboard_banner') }}") center/cover;
+                opacity: 0.32;
             }
 
             .hero-visual-inner {
@@ -325,8 +320,8 @@
             <div class="container">
                 <nav>
                     <a href="{{ route('student.dashboard') }}" class="brand">
-                        <span class="brand-badge">MC</span>
-                        MayClass
+                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <span>MayClass</span>
                     </a>
                     <div class="nav-links">
                         <a href="{{ route('student.dashboard') }}" data-active="true">Beranda</a>
@@ -427,6 +422,6 @@
                 </div>
             </section>
         </main>
-        <footer>© 2024 MayClass. Semua hak dilindungi.</footer>
+        <footer>© {{ now()->year }} MayClass. Semua hak dilindungi.</footer>
     </body>
 </html>

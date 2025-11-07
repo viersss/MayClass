@@ -53,7 +53,7 @@ class MaterialController extends Controller
                 'title' => $material->title,
                 'level' => $material->level,
                 'summary' => $material->summary,
-                'thumbnail' => $material->thumbnail_url,
+                'thumbnail' => $material->thumbnail_asset,
                 'objectives' => $material->objectives
                     ->sortBy('position')
                     ->map(fn ($objective) => $objective->description)

@@ -41,10 +41,13 @@
                 padding: 28px 0 0;
             }
 
-            .container {
-                width: min(960px, 92vw);
-                margin: 0 auto;
-            }
+
+.container {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
 
             nav {
                 background: var(--card);
@@ -57,26 +60,21 @@
                 gap: 24px;
             }
 
-            .brand {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                font-weight: 600;
-                font-size: 1.1rem;
-                color: var(--primary-dark);
-            }
 
-            .brand-badge {
-                width: 40px;
-                height: 40px;
-                border-radius: 12px;
-                background: var(--primary);
-                display: grid;
-                place-items: center;
-                color: #ffffff;
-                font-weight: 700;
-                box-shadow: 0 18px 32px rgba(61, 183, 173, 0.25);
-            }
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--primary-dark);
+}
+
+.brand img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
 
             .nav-links {
                 display: flex;
@@ -238,8 +236,8 @@
             <div class="container">
                 <nav>
                     <a href="{{ route('student.dashboard') }}" class="brand">
-                        <span class="brand-badge">MC</span>
-                        MayClass
+                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <span>MayClass</span>
                     </a>
                     <div class="nav-links">
                         <a href="{{ route('student.dashboard') }}">Beranda</a>
@@ -305,6 +303,6 @@
                 </form>
             </section>
         </main>
-        <footer>© 2024 MayClass. Data pribadi dijaga sesuai kebijakan privasi.</footer>
+        <footer>© {{ now()->year }} MayClass. Data pribadi dijaga sesuai kebijakan privasi.</footer>
     </body>
 </html>

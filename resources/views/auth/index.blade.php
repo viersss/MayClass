@@ -349,10 +349,7 @@
             <div class="auth-card">
                 <div class="auth-illustration">
                     <div class="image-frame" aria-hidden="true">
-                        <img
-                            src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=900&q=80"
-                            alt="Siswa sedang mengikuti pembelajaran di kelas"
-                        />
+                        <img src="{{ \App\Support\ImageRepository::url('auth') }}" alt="Ilustrasi siswa MayClass" />
                     </div>
                     <div>
                         <h1>

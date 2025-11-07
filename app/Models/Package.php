@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\ImageRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -25,6 +26,13 @@ class Package extends Model
     protected $casts = [
         'price' => 'float',
     ];
+
+    public function getImageAssetAttribute(): string
+    {
+        $key = $this->attributes['image_url'] ?? '';
+
+        return ImageRepository::url("packages.$key");
+    }
 
     public function features(): HasMany
     {

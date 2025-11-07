@@ -43,8 +43,10 @@
             }
 
             .container {
-                width: min(1180px, 92vw);
+                width: 100%;
+                max-width: 1180px;
                 margin: 0 auto;
+                padding: 0 24px;
             }
 
             nav {
@@ -55,24 +57,18 @@
             }
 
             .brand {
-                display: flex;
+                display: inline-flex;
                 align-items: center;
                 gap: 14px;
                 font-weight: 600;
-                font-size: 1.3rem;
+                font-size: 1.25rem;
                 color: var(--primary-dark);
             }
 
-            .brand-icon {
+            .brand img {
                 width: 44px;
                 height: 44px;
-                border-radius: 12px;
-                background: var(--primary);
-                display: grid;
-                place-items: center;
-                color: #fff;
-                font-weight: 700;
-                box-shadow: 0 18px 32px rgba(61, 183, 173, 0.28);
+                object-fit: contain;
             }
 
             .nav-actions {
@@ -317,8 +313,8 @@
             <div class="container">
                 <nav>
                     <a href="/" class="brand">
-                        <span class="brand-icon">MC</span>
-                        MayClass
+                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <span>MayClass</span>
                     </a>
                     <div class="nav-actions">
                         <a class="nav-btn" href="{{ route('packages.index') }}">Paket Lainnya</a>
@@ -405,7 +401,7 @@
                         </ul>
                     </div>
                 </div>
-                <p class="copyright">© 2024 MayClass. All rights reserved.</p>
+                <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
             </div>
         </footer>
     </body>

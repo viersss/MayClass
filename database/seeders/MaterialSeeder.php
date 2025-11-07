@@ -16,7 +16,7 @@ class MaterialSeeder extends Seeder
                 'title' => 'Persamaan Linear',
                 'level' => 'SMA IPA',
                 'summary' => 'Pendalaman konsep persamaan linear dua variabel lengkap dengan contoh kontekstual dan latihan terstruktur.',
-                'thumbnail_url' => 'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=900&q=80',
+                'thumbnail_url' => 'persamaan_linear',
                 'objectives' => [
                     'Menjabarkan bentuk umum persamaan linear satu dan dua variabel.',
                     'Menggunakan metode subtitusi dan eliminasi pada soal cerita.',
@@ -36,7 +36,7 @@ class MaterialSeeder extends Seeder
                 'title' => 'Kimia: Termokimia',
                 'level' => 'SMA IPA',
                 'summary' => 'Pelajari konsep perubahan entalpi, hukum Hess, dan penerapan termokimia pada reaksi sehari-hari.',
-                'thumbnail_url' => 'https://images.unsplash.com/photo-1559757175-5700dde6756b?auto=format&fit=crop&w=900&q=80',
+                'thumbnail_url' => 'kimia_termokimia',
                 'objectives' => [
                     'Menjelaskan konsep energi dan entalpi reaksi secara kualitatif.',
                     'Menggunakan hukum Hess dan data entalpi standar.',
@@ -56,7 +56,7 @@ class MaterialSeeder extends Seeder
                 'title' => 'Grammar Intensif',
                 'level' => 'SMP',
                 'summary' => 'Kuasai struktur kalimat bahasa Inggris melalui praktik interaktif dan evaluasi otomatis.',
-                'thumbnail_url' => 'https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=900&q=80',
+                'thumbnail_url' => 'bahasa_grammar',
                 'objectives' => [
                     'Memahami tenses dasar hingga kompleks secara runtut.',
                     'Mengidentifikasi kesalahan umum dalam writing dan speaking.',
@@ -76,7 +76,7 @@ class MaterialSeeder extends Seeder
                 'title' => 'Literasi Tematik SD',
                 'level' => 'SD (Kelas 3-4)',
                 'summary' => 'Pendekatan tematik untuk meningkatkan kemampuan literasi dan numerasi dasar siswa SD.',
-                'thumbnail_url' => 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=80',
+                'thumbnail_url' => 'sd_literasi',
                 'objectives' => [
                     'Membangun kebiasaan membaca aktif melalui cerita tematik.',
                     'Melatih pemahaman bacaan dengan pertanyaan inferensi.',

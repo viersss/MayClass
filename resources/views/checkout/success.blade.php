@@ -46,8 +46,10 @@
             }
 
             .container {
-                width: min(1100px, 92vw);
+                width: 100%;
+                max-width: 1100px;
                 margin: 0 auto;
+                padding: 0 24px;
             }
 
             nav {
@@ -66,16 +68,10 @@
                 color: var(--primary-dark);
             }
 
-            .brand-badge {
+            .brand img {
                 width: 44px;
                 height: 44px;
-                border-radius: 14px;
-                display: grid;
-                place-items: center;
-                background: var(--primary);
-                color: #ffffff;
-                font-weight: 700;
-                box-shadow: 0 20px 36px rgba(61, 183, 173, 0.22);
+                object-fit: contain;
             }
 
             main {
@@ -205,8 +201,8 @@
             <div class="container">
                 <nav>
                     <a href="/" class="brand">
-                        <span class="brand-badge">MC</span>
-                        MayClass
+                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <span>MayClass</span>
                     </a>
                     <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Lain</a>
                 </nav>
@@ -240,6 +236,6 @@
                 </div>
             </div>
         </main>
-        <footer>© 2024 MayClass. Tetap semangat belajar!</footer>
+        <footer>© {{ now()->year }} MayClass. Tetap semangat belajar!</footer>
     </body>
 </html>

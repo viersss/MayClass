@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\ImageRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -27,5 +28,12 @@ class Material extends Model
     public function chapters(): HasMany
     {
         return $this->hasMany(MaterialChapter::class)->orderBy('position');
+    }
+
+    public function getThumbnailAssetAttribute(): string
+    {
+        $key = $this->attributes['thumbnail_url'] ?? '';
+
+        return ImageRepository::url("materials.$key");
     }
 }
