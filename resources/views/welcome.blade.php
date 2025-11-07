@@ -134,6 +134,7 @@
 
             .nav-actions form {
                 margin: 0;
+                display: inline-flex;
             }
 
             /* mobile nav toggle */
@@ -202,116 +203,174 @@
             }
 
             .hero {
-                display: grid;
-                grid-template-columns: 1fr; /* single column: image will become background silhouette */
-                align-items: center;
-                gap: 56px;
-                padding: 40px 0 80px;
                 position: relative;
-                overflow: visible;
+                isolation: isolate;
+                display: grid;
+                gap: clamp(32px, 5vw, 56px);
+                grid-template-columns: minmax(0, 1fr);
+                align-items: center;
+                padding: clamp(36px, 5vw, 72px);
+                margin-top: 32px;
+                border-radius: 40px;
+                background: linear-gradient(115deg, #0d3f2c 0%, #1f7a54 42%, #f5fff9 100%);
+                color: #042616;
+                box-shadow: 0 40px 80px -50px rgba(4, 61, 40, 0.55);
+                overflow: hidden;
             }
 
-            /* center hero textual content horizontally but keep natural vertical flow */
-            .hero-content {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                padding: 0 20px;
+            .hero::before,
+            .hero::after {
+                content: "";
+                position: absolute;
+                border-radius: 999px;
+                pointer-events: none;
+                mix-blend-mode: screen;
+                opacity: 0.35;
+            }
+
+            .hero::before {
+                width: 480px;
+                height: 480px;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0) 70%);
+                top: -180px;
+                right: -160px;
+            }
+
+            .hero::after {
+                width: 360px;
+                height: 360px;
+                background: radial-gradient(circle, rgba(80, 197, 141, 0.35) 0%, rgba(80, 197, 141, 0) 70%);
+                bottom: -160px;
+                left: -120px;
+            }
+
+            .hero-copy {
+                position: relative;
+                z-index: 2;
+                display: grid;
+                gap: 24px;
+            }
+
+            .hero-copy .pill {
+                align-self: start;
+                background: rgba(255, 255, 255, 0.25);
+                color: #0f4c3a;
+                border: 1px solid rgba(15, 76, 58, 0.12);
             }
 
             .hero h1 {
-                font-size: clamp(2.4rem, 4vw, 3.6rem);
-                line-height: 1.15;
-                margin: 20px auto 18px;
-                max-width: 1100px; /* allow title to stretch wider */
-                width: 100%;
+                font-size: clamp(2.6rem, 4.6vw, 3.9rem);
+                line-height: 1.1;
+                margin: 0;
+                max-width: 640px;
             }
 
             .hero p {
-                max-width: 880px; /* wider paragraph to match longer title */
-                color: var(--text-muted);
-                margin: 0 auto 34px;
+                max-width: 560px;
+                color: rgba(4, 38, 22, 0.78);
+                margin: 0;
+                font-size: 1.05rem;
             }
 
             .hero-cta {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 16px;
-                margin-bottom: 36px;
-                justify-content: center; /* center CTA buttons */
+                justify-content: flex-start;
+            }
+
+            .hero-cta .btn-primary {
+                box-shadow: 0 18px 34px -16px rgba(5, 64, 36, 0.6);
             }
 
             .stats {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 20px;
-                justify-content: center; /* center stat cards */
+                gap: 18px;
+                justify-content: flex-start;
             }
 
             .stat-card {
                 padding: 18px 24px;
-                border-radius: 20px;
-                background: rgba(255, 255, 255, 0.7);
-                backdrop-filter: blur(6px);
+                border-radius: 22px;
+                background: linear-gradient(160deg, rgba(255, 255, 255, 0.92), rgba(220, 244, 231, 0.88));
+                border: 1px solid rgba(18, 95, 60, 0.12);
+                backdrop-filter: blur(8px);
                 min-width: 180px;
-                box-shadow: 0 10px 22px rgba(40, 110, 120, 0.12);
+                box-shadow: 0 22px 48px -28px rgba(5, 64, 36, 0.55);
+                color: #08442c;
+                flex: 1 1 200px;
             }
 
             .stat-card h3 {
                 margin: 0 0 8px;
-                font-size: 1.6rem;
+                font-size: 1.7rem;
+                color: #0e5a3b;
             }
 
-            .stat-card {
-                text-align: center; /* center numbers and labels */
+            .stat-card p {
+                margin: 0;
+                color: rgba(8, 68, 44, 0.72);
+                font-size: 0.95rem;
             }
 
-            .hero-art {
-                /* position image as a low-opacity silhouette behind the hero text */
-                position: absolute;
-                right: 4%;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 48%;
-                height: 78%;
-                z-index: 0;
-                pointer-events: none;
-                display: block;
+            .hero-visual {
+                position: relative;
+                z-index: 2;
+                display: grid;
+                place-items: center;
+                align-self: stretch;
+            }
+
+            .hero-visual-frame {
+                position: relative;
+                width: min(420px, 80vw);
+                aspect-ratio: 5 / 6;
+                border-radius: 36px;
                 overflow: hidden;
+                box-shadow: 0 32px 68px -32px rgba(5, 64, 36, 0.55);
+                border: 1px solid rgba(255, 255, 255, 0.6);
+                background: linear-gradient(160deg, rgba(8, 59, 36, 0.65), rgba(19, 114, 74, 0.45));
             }
 
-            .hero-art::after {
-                /* subtle green wash behind image to match theme */
-                content: "";
-                position: absolute;
-                inset: 0;
-                background: rgba(61, 183, 173, 0.06);
-                z-index: 0;
-            }
-
-            .hero-art img {
+            .hero-visual-frame img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                opacity: 0.10; /* silhouette effect */
-                filter: grayscale(100%) blur(1px);
-                transform: translateZ(0);
+                filter: saturate(1.1);
             }
 
-            .hero-content { position: relative; z-index: 2; }
-            .hero-inline {
+            .hero-floating-card {
                 position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                width: 80%;
-                max-width: 1100px;
-                height: auto;
-                opacity: 0.06;
-                filter: grayscale(100%) blur(1px);
-                pointer-events: none;
-                z-index: 1;
+                display: grid;
+                gap: 2px;
+                padding: 16px 20px;
+                border-radius: 20px;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(228, 249, 237, 0.9));
+                color: #0d4f36;
+                box-shadow: 0 22px 42px -28px rgba(5, 64, 36, 0.45);
+                border: 1px solid rgba(18, 95, 60, 0.08);
+                text-align: left;
+                max-width: 220px;
+            }
+
+            .hero-floating-card span {
+                font-weight: 700;
+                font-size: 1.3rem;
+            }
+
+            .hero-floating-card small {
+                color: rgba(13, 79, 54, 0.7);
+            }
+
+            .hero-floating-card--top {
+                top: 10%;
+                right: 6%;
+            }
+
+            .hero-floating-card--bottom {
+                bottom: 10%;
+                left: 4%;
             }
 
             .section {
@@ -458,6 +517,12 @@
                 box-shadow: var(--shadow);
             }
 
+            .testimonial-card {
+                background: linear-gradient(170deg, rgba(244, 255, 248, 0.92), rgba(222, 244, 232, 0.9));
+                border: 1px solid rgba(22, 93, 63, 0.12);
+                box-shadow: 0 30px 70px -45px rgba(6, 60, 36, 0.5);
+            }
+
             .tutor-card img,
             .testimonial-card img {
                 width: 100%;
@@ -466,8 +531,9 @@
 
             .testimonial-card p {
                 margin: 0;
-                color: var(--text-muted);
-                font-size: 0.95rem;
+                color: rgba(6, 60, 36, 0.72);
+                font-size: 0.98rem;
+                line-height: 1.6;
             }
 
             .faq-list {
@@ -538,6 +604,17 @@
                 color: rgba(255, 255, 255, 0.6);
             }
 
+            @media (min-width: 992px) {
+                .hero {
+                    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+                    padding: clamp(56px, 6vw, 88px) clamp(56px, 7vw, 96px);
+                }
+
+                .hero-copy {
+                    text-align: left;
+                }
+            }
+
             @media (max-width: 1080px) {
                 .features-grid {
                     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -569,21 +646,16 @@
                 .hero {
                     grid-template-columns: 1fr;
                     text-align: center;
+                    padding: 48px 28px 64px;
                 }
 
-                /* make hero silhouettes smaller on narrow screens so they don't overwhelm text */
-                .hero-art {
-                    right: 2%;
-                    top: 60%;
-                    width: 60%;
-                    height: 46%;
-                    opacity: 0.08;
+                .hero-copy {
+                    text-align: center;
+                    justify-items: center;
                 }
 
-                .hero-inline {
-                    width: 92%;
-                    opacity: 0.04;
-                    transform: translate(-50%, -48%);
+                .hero-copy .pill {
+                    margin: 0 auto;
                 }
 
                 .hero p,
@@ -597,8 +669,18 @@
                     justify-content: center;
                 }
 
-                .hero-art::after {
-                    inset: 12% 4% 0 4%;
+                .hero-visual {
+                    order: -1;
+                }
+
+                .hero-floating-card--top {
+                    top: 12%;
+                    right: 12%;
+                }
+
+                .hero-floating-card--bottom {
+                    bottom: 12%;
+                    left: 12%;
                 }
 
                 .programs-grid {
@@ -613,6 +695,26 @@
             @media (max-width: 640px) {
                 .container {
                     padding: 0 18px;
+                }
+
+                .hero {
+                    padding: 42px 22px 56px;
+                }
+
+                .hero-visual-frame {
+                    width: min(360px, 90vw);
+                    border-radius: 30px;
+                }
+
+                .hero-floating-card {
+                    position: static;
+                    margin-top: 18px;
+                    justify-self: center;
+                    text-align: center;
+                }
+
+                .hero-visual {
+                    gap: 12px;
                 }
 
                 .features-grid {
@@ -650,10 +752,11 @@
                             </div>
                             <div class="nav-right nav-actions">
                                 @auth
-                                    <a class="btn btn-outline" href="{{ route('student.profile') }}">Masuk</a>
+                                    <a class="btn btn-outline" href="{{ route('student.dashboard') }}">Dashboard</a>
+                                    <a class="btn btn-primary" href="{{ route('student.profile') }}" style="box-shadow: none;">Profil</a>
                                     <form method="post" action="{{ route('logout') }}">
                                         @csrf
-                                        <button class="btn btn-primary" type="submit" style="box-shadow: none;">Keluar</button>
+                                        <button class="btn" type="submit" style="gap: 6px; color: var(--primary-dark); background: rgba(31, 42, 55, 0.06); box-shadow: none;">Keluar</button>
                                     </form>
                                 @else
                                     <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
@@ -670,8 +773,7 @@
                     </div>
                 </nav>
                 <section class="hero content-width">
-                    <div class="hero-content">
-                        <img class="hero-inline" src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1400&q=80" alt="" aria-hidden="true" />
+                    <div class="hero-copy">
                         <span class="pill">Langkah Pasti Menuju Prestasi</span>
                         <h1>Platform Bimbingan Belajar Terintegrasi untuk Semua Kebutuhan Akademik</h1>
                         <p>
@@ -692,10 +794,24 @@
                                 <h3>500+</h3>
                                 <p>Tentor berpengalaman dan tersertifikasi di bidangnya.</p>
                             </div>
+                            <div class="stat-card">
+                                <h3>97%</h3>
+                                <p>Tingkat kelulusan target ujian dari siswa MayClass.</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="hero-art">
-                        <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1400&q=80" alt="Ilustrasi siswa belajar" />
+                    <div class="hero-visual">
+                        <div class="hero-visual-frame">
+                            <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1400&q=80" alt="Ilustrasi siswa belajar" />
+                        </div>
+                        <div class="hero-floating-card hero-floating-card--top">
+                            <span>98%</span>
+                            <small>Kepuasan siswa dan orang tua</small>
+                        </div>
+                        <div class="hero-floating-card hero-floating-card--bottom">
+                            <span>24/7</span>
+                            <small>Dukungan belajar dan konsultasi</small>
+                        </div>
                     </div>
                 </section>
             </div>

@@ -316,6 +316,8 @@
         </style>
     </head>
     <body>
+        @php($materialsLink = config('mayclass.links.materials_drive'))
+        @php($quizLink = config('mayclass.links.quiz_platform'))
         <header>
             <div class="container">
                 <nav>
@@ -345,7 +347,7 @@
                         Mulai dari jadwal live class hingga bank soal adaptif, semuanya ada dalam satu dashboard.
                     </p>
                     <div class="hero-cta">
-                        <a class="btn btn-primary" href="{{ route('student.materials') }}">Mulai Belajar</a>
+                        <a class="btn btn-primary" href="{{ $materialsLink }}" target="_blank" rel="noopener">Mulai Belajar</a>
                         <a class="btn btn-outline" href="{{ route('student.schedule') }}">Lihat Jadwal</a>
                     </div>
                 </div>
@@ -384,7 +386,7 @@
             <section class="materials">
                 <div class="section-header">
                     <h2 style="margin: 0; font-size: 1.4rem;">Materi Terbaru</h2>
-                    <a class="btn btn-outline" href="{{ route('student.materials') }}">Lihat Materi</a>
+                    <a class="btn btn-outline" href="{{ $materialsLink }}" target="_blank" rel="noopener">Lihat Materi</a>
                 </div>
                 <div class="cards-row">
                     @foreach ($recentMaterials as $material)
@@ -395,10 +397,10 @@
                             <h4>{{ $material['title'] }}</h4>
                             <p>{{ $material['summary'] }}</p>
                             <div style="display: flex; gap: 12px;">
-                                <a class="btn btn-primary" style="padding: 12px 20px; font-size: 0.9rem;" href="{{ route('student.materials.show', $material['slug']) }}">
+                                <a class="btn btn-primary" style="padding: 12px 20px; font-size: 0.9rem;" href="{{ $materialsLink }}" target="_blank" rel="noopener">
                                     Lihat Materi
                                 </a>
-                                <a class="btn btn-outline" style="padding: 12px 20px; font-size: 0.9rem;" href="{{ route('student.quiz.show', $material['slug']) }}">
+                                <a class="btn btn-outline" style="padding: 12px 20px; font-size: 0.9rem;" href="{{ $quizLink }}" target="_blank" rel="noopener">
                                     Mulai Quiz
                                 </a>
                             </div>
