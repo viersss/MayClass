@@ -133,6 +133,8 @@
             }
 
             .hero {
+                position: relative;
+                isolation: isolate;
                 display: grid;
                 grid-template-columns: repeat(12, 1fr);
                 align-items: center;
@@ -565,6 +567,10 @@
                             <div class="feature-card">
                                 <h3>Komunitas Supportif</h3>
                                 <p>Temui teman seperjuangan dan mentor inspiratif dalam satu ekosistem.</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>97%</h3>
+                                <p>Tingkat kelulusan target ujian dari siswa MayClass.</p>
                             </div>
                         </div>
                     </div>
