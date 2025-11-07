@@ -10,12 +10,13 @@ return new class extends Migration
     {
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('restrict'); // Creator (tentor or admin)
-            $table->foreignId('subject_id')->constrained('subjects')->onDelete('restrict');
-            $table->foreignId('level_id')->constrained('levels')->onDelete('restrict');
+            $table->string('slug')->unique();
+            $table->string('subject');
             $table->string('title');
-            $table->text('description')->nullable();
-            $table->integer('duration_minutes')->default(0);
+            $table->text('summary');
+            $table->string('thumbnail_url');
+            $table->string('duration_label');
+            $table->unsignedInteger('question_count');
             $table->timestamps();
         });
     }
