@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\Material;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Schema;
 
 class MaterialController extends Controller
 {
@@ -21,53 +23,36 @@ class MaterialController extends Controller
 
     public function index()
     {
-        $collections = Material::with('objectives', 'chapters')
-            ->orderBy('subject')
-            ->get()
-            ->groupBy('subject')
-            ->map(function ($materials, $subject) {
-                return [
-                    'label' => $subject,
-                    'accent' => self::SUBJECT_ACCENTS[$subject] ?? '#37b6ad',
-                    'items' => $materials->map(fn ($material) => [
-                        'slug' => $material->slug,
-                        'level' => $material->level,
-                        'title' => $material->title,
-                        'summary' => $material->summary,
-                    ])->values()->all(),
-                ];
-            })
-            ->values();
+        $collections = Schema::hasTable('materials')
+            ? Material::with('objectives', 'chapters')
+                ->orderBy('subject')
+                ->get()
+                ->groupBy('subject')
+                ->map(function ($materials, $subject) {
+                    return [
+                        'label' => $subject,
+                        'accent' => self::SUBJECT_ACCENTS[$subject] ?? '#37b6ad',
+                        'items' => $materials->map(fn ($material) => [
+                            'slug' => $material->slug,
+                            'level' => $material->level,
+                            'title' => $material->title,
+                            'summary' => $material->summary,
+                        ])->values()->all(),
+                    ];
+                })
+                ->values()
+            : collect();
 
         return view('student.materials.index', ['collections' => $collections]);
     }
 
-    public function show(string $slug)
+    public function show(string $slug): RedirectResponse
     {
-        $material = Material::with(['objectives', 'chapters'])->where('slug', $slug)->firstOrFail();
+        return redirect()->away($this->materialsLink());
+    }
 
-        return view('student.materials.show', [
-            'material' => [
-                'slug' => $material->slug,
-                'subject' => $material->subject,
-                'title' => $material->title,
-                'level' => $material->level,
-                'summary' => $material->summary,
-                'thumbnail' => $material->thumbnail_asset,
-                'objectives' => $material->objectives
-                    ->sortBy('position')
-                    ->map(fn ($objective) => $objective->description)
-                    ->values()
-                    ->all(),
-                'chapters' => $material->chapters
-                    ->sortBy('position')
-                    ->map(fn ($chapter) => [
-                        'title' => $chapter->title,
-                        'description' => $chapter->description,
-                    ])
-                    ->values()
-                    ->all(),
-            ],
-        ]);
+    private function materialsLink(): string
+    {
+        return (string) config('mayclass.links.materials_drive');
     }
 }

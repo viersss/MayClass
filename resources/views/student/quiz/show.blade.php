@@ -98,6 +98,16 @@
                 background: linear-gradient(120deg, var(--primary), var(--accent));
             }
 
+            .nav-actions {
+                display: inline-flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .nav-actions form {
+                margin: 0;
+            }
+
             .profile-chip {
                 display: inline-flex;
                 align-items: center;
@@ -107,6 +117,20 @@
                 background: rgba(61, 183, 173, 0.12);
                 font-size: 0.9rem;
                 color: var(--primary-dark);
+            }
+
+            .logout-button {
+                padding: 10px 18px;
+                border-radius: 999px;
+                border: 1px solid rgba(61, 183, 173, 0.25);
+                background: rgba(61, 183, 173, 0.12);
+                color: var(--primary-dark);
+                font-weight: 600;
+            }
+
+            .logout-button:hover {
+                background: rgba(44, 147, 139, 0.2);
+                border-color: rgba(44, 147, 139, 0.3);
             }
 
             main {
@@ -258,10 +282,16 @@
                         <a href="{{ route('student.quiz') }}" data-active="true">Quiz</a>
                         <a href="{{ route('student.schedule') }}">Jadwal</a>
                     </div>
-                    <a class="profile-chip" href="{{ route('student.profile') }}">
-                        <span>👋</span>
-                        <span>Siswa</span>
-                    </a>
+                    <div class="nav-actions">
+                        <a class="profile-chip" href="{{ route('student.profile') }}">
+                            <span>👋</span>
+                            <span>Siswa</span>
+                        </a>
+                        <form method="post" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="logout-button">Keluar</button>
+                        </form>
+                    </div>
                 </nav>
             </div>
         </header>
@@ -279,7 +309,7 @@
                         @endforeach
                     </div>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px;">
-                        <a class="btn btn-primary" href="#detail">Mulai Sekarang</a>
+                        <a class="btn btn-primary" href="{{ config('mayclass.links.quiz_platform') }}" target="_blank" rel="noopener">Mulai di Wayground</a>
                         <a class="btn btn-outline" href="{{ route('student.quiz') }}">Kembali ke Quiz</a>
                     </div>
                 </div>
@@ -324,8 +354,8 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
-                        <a class="btn btn-primary" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ route('student.materials.show', $quiz['slug']) }}">
-                            Lihat Materi Pendukung
+                        <a class="btn btn-primary" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ config('mayclass.links.materials_drive') }}" target="_blank" rel="noopener">
+                            Lihat Materi di Google Drive
                         </a>
                         <a class="btn btn-outline" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ route('student.dashboard') }}">
                             Kembali ke Dashboard
