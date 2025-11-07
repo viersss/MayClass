@@ -96,6 +96,16 @@
                 background: linear-gradient(120deg, var(--primary), var(--accent));
             }
 
+            .nav-actions {
+                display: inline-flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .nav-actions form {
+                margin: 0;
+            }
+
             .profile-chip {
                 display: inline-flex;
                 align-items: center;
@@ -105,6 +115,20 @@
                 background: rgba(61, 183, 173, 0.12);
                 font-size: 0.9rem;
                 color: var(--primary-dark);
+            }
+
+            .logout-button {
+                padding: 10px 18px;
+                border-radius: 999px;
+                border: 1px solid rgba(61, 183, 173, 0.25);
+                background: rgba(61, 183, 173, 0.12);
+                color: var(--primary-dark);
+                font-weight: 600;
+            }
+
+            .logout-button:hover {
+                background: rgba(44, 147, 139, 0.2);
+                border-color: rgba(44, 147, 139, 0.3);
             }
 
             main {
@@ -259,6 +283,8 @@
         </style>
     </head>
     <body>
+        @php($materialsLink = config('mayclass.links.materials_drive'))
+        @php($quizLink = config('mayclass.links.quiz_platform'))
         <header>
             <div class="container">
                 <nav>
@@ -271,10 +297,16 @@
                         <a href="{{ route('student.quiz') }}">Quiz</a>
                         <a href="{{ route('student.schedule') }}">Jadwal</a>
                     </div>
-                    <a class="profile-chip" href="{{ route('student.profile') }}">
-                        <span>👋</span>
-                        <span>Siswa</span>
-                    </a>
+                    <div class="nav-actions">
+                        <a class="profile-chip" href="{{ route('student.profile') }}">
+                            <span>👋</span>
+                            <span>Siswa</span>
+                        </a>
+                        <form method="post" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="logout-button">Keluar</button>
+                        </form>
+                    </div>
                 </nav>
             </div>
         </header>
@@ -286,17 +318,18 @@
                     Konsol materi kami tersusun agar TWK, TIU, dan TKP dipahami dengan metode yang mudah.
                 </p>
                 <div class="hero-actions">
-                    <a class="btn btn-primary" href="#collections">Lihat Materi</a>
+                    <a class="btn btn-primary" href="{{ $materialsLink }}" target="_blank" rel="noopener">Lihat Materi</a>
+                    <a class="btn btn-outline" href="{{ $quizLink }}" target="_blank" rel="noopener">Mulai Quiz</a>
                     <a class="btn btn-outline" href="{{ route('student.dashboard') }}">Kembali ke Beranda</a>
                 </div>
             </section>
 
             <section id="collections" style="display: grid; gap: 32px;">
-                @foreach ($collections as $collection)
+                @forelse ($collections as $collection)
                     <article class="collection">
                         <div class="collection-header">
                             <h2>{{ $collection['label'] }}</h2>
-                            <a class="btn btn-outline" href="{{ route('student.quiz') }}">Mulai Quiz</a>
+                            <a class="btn btn-outline" href="{{ $quizLink }}" target="_blank" rel="noopener">Mulai Quiz</a>
                         </div>
                         <div class="cards-grid">
                             @foreach ($collection['items'] as $material)
@@ -305,10 +338,10 @@
                                     <h3>{{ $material['title'] }}</h3>
                                     <p>{{ $material['summary'] }}</p>
                                     <div class="actions">
-                                        <a class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;" href="{{ route('student.materials.show', $material['slug']) }}">
+                                        <a class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;" href="{{ $materialsLink }}" target="_blank" rel="noopener">
                                             Lihat Materi
                                         </a>
-                                        <a class="btn btn-outline" style="padding: 10px 20px; font-size: 0.9rem;" href="{{ route('student.quiz.show', $material['slug']) }}">
+                                        <a class="btn btn-outline" style="padding: 10px 20px; font-size: 0.9rem;" href="{{ $quizLink }}" target="_blank" rel="noopener">
                                             Lihat Bank Soal
                                         </a>
                                     </div>
@@ -316,7 +349,17 @@
                             @endforeach
                         </div>
                     </article>
-                @endforeach
+                @empty
+                    <article class="collection" style="text-align: center;">
+                        <h2 style="margin: 0 0 12px;">Materi siap diakses</h2>
+                        <p style="margin: 0 0 18px; color: var(--text-muted);">
+                            Materi digital kami dapat diakses langsung melalui Google Drive.
+                        </p>
+                        <a class="btn btn-primary" style="justify-self: center;" href="{{ $materialsLink }}" target="_blank" rel="noopener">
+                            Buka Google Drive MayClass
+                        </a>
+                    </article>
+                @endforelse
             </section>
         </main>
         <footer>© {{ now()->year }} MayClass. Materi diperbarui setiap pekan.</footer>

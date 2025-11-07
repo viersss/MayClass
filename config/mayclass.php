@@ -117,4 +117,8 @@ return [
             ],
         ],
     ],
+    'links' => [
+        'materials_drive' => 'https://drive.google.com/drive/u/0/folders/1oZ3MIlb9T5LvPefjrdX4n9eE06INrZbu',
+        'quiz_platform' => 'https://wayground.com/join',
+    ],
 ];
