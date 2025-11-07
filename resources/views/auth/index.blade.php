@@ -492,6 +492,25 @@
             });
 
             setMode(doc.getAttribute('data-mode'));
+
+            const loginForm = document.querySelector('form[data-mode="login"]');
+            const registerForm = document.querySelector('form[data-mode="register"]');
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    window.location.href = '{{ route('packages.index') }}';
+                });
+            }
+
+            if (registerForm) {
+                registerForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    setMode('login');
+                    history.replaceState(null, '', '{{ route('login') }}');
+                    loginForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
         </script>
     </body>
 </html>
