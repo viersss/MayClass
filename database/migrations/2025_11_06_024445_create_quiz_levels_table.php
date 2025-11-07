@@ -8,15 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('levels', function (Blueprint $table) {
+        Schema::create('quiz_levels', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->foreignId('quiz_id')->constrained()->cascadeOnDelete();
+            $table->string('label');
+            $table->unsignedInteger('position')->default(0);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('levels');
+        Schema::dropIfExists('quiz_levels');
     }
 };

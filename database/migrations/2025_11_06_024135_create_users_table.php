@@ -13,7 +13,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('role', 50)->default('siswa'); // 'siswa', 'tentor', 'admin_pembelajaran', 'admin_keuangan'
+            $table->string('role', 50)->default('student');
+            $table->string('student_id')->unique()->nullable();
+            $table->string('phone')->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+            $table->string('parent_name')->nullable();
+            $table->string('address')->nullable();
+            $table->string('avatar_path')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

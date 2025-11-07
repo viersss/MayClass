@@ -225,13 +225,14 @@
                 <h1>Pembayaran Berhasil!</h1>
                 <p>
                     Terima kasih telah mempercayakan perjalanan belajar bersama MayClass. Akses paket
-                    <strong>{{ $package['detail_title'] }}</strong> kini aktif. Silakan masuk kembali untuk menikmati
-                    materi, quiz, dan jadwal terbaru sesuai akunmu.
+                    <strong>{{ $package['detail_title'] }}</strong> kini tercatat sebagai <strong>{{ ucfirst($order->status) }}</strong>.
+                    Silakan masuk kembali untuk menikmati materi, quiz, dan jadwal terbaru sesuai akunmu.
                 </p>
                 <div class="order-summary">
                     <div><strong>Paket:</strong> {{ $package['detail_title'] }}</div>
-                    <div><strong>Status:</strong> Aktif &amp; Terverifikasi</div>
-                    <div><strong>Email Konfirmasi:</strong> Telah dikirim ke {{ $package['level'] ?? 'akun MayClass Anda' }}</div>
+                    <div><strong>ID Pesanan:</strong> MC-{{ str_pad((string) $order->id, 6, '0', STR_PAD_LEFT) }}</div>
+                    <div><strong>Total Dibayar:</strong> Rp {{ number_format((int) $order->total, 0, ',', '.') }}</div>
+                    <div><strong>Email Konfirmasi:</strong> {{ optional($order->user)->email ?? 'Akun MayClass Anda' }}</div>
                 </div>
                 <div class="cta-group">
                     <a class="btn btn-primary" href="{{ route('login') }}">Login Ulang Sekarang</a>

@@ -384,7 +384,7 @@
             <section class="calendar">
                 <div class="calendar-header">
                     <h2 style="margin: 0; font-size: 1.3rem;">Kalender Jadwal</h2>
-                    <span style="color: var(--text-muted);">Desember 2023</span>
+                    <span style="color: var(--text-muted);">{{ $schedule['monthLabel'] }}</span>
                 </div>
                 <div class="calendar-grid">
                     @foreach ($schedule['calendar'] as $column)

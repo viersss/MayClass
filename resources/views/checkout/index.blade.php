@@ -122,6 +122,26 @@
                 margin-bottom: 8px;
             }
 
+            .error-alert {
+                margin: 8px 0 0;
+                padding: 16px 18px;
+                border-radius: 18px;
+                background: rgba(220, 38, 38, 0.1);
+                color: #991b1b;
+                font-size: 0.85rem;
+            }
+
+            .error-alert ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+            .input-error {
+                color: #dc2626;
+                font-size: 0.75rem;
+                margin: 6px 0 0;
+            }
+
             .payment-options {
                 display: flex;
                 gap: 16px;
@@ -266,7 +286,14 @@
 
         <div class="container">
             <main>
-                <section class="checkout-card">
+                <form
+                    class="checkout-card"
+                    method="post"
+                    action="{{ route('checkout.process', $package['slug']) }}"
+                    enctype="multipart/form-data"
+                    novalidate
+                >
+                    @csrf
                     <div>
                         <h1>Checkout</h1>
                         <p style="color: var(--text-muted); margin: 12px 0 0;">
@@ -274,34 +301,104 @@
                         </p>
                     </div>
 
+                    @if ($errors->any())
+                        <div class="error-alert" role="alert" style="margin-top: 4px;">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <div>
                         <label>Metode Pembayaran</label>
                         <div class="payment-options">
-                            <div class="payment-option">American Express</div>
-                            <div class="payment-option">Visa</div>
-                            <div class="payment-option">Transfer Bank</div>
+                            <label class="payment-option">
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="american_express"
+                                    @checked(old('payment_method', 'transfer_bank') === 'american_express')
+                                />
+                                American Express
+                            </label>
+                            <label class="payment-option">
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="visa"
+                                    @checked(old('payment_method', 'transfer_bank') === 'visa')
+                                />
+                                Visa
+                            </label>
+                            <label class="payment-option">
+                                <input
+                                    type="radio"
+                                    name="payment_method"
+                                    value="transfer_bank"
+                                    @checked(old('payment_method', 'transfer_bank') === 'transfer_bank')
+                                />
+                                Transfer Bank
+                            </label>
                         </div>
+                        @error('payment_method')
+                            <p class="input-error" style="margin-top: 8px;">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
-                        <label>Nama pada Kartu</label>
-                        <input class="input" type="text" placeholder="Masukkan nama sesuai kartu" />
+                        <label for="cardholder-name">Nama pada Kartu</label>
+                        <input
+                            id="cardholder-name"
+                            class="input"
+                            type="text"
+                            name="cardholder_name"
+                            value="{{ old('cardholder_name') }}"
+                            placeholder="Masukkan nama sesuai kartu"
+                            required
+                        />
+                        @error('cardholder_name')
+                            <p class="input-error">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
-                        <label>Nomor Kartu</label>
-                        <input class="input" type="text" placeholder="0000 0000 0000 0000" />
+                        <label for="card-number">Nomor Kartu</label>
+                        <input
+                            id="card-number"
+                            class="input"
+                            type="text"
+                            name="card_number"
+                            value="{{ old('card_number') }}"
+                            placeholder="0000 0000 0000 0000"
+                            required
+                        />
+                        @error('card_number')
+                            <p class="input-error">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
-                        <label>Unggah Bukti Pembayaran</label>
-                        <div class="upload-box">
+                        <label for="payment-proof">Unggah Bukti Pembayaran</label>
+                        <label class="upload-box" for="payment-proof">
                             Tarik & letakkan bukti transaksi atau klik untuk mengunggah
-                        </div>
+                        </label>
+                        <input
+                            id="payment-proof"
+                            type="file"
+                            name="payment_proof"
+                            accept=".jpg,.jpeg,.png,.pdf"
+                            style="display: none;"
+                            required
+                        />
+                        @error('payment_proof')
+                            <p class="input-error">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <button class="confirm-btn" type="button">Confirm Payment</button>
-                </section>
+                    <button class="confirm-btn" type="submit">Konfirmasi Pembayaran</button>
+                </form>
 
                 <aside class="summary-card">
                     <div>
@@ -309,12 +406,14 @@
                         <p style="margin: 8px 0 0; color: var(--text-muted);">{{ $package['detail_title'] }}</p>
                     </div>
                     <ul>
-                        <li><span>Subtotal</span><span>Rp {{ number_format($package['price_numeric'], 0, ',', '.') }}</span></li>
-                        <li><span>Coupon Discount</span><span>Rp 0</span></li>
-                        <li><span>Pajak (PPN 11%)</span><span>Rp {{ number_format(round($package['price_numeric'] * 0.11), 0, ',', '.') }}</span></li>
                         @php
-                            $total = $package['price_numeric'] + round($package['price_numeric'] * 0.11);
+                            $subtotal = $package['price_numeric'];
+                            $tax = round($subtotal * 0.11);
+                            $total = $subtotal + $tax;
                         @endphp
+                        <li><span>Subtotal</span><span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span></li>
+                        <li><span>Coupon Discount</span><span>Rp 0</span></li>
+                        <li><span>Pajak (PPN 11%)</span><span>Rp {{ number_format($tax, 0, ',', '.') }}</span></li>
                         <li class="total"><span>Total</span><span>Rp {{ number_format($total, 0, ',', '.') }}</span></li>
                     </ul>
                     <div>
@@ -359,10 +458,5 @@
             </div>
         </footer>
 
-        <script>
-            document.querySelector('.confirm-btn')?.addEventListener('click', () => {
-                window.location.href = '{{ route('checkout.success', $package['slug']) }}';
-            });
-        </script>
     </body>
 </html>

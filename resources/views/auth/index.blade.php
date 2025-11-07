@@ -170,6 +170,26 @@
                 text-align: left;
             }
 
+            .error-alert {
+                padding: 12px 16px;
+                border-radius: 12px;
+                background: rgba(220, 38, 38, 0.1);
+                color: #991b1b;
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }
+
+            .error-alert ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+            .input-error {
+                color: #dc2626;
+                font-size: 0.75rem;
+                margin: -6px 0 0;
+            }
+
             html[data-mode="login"] form[data-mode="login"],
             html[data-mode="register"] form[data-mode="register"] {
                 display: flex;
@@ -358,15 +378,46 @@
                         </div>
                     </div>
 
-                    <form data-mode="register" method="get" action="{{ route('packages.index') }}" novalidate>
+                    @if ($errors->any())
+                        <div class="error-alert" role="alert">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form data-mode="register" method="post" action="{{ route('register.perform') }}" novalidate>
+                        @csrf
                         <div class="two-column">
                             <div class="input-group">
                                 <label for="register-name">Nama Lengkap</label>
-                                <input id="register-name" type="text" name="name" placeholder="Enter your Name" />
+                                <input
+                                    id="register-name"
+                                    type="text"
+                                    name="name"
+                                    value="{{ old('name') }}"
+                                    placeholder="Enter your Name"
+                                    required
+                                />
+                                @error('name')
+                                    <p class="input-error">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="input-group">
                                 <label for="register-email">Email</label>
-                                <input id="register-email" type="email" name="email" placeholder="Enter your Email" />
+                                <input
+                                    id="register-email"
+                                    type="email"
+                                    name="email"
+                                    value="{{ old('email') }}"
+                                    placeholder="Enter your Email"
+                                    required
+                                />
+                                @error('email')
+                                    <p class="input-error">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                         <div class="two-column">
@@ -376,17 +427,24 @@
                                     id="register-phone"
                                     type="tel"
                                     name="phone"
+                                    value="{{ old('phone') }}"
                                     placeholder="Enter your Phone number"
                                 />
+                                @error('phone')
+                                    <p class="input-error">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="input-group">
                                 <label for="register-gender">Jenis Kelamin</label>
                                 <select id="register-gender" name="gender">
-                                    <option value="" disabled selected>Pilih Jenis Kelamin</option>
-                                    <option value="female">Perempuan</option>
-                                    <option value="male">Laki-laki</option>
-                                    <option value="other">Lainnya</option>
+                                    <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Pilih Jenis Kelamin</option>
+                                    <option value="female" @selected(old('gender') === 'female')>Perempuan</option>
+                                    <option value="male" @selected(old('gender') === 'male')>Laki-laki</option>
+                                    <option value="other" @selected(old('gender') === 'other')>Lainnya</option>
                                 </select>
+                                @error('gender')
+                                    <p class="input-error">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
                         <div class="input-group">
@@ -395,8 +453,13 @@
                                 id="register-password"
                                 type="password"
                                 name="password"
+                                autocomplete="new-password"
                                 placeholder="Enter your Password"
+                                required
                             />
+                            @error('password')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
                         </div>
                         <button class="primary-action" type="submit">Daftar</button>
                         <div class="divider">atau</div>
@@ -426,10 +489,21 @@
                         </p>
                     </form>
 
-                    <form data-mode="login" method="get" action="{{ route('student.dashboard') }}" novalidate>
+                    <form data-mode="login" method="post" action="{{ route('login.perform') }}" novalidate>
+                        @csrf
                         <div class="input-group">
                             <label for="login-email">Email</label>
-                            <input id="login-email" type="email" name="email" placeholder="Enter your Email" />
+                            <input
+                                id="login-email"
+                                type="email"
+                                name="email"
+                                value="{{ old('email') }}"
+                                placeholder="Enter your Email"
+                                required
+                            />
+                            @error('email')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div class="input-group">
                             <label for="login-password">Password</label>
@@ -438,7 +512,12 @@
                                 type="password"
                                 name="password"
                                 placeholder="Enter your Password"
+                                autocomplete="current-password"
+                                required
                             />
+                            @error('password')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
                         </div>
                         <button class="primary-action" type="submit">Masuk</button>
                         <div class="divider">atau</div>
@@ -493,22 +572,6 @@
 
             setMode(doc.getAttribute('data-mode'));
 
-            const loginForm = document.querySelector('form[data-mode="login"]');
-            const registerForm = document.querySelector('form[data-mode="register"]');
-
-            if (loginForm) {
-                loginForm.addEventListener('submit', (event) => {
-                    event.preventDefault();
-                    window.location.href = '{{ route('student.dashboard') }}';
-                });
-            }
-
-            if (registerForm) {
-                registerForm.addEventListener('submit', (event) => {
-                    event.preventDefault();
-                    window.location.href = '{{ route('packages.index') }}';
-                });
-            }
         </script>
     </body>
 </html>
