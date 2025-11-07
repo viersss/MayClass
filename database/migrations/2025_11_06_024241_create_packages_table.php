@@ -10,11 +10,15 @@ return new class extends Migration
     {
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->integer('duration_days');
-            $table->boolean('is_active')->default(true);
+            $table->string('slug')->unique();
+            $table->string('level');
+            $table->string('tag')->nullable();
+            $table->string('card_price_label');
+            $table->string('detail_title');
+            $table->string('detail_price_label');
+            $table->string('image_url');
+            $table->decimal('price', 12, 2);
+            $table->text('summary');
             $table->timestamps();
         });
     }
