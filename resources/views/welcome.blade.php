@@ -29,12 +29,17 @@
                 box-sizing: border-box;
             }
 
+            html {
+                scroll-behavior: smooth;
+            }
+            
             body {
                 margin: 0;
                 font-family: "Poppins", sans-serif;
                 color: var(--text-dark);
                 background: #ffffff;
                 line-height: 1.6;
+                font-size: 16px;
             }
 
             img {
@@ -55,9 +60,15 @@
                 padding: 0 24px;
             }
 
+            /* full-width variant to make specific sections (eg. header/hero)
+               extend to the viewport edges without large left/right gutters */
+            .container.full {
+                max-width: 100%;
+                padding: 0 18px; /* small inner padding to avoid content touching exact edge */
+            }
+
             header {
-                background: linear-gradient(135deg, #f5fbfb 0%, #eaf6ff 50%, #f5f0ff 100%);
-                border-bottom-left-radius: 160px;
+                background: linear-gradient(135deg, #f7fffe 0%, rgba(61,183,173,0.08) 50%, #ffffff 100%);
                 overflow: hidden;
             }
 
@@ -65,14 +76,22 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                gap: 32px;
-                padding: 28px 0;
+                gap: 20px;
+                padding: 0 18px; /* keep horizontal padding, remove vertical padding to fix box height */
+                height: 135px; /* fixed height so nav box doesn't grow */
+                line-height: 56px;
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 12px;
+                box-shadow: 0 6px 18px rgba(20, 60, 70, 0.06);
+                margin: 10px 0;
+                backdrop-filter: blur(8px);
+                overflow: visible; /* allow logo to overflow visually without expanding nav */
             }
 
             .brand {
                 display: inline-flex;
                 align-items: center;
-                gap: 14px;
+                gap: 12px;
                 font-weight: 600;
                 font-size: 1.25rem;
                 color: var(--primary-dark);
@@ -87,20 +106,31 @@
             .nav-links {
                 display: flex;
                 align-items: center;
-                gap: 28px;
-                font-size: 0.95rem;
+                justify-content: center;
+                gap: 20px;
+                font-size: 0.95rem; /* reduced from 1.1rem to match previous size */
                 color: var(--text-muted);
+                margin: 0 auto;
+                flex: 1;
             }
 
-            .nav-links a:hover,
-            .nav-actions a:hover {
+            .nav-links a {
+                padding: 8px 16px;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                font-weight: 500;
+            }
+
+            .nav-links a:hover {
                 color: var(--primary-dark);
+                background: rgba(61, 183, 173, 0.08);
             }
 
             .nav-actions {
                 display: flex;
                 align-items: center;
-                gap: 16px;
+                gap: 12px;
+                margin-left: auto;
             }
 
             .btn {
@@ -110,10 +140,10 @@
                 gap: 8px;
                 padding: 12px 26px;
                 border-radius: 999px;
-                font-size: 0.95rem;
-                font-weight: 500;
+                font-size: 1rem; /* increase button font for accessibility */
+                font-weight: 600;
                 border: 1px solid transparent;
-                transition: all 0.2s ease;
+                transition: all 0.18s ease;
                 cursor: pointer;
             }
 
@@ -140,35 +170,53 @@
             }
 
             .pill {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
+                display: block;
+                width: fit-content;
+                margin: 0 auto;
                 padding: 8px 18px;
                 border-radius: 999px;
                 background: rgba(61, 183, 173, 0.12);
                 color: var(--primary-dark);
                 font-size: 0.85rem;
                 font-weight: 600;
+                text-align: center;
             }
 
+            /* hero uses full-bleed background; inner wrapper centers and constrains content */
             .hero {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                align-items: center;
-                gap: 56px;
                 padding: 40px 0 80px;
             }
 
+            .hero-inner {
+                display: grid;
+                grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+                align-items: center;
+                gap: 40px;
+                max-width: 1280px;
+                margin: 0 auto;
+                padding: 20px 24px 0;
+            }
+
+            .hero-copy {
+                max-width: 800px;
+            }
+
             .hero h1 {
-                font-size: clamp(2.4rem, 4vw, 3.6rem);
-                line-height: 1.15;
-                margin: 20px 0 18px;
+                font-size: clamp(2.8rem, 5vw, 4.2rem);
+                line-height: 1.1;
+                margin: 24px 0 20px;
+                letter-spacing: -0.02em;
+                max-width: 100%;
+                color: var(--text-dark);
             }
 
             .hero p {
-                max-width: 560px;
+                width: 100%;
+                max-width: 720px;
                 color: var(--text-muted);
-                margin-bottom: 34px;
+                margin-bottom: 32px;
+                font-size: 1.125rem;
+                line-height: 1.7;
             }
 
             .hero-cta {
@@ -207,7 +255,7 @@
                 position: absolute;
                 inset: 12% 10% 0 0;
                 border-radius: 32px;
-                background: rgba(111, 93, 246, 0.12);
+                background: rgba(61, 183, 173, 0.12);
                 filter: blur(0);
                 z-index: 0;
             }
@@ -234,14 +282,21 @@
                 max-width: 760px;
             }
 
+            .section-header {
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
             .section-title {
                 margin: 0;
-                font-size: clamp(2rem, 3vw, 2.8rem);
+                font-size: clamp(2.1rem, 3vw, 3rem);
             }
 
             .section-subtitle {
                 margin: 0;
                 color: var(--text-muted);
+                font-size: 1.05rem;
             }
 
             .features-grid {
@@ -302,15 +357,18 @@
 
             .slider {
                 position: relative;
+                padding: 18px 0; /* vertical spacing around slider */
             }
 
             .slider-track {
                 display: flex;
-                gap: 24px;
+                gap: 28px;
                 overflow-x: auto;
                 scroll-snap-type: x mandatory;
                 scroll-behavior: smooth;
-                padding-bottom: 12px;
+                padding: 12px 6px;
+                -webkit-overflow-scrolling: touch;
+                align-items: center; /* vertically center cards inside track */
             }
 
             .slider-track::-webkit-scrollbar {
@@ -323,15 +381,40 @@
             }
 
             .slider-track > * {
-                flex: 0 0 min(320px, 80vw);
+                flex: 0 0 320px; /* fixed card width for consistent layout */
+                width: 320px;
+                max-width: 320px;
                 scroll-snap-align: start;
             }
 
+            /* Place controls in normal flow below the track so they don't overlap
+               the following content and don't require extra bottom padding. */
             .slider-controls {
-                position: absolute;
-                inset: -68px 0 auto auto;
+                position: relative;
                 display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 24px; /* align with container horizontal padding */
+                z-index: 3;
+                pointer-events: auto;
                 gap: 12px;
+            }
+
+            .slider-controls button {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                border: none;
+                background: var(--surface);
+                box-shadow: 0 10px 24px rgba(20, 60, 70, 0.15);
+                color: var(--primary-dark);
+                cursor: pointer;
+                transition: transform 0.16s ease, box-shadow 0.16s ease;
+            }
+
+            .slider-controls button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 14px 32px rgba(20, 60, 70, 0.16);
             }
 
             .slider button {
@@ -354,16 +437,27 @@
             .testimonial-card {
                 background: var(--surface);
                 border-radius: 28px;
-                padding: 28px;
-                display: grid;
-                gap: 18px;
+                padding: 20px 20px 22px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
                 box-shadow: var(--shadow);
+                min-height: 220px;
+                transition: transform 0.16s ease, box-shadow 0.16s ease;
             }
 
             .tutor-card img,
             .testimonial-card img {
                 width: 100%;
-                border-radius: 20px;
+                border-radius: 12px;
+                object-fit: cover;
+                height: 140px;
+            }
+
+            .tutor-card:hover,
+            .testimonial-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 22px 46px rgba(20,60,70,0.12);
             }
 
             .testimonial-card p {
@@ -391,38 +485,67 @@
             }
 
             footer {
-                background: #0f172a;
+                background: linear-gradient(to bottom, #0f172a, #1e293b);
                 color: rgba(255, 255, 255, 0.72);
-                padding: 64px 0 48px;
+                padding: 80px 0 48px;
+                position: relative;
+            }
+
+            footer::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
             }
 
             .footer-grid {
                 display: grid;
-                grid-template-columns: repeat(4, minmax(0, 1fr));
-                gap: 32px;
-                margin-bottom: 40px;
+                grid-template-columns: 1.5fr repeat(3, 1fr);
+                gap: 48px;
+                margin-bottom: 60px;
             }
 
             .footer-brand {
                 display: grid;
-                gap: 18px;
+                gap: 20px;
             }
 
             .footer-brand img {
-                width: 120px;
+                width: 140px;
+                filter: brightness(1.1);
+            }
+
+            .footer-brand p {
+                font-size: 0.95rem;
+                line-height: 1.7;
+                opacity: 0.9;
             }
 
             .footer-links {
                 display: grid;
-                gap: 8px;
+                gap: 12px;
+            }
+
+            .footer-links h4 {
+                color: #fff;
+                font-size: 1.1rem;
+                margin: 0 0 16px;
             }
 
             .footer-links a {
                 color: rgba(255, 255, 255, 0.72);
+                font-size: 0.95rem;
+                transition: all 0.2s ease;
+                width: fit-content;
+                padding: 4px 0;
             }
 
             .footer-links a:hover {
                 color: #ffffff;
+                transform: translateX(4px);
             }
 
             .copyright {
@@ -453,15 +576,21 @@
                     text-align: center;
                 }
 
-                .hero {
+                .hero-inner {
                     grid-template-columns: 1fr;
                     text-align: center;
                 }
 
-                .hero p,
-                .section-header {
+                .hero p {
                     margin-left: auto;
                     margin-right: auto;
+                }
+
+                /* Keep section headers left-aligned on mobile */
+                .section:not(#testimoni, #faq, #kontak) .section-header {
+                    text-align: left;
+                    margin-left: 0;
+                    margin-right: 0;
                 }
 
                 .hero-cta,
@@ -503,12 +632,15 @@
     </head>
     <body>
         <header>
-            <div class="container">
+                <div class="container full">
                 <nav>
                     <a class="brand" href="/">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                        <span>MayClass</span>
+                            <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass"
+                                style="width: 250px; height: auto !important; display: block;" />
                     </a>
+
+
+
                     <div class="nav-links">
                         <a href="#tentang">Tentang</a>
                         <a href="#program">Program</a>
@@ -522,31 +654,35 @@
                     </div>
                 </nav>
                 <section class="hero">
-                    <div>
-                        <span class="pill">Langkah Pasti Menuju Prestasi</span>
-                        <h1>Platform Bimbingan Belajar Terintegrasi untuk Semua Kebutuhan Akademik</h1>
-                        <p>
-                            MayClass menghadirkan pengalaman belajar terarah bersama tentor profesional,
-                            sistem monitoring real-time, serta fitur fleksibel yang menyesuaikan gaya belajar
-                            siswa modern.
-                        </p>
-                        <div class="hero-cta">
-                            <a class="btn btn-primary" href="{{ route('packages.index') }}">Jelajahi Paket</a>
-                            <a class="btn btn-outline" href="#kontak">Hubungi Kami</a>
-                        </div>
-                        <div class="stats">
-                            <div class="stat-card">
-                                <h3>12K+</h3>
-                                <p>Siswa aktif setiap bulan dari berbagai jenjang pendidikan.</p>
+                    <div class="hero-inner">
+                        <div class="hero-copy">
+                            <span class="pill">Langkah Pasti Menuju Prestasi</span>
+                            <h1>Platform Bimbingan Belajar Terintegrasi untuk Semua Kebutuhan Akademik</h1>
+                            <p>
+                                MayClass menghadirkan pengalaman belajar terarah bersama tentor profesional,
+                                sistem monitoring real-time, serta fitur fleksibel yang menyesuaikan gaya belajar
+                                siswa modern.
+                            </p>
+                            <div class="hero-cta">
+                                <a class="btn btn-primary" href="{{ route('packages.index') }}">Jelajahi Paket</a>
+                                <a class="btn btn-outline" href="#kontak">Hubungi Kami</a>
                             </div>
-                            <div class="stat-card">
-                                <h3>500+</h3>
-                                <p>Tentor berpengalaman dan tersertifikasi di bidangnya.</p>
+                            <div class="stats">
+                                <div class="stat-card">
+                                    <h3>12K+</h3>
+                                    <p>Siswa aktif setiap bulan dari berbagai jenjang pendidikan.</p>
+                                </div>
+                                <div class="stat-card">
+                                    <h3>500+</h3>
+                                    <p>Tentor berpengalaman dan tersertifikasi di bidangnya.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="hero-art">
-                        <img src="{{ \App\Support\ImageRepository::url('hero') }}" alt="Ilustrasi siswa belajar" />
+                        <div class="hero-art">
+                            <img src="https://img.freepik.com/free-vector/online-tutorials-concept_52683-37480.jpg" 
+                                 alt="Ilustrasi pembelajaran online" 
+                                 style="width: 100%; height: auto; object-fit: contain;" />
+                        </div>
                     </div>
                 </section>
             </div>
@@ -678,10 +814,6 @@
                             </div>
                         </article>
                     </div>
-                    <div class="slider-controls" aria-hidden="true">
-                        <button type="button" data-slider-prev>&larr;</button>
-                        <button type="button" data-slider-next>&rarr;</button>
-                    </div>
                 </div>
             </div>
         </section>
@@ -731,10 +863,6 @@
                                 <div style="color: var(--text-muted);">Orang tua siswa</div>
                             </div>
                         </article>
-                    </div>
-                    <div class="slider-controls" aria-hidden="true">
-                        <button type="button" data-slider-prev>&larr;</button>
-                        <button type="button" data-slider-next>&rarr;</button>
                     </div>
                 </div>
             </div>
@@ -801,8 +929,8 @@
             <div class="container">
                 <div class="footer-grid">
                     <div class="footer-brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                        <p>
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass"
+                                style="width: 300px; height: auto !important;" />                        <p>
                             MayClass menghadirkan pengalaman belajar terpadu dengan tentor profesional, materi interaktif, dan
                             dukungan admin yang responsif.
                         </p>
@@ -837,31 +965,8 @@
         </footer>
 
         <script>
-            document.querySelectorAll('[data-slider]').forEach((slider) => {
-                const track = slider.querySelector('.slider-track');
-                if (!track) {
-                    return;
-                }
-
-                const prev = slider.querySelector('[data-slider-prev]');
-                const next = slider.querySelector('[data-slider-next]');
-                const itemWidth = () => {
-                    const firstItem = track.querySelector(':scope > *');
-                    return firstItem ? firstItem.getBoundingClientRect().width + 24 : track.clientWidth;
-                };
-
-                if (prev) {
-                    prev.addEventListener('click', () => {
-                        track.scrollBy({ left: -itemWidth(), behavior: 'smooth' });
-                    });
-                }
-
-                if (next) {
-                    next.addEventListener('click', () => {
-                        track.scrollBy({ left: itemWidth(), behavior: 'smooth' });
-                    });
-                }
-            });
+            // Keep sliders as simple horizontal scroll areas. No JS controls needed.
+            // Optional: if you want auto-scroll later, I can add a small script.
         </script>
     </body>
 </html>
