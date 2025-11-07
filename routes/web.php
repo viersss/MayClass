@@ -38,4 +38,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/student/quiz', [QuizController::class, 'index'])->name('student.quiz');
     Route::get('/student/quiz/{slug}', [QuizController::class, 'show'])->name('student.quiz.show');
     Route::get('/student/profile', [ProfileController::class, 'show'])->name('student.profile');
+    Route::post('/student/profile', [ProfileController::class, 'update'])->name('student.profile.update');
 });
