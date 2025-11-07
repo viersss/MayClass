@@ -255,45 +255,90 @@
             <section class="profile-card">
                 <h1>Edit Profil</h1>
                 <div class="avatar">🧑</div>
-                <form action="#" method="post">
+                @if ($errors->any())
+                    <div
+                        style="padding: 14px 18px; border-radius: 16px; background: rgba(220, 38, 38, 0.12); color: #b91c1c; text-align: center;"
+                    >
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+                @if (session('status'))
+                    <div
+                        style="padding: 14px 18px; border-radius: 16px; background: rgba(61, 183, 173, 0.12); color: var(--primary-dark); text-align: center;"
+                    >
+                        {{ session('status') }}
+                    </div>
+                @endif
+                <form action="{{ route('student.profile.update') }}" method="post">
+                    @csrf
                     <div class="grid">
                         <div>
                             <label for="name">Nama Lengkap</label>
-                            <input id="name" type="text" value="{{ $profile['name'] }}" />
+                            <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                value="{{ old('name', $profile['name']) }}"
+                                required
+                            />
                         </div>
                         <div>
                             <label for="email">Email</label>
-                            <input id="email" type="email" value="{{ $profile['email'] }}" />
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                value="{{ old('email', $profile['email']) }}"
+                                required
+                            />
                         </div>
                     </div>
                     <div class="grid">
                         <div>
                             <label for="student-id">No. Tlp/WA</label>
-                            <input id="student-id" type="text" value="{{ $profile['phone'] }}" />
+                            <input
+                                id="student-id"
+                                name="phone"
+                                type="text"
+                                value="{{ old('phone', $profile['phone']) }}"
+                            />
                         </div>
                         <div>
                             <label for="gender">Jenis Kelamin</label>
-                            <select id="gender">
-                                <option>{{ $profile['gender'] }}</option>
-                                <option>Perempuan</option>
-                                <option>Laki-laki</option>
-                                <option>Lainnya</option>
+                            <select id="gender" name="gender">
+                                <option value="">Pilih jenis kelamin</option>
+                                @foreach ($genderOptions as $value => $label)
+                                    <option value="{{ $value }}" @selected(old('gender', $profile['gender']) === $value)>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
                     <div class="grid">
                         <div>
                             <label for="parent">Nama Orang Tua</label>
-                            <input id="parent" type="text" value="{{ $profile['parentName'] }}" />
+                            <input
+                                id="parent"
+                                name="parent_name"
+                                type="text"
+                                value="{{ old('parent_name', $profile['parentName']) }}"
+                            />
                         </div>
                         <div>
                             <label for="student-code">ID Siswa</label>
-                            <input id="student-code" type="text" value="{{ $profile['studentId'] }}" />
+                            <input
+                                id="student-code"
+                                type="text"
+                                value="{{ $profile['studentId'] }}"
+                                readonly
+                                style="background: rgba(61, 183, 173, 0.06);"
+                            />
                         </div>
                     </div>
                     <div>
                         <label for="address">Alamat</label>
-                        <textarea id="address">{{ $profile['address'] }}</textarea>
+                        <textarea id="address" name="address">{{ old('address', $profile['address']) }}</textarea>
                     </div>
                     <div class="btn-group">
                         <button class="btn btn-outline" type="reset">Batal</button>

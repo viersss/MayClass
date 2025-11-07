@@ -35,4 +35,31 @@ class StudentProfileTest extends TestCase
             ->assertSeeText('Edit Profil')
             ->assertSee($studentId, false);
     }
+
+    public function test_student_can_update_profile(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'student',
+            'student_id' => 'MC-000001',
+        ]);
+
+        $payload = [
+            'name' => 'Student Baru',
+            'email' => 'student@example.test',
+            'phone' => '081234567810',
+            'gender' => 'female',
+            'parent_name' => 'Orang Tua',
+            'address' => 'Alamat baru',
+        ];
+
+        $this->actingAs($user)
+            ->post(route('student.profile.update'), $payload)
+            ->assertRedirect(route('student.profile'))
+            ->assertSessionHas('status');
+
+        $this->assertDatabaseHas('users', array_merge($payload, [
+            'id' => $user->id,
+            'student_id' => 'MC-000001',
+        ]));
+    }
 }

@@ -279,7 +279,7 @@
                         @endforeach
                     </div>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px;">
-                        <a class="btn btn-primary" href="#detail">Mulai Sekarang</a>
+                        <a class="btn btn-primary" href="{{ config('mayclass.links.quiz_platform') }}" target="_blank" rel="noopener">Mulai di Wayground</a>
                         <a class="btn btn-outline" href="{{ route('student.quiz') }}">Kembali ke Quiz</a>
                     </div>
                 </div>
@@ -324,8 +324,8 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
-                        <a class="btn btn-primary" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ route('student.materials.show', $quiz['slug']) }}">
-                            Lihat Materi Pendukung
+                        <a class="btn btn-primary" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ config('mayclass.links.materials_drive') }}" target="_blank" rel="noopener">
+                            Lihat Materi di Google Drive
                         </a>
                         <a class="btn btn-outline" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ route('student.dashboard') }}">
                             Kembali ke Dashboard

@@ -305,11 +305,11 @@
                         @endforeach
                     </div>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
-                        <a class="btn btn-primary" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ route('student.quiz.show', $material['slug']) }}">
-                            Download Bank Soal (PDF)
+                        <a class="btn btn-primary" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ config('mayclass.links.quiz_platform') }}" target="_blank" rel="noopener">
+                            Mulai Quiz di Wayground
                         </a>
-                        <a class="btn btn-outline" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ route('student.quiz') }}">
-                            Lihat Quiz Lainnya
+                        <a class="btn btn-outline" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ config('mayclass.links.materials_drive') }}" target="_blank" rel="noopener">
+                            Buka Google Drive MayClass
                         </a>
                     </div>
                 </article>
