@@ -57,6 +57,17 @@
                 gap: 24px;
             }
 
+            .nav-actions {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+
+            .nav-actions form {
+                margin: 0;
+            }
+
             .brand {
                 display: inline-flex;
                 align-items: center;
@@ -271,11 +282,21 @@
                 <nav>
                     <a href="/" class="brand">
                         <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                        <span>MayClass</span>
                     </a>
-                    <a class="nav-btn" style="padding: 10px 24px; border-radius: 999px; border: 1px solid rgba(61, 183, 173, 0.35);" href="{{ route('packages.index') }}">
-                        ← Kembali ke Paket
-                    </a>
+                    <div class="nav-actions">
+                        <a class="nav-btn" style="padding: 10px 24px; border-radius: 999px; border: 1px solid rgba(61, 183, 173, 0.35);" href="{{ route('packages.index') }}">
+                            ← Kembali ke Paket
+                        </a>
+                        @auth
+                            <a class="nav-btn" style="border-color: transparent; background: rgba(61, 183, 173, 0.15);" href="{{ route('student.profile') }}">
+                                Profil
+                            </a>
+                            <form method="post" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="nav-btn" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
+                            </form>
+                        @endauth
+                    </div>
                 </nav>
             </div>
         </header>

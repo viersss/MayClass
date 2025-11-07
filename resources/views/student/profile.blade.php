@@ -237,7 +237,6 @@
                 <nav>
                     <a href="{{ route('student.dashboard') }}" class="brand">
                         <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                        <span>MayClass</span>
                     </a>
                     <div class="nav-links">
                         <a href="{{ route('student.dashboard') }}">Beranda</a>

@@ -79,6 +79,10 @@
                 gap: 16px;
             }
 
+            .nav-actions form {
+                margin: 0;
+            }
+
             .nav-btn {
                 display: inline-flex;
                 align-items: center;
@@ -308,12 +312,21 @@
                 <nav>
                     <a href="/" class="brand">
                         <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                        <span>MayClass</span>
                     </a>
-                    <div class="nav-actions">
-                        <a class="nav-btn" href="{{ route('login') }}">Masuk</a>
-                        <a class="nav-btn primary" href="{{ route('register') }}">Daftar</a>
-                    </div>
+                    @auth
+                        <div class="nav-actions">
+                            <a class="nav-btn" href="{{ route('student.profile') }}">Profil</a>
+                            <form method="post" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="nav-btn" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
+                            </form>
+                        </div>
+                    @else
+                        <div class="nav-actions">
+                            <a class="nav-btn" href="{{ route('login') }}">Masuk</a>
+                            <a class="nav-btn primary" href="{{ route('register') }}">Daftar</a>
+                        </div>
+                    @endauth
                 </nav>
                 <div class="page-title">
                     <h1>Pilih Paket Belajar Terbaik untuk Kamu</h1>

@@ -179,6 +179,16 @@
                 line-height: 1.5;
             }
 
+            .status-alert {
+                padding: 12px 16px;
+                border-radius: 12px;
+                background: rgba(66, 183, 173, 0.12);
+                color: var(--accent-dark);
+                font-size: 0.9rem;
+                line-height: 1.5;
+                text-align: center;
+            }
+
             .error-alert ul {
                 margin: 0;
                 padding-left: 20px;
@@ -374,6 +384,10 @@
                             </button>
                         </div>
                     </div>
+
+                    @if (session('status'))
+                        <div class="status-alert" role="status">{{ session('status') }}</div>
+                    @endif
 
                     @if ($errors->any())
                         <div class="error-alert" role="alert">

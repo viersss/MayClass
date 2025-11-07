@@ -42,7 +42,7 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
         ]);
 
-        $user = User::create([
+        User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
@@ -54,10 +54,10 @@ class AuthController extends Controller
             'student_id' => $this->generateStudentId(),
         ]);
 
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return redirect()->route('packages.index');
+        return redirect()
+            ->route('login')
+            ->with('status', __('Akun berhasil dibuat. Silakan login untuk mulai belajar.'))
+            ->withInput(['email' => $data['email']]);
     }
 
     public function login(Request $request): RedirectResponse

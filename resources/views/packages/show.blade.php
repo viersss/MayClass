@@ -76,6 +76,10 @@
                 gap: 16px;
             }
 
+            .nav-actions form {
+                margin: 0;
+            }
+
             .nav-btn {
                 padding: 10px 22px;
                 border-radius: 999px;
@@ -314,11 +318,19 @@
                 <nav>
                     <a href="/" class="brand">
                         <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                        <span>MayClass</span>
                     </a>
                     <div class="nav-actions">
                         <a class="nav-btn" href="{{ route('packages.index') }}">Paket Lainnya</a>
-                        <a class="nav-btn primary" href="{{ route('register') }}">Gabung Sekarang</a>
+                        @auth
+                            <a class="nav-btn primary" href="{{ route('student.profile') }}">Profil</a>
+                            <form method="post" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="nav-btn" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
+                            </form>
+                        @else
+                            <a class="nav-btn" href="{{ route('login') }}">Masuk</a>
+                            <a class="nav-btn primary" href="{{ route('register') }}">Daftar</a>
+                        @endauth
                     </div>
                 </nav>
                 <a class="breadcrumb" href="{{ route('packages.index') }}">← Kembali ke semua paket</a>
