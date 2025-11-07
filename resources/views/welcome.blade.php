@@ -471,7 +471,7 @@
                 <div class="shell">
                     <nav>
                         <a class="brand" href="#">
-                            <img src="{{ app(\App\Support\ImageRepository::class)->get('logo') }}" alt="MayClass" />
+                            <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="MayClass" />
                             MayClass
                         </a>
                         <div class="nav-links">
@@ -567,10 +567,6 @@
                             <div class="feature-card">
                                 <h3>Komunitas Supportif</h3>
                                 <p>Temui teman seperjuangan dan mentor inspiratif dalam satu ekosistem.</p>
-                            </div>
-                            <div class="stat-card">
-                                <h3>97%</h3>
-                                <p>Tingkat kelulusan target ujian dari siswa MayClass.</p>
                             </div>
                         </div>
                     </div>
