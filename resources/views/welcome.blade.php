@@ -480,8 +480,10 @@
                         <a href="#faq">FAQ</a>
                     </div>
                     <div class="nav-actions">
+
                         <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
                         <a class="btn btn-primary" href="{{ route('register') }}">Daftar Tutor</a>
+
                     </div>
                 </nav>
                 <section class="hero">
@@ -581,7 +583,9 @@
                             <li>Live class 3x seminggu</li>
                             <li>Monitoring perkembangan mingguan</li>
                         </ul>
+
                         <a class="btn btn-outline" href="{{ route('register') }}">Selengkapnya</a>
+
                     </article>
                     <article class="program-card">
                         <h4>SMP Kelas 7-9</h4>
@@ -591,7 +595,9 @@
                             <li>Bank soal interaktif</li>
                             <li>Konsultasi belajar personal</li>
                         </ul>
+
                         <a class="btn btn-primary" href="{{ route('register') }}">Daftar Sekarang</a>
+                        
                     </article>
                     <article class="program-card">
                         <h4>SMA Kelas 10-12</h4>
@@ -601,7 +607,9 @@
                             <li>Pemantauan progres real-time</li>
                             <li>Try out berkala dan evaluasi</li>
                         </ul>
+
                         <a class="btn btn-outline" href="{{ route('register') }}">Selengkapnya</a>
+
                     </article>
                 </div>
             </div>
