@@ -48,28 +48,29 @@
                 text-decoration: none;
             }
 
+            /* Use full-bleed sections; keep inner content centered with small side padding */
             .container {
                 width: 100%;
                 margin: 0;
-                padding: 0 clamp(24px, 6vw, 96px);
+                padding: 0; /* remove large adaptive paddings to avoid big empty sides */
             }
 
             .content-width {
-                width: min(1280px, 100%);
-                margin: 0 auto;
+                /* full-bleed content: span the entire viewport width with no side margins */
+                width: 100%;
+                margin: 0;
+                padding: 0; /* remove inner horizontal padding to ensure edge-to-edge layout */
             }
 
             header {
-                background: linear-gradient(135deg, #f5fbfb 0%, #eaf6ff 50%, #f5f0ff 100%);
-                border-bottom-left-radius: 160px;
+                /* use a green gradient and remove the large curved corner */
+                background: linear-gradient(135deg, #f1fdfb 0%, #dff8f4 45%, #e6fff9 100%);
+                border-bottom-left-radius: 0;
                 overflow: hidden;
             }
 
             nav {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 32px;
+                display: block; /* we use an inner box for the white navbar */
                 padding: 28px 0;
             }
 
@@ -88,10 +89,34 @@
                 object-fit: contain;
             }
 
+            /* white navbar box */
+            .nav-box {
+                background: var(--surface);
+                border-radius: 12px;
+                padding: 10px 18px;
+                box-shadow: 0 8px 24px rgba(20, 60, 70, 0.08);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* 3-column grid so center links are perfectly centered regardless of left/right widths */
+            .nav-inner {
+                display: grid;
+                grid-template-columns: 1fr auto 1fr; /* ensures center column stays centered */
+                align-items: center;
+                width: 100%;
+                gap: 16px;
+            }
+
+            .nav-left { grid-column: 1; justify-self: start; display: flex; align-items: center; }
+            .nav-center { grid-column: 2; justify-self: center; display: flex; justify-content: center; }
+            .nav-right { grid-column: 3; justify-self: end; display: flex; justify-content: flex-end; gap: 16px; align-items: center; }
+
             .nav-links {
                 display: flex;
                 align-items: center;
-                gap: 28px;
+                gap: 22px;
                 font-size: 0.95rem;
                 color: var(--text-muted);
             }
@@ -104,12 +129,29 @@
             .nav-actions {
                 display: flex;
                 align-items: center;
-                gap: 16px;
+                gap: 12px;
             }
 
             .nav-actions form {
                 margin: 0;
             }
+
+            /* mobile nav toggle */
+            .nav-toggle {
+                display: none;
+                background: transparent;
+                border: none;
+                width: 44px;
+                height: 44px;
+                border-radius: 10px;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+            }
+            .nav-toggle svg { width: 22px; height: 22px; color: var(--primary-dark); }
+
+            /* helper (unused on desktop) */
+            .nav-collapsed { display: none; }
 
             .btn {
                 display: inline-flex;
@@ -161,22 +203,35 @@
 
             .hero {
                 display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns: 1fr; /* single column: image will become background silhouette */
                 align-items: center;
                 gap: 56px;
                 padding: 40px 0 80px;
+                position: relative;
+                overflow: visible;
+            }
+
+            /* center hero textual content horizontally but keep natural vertical flow */
+            .hero-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 0 20px;
             }
 
             .hero h1 {
                 font-size: clamp(2.4rem, 4vw, 3.6rem);
                 line-height: 1.15;
-                margin: 20px 0 18px;
+                margin: 20px auto 18px;
+                max-width: 1100px; /* allow title to stretch wider */
+                width: 100%;
             }
 
             .hero p {
-                max-width: 560px;
+                max-width: 880px; /* wider paragraph to match longer title */
                 color: var(--text-muted);
-                margin-bottom: 34px;
+                margin: 0 auto 34px;
             }
 
             .hero-cta {
@@ -184,12 +239,14 @@
                 flex-wrap: wrap;
                 gap: 16px;
                 margin-bottom: 36px;
+                justify-content: center; /* center CTA buttons */
             }
 
             .stats {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 20px;
+                justify-content: center; /* center stat cards */
             }
 
             .stat-card {
@@ -206,25 +263,55 @@
                 font-size: 1.6rem;
             }
 
+            .stat-card {
+                text-align: center; /* center numbers and labels */
+            }
+
             .hero-art {
-                position: relative;
+                /* position image as a low-opacity silhouette behind the hero text */
+                position: absolute;
+                right: 4%;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 48%;
+                height: 78%;
+                z-index: 0;
+                pointer-events: none;
+                display: block;
+                overflow: hidden;
             }
 
             .hero-art::after {
+                /* subtle green wash behind image to match theme */
                 content: "";
                 position: absolute;
-                inset: 12% 10% 0 0;
-                border-radius: 32px;
-                background: rgba(111, 93, 246, 0.12);
-                filter: blur(0);
+                inset: 0;
+                background: rgba(61, 183, 173, 0.06);
                 z-index: 0;
             }
 
             .hero-art img {
-                position: relative;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0.10; /* silhouette effect */
+                filter: grayscale(100%) blur(1px);
+                transform: translateZ(0);
+            }
+
+            .hero-content { position: relative; z-index: 2; }
+            .hero-inline {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                width: 80%;
+                max-width: 1100px;
+                height: auto;
+                opacity: 0.06;
+                filter: grayscale(100%) blur(1px);
+                pointer-events: none;
                 z-index: 1;
-                border-radius: 32px;
-                box-shadow: 0 28px 52px rgba(31, 42, 55, 0.18);
             }
 
             .section {
@@ -311,6 +398,9 @@
             .slider {
                 position: relative;
             }
+
+            /* hide previous/next buttons — keep horizontal scrolling when overflowed */
+            .slider-controls { display: none !important; }
 
             .slider-track {
                 display: flex;
@@ -404,6 +494,14 @@
                 padding: 64px 0 48px;
             }
 
+            /* give footer some comfortable side padding so it isn't flush to the edges */
+            footer .content-width {
+                padding-left: 28px;
+                padding-right: 28px;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+
             .footer-grid {
                 display: grid;
                 grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -457,13 +555,35 @@
             @media (max-width: 840px) {
                 nav {
                     flex-wrap: wrap;
-                    justify-content: center;
-                    text-align: center;
+                    justify-content: space-between;
+                    text-align: left;
                 }
+
+                /* hide regular links and actions by default on small screens; toggle via JS */
+                .nav-links,
+                .nav-actions { display: none; }
+                .nav-inner.open .nav-links,
+                .nav-inner.open .nav-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+                .nav-toggle { display: inline-flex; }
 
                 .hero {
                     grid-template-columns: 1fr;
                     text-align: center;
+                }
+
+                /* make hero silhouettes smaller on narrow screens so they don't overwhelm text */
+                .hero-art {
+                    right: 2%;
+                    top: 60%;
+                    width: 60%;
+                    height: 46%;
+                    opacity: 0.08;
+                }
+
+                .hero-inline {
+                    width: 92%;
+                    opacity: 0.04;
+                    transform: translate(-50%, -48%);
                 }
 
                 .hero p,
@@ -512,32 +632,46 @@
     <body>
         <header>
             <div class="container">
-                <nav class="content-width">
-                    <a class="brand" href="/">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                    </a>
-                    <div class="nav-links">
-                        <a href="#tentang">Tentang</a>
-                        <a href="#program">Program</a>
-                        <a href="#tentor">Tentor</a>
-                        <a href="#testimoni">Testimoni</a>
-                        <a href="#faq">FAQ</a>
-                    </div>
-                    <div class="nav-actions">
-                        @auth
-                            <a class="btn btn-outline" href="{{ route('student.profile') }}">Profil</a>
-                            <form method="post" action="{{ route('logout') }}">
-                                @csrf
-                                <button class="btn btn-primary" type="submit" style="box-shadow: none;">Keluar</button>
-                            </form>
-                        @else
-                            <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
-                            <a class="btn btn-primary" href="{{ route('register') }}">Daftar</a>
-                        @endauth
+                <nav>
+                    <div class="nav-box content-width">
+                        <div class="nav-inner">
+                            <div class="nav-left">
+                                <a class="brand" href="/">
+                                    <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                                </a>
+                            </div>
+
+                            <div class="nav-center nav-links">
+                                <a href="#tentang">Tentang</a>
+                                <a href="#program">Program</a>
+                                <a href="#tentor">Tentor</a>
+                                <a href="#testimoni">Testimoni</a>
+                                <a href="#faq">FAQ</a>
+                            </div>
+                            <div class="nav-right nav-actions">
+                                @auth
+                                    <a class="btn btn-outline" href="{{ route('student.profile') }}">Masuk</a>
+                                    <form method="post" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button class="btn btn-primary" type="submit" style="box-shadow: none;">Keluar</button>
+                                    </form>
+                                @else
+                                    <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
+                                    <a class="btn btn-primary" href="{{ route('register') }}">Daftar</a>
+                                @endauth
+                            </div>
+
+                            <button class="nav-toggle" aria-expanded="false" aria-label="Toggle menu">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </nav>
                 <section class="hero content-width">
-                    <div>
+                    <div class="hero-content">
+                        <img class="hero-inline" src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1400&q=80" alt="" aria-hidden="true" />
                         <span class="pill">Langkah Pasti Menuju Prestasi</span>
                         <h1>Platform Bimbingan Belajar Terintegrasi untuk Semua Kebutuhan Akademik</h1>
                         <p>
@@ -561,7 +695,7 @@
                         </div>
                     </div>
                     <div class="hero-art">
-                        <img src="{{ \App\Support\ImageRepository::url('hero') }}" alt="Ilustrasi siswa belajar" />
+                        <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1400&q=80" alt="Ilustrasi siswa belajar" />
                     </div>
                 </section>
             </div>
@@ -866,6 +1000,18 @@
         </footer>
 
         <script>
+            // Mobile nav toggle behavior: toggle `open` on .nav-inner
+            (function () {
+                const navToggle = document.querySelector('.nav-toggle');
+                const navInner = document.querySelector('.nav-inner');
+                if (navToggle && navInner) {
+                    navToggle.addEventListener('click', () => {
+                        const isOpen = navInner.classList.toggle('open');
+                        navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                    });
+                }
+            })();
+
             document.querySelectorAll('[data-slider]').forEach((slider) => {
                 const track = slider.querySelector('.slider-track');
                 if (!track) {

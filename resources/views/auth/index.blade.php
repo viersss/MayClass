@@ -374,10 +374,10 @@
                 </div>
                 <div class="auth-panel">
                     <div class="auth-header">
-                        <h2>Welcome to MayClass</h2>
+                        <h2>Selamat datang di MayClass</h2>
                         <div class="tab-switcher" role="tablist">
                             <button type="button" data-mode="login" role="tab" aria-selected="false">
-                                Login
+                                Masuk
                             </button>
                             <button type="button" data-mode="register" role="tab" aria-selected="false">
                                 Registrasi
@@ -409,7 +409,7 @@
                                     type="text"
                                     name="name"
                                     value="{{ old('name') }}"
-                                    placeholder="Enter your Name"
+                                    placeholder="Masukkan nama lengkap"
                                     required
                                 />
                                 @error('name')
@@ -423,7 +423,7 @@
                                     type="email"
                                     name="email"
                                     value="{{ old('email') }}"
-                                    placeholder="Enter your Email"
+                                    placeholder="Masukkan email"
                                     required
                                 />
                                 @error('email')
@@ -439,7 +439,7 @@
                                     type="tel"
                                     name="phone"
                                     value="{{ old('phone') }}"
-                                    placeholder="Enter your Phone number"
+                                    placeholder="Masukkan nomor telepon"
                                 />
                                 @error('phone')
                                     <p class="input-error">{{ $message }}</p>
@@ -465,7 +465,7 @@
                                 type="password"
                                 name="password"
                                 autocomplete="new-password"
-                                placeholder="Enter your Password"
+                                placeholder="Masukkan kata sandi"
                                 required
                             />
                             @error('password')
@@ -509,7 +509,7 @@
                                 type="email"
                                 name="email"
                                 value="{{ old('email') }}"
-                                placeholder="Enter your Email"
+                                placeholder="Masukkan email"
                                 required
                             />
                             @error('email')
@@ -522,7 +522,7 @@
                                 id="login-password"
                                 type="password"
                                 name="password"
-                                placeholder="Enter your Password"
+                                placeholder="Masukkan kata sandi"
                                 autocomplete="current-password"
                                 required
                             />
