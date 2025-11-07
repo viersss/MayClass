@@ -134,6 +134,7 @@
 
             .nav-actions form {
                 margin: 0;
+                display: inline-flex;
             }
 
             /* mobile nav toggle */
@@ -751,10 +752,11 @@
                             </div>
                             <div class="nav-right nav-actions">
                                 @auth
-                                    <a class="btn btn-outline" href="{{ route('student.profile') }}">Masuk</a>
+                                    <a class="btn btn-outline" href="{{ route('student.dashboard') }}">Dashboard</a>
+                                    <a class="btn btn-primary" href="{{ route('student.profile') }}" style="box-shadow: none;">Profil</a>
                                     <form method="post" action="{{ route('logout') }}">
                                         @csrf
-                                        <button class="btn btn-primary" type="submit" style="box-shadow: none;">Keluar</button>
+                                        <button class="btn" type="submit" style="gap: 6px; color: var(--primary-dark); background: rgba(31, 42, 55, 0.06); box-shadow: none;">Keluar</button>
                                     </form>
                                 @else
                                     <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
