@@ -133,6 +133,8 @@
             }
 
             .hero {
+                position: relative;
+                isolation: isolate;
                 display: grid;
                 grid-template-columns: repeat(12, 1fr);
                 align-items: center;
