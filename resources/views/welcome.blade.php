@@ -63,8 +63,8 @@
             }
 
             header {
-                /* use a green gradient and remove the large curved corner */
-                background: linear-gradient(135deg, #f1fdfb 0%, #dff8f4 45%, #e6fff9 100%);
+                /* use a soft, even green backdrop for a cleaner hero */
+                background: #e5f9f2;
                 border-bottom-left-radius: 0;
                 overflow: hidden;
             }
@@ -180,7 +180,7 @@
             }
 
             .btn-primary {
-                background: linear-gradient(120deg, var(--primary) 0%, #5ad7c9 100%);
+                background: var(--primary);
                 color: #ffffff;
                 box-shadow: 0 14px 32px rgba(61, 183, 173, 0.32);
             }
@@ -212,7 +212,7 @@
                 padding: clamp(36px, 5vw, 72px);
                 margin-top: 32px;
                 border-radius: 40px;
-                background: linear-gradient(115deg, #0d3f2c 0%, #1f7a54 42%, #f5fff9 100%);
+                background: #c8efe0;
                 color: #042616;
                 box-shadow: 0 40px 80px -50px rgba(4, 61, 40, 0.55);
                 overflow: hidden;
@@ -231,7 +231,7 @@
             .hero::before {
                 width: 480px;
                 height: 480px;
-                background: radial-gradient(circle, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0) 70%);
+                background: rgba(255, 255, 255, 0.28);
                 top: -180px;
                 right: -160px;
             }
@@ -239,7 +239,7 @@
             .hero::after {
                 width: 360px;
                 height: 360px;
-                background: radial-gradient(circle, rgba(80, 197, 141, 0.35) 0%, rgba(80, 197, 141, 0) 70%);
+                background: rgba(61, 183, 173, 0.24);
                 bottom: -160px;
                 left: -120px;
             }
@@ -293,7 +293,7 @@
             .stat-card {
                 padding: 18px 24px;
                 border-radius: 22px;
-                background: linear-gradient(160deg, rgba(255, 255, 255, 0.92), rgba(220, 244, 231, 0.88));
+                background: rgba(255, 255, 255, 0.92);
                 border: 1px solid rgba(18, 95, 60, 0.12);
                 backdrop-filter: blur(8px);
                 min-width: 180px;
@@ -330,7 +330,7 @@
                 overflow: hidden;
                 box-shadow: 0 32px 68px -32px rgba(5, 64, 36, 0.55);
                 border: 1px solid rgba(255, 255, 255, 0.6);
-                background: linear-gradient(160deg, rgba(8, 59, 36, 0.65), rgba(19, 114, 74, 0.45));
+                background: rgba(8, 59, 36, 0.58);
             }
 
             .hero-visual-frame img {
@@ -346,7 +346,7 @@
                 gap: 2px;
                 padding: 16px 20px;
                 border-radius: 20px;
-                background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(228, 249, 237, 0.9));
+                background: rgba(255, 255, 255, 0.94);
                 color: #0d4f36;
                 box-shadow: 0 22px 42px -28px rgba(5, 64, 36, 0.45);
                 border: 1px solid rgba(18, 95, 60, 0.08);
@@ -518,7 +518,7 @@
             }
 
             .testimonial-card {
-                background: linear-gradient(170deg, rgba(244, 255, 248, 0.92), rgba(222, 244, 232, 0.9));
+                background: rgba(229, 249, 242, 0.9);
                 border: 1px solid rgba(22, 93, 63, 0.12);
                 box-shadow: 0 30px 70px -45px rgba(6, 60, 36, 0.5);
             }
