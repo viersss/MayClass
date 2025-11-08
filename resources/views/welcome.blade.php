@@ -13,18 +13,18 @@
         <style>
             :root {
                 color-scheme: light;
-                --maroon-900: #6d0f18;
-                --maroon-800: #8e1d24;
-                --maroon-700: #a42b2e;
-                --gold-500: #f2b859;
-                --gold-400: #ffd38a;
+                --primary-dark: #1b6d4f;
+                --primary-main: #3fa67e;
+                --primary-light: #84d986;
+                --primary-accent: #a8e6a1;
                 --neutral-900: #1f2328;
                 --neutral-700: #4d5660;
                 --neutral-100: #f6f7f8;
                 --surface: #ffffff;
-                --shadow-lg: 0 24px 60px rgba(66, 10, 17, 0.2);
-                --shadow-md: 0 18px 40px rgba(66, 10, 17, 0.12);
-                --radius-xl: 32px;
+                --shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
+                --shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
+                --radius-lg: 20px;
+                --radius-xl: 28px;
             }
 
             *,
@@ -52,37 +52,58 @@
                 text-decoration: none;
             }
 
+            /* Full-width layout with proper container centering */
             .container {
-                width: min(1180px, 100%);
+                width: 100%;
+                max-width: 1200px;
                 margin: 0 auto;
                 padding: 0 32px;
             }
 
+            /* Ensure all sections have consistent full-width layout */
+            .section {
+                width: 100%;
+                padding: 96px 0;
+            }
+
+            .section .container {
+                width: 100%;
+            }
+
             header {
                 position: relative;
-                background: linear-gradient(135deg, var(--maroon-900) 0%, var(--maroon-700) 100%);
+                background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-main) 100%);
                 color: #ffffff;
-                border-bottom-left-radius: 120px;
                 overflow: hidden;
+                width: 100%;
             }
 
-            header::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background: radial-gradient(circle at 20% 20%, rgba(255, 211, 138, 0.35), transparent 55%),
-                    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.18), transparent 45%);
-                pointer-events: none;
-            }
-
+            /* Improved nav layout to be full-width properly */
             nav {
                 position: relative;
                 z-index: 1;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 28px 0;
+                padding: 28px 32px;
                 gap: 32px;
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                flex-wrap: wrap;
+            }
+
+            @media (max-width: 1280px) {
+                nav {
+                    padding: 28px 32px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                nav {
+                    padding: 20px 16px;
+                    justify-content: center;
+                }
             }
 
             .brand {
@@ -146,36 +167,54 @@
                 box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
             }
 
-            .btn-gold {
-                background: linear-gradient(120deg, var(--gold-400) 0%, var(--gold-500) 100%);
-                color: #6d3d09;
-                box-shadow: 0 16px 40px rgba(242, 184, 89, 0.36);
+            .btn-primary {
+                background: linear-gradient(120deg, var(--primary-light) 0%, var(--primary-accent) 100%);
+                color: var(--primary-dark);
+                box-shadow: 0 16px 40px rgba(132, 217, 134, 0.36);
             }
 
-            .btn-gold:hover {
+            .btn-primary:hover {
                 transform: translateY(-1px);
             }
 
+            /* Hero section as flex container inside full-width header */
             .hero {
                 position: relative;
                 z-index: 1;
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 56px;
+                display: flex;
+                flex-direction: column;
                 align-items: center;
-                padding: 48px 0 120px;
+                text-align: center;
+                width: 100%;
+                padding: 80px 32px;
+                min-height: 90vh;
+                background: linear-gradient(to bottom, rgba(27, 109, 79, 0.85), rgba(63, 166, 126, 0.75)),
+                    url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1600') center/cover no-repeat;
+            }
+
+            .hero-content {
+                max-width: 800px;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
             .hero h1 {
                 font-size: clamp(2.7rem, 4vw, 3.9rem);
                 line-height: 1.15;
                 margin: 18px 0;
+                color: #ffffff;
+                text-align: center;
+                max-width: 720px;
             }
 
             .hero p {
-                color: rgba(255, 255, 255, 0.84);
+                color: rgba(255, 255, 255, 0.94);
                 margin: 0 0 32px;
-                max-width: 520px;
+                max-width: 640px;
+                text-align: center;
+                font-size: 1.1rem;
             }
 
             .badge {
@@ -187,6 +226,7 @@
                 background: rgba(255, 255, 255, 0.16);
                 font-weight: 600;
                 letter-spacing: 0.02em;
+                color: #ffffff;
             }
 
             .hero-actions {
@@ -200,8 +240,8 @@
                 display: grid;
                 gap: 18px;
                 background: rgba(255, 255, 255, 0.12);
-                border-radius: 24px;
-                padding: 22px 28px;
+                border-radius: var(--radius-xl);
+                padding: 28px 32px;
                 backdrop-filter: blur(12px);
                 border: 1px solid rgba(255, 255, 255, 0.16);
                 max-width: 440px;
@@ -221,6 +261,7 @@
 
             .hero-stat strong {
                 font-size: 1.6rem;
+                color: #ffffff;
             }
 
             .hero-art {
@@ -243,14 +284,9 @@
                 box-shadow: var(--shadow-lg);
             }
 
-            .stat-card strong {
-                font-size: 1.4rem;
-                color: var(--primary-strong);
-            }
-
             .section-header {
                 max-width: 760px;
-                margin: 0 auto 56px;
+                margin: 0 auto 64px;
                 text-align: center;
                 display: grid;
                 gap: 16px;
@@ -267,15 +303,17 @@
                 color: var(--neutral-700);
             }
 
+            /* Articles grid in full-width container */
             .articles-grid {
                 display: grid;
                 grid-template-columns: repeat(3, minmax(0, 1fr));
                 gap: 28px;
+                width: 100%;
             }
 
             .article-card {
                 background: var(--surface);
-                border-radius: 28px;
+                border-radius: var(--radius-xl);
                 box-shadow: var(--shadow-md);
                 overflow: hidden;
                 display: grid;
@@ -307,23 +345,27 @@
             }
 
             .link-muted {
-                color: var(--maroon-800);
+                color: var(--primary-main);
                 font-weight: 600;
             }
 
+            /* Full-width pricing section */
             .pricing-section {
-                background: linear-gradient(135deg, #fff6ec 0%, #fff9f2 100%);
+                width: 100%;
+                background: linear-gradient(135deg, #f0fdf4 0%, #f7fef5 100%);
+                padding: 96px 0;
             }
 
             .pricing-grid {
                 display: grid;
                 grid-template-columns: repeat(3, minmax(0, 1fr));
                 gap: 32px;
+                width: 100%;
             }
 
             .pricing-card {
                 background: var(--surface);
-                border-radius: 32px;
+                border-radius: var(--radius-xl);
                 padding: 36px 32px;
                 box-shadow: var(--shadow-md);
                 display: grid;
@@ -335,8 +377,8 @@
                 content: "";
                 position: absolute;
                 inset: 18px;
-                border-radius: 26px;
-                border: 1px dashed rgba(162, 43, 46, 0.18);
+                border-radius: 24px;
+                border: 1px dashed rgba(63, 166, 126, 0.18);
                 pointer-events: none;
             }
 
@@ -346,7 +388,7 @@
 
             .pricing-price {
                 font-size: 2rem;
-                color: var(--maroon-800);
+                color: var(--primary-main);
                 font-weight: 700;
             }
 
@@ -362,112 +404,163 @@
             .pricing-features li::before {
                 content: "•";
                 margin-right: 8px;
-                color: var(--gold-500);
+                color: var(--primary-light);
             }
 
+            /* Highlight section as full-width block */
             .highlight-section {
                 position: relative;
-                background: linear-gradient(110deg, rgba(141, 27, 36, 0.96), rgba(81, 11, 17, 0.92)),
+                width: 100%;
+                background: linear-gradient(110deg, rgba(31, 109, 79, 0.96), rgba(17, 54, 37, 0.92)),
                     url("https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1600&q=80")
                         center/cover;
                 color: #ffffff;
-                border-radius: 100px 0 0 100px;
                 overflow: hidden;
-                margin: 0 32px;
+                margin: 0;
+                padding: 80px 32px;
             }
 
             .highlight-content {
-                padding: 90px clamp(32px, 6vw, 96px);
                 display: grid;
-                gap: 32px;
+                gap: 48px;
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0;
             }
 
             .highlight-grid {
                 display: grid;
                 grid-template-columns: repeat(4, minmax(0, 1fr));
                 gap: 24px;
+                width: 100%;
             }
 
             .highlight-card {
                 background: rgba(255, 255, 255, 0.12);
-                border-radius: 24px;
-                padding: 22px;
+                border-radius: var(--radius-lg);
+                padding: 28px;
                 backdrop-filter: blur(12px);
                 display: grid;
                 gap: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.16);
             }
 
-            .slider {
-                position: relative;
+            .highlight-card strong {
+                color: #ffffff;
             }
 
+            .highlight-card p {
+                margin: 0;
+            }
+
+            /* Slider track improvements */
             .slider-track {
-                display: flex;
-                gap: 24px;
+                display: grid;
+                grid-auto-flow: column;
+                gap: 28px;
                 overflow-x: auto;
                 scroll-snap-type: x mandatory;
                 scroll-behavior: smooth;
-                padding-bottom: 12px;
+                padding: 8px 0;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+                scrollbar-color: rgba(63, 166, 126, 0.32) transparent;
             }
 
             .slider-track::-webkit-scrollbar {
-                height: 8px;
+                height: 6px;
+            }
+
+            .slider-track::-webkit-scrollbar-track {
+                background: transparent;
             }
 
             .slider-track::-webkit-scrollbar-thumb {
-                background: rgba(109, 15, 24, 0.32);
+                background: rgba(63, 166, 126, 0.32);
                 border-radius: 999px;
             }
 
-            .slider-track > * {
-                flex: 0 0 min(320px, 80vw);
+            .slider-track::-webkit-scrollbar-thumb:hover {
+                background: rgba(63, 166, 126, 0.48);
+            }
+
+            .slide {
+                flex: 0 0 auto;
+                width: min(350px, calc(100% - 28px));
                 scroll-snap-align: start;
+                scroll-snap-stop: always;
             }
 
             .slider-controls {
                 position: absolute;
-                inset: -72px 0 auto auto;
+                top: -66px;
+                right: 0;
                 display: flex;
                 gap: 12px;
+                z-index: 10;
             }
 
             .slider button {
-                width: 46px;
-                height: 46px;
+                width: 48px;
+                height: 48px;
                 border-radius: 50%;
                 border: none;
                 background: var(--surface);
-                color: var(--maroon-800);
+                color: var(--primary-main);
                 box-shadow: var(--shadow-md);
                 cursor: pointer;
-                transition: transform 0.2s ease;
+                transition: all 0.2s ease;
+                font-size: 1.2rem;
+                font-weight: bold;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .slide {
-                flex: 0 0 100%;
-                padding: 0 12px;
+            .slider button:hover {
+                transform: scale(1.08);
+                box-shadow: 0 12px 32px rgba(31, 107, 79, 0.24);
+                background: var(--primary-light);
+                color: var(--primary-dark);
+            }
+
+            .slider button:active {
+                transform: scale(0.96);
             }
 
             .testimonial-card,
             .mentor-card {
                 background: #ffffff;
-                border-radius: 28px;
-                padding: 28px;
-                display: grid;
-                gap: 16px;
+                border-radius: var(--radius-xl);
+                padding: 32px;
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
                 box-shadow: var(--shadow-md);
+                height: 100%;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .testimonial-card:hover,
+            .mentor-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 48px rgba(31, 107, 79, 0.16);
             }
 
             .testimonial-card img,
             .mentor-card img {
                 width: 100%;
-                border-radius: 20px;
+                height: 200px;
+                object-fit: cover;
+                border-radius: var(--radius-lg);
             }
 
             .testimonial-card p {
                 margin: 0;
                 color: var(--neutral-700);
                 font-size: 0.95rem;
+                line-height: 1.6;
             }
 
             .mentor-card {
@@ -476,53 +569,45 @@
 
             .mentor-role {
                 color: var(--neutral-700);
-                font-size: 0.95rem;
+                font-size: 0.9rem;
+                margin: 0;
             }
 
+            /* FAQ grid in full-width container */
             .faq-grid {
                 display: grid;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 18px;
+                width: 100%;
             }
 
             details {
-                border-radius: 22px;
+                border-radius: var(--radius-lg);
                 background: var(--surface);
                 padding: 20px 24px;
                 box-shadow: var(--shadow-md);
             }
 
-            .slider-button {
-                width: 42px;
-                height: 42px;
-                border-radius: 50%;
-                border: none;
-                display: grid;
-                place-items: center;
-                background: rgba(61, 183, 173, 0.15);
-                color: var(--primary-strong);
-                cursor: pointer;
-                outline: none;
-            }
-
+            /* Full-width footer */
             footer {
                 background: #f0f1f3;
                 padding: 72px 0 48px;
+                width: 100%;
             }
 
             .footer-grid {
                 display: grid;
                 grid-template-columns: repeat(4, minmax(0, 1fr));
                 gap: 32px;
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto 48px;
+                padding: 0 32px;
             }
 
             .footer-brand {
                 display: grid;
                 gap: 16px;
-            }
-
-            .slider-dot[aria-current="true"] {
-                background: var(--primary-strong);
             }
 
             .footer-links {
@@ -537,69 +622,77 @@
             }
 
             .footer-links a:hover {
-                color: var(--maroon-800);
+                color: var(--primary-main);
             }
 
             .copyright {
-                margin: 48px 0 0;
+                margin: 0;
                 text-align: center;
                 color: var(--neutral-700);
                 font-size: 0.9rem;
+                padding: 0 32px;
             }
 
             @media (max-width: 1080px) {
                 .hero {
-                    grid-template-columns: 1fr;
-                    text-align: center;
+                    padding: 60px 24px;
                 }
 
-                .hero p,
-                .hero-stats {
-                    margin-left: auto;
-                    margin-right: auto;
+                .hero h1 {
+                    font-size: clamp(2.2rem, 3.5vw, 2.9rem);
                 }
 
-                .hero-actions {
-                    justify-content: center;
-                }
-            }
-
-                .hero-art::after {
-                    inset: 12% 12% -6% 12%;
+                .hero p {
+                    font-size: 1rem;
                 }
 
                 .articles-grid,
                 .pricing-grid,
-                .highlight-grid {
+                .highlight-grid,
+                .faq-grid {
                     grid-template-columns: repeat(2, minmax(0, 1fr));
                 }
 
-                .highlight-section {
-                    border-radius: 80px 0 0 80px;
-                }
-
                 .slider-controls {
-                    inset: -56px 24px auto auto;
+                    top: -56px;
                 }
 
-                nav {
-                    gap: 18px;
+                .slide {
+                    width: min(300px, calc(100% - 24px));
                 }
+            }
 
-            @media (max-width: 760px) {
+            @media (max-width: 768px) {
                 nav {
-                    flex-wrap: wrap;
-                    justify-content: center;
-                    text-align: center;
+                    padding: 20px 16px;
+                    gap: 16px;
                 }
 
                 .nav-links {
                     flex-wrap: wrap;
                     justify-content: center;
+                    gap: 16px;
                 }
 
-                .container {
-                    padding: 0 20px;
+                .section {
+                    padding: 60px 0;
+                }
+
+                .pricing-section {
+                    padding: 60px 0;
+                }
+
+                .hero {
+                    padding: 50px 16px;
+                    gap: 40px;
+                }
+
+                .highlight-section {
+                    padding: 60px 16px;
+                }
+
+                .section .container {
+                    padding: 0 16px;
                 }
 
                 .articles-grid,
@@ -614,74 +707,95 @@
                     width: 100%;
                 }
 
-                .highlight-section {
-                    margin: 0 20px;
-                    border-radius: 48px;
-                }
-
-                section {
-                    padding: 68px 0;
+                footer {
+                    padding: 60px 0 40px;
                 }
 
                 .footer-grid {
                     grid-template-columns: 1fr;
+                    padding: 0 16px;
+                    margin: 0 auto 40px;
+                }
+
+                .copyright {
+                    padding: 0 16px;
+                }
+
+                .slider-controls {
+                    top: -50px;
+                    gap: 10px;
+                }
+
+                .slider button {
+                    width: 40px;
+                    height: 40px;
+                    font-size: 1rem;
+                }
+
+                .slide {
+                    width: min(280px, calc(100% - 20px));
+                }
+
+                .testimonial-card,
+                .mentor-card {
+                    padding: 24px;
+                }
+
+                .testimonial-card img,
+                .mentor-card img {
+                    height: 160px;
                 }
             }
         </style>
     </head>
     <body>
         <header>
-            <div class="container">
-                <nav>
-                    <a class="brand" href="/">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                        <span>MayClass</span>
-                    </a>
-                    <div class="nav-links">
-                        <a href="#beranda">Beranda</a>
-                        <a href="#artikel">Artikel</a>
-                        <a href="#paket">Paket Belajar</a>
-                        <a href="#keunggulan">Keunggulan</a>
-                        <a href="#testimoni">Testimoni</a>
-                        <a href="#faq">FAQ</a>
+            <nav>
+                <a class="brand" href="/">
+                    <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                    <span>MayClass</span>
+                </a>
+                <div class="nav-links">
+                    <a href="#beranda">Beranda</a>
+                    <a href="#artikel">Artikel</a>
+                    <a href="#paket">Paket Belajar</a>
+                    <a href="#keunggulan">Keunggulan</a>
+                    <a href="#testimoni">Testimoni</a>
+                    <a href="#faq">FAQ</a>
+                </div>
+                <div class="nav-actions">
+                    <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
+                    <a class="btn btn-primary" href="{{ route('register') }}">Daftar</a>
+                </div>
+            </nav>
+            <div class="hero" id="beranda">
+                <div class="hero-content">
+                    <span class="badge">Bimbel Digital MayClass</span>
+                    <h1>Belajar Nyaman, Prestasi Mengesankan</h1>
+                    <p>
+                        Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel, dan
+                        penuh dukungan menuju kampus impianmu.
+                    </p>
+                    <div class="hero-actions">
+                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
+                        <a class="btn btn-outline" href="{{ route('login') }}">Masuk sebagai Siswa</a>
                     </div>
-                    <div class="nav-actions">
-                        <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
-                        <a class="btn btn-gold" href="{{ route('register') }}">Daftar</a>
-                    </div>
-                </nav>
-                <div class="hero" id="beranda">
-                    <div>
-                        <span class="badge">Bimbel Digital MayClass</span>
-                        <h1>Belajar Nyaman, Prestasi Mengesankan</h1>
-                        <p>
-                            Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel, dan
-                            penuh dukungan menuju kampus impianmu.
-                        </p>
-                        <div class="hero-actions">
-                            <a class="btn btn-gold" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
-                            <a class="btn btn-outline" href="{{ route('login') }}">Masuk sebagai Siswa</a>
-                        </div>
-                        <div class="hero-stats">
-                            <div>Dipercaya ribuan pelajar dan orang tua di seluruh Indonesia.</div>
-                            <div class="hero-stats-row">
-                                <div class="hero-stat">
-                                    <strong>2.000+</strong>
-                                    <span>Siswa aktif MayClass</span>
-                                </div>
-                                <div class="hero-stat">
-                                    <strong>120+</strong>
-                                    <span>Tentor profesional</span>
-                                </div>
-                                <div class="hero-stat">
-                                    <strong>98%</strong>
-                                    <span>Tingkat kepuasan</span>
-                                </div>
+                    <div class="hero-stats">
+                        <div>Dipercaya ribuan pelajar dan orang tua di seluruh Indonesia.</div>
+                        <div class="hero-stats-row">
+                            <div class="hero-stat">
+                                <strong>2.000+</strong>
+                                <span>Siswa aktif MayClass</span>
+                            </div>
+                            <div class="hero-stat">
+                                <strong>120+</strong>
+                                <span>Tentor profesional</span>
+                            </div>
+                            <div class="hero-stat">
+                                <strong>98%</strong>
+                                <span>Tingkat kepuasan</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="hero-art">
-                        <img src="{{ \App\Support\ImageRepository::url('hero') }}" alt="Ilustrasi siswa MayClass" />
                     </div>
                 </div>
             </div>
@@ -690,7 +804,7 @@
         <section class="section" id="artikel">
             <div class="container">
                 <div class="section-header">
-                    <span class="badge" style="background: rgba(142, 29, 36, 0.08); color: var(--maroon-800);">
+                    <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Artikel Terupdate
                     </span>
                     <h2 class="section-title">Wawasan Terbaru untuk Dukung Persiapanmu</h2>
@@ -734,10 +848,10 @@
             </div>
         </section>
 
-        <section class="section pricing-section" id="paket">
+        <section class="pricing-section" id="paket">
             <div class="container">
                 <div class="section-header">
-                    <span class="badge" style="background: rgba(242, 184, 89, 0.18); color: var(--maroon-800);">
+                    <span class="badge" style="background: rgba(132, 217, 134, 0.18); color: var(--primary-main);">
                         Paket Belajar
                     </span>
                     <h2 class="section-title">Pilih Paket Favoritmu &amp; Belajar Bareng Mentor Andal</h2>
@@ -748,7 +862,7 @@
                 </div>
                 <div class="pricing-grid">
                     <article class="pricing-card">
-                        <span class="badge" style="background: rgba(162, 43, 46, 0.12); color: var(--maroon-800);">Tryout SKD</span>
+                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">Tryout SKD</span>
                         <strong>Simulasi Premium</strong>
                         <div class="pricing-price">Rp30K</div>
                         <div style="color: var(--neutral-700);">Diskon spesial dari Rp60K/paket</div>
@@ -757,10 +871,10 @@
                             <li>Analisis skor otomatis &amp; ranking nasional</li>
                             <li>Group coaching bersama mentor ASN</li>
                         </ul>
-                        <a class="btn btn-gold" href="{{ route('packages.index') }}">Beli Paket</a>
+                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Beli Paket</a>
                     </article>
                     <article class="pricing-card">
-                        <span class="badge" style="background: rgba(162, 43, 46, 0.12); color: var(--maroon-800);">Tryout TPA</span>
+                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">Tryout TPA</span>
                         <strong>Bundling Stan/Polstat</strong>
                         <div class="pricing-price">Rp30K</div>
                         <div style="color: var(--neutral-700);">Diskon spesial dari Rp60K/paket</div>
@@ -769,10 +883,10 @@
                             <li>Pembinaan mindset &amp; habit belajar</li>
                             <li>Prediksi soal dari mentor berpengalaman</li>
                         </ul>
-                        <a class="btn btn-gold" href="{{ route('packages.index') }}">Beli Paket</a>
+                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Beli Paket</a>
                     </article>
                     <article class="pricing-card">
-                        <span class="badge" style="background: rgba(162, 43, 46, 0.12); color: var(--maroon-800);">Tryout Matematika</span>
+                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">Tryout Matematika</span>
                         <strong>Spesialis STIS</strong>
                         <div class="pricing-price">Rp20K</div>
                         <div style="color: var(--neutral-700);">Diskon spesial dari Rp40K/paket</div>
@@ -781,57 +895,55 @@
                             <li>Latihan adaptif sesuai level kemampuan</li>
                             <li>Group diskusi eksklusif bersama mentor</li>
                         </ul>
-                        <a class="btn btn-gold" href="{{ route('packages.index') }}">Beli Paket</a>
+                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Beli Paket</a>
                     </article>
                 </div>
             </div>
         </section>
 
-        <section class="section" id="keunggulan">
-            <div class="highlight-section">
-                <div class="highlight-content">
-                    <div>
-                        <span class="badge" style="background: rgba(255, 255, 255, 0.16); color: #ffffff;">Mengapa MayClass?</span>
-                        <h2 style="margin: 18px 0 12px; font-size: clamp(2.1rem, 3vw, 3rem);">Bersama MayClass Belajarmu Lebih Seru</h2>
-                        <p style="margin: 0; max-width: 620px; color: rgba(255, 255, 255, 0.84);">
-                            Rasakan pengalaman belajar intensif, hangat, dan profesional. Tim MayClass memastikan setiap sesi
-                            berjalan menyenangkan dengan target capaian yang jelas.
+        <div class="highlight-section" id="keunggulan">
+            <div class="highlight-content">
+                <div>
+                    <span class="badge" style="background: rgba(255, 255, 255, 0.16); color: #ffffff;">Mengapa MayClass?</span>
+                    <h2 style="margin: 18px 0 12px; font-size: clamp(2.1rem, 3vw, 3rem); color: #ffffff;">Bersama MayClass Belajarmu Lebih Seru</h2>
+                    <p style="margin: 0; max-width: 620px; color: rgba(255, 255, 255, 0.84);">
+                        Rasakan pengalaman belajar intensif, hangat, dan profesional. Tim MayClass memastikan setiap sesi
+                        berjalan menyenangkan dengan target capaian yang jelas.
+                    </p>
+                </div>
+                <div class="highlight-grid">
+                    <div class="highlight-card">
+                        <strong>Super Teacher</strong>
+                        <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
+                            Mentor pilihan dengan pengalaman mengajar panjang dan capaian prestisius.
                         </p>
                     </div>
-                    <div class="highlight-grid">
-                        <div class="highlight-card">
-                            <strong>Super Teacher</strong>
-                            <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
-                                Mentor pilihan dengan pengalaman mengajar panjang dan capaian prestisius.
-                            </p>
-                        </div>
-                        <div class="highlight-card">
-                            <strong>Materi Lengkap</strong>
-                            <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
-                                Silabus terbaru, bank soal adaptif, dan rekaman kelas siap diputar kapan pun.
-                            </p>
-                        </div>
-                        <div class="highlight-card">
-                            <strong>Analisis Mendalam</strong>
-                            <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
-                                Pantau progres lewat laporan mingguan dan rekomendasi belajar personal.
-                            </p>
-                        </div>
-                        <div class="highlight-card">
-                            <strong>Komunitas Aktif</strong>
-                            <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
-                                Saling dukung bersama teman sefrekuensi dan dapatkan motivasi harian.
-                            </p>
-                        </div>
+                    <div class="highlight-card">
+                        <strong>Materi Lengkap</strong>
+                        <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
+                            Silabus terbaru, bank soal adaptif, dan rekaman kelas siap diputar kapan pun.
+                        </p>
+                    </div>
+                    <div class="highlight-card">
+                        <strong>Analisis Mendalam</strong>
+                        <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
+                            Pantau progres lewat laporan mingguan dan rekomendasi belajar personal.
+                        </p>
+                    </div>
+                    <div class="highlight-card">
+                        <strong>Komunitas Aktif</strong>
+                        <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
+                            Saling dukung bersama teman sefrekuensi dan dapatkan motivasi harian.
+                        </p>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
         <section class="section" id="testimoni">
             <div class="container">
                 <div class="section-header">
-                    <span class="badge" style="background: rgba(142, 29, 36, 0.08); color: var(--maroon-800);">
+                    <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Testimoni Siswa
                     </span>
                     <h2 class="section-title">Cerita Mereka yang Sudah Mewujudkan Mimpi</h2>
@@ -840,41 +952,47 @@
                         di ujian bergengsi.
                     </p>
                 </div>
-                <div class="slider" data-slider>
+                <div class="slider" data-slider="testimonial">
                     <div class="slider-track">
-                        <article class="testimonial-card">
-                            <img src="{{ \App\Support\ImageRepository::url('testimonials.yohanna') }}" alt="Testimoni Yohanna" />
-                            <div style="display: grid; gap: 4px;">
-                                <strong>Yohanna • Skor UTBK 640</strong>
-                                <p>
-                                    "Mentor MayClass ramah banget dan jelas saat jelasin materi. Tryoutnya bikin aku makin percaya diri
-                                    masuk kampus impian."
-                                </p>
-                            </div>
-                        </article>
-                        <article class="testimonial-card">
-                            <img src="{{ \App\Support\ImageRepository::url('testimonials.xavier') }}" alt="Testimoni Xavier" />
-                            <div style="display: grid; gap: 4px;">
-                                <strong>Xavier • Skor SKD 433</strong>
-                                <p>
-                                    "Latihan soal dan pembahasan detailnya sangat membantu. Nilai SKD-ku naik signifikan setelah ikut
-                                    program intensif."
-                                </p>
-                            </div>
-                        </article>
-                        <article class="testimonial-card">
-                            <img src="{{ \App\Support\ImageRepository::url('testimonials.lisa') }}" alt="Testimoni Lisa" />
-                            <div style="display: grid; gap: 4px;">
-                                <strong>Lisa • Orang Tua Siswa</strong>
-                                <p>
-                                    "Progres anakku dipantau terus dan laporan mingguannya bikin kami tenang. MayClass responsif banget."
-                                </p>
-                            </div>
-                        </article>
+                        <div class="slide">
+                            <article class="testimonial-card">
+                                <img src="{{ \App\Support\ImageRepository::url('testimonials.yohanna') }}" alt="Testimoni Yohanna" />
+                                <div style="display: grid; gap: 8px; flex: 1;">
+                                    <strong>Yohanna • Skor UTBK 640</strong>
+                                    <p>
+                                        "Mentor MayClass ramah banget dan jelas saat jelasin materi. Tryoutnya bikin aku makin percaya diri
+                                        masuk kampus impian."
+                                    </p>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="slide">
+                            <article class="testimonial-card">
+                                <img src="{{ \App\Support\ImageRepository::url('testimonials.xavier') }}" alt="Testimoni Xavier" />
+                                <div style="display: grid; gap: 8px; flex: 1;">
+                                    <strong>Xavier • Skor SKD 433</strong>
+                                    <p>
+                                        "Latihan soal dan pembahasan detailnya sangat membantu. Nilai SKD-ku naik signifikan setelah ikut
+                                        program intensif."
+                                    </p>
+                                </div>
+                            </article>
+                        </div>
+                        <div class="slide">
+                            <article class="testimonial-card">
+                                <img src="{{ \App\Support\ImageRepository::url('testimonials.lisa') }}" alt="Testimoni Lisa" />
+                                <div style="display: grid; gap: 8px; flex: 1;">
+                                    <strong>Lisa • Orang Tua Siswa</strong>
+                                    <p>
+                                        "Progres anakku dipantau terus dan laporan mingguannya bikin kami tenang. MayClass responsif banget."
+                                    </p>
+                                </div>
+                            </article>
+                        </div>
                     </div>
                     <div class="slider-controls" aria-hidden="true">
-                        <button type="button" data-slider-prev>&larr;</button>
-                        <button type="button" data-slider-next>&rarr;</button>
+                        <button type="button" data-slider-prev aria-label="Previous testimonial">←</button>
+                        <button type="button" data-slider-next aria-label="Next testimonial">→</button>
                     </div>
                 </div>
             </div>
@@ -883,7 +1001,7 @@
         <section class="section" id="tentor">
             <div class="container">
                 <div class="section-header">
-                    <span class="badge" style="background: rgba(142, 29, 36, 0.08); color: var(--maroon-800);">
+                    <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Super Teacher MayClass
                     </span>
                     <h2 class="section-title">Mentor Berkualitas Siap Mendampingi Belajarmu</h2>
@@ -892,36 +1010,42 @@
                         menyenangkan.
                     </p>
                 </div>
-                <div class="slider" data-slider>
+                <div class="slider" data-slider="mentor">
                     <div class="slider-track">
-                        <article class="mentor-card">
-                            <img src="{{ \App\Support\ImageRepository::url('tutors.henny') }}" alt="Tutor Henny" />
-                            <div>
-                                <strong>Kak Henny</strong>
-                                <div class="mentor-role">Mentor Bahasa Indonesia &amp; Inggris</div>
-                            </div>
-                            <p class="mentor-role">"Bangun mindset juara dengan konsistensi dan disiplin belajar."</p>
-                        </article>
-                        <article class="mentor-card">
-                            <img src="{{ \App\Support\ImageRepository::url('tutors.husein') }}" alt="Tutor Husein" />
-                            <div>
-                                <strong>Kak Husein</strong>
-                                <div class="mentor-role">Mentor Matematika &amp; TPS</div>
-                            </div>
-                            <p class="mentor-role">"Tidak ada perjalanan sulit jika kita fokus sama tujuan besar."</p>
-                        </article>
-                        <article class="mentor-card">
-                            <img src="{{ \App\Support\ImageRepository::url('tutors.pal') }}" alt="Tutor Pal" />
-                            <div>
-                                <strong>Kak Pal</strong>
-                                <div class="mentor-role">Mentor SKD &amp; TPA</div>
-                            </div>
-                            <p class="mentor-role">"Strategi tepat dan evaluasi rutin bikin kamu siap setiap ujian."</p>
-                        </article>
+                        <div class="slide">
+                            <article class="mentor-card">
+                                <img src="{{ \App\Support\ImageRepository::url('tutors.henny') }}" alt="Tutor Henny" />
+                                <div style="display: grid; gap: 4px;">
+                                    <strong>Kak Henny</strong>
+                                    <div class="mentor-role">Mentor Bahasa Indonesia &amp; Inggris</div>
+                                </div>
+                                <p class="mentor-role" style="margin-top: auto; font-style: italic;">"Bangun mindset juara dengan konsistensi dan disiplin belajar."</p>
+                            </article>
+                        </div>
+                        <div class="slide">
+                            <article class="mentor-card">
+                                <img src="{{ \App\Support\ImageRepository::url('tutors.husein') }}" alt="Tutor Husein" />
+                                <div style="display: grid; gap: 4px;">
+                                    <strong>Kak Husein</strong>
+                                    <div class="mentor-role">Mentor Matematika &amp; TPS</div>
+                                </div>
+                                <p class="mentor-role" style="margin-top: auto; font-style: italic;">"Tidak ada perjalanan sulit jika kita fokus sama tujuan besar."</p>
+                            </article>
+                        </div>
+                        <div class="slide">
+                            <article class="mentor-card">
+                                <img src="{{ \App\Support\ImageRepository::url('tutors.pal') }}" alt="Tutor Pal" />
+                                <div style="display: grid; gap: 4px;">
+                                    <strong>Kak Pal</strong>
+                                    <div class="mentor-role">Mentor SKD &amp; TPA</div>
+                                </div>
+                                <p class="mentor-role" style="margin-top: auto; font-style: italic;">"Strategi tepat dan evaluasi rutin bikin kamu siap setiap ujian."</p>
+                            </article>
+                        </div>
                     </div>
                     <div class="slider-controls" aria-hidden="true">
-                        <button type="button" data-slider-prev>&larr;</button>
-                        <button type="button" data-slider-next>&rarr;</button>
+                        <button type="button" data-slider-prev aria-label="Previous mentor">←</button>
+                        <button type="button" data-slider-next aria-label="Next mentor">→</button>
                     </div>
                 </div>
             </div>
@@ -930,7 +1054,7 @@
         <section class="section" id="faq">
             <div class="container">
                 <div class="section-header">
-                    <span class="badge" style="background: rgba(142, 29, 36, 0.08); color: var(--maroon-800);">
+                    <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Pertanyaan yang Sering Diajukan
                     </span>
                     <h2 class="section-title">FAQ MayClass</h2>
@@ -1015,7 +1139,6 @@
                             <a href="https://www.tiktok.com" target="_blank" rel="noreferrer">TikTok</a>
                             <a href="https://www.youtube.com" target="_blank" rel="noreferrer">YouTube</a>
                         </div>
-                        <div class="footer-meta">© {{ date('Y') }} MayClass. Semua hak cipta dilindungi.</div>
                     </div>
                 </div>
                 <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
@@ -1023,27 +1146,58 @@
         </footer>
 
         <script>
+            /* Improved slider functionality with better scroll logic and state management */
             document.querySelectorAll('[data-slider]').forEach((slider) => {
                 const track = slider.querySelector('.slider-track');
                 if (!track) {
                     return;
                 }
 
+                const prevBtn = slider.querySelector('[data-slider-prev]');
+                const nextBtn = slider.querySelector('[data-slider-next]');
+                const slides = track.querySelectorAll('.slide');
+
+                if (!prevBtn || !nextBtn || slides.length === 0) {
+                    return;
+                }
+
+                let currentIndex = 0;
+                let isScrolling = false;
+
+                const scrollToSlide = (index) => {
+                    if (isScrolling || slides.length === 0) return;
+
+                    isScrolling = true;
+                    const slide = slides[index];
+                    const trackRect = track.getBoundingClientRect();
+                    const slideRect = slide.getBoundingClientRect();
+
+                    const scrollAmount = slide.offsetLeft - (trackRect.width - slide.offsetWidth) / 2;
+
+                    track.scrollTo({
+                        left: scrollAmount,
+                        behavior: 'smooth'
+                    });
+
+                    currentIndex = index;
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 600);
+                };
+
                 prevBtn.addEventListener('click', () => {
-                    index = (index - 1 + slides.length) % slides.length;
-                    update();
+                    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    scrollToSlide(currentIndex);
                 });
 
                 nextBtn.addEventListener('click', () => {
-                    index = (index + 1) % slides.length;
-                    update();
+                    currentIndex = (currentIndex + 1) % slides.length;
+                    scrollToSlide(currentIndex);
                 });
 
-                renderDots();
-                update();
-            }
-
-            document.querySelectorAll('[data-slider]').forEach(initSlider);
+                // Initialize with first slide
+                scrollToSlide(0);
+            });
         </script>
     </body>
 </html>
