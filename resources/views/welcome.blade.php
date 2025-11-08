@@ -539,13 +539,41 @@
                 gap: 18px;
                 box-shadow: var(--shadow-md);
                 height: 100%;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+                position: relative;
+                overflow: hidden;
+                border: 1px solid rgba(31, 107, 79, 0.08);
+            }
+
+            .testimonial-card::before,
+            .mentor-card::before {
+                content: "";
+                position: absolute;
+                inset: -40%;
+                background: radial-gradient(circle at top left, rgba(63, 166, 126, 0.2), transparent 65%);
+                opacity: 0;
+                transform: scale(0.9);
+                transition: opacity 0.4s ease, transform 0.4s ease;
+                z-index: 0;
+            }
+
+            .testimonial-card > *,
+            .mentor-card > * {
+                position: relative;
+                z-index: 1;
             }
 
             .testimonial-card:hover,
             .mentor-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 20px 48px rgba(31, 107, 79, 0.16);
+                transform: translateY(-6px);
+                box-shadow: 0 28px 56px rgba(31, 107, 79, 0.18);
+                border-color: rgba(63, 166, 126, 0.32);
+            }
+
+            .testimonial-card:hover::before,
+            .mentor-card:hover::before {
+                opacity: 1;
+                transform: scale(1.05);
             }
 
             .testimonial-card img,
@@ -554,6 +582,14 @@
                 height: 200px;
                 object-fit: cover;
                 border-radius: var(--radius-lg);
+                transition: transform 0.35s ease, box-shadow 0.35s ease;
+                box-shadow: 0 12px 24px rgba(15, 52, 38, 0.08);
+            }
+
+            .testimonial-card:hover img,
+            .mentor-card:hover img {
+                transform: scale(1.03);
+                box-shadow: 0 18px 36px rgba(15, 52, 38, 0.14);
             }
 
             .testimonial-card p {
