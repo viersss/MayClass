@@ -803,13 +803,7 @@
     </head>
     <body>
         @php
-            $joinLink = route('register');
-
-            if (auth()->check()) {
-                $joinLink = auth()->user()->role === 'tutor'
-                    ? route('tutor.dashboard')
-                    : route('student.dashboard');
-            }
+            $joinLink = route('join');
         @endphp
 
         <header>

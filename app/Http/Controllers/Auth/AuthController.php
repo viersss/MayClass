@@ -30,6 +30,18 @@ class AuthController extends Controller
         return view('auth.index', ['mode' => 'register']);
     }
 
+    public function join(Request $request): RedirectResponse
+    {
+        if (Auth::check()) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        return redirect()->route('login');
+    }
+
     public function register(Request $request): RedirectResponse
     {
         $data = $request->validate([
