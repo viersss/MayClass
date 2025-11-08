@@ -15,7 +15,7 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('packages.index');
+            return redirect()->to($this->homeRouteFor(Auth::user()));
         }
 
         return view('auth.index', ['mode' => 'login']);
@@ -24,7 +24,7 @@ class AuthController extends Controller
     public function showRegister()
     {
         if (Auth::check()) {
-            return redirect()->route('packages.index');
+            return redirect()->to($this->homeRouteFor(Auth::user()));
         }
 
         return view('auth.index', ['mode' => 'register']);
@@ -75,7 +75,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('packages.index'));
+        return redirect()->intended($this->homeRouteFor(Auth::user()));
     }
 
     public function logout(Request $request): RedirectResponse
@@ -96,4 +96,18 @@ class AuthController extends Controller
 
         return $id;
     }
+
+    private function homeRouteFor(?User $user): string
+    {
+        if (! $user) {
+            return route('login');
+        }
+
+        return match ($user->role) {
+            'tutor' => route('tutor.dashboard'),
+            'student' => route('student.dashboard'),
+            default => route('packages.index'),
+        };
+    }
 }
+
