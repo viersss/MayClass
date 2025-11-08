@@ -18,6 +18,7 @@ class Material extends Model
         'level',
         'summary',
         'thumbnail_url',
+        'resource_path',
     ];
 
     public function objectives(): HasMany
@@ -35,5 +36,20 @@ class Material extends Model
         $key = $this->attributes['thumbnail_url'] ?? '';
 
         return ImageRepository::url("materials.$key");
+    }
+
+    public function getResourceUrlAttribute(): ?string
+    {
+        $path = $this->attributes['resource_path'] ?? null;
+
+        if (! $path) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        return asset('storage/' . ltrim($path, '/'));
     }
 }
