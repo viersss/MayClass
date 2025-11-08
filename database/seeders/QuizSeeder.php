@@ -13,8 +13,10 @@ class QuizSeeder extends Seeder
             [
                 'slug' => 'persamaan-linear',
                 'subject' => 'Matematika',
+                'class_level' => 'Kelas 10A',
                 'title' => 'Quiz Persamaan Linear',
                 'summary' => 'Uji kemampuanmu menyelesaikan soal persamaan linear satu dan dua variabel.',
+                'link_url' => 'https://mayclass.id/quiz/persamaan-linear',
                 'thumbnail_url' => 'persamaan_linear',
                 'duration_label' => '45 Menit',
                 'question_count' => 30,
@@ -28,8 +30,10 @@ class QuizSeeder extends Seeder
             [
                 'slug' => 'kimia-termokimia',
                 'subject' => 'Kimia',
+                'class_level' => 'Kelas 12 IPA',
                 'title' => 'Quiz Termokimia',
                 'summary' => 'Tantang pemahaman energi reaksi, perubahan entalpi, dan hukum Hess.',
+                'link_url' => 'https://mayclass.id/quiz/kimia-termokimia',
                 'thumbnail_url' => 'kimia_termokimia',
                 'duration_label' => '35 Menit',
                 'question_count' => 25,
@@ -43,8 +47,10 @@ class QuizSeeder extends Seeder
             [
                 'slug' => 'bahasa-grammar',
                 'subject' => 'Bahasa Inggris',
+                'class_level' => 'Kelas 11',
                 'title' => 'Quiz Grammar Adaptive',
                 'summary' => 'Cek penguasaan grammar dengan soal adaptif dan feedback instan.',
+                'link_url' => 'https://mayclass.id/quiz/bahasa-grammar',
                 'thumbnail_url' => 'bahasa_grammar',
                 'duration_label' => '30 Menit',
                 'question_count' => 28,
@@ -58,8 +64,10 @@ class QuizSeeder extends Seeder
             [
                 'slug' => 'sd-literasi',
                 'subject' => 'SD Terpadu',
+                'class_level' => 'Kelas 4',
                 'title' => 'Quiz Literasi Tematik',
                 'summary' => 'Pertanyaan literasi-numerasi yang menyenangkan untuk siswa SD kelas menengah.',
+                'link_url' => 'https://mayclass.id/quiz/sd-literasi',
                 'thumbnail_url' => 'sd_literasi',
                 'duration_label' => '25 Menit',
                 'question_count' => 20,

@@ -8,7 +8,11 @@ use App\Http\Controllers\Student\MaterialController;
 use App\Http\Controllers\Student\ProfileController;
 use App\Http\Controllers\Student\QuizController;
 use App\Http\Controllers\Student\ScheduleController;
+use App\Http\Controllers\Tutor\AccountController as TutorAccountController;
 use App\Http\Controllers\Tutor\DashboardController as TutorDashboardController;
+use App\Http\Controllers\Tutor\MaterialController as TutorMaterialController;
+use App\Http\Controllers\Tutor\QuizController as TutorQuizController;
+use App\Http\Controllers\Tutor\ScheduleController as TutorScheduleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -46,4 +50,20 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
 
 Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->name('tutor.')->group(function () {
     Route::get('/dashboard', [TutorDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/materi', [TutorMaterialController::class, 'index'])->name('materials.index');
+    Route::get('/materi/tambah', [TutorMaterialController::class, 'create'])->name('materials.create');
+    Route::post('/materi', [TutorMaterialController::class, 'store'])->name('materials.store');
+    Route::get('/materi/{material:slug}/edit', [TutorMaterialController::class, 'edit'])->name('materials.edit');
+    Route::put('/materi/{material:slug}', [TutorMaterialController::class, 'update'])->name('materials.update');
+
+    Route::get('/quiz', [TutorQuizController::class, 'index'])->name('quizzes.index');
+    Route::get('/quiz/tambah', [TutorQuizController::class, 'create'])->name('quizzes.create');
+    Route::post('/quiz', [TutorQuizController::class, 'store'])->name('quizzes.store');
+    Route::get('/quiz/{quiz:slug}/edit', [TutorQuizController::class, 'edit'])->name('quizzes.edit');
+    Route::put('/quiz/{quiz:slug}', [TutorQuizController::class, 'update'])->name('quizzes.update');
+
+    Route::get('/jadwal', [TutorScheduleController::class, 'index'])->name('schedule.index');
+
+    Route::get('/pengaturan', [TutorAccountController::class, 'edit'])->name('account.edit');
+    Route::put('/pengaturan', [TutorAccountController::class, 'update'])->name('account.update');
 });

@@ -16,6 +16,7 @@ class TutorProfile extends Model
         'headline',
         'bio',
         'specializations',
+        'education',
         'experience_years',
         'students_taught',
         'hours_taught',
@@ -27,6 +28,9 @@ class TutorProfile extends Model
     protected $casts = [
         'certifications' => 'array',
         'rating' => 'decimal:2',
+        'experience_years' => 'integer',
+        'students_taught' => 'integer',
+        'hours_taught' => 'integer',
     ];
 
     public function user(): BelongsTo
