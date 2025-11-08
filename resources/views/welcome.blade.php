@@ -21,6 +21,8 @@
                 --neutral-700: #4d5660;
                 --neutral-100: #f6f7f8;
                 --surface: #ffffff;
+                --nav-surface: rgba(16, 78, 57, 0.92);
+                --footer-surface: #e8f3ef;
                 --shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
                 --shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
                 --radius-lg: 20px;
@@ -76,6 +78,7 @@
                 color: #ffffff;
                 overflow: hidden;
                 width: 100%;
+                padding: 16px 0 0;
             }
 
             /* Improved nav layout to be full-width properly */
@@ -85,24 +88,31 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 28px 32px;
+                padding: 24px 32px;
                 gap: 32px;
-                width: 100%;
-                max-width: none;
-                margin: 0;
+                width: calc(100% - 64px);
+                max-width: 1180px;
+                margin: 0 auto 32px;
                 flex-wrap: wrap;
+                background: var(--nav-surface);
+                border-radius: var(--radius-xl);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                box-shadow: 0 20px 48px rgba(8, 43, 31, 0.45);
+                backdrop-filter: blur(8px);
             }
 
             @media (max-width: 1280px) {
                 nav {
-                    padding: 28px 32px;
+                    padding: 24px 28px;
                 }
             }
 
             @media (max-width: 768px) {
                 nav {
-                    padding: 20px 16px;
+                    padding: 18px 18px;
                     justify-content: center;
+                    width: calc(100% - 32px);
+                    margin: 0 auto 24px;
                 }
             }
 
@@ -539,13 +549,41 @@
                 gap: 18px;
                 box-shadow: var(--shadow-md);
                 height: 100%;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+                position: relative;
+                overflow: hidden;
+                border: 1px solid rgba(31, 107, 79, 0.08);
+            }
+
+            .testimonial-card::before,
+            .mentor-card::before {
+                content: "";
+                position: absolute;
+                inset: -40%;
+                background: radial-gradient(circle at top left, rgba(63, 166, 126, 0.2), transparent 65%);
+                opacity: 0;
+                transform: scale(0.9);
+                transition: opacity 0.4s ease, transform 0.4s ease;
+                z-index: 0;
+            }
+
+            .testimonial-card > *,
+            .mentor-card > * {
+                position: relative;
+                z-index: 1;
             }
 
             .testimonial-card:hover,
             .mentor-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 20px 48px rgba(31, 107, 79, 0.16);
+                transform: translateY(-6px);
+                box-shadow: 0 28px 56px rgba(31, 107, 79, 0.18);
+                border-color: rgba(63, 166, 126, 0.32);
+            }
+
+            .testimonial-card:hover::before,
+            .mentor-card:hover::before {
+                opacity: 1;
+                transform: scale(1.05);
             }
 
             .testimonial-card img,
@@ -554,6 +592,14 @@
                 height: 200px;
                 object-fit: cover;
                 border-radius: var(--radius-lg);
+                transition: transform 0.35s ease, box-shadow 0.35s ease;
+                box-shadow: 0 12px 24px rgba(15, 52, 38, 0.08);
+            }
+
+            .testimonial-card:hover img,
+            .mentor-card:hover img {
+                transform: scale(1.03);
+                box-shadow: 0 18px 36px rgba(15, 52, 38, 0.14);
             }
 
             .testimonial-card p {
@@ -590,9 +636,10 @@
 
             /* Full-width footer */
             footer {
-                background: #f0f1f3;
-                padding: 72px 0 48px;
+                background: var(--footer-surface);
+                padding: 80px 0 52px;
                 width: 100%;
+                border-top: 1px solid rgba(31, 107, 79, 0.12);
             }
 
             .footer-grid {
@@ -608,6 +655,11 @@
             .footer-brand {
                 display: grid;
                 gap: 16px;
+            }
+
+            .footer-brand img {
+                width: 64px;
+                height: auto;
             }
 
             .footer-links {
@@ -664,8 +716,10 @@
 
             @media (max-width: 768px) {
                 nav {
-                    padding: 20px 16px;
+                    padding: 18px 18px;
                     gap: 16px;
+                    width: calc(100% - 32px);
+                    margin: 0 auto 24px;
                 }
 
                 .nav-links {
@@ -752,7 +806,7 @@
         <header>
             <nav>
                 <a class="brand" href="/">
-                    <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                    <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                     <span>MayClass</span>
                 </a>
                 <div class="nav-links">
@@ -764,8 +818,7 @@
                     <a href="#faq">FAQ</a>
                 </div>
                 <div class="nav-actions">
-                    <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
-                    <a class="btn btn-primary" href="{{ route('register') }}">Daftar</a>
+                    <a class="btn btn-primary" href="{{ route('login') }}">Gabung Sekarang</a>
                 </div>
             </nav>
             <div class="hero" id="beranda">
@@ -777,8 +830,8 @@
                         penuh dukungan menuju kampus impianmu.
                     </p>
                     <div class="hero-actions">
-                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
-                        <a class="btn btn-outline" href="{{ route('login') }}">Masuk sebagai Siswa</a>
+                        <a class="btn btn-primary" href="{{ route('login') }}">Gabung Sekarang</a>
+                        <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
                     </div>
                     <div class="hero-stats">
                         <div>Dipercaya ribuan pelajar dan orang tua di seluruh Indonesia.</div>
@@ -815,7 +868,10 @@
                 </div>
                 <div class="articles-grid">
                     <article class="article-card">
-                        <img src="{{ \App\Support\ImageRepository::url('materials.persamaan_linear') }}" alt="Artikel UTBK" />
+                        <img
+                            src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=800&q=80"
+                            alt="Artikel UTBK"
+                        />
                         <div class="article-content">
                             <h3>Kenali 7 Subtes UTBK yang Harus Kamu Taklukkan</h3>
                             <p>
@@ -825,7 +881,10 @@
                         </div>
                     </article>
                     <article class="article-card">
-                        <img src="{{ \App\Support\ImageRepository::url('materials.kimia_termokimia') }}" alt="Artikel SKD" />
+                        <img
+                            src="https://images.unsplash.com/photo-1460518451285-97b6aa326961?auto=format&fit=crop&w=800&q=80"
+                            alt="Artikel SKD"
+                        />
                         <div class="article-content">
                             <h3>Strategi Lulus SKD ASN &amp; PPPK Bersama Mentor Ahli</h3>
                             <p>
@@ -835,7 +894,10 @@
                         </div>
                     </article>
                     <article class="article-card">
-                        <img src="{{ \App\Support\ImageRepository::url('materials.bahasa_grammar') }}" alt="Artikel motivasi" />
+                        <img
+                            src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80"
+                            alt="Artikel motivasi"
+                        />
                         <div class="article-content">
                             <h3>Cerita Alumni: Raih Kampus Impian dari Nol</h3>
                             <p>
@@ -956,7 +1018,10 @@
                     <div class="slider-track">
                         <div class="slide">
                             <article class="testimonial-card">
-                                <img src="{{ \App\Support\ImageRepository::url('testimonials.yohanna') }}" alt="Testimoni Yohanna" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80"
+                                    alt="Testimoni Yohanna"
+                                />
                                 <div style="display: grid; gap: 8px; flex: 1;">
                                     <strong>Yohanna • Skor UTBK 640</strong>
                                     <p>
@@ -968,7 +1033,10 @@
                         </div>
                         <div class="slide">
                             <article class="testimonial-card">
-                                <img src="{{ \App\Support\ImageRepository::url('testimonials.xavier') }}" alt="Testimoni Xavier" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=600&q=80"
+                                    alt="Testimoni Xavier"
+                                />
                                 <div style="display: grid; gap: 8px; flex: 1;">
                                     <strong>Xavier • Skor SKD 433</strong>
                                     <p>
@@ -980,7 +1048,10 @@
                         </div>
                         <div class="slide">
                             <article class="testimonial-card">
-                                <img src="{{ \App\Support\ImageRepository::url('testimonials.lisa') }}" alt="Testimoni Lisa" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=600&q=80"
+                                    alt="Testimoni Lisa"
+                                />
                                 <div style="display: grid; gap: 8px; flex: 1;">
                                     <strong>Lisa • Orang Tua Siswa</strong>
                                     <p>
@@ -1014,7 +1085,10 @@
                     <div class="slider-track">
                         <div class="slide">
                             <article class="mentor-card">
-                                <img src="{{ \App\Support\ImageRepository::url('tutors.henny') }}" alt="Tutor Henny" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80"
+                                    alt="Tutor Henny"
+                                />
                                 <div style="display: grid; gap: 4px;">
                                     <strong>Kak Henny</strong>
                                     <div class="mentor-role">Mentor Bahasa Indonesia &amp; Inggris</div>
@@ -1024,7 +1098,10 @@
                         </div>
                         <div class="slide">
                             <article class="mentor-card">
-                                <img src="{{ \App\Support\ImageRepository::url('tutors.husein') }}" alt="Tutor Husein" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=600&q=80"
+                                    alt="Tutor Husein"
+                                />
                                 <div style="display: grid; gap: 4px;">
                                     <strong>Kak Husein</strong>
                                     <div class="mentor-role">Mentor Matematika &amp; TPS</div>
@@ -1034,7 +1111,10 @@
                         </div>
                         <div class="slide">
                             <article class="mentor-card">
-                                <img src="{{ \App\Support\ImageRepository::url('tutors.pal') }}" alt="Tutor Pal" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80"
+                                    alt="Tutor Pal"
+                                />
                                 <div style="display: grid; gap: 4px;">
                                     <strong>Kak Pal</strong>
                                     <div class="mentor-role">Mentor SKD &amp; TPA</div>
@@ -1110,7 +1190,7 @@
             <div class="container">
                 <div class="footer-grid">
                     <div class="footer-brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                         <p>
                             MayClass menghadirkan bimbingan belajar terpadu dengan tentor profesional, materi interaktif, dan
                             layanan pelanggan responsif.
