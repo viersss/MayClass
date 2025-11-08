@@ -8,6 +8,11 @@ use App\Http\Controllers\Student\MaterialController;
 use App\Http\Controllers\Student\ProfileController;
 use App\Http\Controllers\Student\QuizController;
 use App\Http\Controllers\Student\ScheduleController;
+use App\Http\Controllers\Tutor\AccountController as TutorAccountController;
+use App\Http\Controllers\Tutor\DashboardController as TutorDashboardController;
+use App\Http\Controllers\Tutor\MaterialController as TutorMaterialController;
+use App\Http\Controllers\Tutor\QuizController as TutorQuizController;
+use App\Http\Controllers\Tutor\ScheduleController as TutorScheduleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -30,13 +35,35 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout/{slug}', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::post('/checkout/{slug}', [CheckoutController::class, 'store'])->name('checkout.process');
     Route::get('/checkout/{slug}/success', [CheckoutController::class, 'success'])->name('checkout.success');
+});
 
-    Route::get('/student/dashboard', [DashboardController::class, 'index'])->name('student.dashboard');
-    Route::get('/student/jadwal', [ScheduleController::class, 'index'])->name('student.schedule');
-    Route::get('/student/materi', [MaterialController::class, 'index'])->name('student.materials');
-    Route::get('/student/materi/{slug}', [MaterialController::class, 'show'])->name('student.materials.show');
-    Route::get('/student/quiz', [QuizController::class, 'index'])->name('student.quiz');
-    Route::get('/student/quiz/{slug}', [QuizController::class, 'show'])->name('student.quiz.show');
-    Route::get('/student/profile', [ProfileController::class, 'show'])->name('student.profile');
-    Route::post('/student/profile', [ProfileController::class, 'update'])->name('student.profile.update');
+Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/jadwal', [ScheduleController::class, 'index'])->name('schedule');
+    Route::get('/materi', [MaterialController::class, 'index'])->name('materials');
+    Route::get('/materi/{slug}', [MaterialController::class, 'show'])->name('materials.show');
+    Route::get('/quiz', [QuizController::class, 'index'])->name('quiz');
+    Route::get('/quiz/{slug}', [QuizController::class, 'show'])->name('quiz.show');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
+
+Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->name('tutor.')->group(function () {
+    Route::get('/dashboard', [TutorDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/materi', [TutorMaterialController::class, 'index'])->name('materials.index');
+    Route::get('/materi/tambah', [TutorMaterialController::class, 'create'])->name('materials.create');
+    Route::post('/materi', [TutorMaterialController::class, 'store'])->name('materials.store');
+    Route::get('/materi/{material:slug}/edit', [TutorMaterialController::class, 'edit'])->name('materials.edit');
+    Route::put('/materi/{material:slug}', [TutorMaterialController::class, 'update'])->name('materials.update');
+
+    Route::get('/quiz', [TutorQuizController::class, 'index'])->name('quizzes.index');
+    Route::get('/quiz/tambah', [TutorQuizController::class, 'create'])->name('quizzes.create');
+    Route::post('/quiz', [TutorQuizController::class, 'store'])->name('quizzes.store');
+    Route::get('/quiz/{quiz:slug}/edit', [TutorQuizController::class, 'edit'])->name('quizzes.edit');
+    Route::put('/quiz/{quiz:slug}', [TutorQuizController::class, 'update'])->name('quizzes.update');
+
+    Route::get('/jadwal', [TutorScheduleController::class, 'index'])->name('schedule.index');
+
+    Route::get('/pengaturan', [TutorAccountController::class, 'edit'])->name('account.edit');
+    Route::put('/pengaturan', [TutorAccountController::class, 'update'])->name('account.update');
 });
