@@ -9,6 +9,7 @@ use App\Models\ScheduleSession;
 use App\Support\ScheduleViewData;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {
@@ -19,25 +20,31 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $sessions = ScheduleSession::orderBy('start_at')->get();
+        $sessions = Schema::hasTable('schedule_sessions')
+            ? ScheduleSession::orderBy('start_at')->get()
+            : collect();
         $schedule = ScheduleViewData::fromCollection($sessions);
 
-        $recentMaterials = Material::orderByDesc('created_at')
-            ->take(3)
-            ->get()
-            ->map(fn ($material) => [
-                'slug' => $material->slug,
-                'subject' => $material->subject,
-                'title' => $material->title,
-                'summary' => $material->summary,
-            ]);
+        $recentMaterials = Schema::hasTable('materials')
+            ? Material::orderByDesc('created_at')
+                ->take(3)
+                ->get()
+                ->map(fn ($material) => [
+                    'slug' => $material->slug,
+                    'subject' => $material->subject,
+                    'title' => $material->title,
+                    'summary' => $material->summary,
+                ])
+            : collect();
 
-        $activeEnrollment = Auth::user()
-            ->enrollments()
-            ->with('package')
-            ->where('is_active', true)
-            ->orderByDesc('ends_at')
-            ->first();
+        $activeEnrollment = Schema::hasTable('enrollments')
+            ? Auth::user()
+                ->enrollments()
+                ->with('package')
+                ->where('is_active', true)
+                ->orderByDesc('ends_at')
+                ->first()
+            : null;
 
         return view('student.dashboard', [
             'schedule' => $schedule,
