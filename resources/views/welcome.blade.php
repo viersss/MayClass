@@ -88,14 +88,13 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 24px 32px;
+                padding: 24px clamp(20px, 5vw, 40px);
                 gap: 32px;
-                width: calc(100% - 64px);
-                max-width: 1180px;
-                margin: 0 auto 32px;
+                width: 100%;
+                margin: 0 0 32px;
                 flex-wrap: wrap;
                 background: var(--nav-surface);
-                border-radius: var(--radius-xl);
+                border-radius: 0;
                 border: 1px solid rgba(255, 255, 255, 0.18);
                 box-shadow: 0 20px 48px rgba(8, 43, 31, 0.45);
                 backdrop-filter: blur(8px);
@@ -103,7 +102,7 @@
 
             @media (max-width: 1280px) {
                 nav {
-                    padding: 24px 28px;
+                    padding: 22px 28px;
                 }
             }
 
@@ -111,8 +110,8 @@
                 nav {
                     padding: 18px 18px;
                     justify-content: center;
-                    width: calc(100% - 32px);
-                    margin: 0 auto 24px;
+                    width: 100%;
+                    margin: 0 0 24px;
                 }
             }
 
@@ -818,7 +817,13 @@
                     <a href="#faq">FAQ</a>
                 </div>
                 <div class="nav-actions">
-                    <a class="btn btn-primary" href="{{ route('login') }}">Gabung Sekarang</a>
+                    <a
+                        class="btn btn-primary"
+                        href="{{ route('login') }}"
+                        data-redirect="{{ route('login') }}"
+                    >
+                        Gabung Sekarang
+                    </a>
                 </div>
             </nav>
             <div class="hero" id="beranda">
@@ -830,7 +835,13 @@
                         penuh dukungan menuju kampus impianmu.
                     </p>
                     <div class="hero-actions">
-                        <a class="btn btn-primary" href="{{ route('login') }}">Gabung Sekarang</a>
+                        <a
+                            class="btn btn-primary"
+                            href="{{ route('login') }}"
+                            data-redirect="{{ route('login') }}"
+                        >
+                            Gabung Sekarang
+                        </a>
                         <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
                     </div>
                     <div class="hero-stats">
@@ -1277,6 +1288,19 @@
 
                 // Initialize with first slide
                 scrollToSlide(0);
+            });
+
+            document.querySelectorAll('[data-redirect]').forEach((trigger) => {
+                trigger.addEventListener('click', (event) => {
+                    const target = trigger.getAttribute('data-redirect');
+
+                    if (!target) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    window.location.href = target;
+                });
             });
         </script>
     </body>
