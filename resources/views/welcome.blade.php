@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>MayClass - Langkah Pasti Menuju Prestasi</title>
+        <title>MayClass - Bimbingan Belajar Premium untuk Raih Prestasi</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -13,14 +13,18 @@
         <style>
             :root {
                 color-scheme: light;
-                --primary: #3db7ad;
-                --primary-dark: #258a83;
-                --accent: #6f5df6;
-                --text-dark: #152033;
-                --text-muted: #5c677d;
+                --maroon-900: #6d0f18;
+                --maroon-800: #8e1d24;
+                --maroon-700: #a42b2e;
+                --gold-500: #f2b859;
+                --gold-400: #ffd38a;
+                --neutral-900: #1f2328;
+                --neutral-700: #4d5660;
+                --neutral-100: #f6f7f8;
                 --surface: #ffffff;
-                --bg-alt: #f5fbfb;
-                --shadow: 0 18px 40px rgba(27, 80, 90, 0.1);
+                --shadow-lg: 0 24px 60px rgba(66, 10, 17, 0.2);
+                --shadow-md: 0 18px 40px rgba(66, 10, 17, 0.12);
+                --radius-xl: 32px;
             }
 
             *,
@@ -32,7 +36,7 @@
             body {
                 margin: 0;
                 font-family: "Poppins", sans-serif;
-                color: var(--text-dark);
+                color: var(--neutral-900);
                 background: #ffffff;
                 line-height: 1.6;
             }
@@ -48,30 +52,37 @@
                 text-decoration: none;
             }
 
-            /* Use full-bleed sections; keep inner content centered with small side padding */
             .container {
-                width: 100%;
-                margin: 0;
-                padding: 0; /* remove large adaptive paddings to avoid big empty sides */
-            }
-
-            .content-width {
-                /* full-bleed content: span the entire viewport width with no side margins */
-                width: 100%;
-                margin: 0;
-                padding: 0; /* remove inner horizontal padding to ensure edge-to-edge layout */
+                width: min(1180px, 100%);
+                margin: 0 auto;
+                padding: 0 32px;
             }
 
             header {
-                /* use a green gradient and remove the large curved corner */
-                background: linear-gradient(135deg, #f1fdfb 0%, #dff8f4 45%, #e6fff9 100%);
-                border-bottom-left-radius: 0;
+                position: relative;
+                background: linear-gradient(135deg, var(--maroon-900) 0%, var(--maroon-700) 100%);
+                color: #ffffff;
+                border-bottom-left-radius: 120px;
                 overflow: hidden;
             }
 
+            header::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at 20% 20%, rgba(255, 211, 138, 0.35), transparent 55%),
+                    radial-gradient(circle at 80% 0%, rgba(255, 255, 255, 0.18), transparent 45%);
+                pointer-events: none;
+            }
+
             nav {
-                display: block; /* we use an inner box for the white navbar */
+                position: relative;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
                 padding: 28px 0;
+                gap: 32px;
             }
 
             .brand {
@@ -80,327 +91,314 @@
                 gap: 14px;
                 font-weight: 600;
                 font-size: 1.25rem;
-                color: var(--primary-dark);
             }
 
             .brand img {
-                width: 44px;
-                height: 44px;
+                width: 48px;
+                height: 48px;
                 object-fit: contain;
             }
-
-            /* white navbar box */
-            .nav-box {
-                background: var(--surface);
-                border-radius: 12px;
-                padding: 10px 18px;
-                box-shadow: 0 8px 24px rgba(20, 60, 70, 0.08);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            /* 3-column grid so center links are perfectly centered regardless of left/right widths */
-            .nav-inner {
-                display: grid;
-                grid-template-columns: 1fr auto 1fr; /* ensures center column stays centered */
-                align-items: center;
-                width: 100%;
-                gap: 16px;
-            }
-
-            .nav-left { grid-column: 1; justify-self: start; display: flex; align-items: center; }
-            .nav-center { grid-column: 2; justify-self: center; display: flex; justify-content: center; }
-            .nav-right { grid-column: 3; justify-self: end; display: flex; justify-content: flex-end; gap: 16px; align-items: center; }
 
             .nav-links {
                 display: flex;
                 align-items: center;
-                gap: 22px;
+                gap: 28px;
                 font-size: 0.95rem;
-                color: var(--text-muted);
             }
 
-            .nav-links a:hover,
-            .nav-actions a:hover {
-                color: var(--primary-dark);
+            .nav-links a {
+                color: rgba(255, 255, 255, 0.78);
+                transition: color 0.2s ease;
+            }
+
+            .nav-links a:hover {
+                color: #ffffff;
             }
 
             .nav-actions {
                 display: flex;
                 align-items: center;
-                gap: 12px;
+                gap: 16px;
             }
-
-            .nav-actions form {
-                margin: 0;
-            }
-
-            /* mobile nav toggle */
-            .nav-toggle {
-                display: none;
-                background: transparent;
-                border: none;
-                width: 44px;
-                height: 44px;
-                border-radius: 10px;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-            }
-            .nav-toggle svg { width: 22px; height: 22px; color: var(--primary-dark); }
-
-            /* helper (unused on desktop) */
-            .nav-collapsed { display: none; }
 
             .btn {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                padding: 12px 26px;
+                padding: 12px 28px;
                 border-radius: 999px;
                 font-size: 0.95rem;
                 font-weight: 500;
                 border: 1px solid transparent;
-                transition: all 0.2s ease;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
                 cursor: pointer;
             }
 
             .btn-outline {
-                border-color: rgba(61, 183, 173, 0.3);
-                background: rgba(61, 183, 173, 0.08);
-                color: var(--primary-dark);
+                border-color: rgba(255, 255, 255, 0.38);
+                color: #ffffff;
+                background: transparent;
             }
 
             .btn-outline:hover {
-                border-color: var(--primary-dark);
-                background: rgba(61, 183, 173, 0.16);
+                transform: translateY(-1px);
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
             }
 
-            .btn-primary {
-                background: linear-gradient(120deg, var(--primary) 0%, #5ad7c9 100%);
-                color: #ffffff;
-                box-shadow: 0 14px 32px rgba(61, 183, 173, 0.32);
+            .btn-gold {
+                background: linear-gradient(120deg, var(--gold-400) 0%, var(--gold-500) 100%);
+                color: #6d3d09;
+                box-shadow: 0 16px 40px rgba(242, 184, 89, 0.36);
             }
 
-            .btn-primary:hover {
-                filter: brightness(0.95);
+            .btn-gold:hover {
                 transform: translateY(-1px);
             }
 
-            .pill {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 18px;
-                border-radius: 999px;
-                background: rgba(61, 183, 173, 0.12);
-                color: var(--primary-dark);
-                font-size: 0.85rem;
-                font-weight: 600;
-            }
-
             .hero {
-                display: grid;
-                grid-template-columns: 1fr; /* single column: image will become background silhouette */
-                align-items: center;
-                gap: 56px;
-                padding: 40px 0 80px;
                 position: relative;
-                overflow: visible;
-            }
-
-            /* center hero textual content horizontally but keep natural vertical flow */
-            .hero-content {
-                display: flex;
-                flex-direction: column;
+                z-index: 1;
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 56px;
                 align-items: center;
-                text-align: center;
-                padding: 0 20px;
+                padding: 48px 0 120px;
             }
 
             .hero h1 {
-                font-size: clamp(2.4rem, 4vw, 3.6rem);
+                font-size: clamp(2.7rem, 4vw, 3.9rem);
                 line-height: 1.15;
-                margin: 20px auto 18px;
-                max-width: 1100px; /* allow title to stretch wider */
-                width: 100%;
+                margin: 18px 0;
             }
 
             .hero p {
-                max-width: 880px; /* wider paragraph to match longer title */
-                color: var(--text-muted);
-                margin: 0 auto 34px;
+                color: rgba(255, 255, 255, 0.84);
+                margin: 0 0 32px;
+                max-width: 520px;
             }
 
-            .hero-cta {
+            .badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 18px;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.16);
+                font-weight: 600;
+                letter-spacing: 0.02em;
+            }
+
+            .hero-actions {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 16px;
-                margin-bottom: 36px;
-                justify-content: center; /* center CTA buttons */
+                margin-bottom: 40px;
             }
 
-            .stats {
+            .hero-stats {
+                display: grid;
+                gap: 18px;
+                background: rgba(255, 255, 255, 0.12);
+                border-radius: 24px;
+                padding: 22px 28px;
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(255, 255, 255, 0.16);
+                max-width: 440px;
+            }
+
+            .hero-stats-row {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 20px;
-                justify-content: center; /* center stat cards */
+                gap: 18px;
             }
 
-            .stat-card {
-                padding: 18px 24px;
-                border-radius: 20px;
-                background: rgba(255, 255, 255, 0.7);
-                backdrop-filter: blur(6px);
-                min-width: 180px;
-                box-shadow: 0 10px 22px rgba(40, 110, 120, 0.12);
+            .hero-stat {
+                flex: 1 1 160px;
+                display: grid;
+                gap: 2px;
             }
 
-            .stat-card h3 {
-                margin: 0 0 8px;
+            .hero-stat strong {
                 font-size: 1.6rem;
             }
 
-            .stat-card {
-                text-align: center; /* center numbers and labels */
-            }
-
             .hero-art {
-                /* position image as a low-opacity silhouette behind the hero text */
-                position: absolute;
-                right: 4%;
-                top: 50%;
-                transform: translateY(-50%);
-                width: 48%;
-                height: 78%;
-                z-index: 0;
-                pointer-events: none;
-                display: block;
-                overflow: hidden;
+                position: relative;
             }
 
             .hero-art::after {
-                /* subtle green wash behind image to match theme */
                 content: "";
                 position: absolute;
-                inset: 0;
-                background: rgba(61, 183, 173, 0.06);
+                inset: 10% 0 -6% 12%;
+                background: radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.22), transparent 65%);
+                border-radius: var(--radius-xl);
                 z-index: 0;
             }
 
             .hero-art img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                opacity: 0.10; /* silhouette effect */
-                filter: grayscale(100%) blur(1px);
-                transform: translateZ(0);
-            }
-
-            .hero-content { position: relative; z-index: 2; }
-            .hero-inline {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                width: 80%;
-                max-width: 1100px;
-                height: auto;
-                opacity: 0.06;
-                filter: grayscale(100%) blur(1px);
-                pointer-events: none;
+                position: relative;
                 z-index: 1;
+                border-radius: var(--radius-xl);
+                box-shadow: var(--shadow-lg);
             }
 
             .section {
                 padding: 96px 0;
             }
 
-            .section.alt {
-                background: var(--bg-alt);
-            }
-
             .section-header {
+                max-width: 760px;
+                margin: 0 auto 56px;
+                text-align: center;
                 display: grid;
                 gap: 16px;
-                margin-bottom: 64px;
-                max-width: 760px;
             }
 
             .section-title {
                 margin: 0;
-                font-size: clamp(2rem, 3vw, 2.8rem);
+                font-size: clamp(2rem, 3vw, 2.7rem);
+                color: var(--neutral-900);
             }
 
             .section-subtitle {
                 margin: 0;
-                color: var(--text-muted);
+                color: var(--neutral-700);
             }
 
-            .features-grid {
+            .articles-grid {
                 display: grid;
-                grid-template-columns: repeat(4, minmax(0, 1fr));
+                grid-template-columns: repeat(3, minmax(0, 1fr));
                 gap: 28px;
             }
 
-            .feature-card {
+            .article-card {
                 background: var(--surface);
-                border-radius: 24px;
-                padding: 28px;
-                box-shadow: var(--shadow);
+                border-radius: 28px;
+                box-shadow: var(--shadow-md);
+                overflow: hidden;
                 display: grid;
-                gap: 16px;
+                grid-template-rows: 220px 1fr;
             }
 
-            .feature-icon {
-                width: 56px;
-                height: 56px;
-                border-radius: 16px;
-                background: rgba(61, 183, 173, 0.12);
-                display: grid;
-                place-items: center;
-                font-size: 1.6rem;
+            .article-card img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
 
-            .programs-grid {
+            .article-content {
+                padding: 24px 26px 32px;
+                display: grid;
+                gap: 10px;
+            }
+
+            .article-content h3 {
+                margin: 0;
+                font-size: 1.15rem;
+                color: var(--neutral-900);
+            }
+
+            .article-content p {
+                margin: 0;
+                color: var(--neutral-700);
+                font-size: 0.95rem;
+            }
+
+            .link-muted {
+                color: var(--maroon-800);
+                font-weight: 600;
+            }
+
+            .pricing-section {
+                background: linear-gradient(135deg, #fff6ec 0%, #fff9f2 100%);
+            }
+
+            .pricing-grid {
                 display: grid;
                 grid-template-columns: repeat(3, minmax(0, 1fr));
                 gap: 32px;
             }
 
-            .program-card {
-                border-radius: 28px;
-                padding: 32px;
+            .pricing-card {
                 background: var(--surface);
-                box-shadow: var(--shadow);
+                border-radius: 32px;
+                padding: 36px 32px;
+                box-shadow: var(--shadow-md);
                 display: grid;
                 gap: 18px;
+                position: relative;
             }
 
-            .program-card ul {
+            .pricing-card::after {
+                content: "";
+                position: absolute;
+                inset: 18px;
+                border-radius: 26px;
+                border: 1px dashed rgba(162, 43, 46, 0.18);
+                pointer-events: none;
+            }
+
+            .pricing-card strong {
+                font-size: 1.4rem;
+            }
+
+            .pricing-price {
+                font-size: 2rem;
+                color: var(--maroon-800);
+                font-weight: 700;
+            }
+
+            .pricing-features {
                 list-style: none;
                 margin: 0;
                 padding: 0;
                 display: grid;
                 gap: 12px;
-                color: var(--text-muted);
+                color: var(--neutral-700);
             }
 
-            .program-card .price {
-                font-size: 1.5rem;
-                margin: 0;
-                color: var(--primary-dark);
-                font-weight: 600;
+            .pricing-features li::before {
+                content: "•";
+                margin-right: 8px;
+                color: var(--gold-500);
+            }
+
+            .highlight-section {
+                position: relative;
+                background: linear-gradient(110deg, rgba(141, 27, 36, 0.96), rgba(81, 11, 17, 0.92)),
+                    url("https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1600&q=80")
+                        center/cover;
+                color: #ffffff;
+                border-radius: 100px 0 0 100px;
+                overflow: hidden;
+                margin: 0 32px;
+            }
+
+            .highlight-content {
+                padding: 90px clamp(32px, 6vw, 96px);
+                display: grid;
+                gap: 32px;
+            }
+
+            .highlight-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 24px;
+            }
+
+            .highlight-card {
+                background: rgba(255, 255, 255, 0.12);
+                border-radius: 24px;
+                padding: 22px;
+                backdrop-filter: blur(12px);
+                display: grid;
+                gap: 12px;
             }
 
             .slider {
                 position: relative;
             }
-
-            /* hide previous/next buttons — keep horizontal scrolling when overflowed */
-            .slider-controls { display: none !important; }
 
             .slider-track {
                 display: flex;
@@ -416,7 +414,7 @@
             }
 
             .slider-track::-webkit-scrollbar-thumb {
-                background: rgba(61, 183, 173, 0.35);
+                background: rgba(109, 15, 24, 0.32);
                 border-radius: 999px;
             }
 
@@ -427,19 +425,19 @@
 
             .slider-controls {
                 position: absolute;
-                inset: -68px 0 auto auto;
+                inset: -72px 0 auto auto;
                 display: flex;
                 gap: 12px;
             }
 
             .slider button {
-                width: 44px;
-                height: 44px;
+                width: 46px;
+                height: 46px;
                 border-radius: 50%;
                 border: none;
                 background: var(--surface);
-                box-shadow: 0 10px 24px rgba(20, 60, 70, 0.15);
-                color: var(--primary-dark);
+                color: var(--maroon-800);
+                box-shadow: var(--shadow-md);
                 cursor: pointer;
                 transition: transform 0.2s ease;
             }
@@ -448,38 +446,48 @@
                 transform: translateY(-2px);
             }
 
-            .tutor-card,
-            .testimonial-card {
-                background: var(--surface);
+            .testimonial-card,
+            .mentor-card {
+                background: #ffffff;
                 border-radius: 28px;
                 padding: 28px;
                 display: grid;
-                gap: 18px;
-                box-shadow: var(--shadow);
+                gap: 16px;
+                box-shadow: var(--shadow-md);
             }
 
-            .tutor-card img,
-            .testimonial-card img {
+            .testimonial-card img,
+            .mentor-card img {
                 width: 100%;
                 border-radius: 20px;
             }
 
             .testimonial-card p {
                 margin: 0;
-                color: var(--text-muted);
+                color: var(--neutral-700);
                 font-size: 0.95rem;
             }
 
-            .faq-list {
+            .mentor-card {
+                text-align: center;
+            }
+
+            .mentor-role {
+                color: var(--neutral-700);
+                font-size: 0.95rem;
+            }
+
+            .faq-grid {
                 display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 18px;
             }
 
             details {
-                border-radius: 20px;
+                border-radius: 22px;
                 background: var(--surface);
-                padding: 22px 28px;
-                box-shadow: var(--shadow);
+                padding: 20px 24px;
+                box-shadow: var(--shadow-md);
             }
 
             summary {
@@ -489,29 +497,19 @@
             }
 
             footer {
-                background: #0f172a;
-                color: rgba(255, 255, 255, 0.72);
-                padding: 64px 0 48px;
-            }
-
-            /* give footer some comfortable side padding so it isn't flush to the edges */
-            footer .content-width {
-                padding-left: 28px;
-                padding-right: 28px;
-                max-width: 1400px;
-                margin: 0 auto;
+                background: #f0f1f3;
+                padding: 72px 0 48px;
             }
 
             .footer-grid {
                 display: grid;
                 grid-template-columns: repeat(4, minmax(0, 1fr));
                 gap: 32px;
-                margin-bottom: 40px;
             }
 
             .footer-brand {
                 display: grid;
-                gap: 18px;
+                gap: 16px;
             }
 
             .footer-brand img {
@@ -520,89 +518,58 @@
 
             .footer-links {
                 display: grid;
-                gap: 8px;
+                gap: 10px;
+                color: var(--neutral-700);
+                font-size: 0.95rem;
             }
 
             .footer-links a {
-                color: rgba(255, 255, 255, 0.72);
+                color: inherit;
             }
 
             .footer-links a:hover {
-                color: #ffffff;
+                color: var(--maroon-800);
             }
 
             .copyright {
-                margin: 0;
+                margin: 48px 0 0;
                 text-align: center;
+                color: var(--neutral-700);
                 font-size: 0.9rem;
-                color: rgba(255, 255, 255, 0.6);
             }
 
             @media (max-width: 1080px) {
-                .features-grid {
-                    grid-template-columns: repeat(2, minmax(0, 1fr));
-                }
-
-                .programs-grid {
-                    grid-template-columns: repeat(2, minmax(0, 1fr));
-                }
-
-                .slider-controls {
-                    inset: auto 24px -24px auto;
-                }
-            }
-
-            @media (max-width: 840px) {
-                nav {
-                    flex-wrap: wrap;
-                    justify-content: space-between;
-                    text-align: left;
-                }
-
-                /* hide regular links and actions by default on small screens; toggle via JS */
-                .nav-links,
-                .nav-actions { display: none; }
-                .nav-inner.open .nav-links,
-                .nav-inner.open .nav-actions { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-                .nav-toggle { display: inline-flex; }
-
                 .hero {
                     grid-template-columns: 1fr;
                     text-align: center;
                 }
 
-                /* make hero silhouettes smaller on narrow screens so they don't overwhelm text */
-                .hero-art {
-                    right: 2%;
-                    top: 60%;
-                    width: 60%;
-                    height: 46%;
-                    opacity: 0.08;
-                }
-
-                .hero-inline {
-                    width: 92%;
-                    opacity: 0.04;
-                    transform: translate(-50%, -48%);
-                }
-
                 .hero p,
-                .section-header {
+                .hero-stats {
                     margin-left: auto;
                     margin-right: auto;
                 }
 
-                .hero-cta,
-                .stats {
+                .hero-actions {
                     justify-content: center;
                 }
 
                 .hero-art::after {
-                    inset: 12% 4% 0 4%;
+                    inset: 12% 12% -6% 12%;
                 }
 
-                .programs-grid {
-                    grid-template-columns: 1fr;
+                .articles-grid,
+                .pricing-grid,
+                .highlight-grid {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
+                .highlight-section {
+                    border-radius: 80px 0 0 80px;
+                }
+
+                .slider-controls {
+                    inset: -56px 24px auto auto;
                 }
 
                 .footer-grid {
@@ -610,21 +577,45 @@
                 }
             }
 
-            @media (max-width: 640px) {
+            @media (max-width: 760px) {
+                nav {
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    text-align: center;
+                }
+
+                .nav-links {
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+
                 .container {
-                    padding: 0 18px;
+                    padding: 0 20px;
                 }
 
-                .features-grid {
+                .articles-grid,
+                .pricing-grid,
+                .highlight-grid,
+                .faq-grid {
                     grid-template-columns: 1fr;
                 }
 
-                .footer-grid {
-                    grid-template-columns: 1fr;
+                .hero-stats {
+                    max-width: none;
+                    width: 100%;
+                }
+
+                .highlight-section {
+                    margin: 0 20px;
+                    border-radius: 48px;
                 }
 
                 .slider-controls {
                     display: none;
+                }
+
+                .footer-grid {
+                    grid-template-columns: 1fr;
                 }
             }
         </style>
@@ -633,165 +624,248 @@
         <header>
             <div class="container">
                 <nav>
-                    <div class="nav-box content-width">
-                        <div class="nav-inner">
-                            <div class="nav-left">
-                                <a class="brand" href="/">
-                                    <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                                </a>
-                            </div>
-
-                            <div class="nav-center nav-links">
-                                <a href="#tentang">Tentang</a>
-                                <a href="#program">Program</a>
-                                <a href="#tentor">Tentor</a>
-                                <a href="#testimoni">Testimoni</a>
-                                <a href="#faq">FAQ</a>
-                            </div>
-                            <div class="nav-right nav-actions">
-                                @auth
-                                    <a class="btn btn-outline" href="{{ route('student.profile') }}">Masuk</a>
-                                    <form method="post" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button class="btn btn-primary" type="submit" style="box-shadow: none;">Keluar</button>
-                                    </form>
-                                @else
-                                    <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
-                                    <a class="btn btn-primary" href="{{ route('register') }}">Daftar</a>
-                                @endauth
-                            </div>
-
-                            <button class="nav-toggle" aria-expanded="false" aria-label="Toggle menu">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 6h16M4 12h16M4 18h16"></path>
-                                </svg>
-                            </button>
-                        </div>
+                    <a class="brand" href="/">
+                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <span>MayClass</span>
+                    </a>
+                    <div class="nav-links">
+                        <a href="#beranda">Beranda</a>
+                        <a href="#artikel">Artikel</a>
+                        <a href="#paket">Paket Belajar</a>
+                        <a href="#keunggulan">Keunggulan</a>
+                        <a href="#testimoni">Testimoni</a>
+                        <a href="#faq">FAQ</a>
+                    </div>
+                    <div class="nav-actions">
+                        <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
+                        <a class="btn btn-gold" href="{{ route('register') }}">Daftar</a>
                     </div>
                 </nav>
-                <section class="hero content-width">
-                    <div class="hero-content">
-                        <img class="hero-inline" src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1400&q=80" alt="" aria-hidden="true" />
-                        <span class="pill">Langkah Pasti Menuju Prestasi</span>
-                        <h1>Platform Bimbingan Belajar Terintegrasi untuk Semua Kebutuhan Akademik</h1>
+                <div class="hero" id="beranda">
+                    <div>
+                        <span class="badge">Bimbel Digital MayClass</span>
+                        <h1>Belajar Nyaman, Prestasi Mengesankan</h1>
                         <p>
-                            MayClass menghadirkan pengalaman belajar terarah bersama tentor profesional,
-                            sistem monitoring real-time, serta fitur fleksibel yang menyesuaikan gaya belajar
-                            siswa modern.
+                            Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel, dan
+                            penuh dukungan menuju kampus impianmu.
                         </p>
-                        <div class="hero-cta">
-                            <a class="btn btn-primary" href="{{ route('packages.index') }}">Jelajahi Paket</a>
-                            <a class="btn btn-outline" href="#kontak">Hubungi Kami</a>
+                        <div class="hero-actions">
+                            <a class="btn btn-gold" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
+                            <a class="btn btn-outline" href="{{ route('login') }}">Masuk sebagai Siswa</a>
                         </div>
-                        <div class="stats">
-                            <div class="stat-card">
-                                <h3>12K+</h3>
-                                <p>Siswa aktif setiap bulan dari berbagai jenjang pendidikan.</p>
-                            </div>
-                            <div class="stat-card">
-                                <h3>500+</h3>
-                                <p>Tentor berpengalaman dan tersertifikasi di bidangnya.</p>
+                        <div class="hero-stats">
+                            <div>Dipercaya ribuan pelajar dan orang tua di seluruh Indonesia.</div>
+                            <div class="hero-stats-row">
+                                <div class="hero-stat">
+                                    <strong>2.000+</strong>
+                                    <span>Siswa aktif MayClass</span>
+                                </div>
+                                <div class="hero-stat">
+                                    <strong>120+</strong>
+                                    <span>Tentor profesional</span>
+                                </div>
+                                <div class="hero-stat">
+                                    <strong>98%</strong>
+                                    <span>Tingkat kepuasan</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="hero-art">
-                        <img src="https://images.unsplash.com/photo-1529070538774-1843cb3265df?auto=format&fit=crop&w=1400&q=80" alt="Ilustrasi siswa belajar" />
+                        <img src="{{ \App\Support\ImageRepository::url('hero') }}" alt="Ilustrasi siswa MayClass" />
                     </div>
-                </section>
+                </div>
             </div>
         </header>
 
-        <section class="section" id="tentang">
+        <section class="section" id="artikel">
             <div class="container">
-                <div class="content-width">
-                    <div class="section-header" style="text-align: center; margin: 0 auto;">
-                        <span class="pill">Tentang MayClass</span>
-                        <h2 class="section-title">Platform Pembelajaran Terlengkap</h2>
-                        <p class="section-subtitle">
-                            Kami menghadirkan solusi bimbingan belajar end-to-end yang menyatukan siswa, tentor, dan
-                            admin dalam satu ekosistem digital yang mudah digunakan.
+                <div class="section-header">
+                    <span class="badge" style="background: rgba(142, 29, 36, 0.08); color: var(--maroon-800);">
+                        Artikel Terupdate
+                    </span>
+                    <h2 class="section-title">Wawasan Terbaru untuk Dukung Persiapanmu</h2>
+                    <p class="section-subtitle">
+                        Nikmati rangkuman materi, strategi ujian, dan cerita motivasi dari tim akademik MayClass agar kamu
+                        selalu selangkah di depan.
+                    </p>
+                </div>
+                <div class="articles-grid">
+                    <article class="article-card">
+                        <img src="{{ \App\Support\ImageRepository::url('materials.persamaan_linear') }}" alt="Artikel UTBK" />
+                        <div class="article-content">
+                            <h3>Kenali 7 Subtes UTBK yang Harus Kamu Taklukkan</h3>
+                            <p>
+                                Panduan lengkap memahami struktur TPS dan Literasi dengan latihan intensif dari mentor MayClass.
+                            </p>
+                            <a class="link-muted" href="{{ route('packages.index') }}">Baca Program Unggulan →</a>
+                        </div>
+                    </article>
+                    <article class="article-card">
+                        <img src="{{ \App\Support\ImageRepository::url('materials.kimia_termokimia') }}" alt="Artikel SKD" />
+                        <div class="article-content">
+                            <h3>Strategi Lulus SKD ASN &amp; PPPK Bersama Mentor Ahli</h3>
+                            <p>
+                                Kisi-kisi terbaru, tips manajemen waktu, dan latihan soal real untuk skor maksimal di seleksi CPNS.
+                            </p>
+                            <a class="link-muted" href="{{ route('packages.index') }}">Ikuti Tryout Interaktif →</a>
+                        </div>
+                    </article>
+                    <article class="article-card">
+                        <img src="{{ \App\Support\ImageRepository::url('materials.bahasa_grammar') }}" alt="Artikel motivasi" />
+                        <div class="article-content">
+                            <h3>Cerita Alumni: Raih Kampus Impian dari Nol</h3>
+                            <p>
+                                Belajar dari pengalaman siswa MayClass yang berhasil masuk kampus favorit berkat program intensif.
+                            </p>
+                            <a class="link-muted" href="{{ route('packages.index') }}">Pelajari Rencana Belajar →</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section pricing-section" id="paket">
+            <div class="container">
+                <div class="section-header">
+                    <span class="badge" style="background: rgba(242, 184, 89, 0.18); color: var(--maroon-800);">
+                        Paket Belajar
+                    </span>
+                    <h2 class="section-title">Pilih Paket Favoritmu &amp; Belajar Bareng Mentor Andal</h2>
+                    <p class="section-subtitle">
+                        Mulai dari kelas reguler, persiapan UTBK, hingga bimbingan CPNS—MayClass siap menemanimu dengan sesi
+                        interaktif dan laporan perkembangan rutin.
+                    </p>
+                </div>
+                <div class="pricing-grid">
+                    <article class="pricing-card">
+                        <span class="badge" style="background: rgba(162, 43, 46, 0.12); color: var(--maroon-800);">Tryout SKD</span>
+                        <strong>Simulasi Premium</strong>
+                        <div class="pricing-price">Rp30K</div>
+                        <div style="color: var(--neutral-700);">Diskon spesial dari Rp60K/paket</div>
+                        <ul class="pricing-features">
+                            <li>Bank soal HOTS + pembahasan video</li>
+                            <li>Analisis skor otomatis &amp; ranking nasional</li>
+                            <li>Group coaching bersama mentor ASN</li>
+                        </ul>
+                        <a class="btn btn-gold" href="{{ route('packages.index') }}">Beli Paket</a>
+                    </article>
+                    <article class="pricing-card">
+                        <span class="badge" style="background: rgba(162, 43, 46, 0.12); color: var(--maroon-800);">Tryout TPA</span>
+                        <strong>Bundling Stan/Polstat</strong>
+                        <div class="pricing-price">Rp30K</div>
+                        <div style="color: var(--neutral-700);">Diskon spesial dari Rp60K/paket</div>
+                        <ul class="pricing-features">
+                            <li>8 set TO intensif + pembahasan LIVE</li>
+                            <li>Pembinaan mindset &amp; habit belajar</li>
+                            <li>Prediksi soal dari mentor berpengalaman</li>
+                        </ul>
+                        <a class="btn btn-gold" href="{{ route('packages.index') }}">Beli Paket</a>
+                    </article>
+                    <article class="pricing-card">
+                        <span class="badge" style="background: rgba(162, 43, 46, 0.12); color: var(--maroon-800);">Tryout Matematika</span>
+                        <strong>Spesialis STIS</strong>
+                        <div class="pricing-price">Rp20K</div>
+                        <div style="color: var(--neutral-700);">Diskon spesial dari Rp40K/paket</div>
+                        <ul class="pricing-features">
+                            <li>Pembahasan konsep mendalam setiap sesi</li>
+                            <li>Latihan adaptif sesuai level kemampuan</li>
+                            <li>Group diskusi eksklusif bersama mentor</li>
+                        </ul>
+                        <a class="btn btn-gold" href="{{ route('packages.index') }}">Beli Paket</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="keunggulan">
+            <div class="highlight-section">
+                <div class="highlight-content">
+                    <div>
+                        <span class="badge" style="background: rgba(255, 255, 255, 0.16); color: #ffffff;">Mengapa MayClass?</span>
+                        <h2 style="margin: 18px 0 12px; font-size: clamp(2.1rem, 3vw, 3rem);">Bersama MayClass Belajarmu Lebih Seru</h2>
+                        <p style="margin: 0; max-width: 620px; color: rgba(255, 255, 255, 0.84);">
+                            Rasakan pengalaman belajar intensif, hangat, dan profesional. Tim MayClass memastikan setiap sesi
+                            berjalan menyenangkan dengan target capaian yang jelas.
                         </p>
                     </div>
-                    <div class="features-grid">
-                        <article class="feature-card">
-                            <div class="feature-icon">📚</div>
-                            <h3>Materi Lengkap &amp; Terstruktur</h3>
-                            <p>
-                                Kurikulum mengikuti standar nasional dan internasional dengan materi interaktif
-                                untuk meningkatkan pemahaman siswa.
+                    <div class="highlight-grid">
+                        <div class="highlight-card">
+                            <strong>Super Teacher</strong>
+                            <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
+                                Mentor pilihan dengan pengalaman mengajar panjang dan capaian prestisius.
                             </p>
-                        </article>
-                        <article class="feature-card">
-                            <div class="feature-icon">👩‍🏫</div>
-                            <h3>Tentor Profesional</h3>
-                            <p>
-                                Setiap tentor melalui proses seleksi ketat dan pelatihan pedagogik untuk memastikan
-                                kualitas pengajaran terbaik.
+                        </div>
+                        <div class="highlight-card">
+                            <strong>Materi Lengkap</strong>
+                            <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
+                                Silabus terbaru, bank soal adaptif, dan rekaman kelas siap diputar kapan pun.
                             </p>
-                        </article>
-                        <article class="feature-card">
-                            <div class="feature-icon">💳</div>
-                            <h3>Pengelolaan Keuangan Aman</h3>
-                            <p>
-                                Sistem administrasi keuangan transparan dan terintegrasi, memudahkan admin keuangan
-                                melakukan pencatatan.
+                        </div>
+                        <div class="highlight-card">
+                            <strong>Analisis Mendalam</strong>
+                            <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
+                                Pantau progres lewat laporan mingguan dan rekomendasi belajar personal.
                             </p>
-                        </article>
-                        <article class="feature-card">
-                            <div class="feature-icon">📊</div>
-                            <h3>Laporan Real-Time</h3>
-                            <p>
-                                Pantau perkembangan belajar siswa secara langsung melalui dashboard lengkap untuk
-                                admin utama dan wali murid.
+                        </div>
+                        <div class="highlight-card">
+                            <strong>Komunitas Aktif</strong>
+                            <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
+                                Saling dukung bersama teman sefrekuensi dan dapatkan motivasi harian.
                             </p>
-                        </article>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="section alt" id="program">
+        <section class="section" id="testimoni">
             <div class="container">
-                <div class="content-width">
-                    <div class="section-header" style="text-align: center; margin: 0 auto;">
-                        <span class="pill">Pilihan Program</span>
-                        <h2 class="section-title">Pilih Paket Sesuai Kebutuhan Belajar</h2>
-                        <p class="section-subtitle">
-                            Didesain untuk berbagai jenjang pendidikan dengan fleksibilitas jadwal, metode hybrid, dan
-                            pendampingan intensif dari tentor berpengalaman.
-                        </p>
+                <div class="section-header">
+                    <span class="badge" style="background: rgba(142, 29, 36, 0.08); color: var(--maroon-800);">
+                        Testimoni Siswa
+                    </span>
+                    <h2 class="section-title">Cerita Mereka yang Sudah Mewujudkan Mimpi</h2>
+                    <p class="section-subtitle">
+                        Dengar langsung pengalaman siswa MayClass yang berhasil menembus kampus favorit dan meraih skor tinggi
+                        di ujian bergengsi.
+                    </p>
+                </div>
+                <div class="slider" data-slider>
+                    <div class="slider-track">
+                        <article class="testimonial-card">
+                            <img src="{{ \App\Support\ImageRepository::url('testimonials.yohanna') }}" alt="Testimoni Yohanna" />
+                            <div style="display: grid; gap: 4px;">
+                                <strong>Yohanna • Skor UTBK 640</strong>
+                                <p>
+                                    "Mentor MayClass ramah banget dan jelas saat jelasin materi. Tryoutnya bikin aku makin percaya diri
+                                    masuk kampus impian."
+                                </p>
+                            </div>
+                        </article>
+                        <article class="testimonial-card">
+                            <img src="{{ \App\Support\ImageRepository::url('testimonials.xavier') }}" alt="Testimoni Xavier" />
+                            <div style="display: grid; gap: 4px;">
+                                <strong>Xavier • Skor SKD 433</strong>
+                                <p>
+                                    "Latihan soal dan pembahasan detailnya sangat membantu. Nilai SKD-ku naik signifikan setelah ikut
+                                    program intensif."
+                                </p>
+                            </div>
+                        </article>
+                        <article class="testimonial-card">
+                            <img src="{{ \App\Support\ImageRepository::url('testimonials.lisa') }}" alt="Testimoni Lisa" />
+                            <div style="display: grid; gap: 4px;">
+                                <strong>Lisa • Orang Tua Siswa</strong>
+                                <p>
+                                    "Progres anakku dipantau terus dan laporan mingguannya bikin kami tenang. MayClass responsif banget."
+                                </p>
+                            </div>
+                        </article>
                     </div>
-                    <div class="programs-grid">
-                        <article class="program-card">
-                            <h4>SD Kelas 4-6</h4>
-                            <p class="price">Rp 365<span style="font-size: 1rem; font-weight: 400;">/bulan</span></p>
-                            <ul>
-                                <li>Materi tematik dan persiapan AKM</li>
-                                <li>Live class 3x seminggu</li>
-                                <li>Monitoring perkembangan mingguan</li>
-                            </ul>
-                            <a class="btn btn-outline" href="{{ route('packages.index') }}">Selengkapnya</a>
-                        </article>
-                        <article class="program-card">
-                            <h4>SMP Kelas 7-9</h4>
-                            <p class="price">Rp 415<span style="font-size: 1rem; font-weight: 400;">/bulan</span></p>
-                            <ul>
-                                <li>Persiapan ujian semester &amp; AKM</li>
-                                <li>Bank soal interaktif</li>
-                                <li>Konsultasi belajar personal</li>
-                            </ul>
-                            <a class="btn btn-outline" href="{{ route('packages.index') }}">Selengkapnya</a>
-                        </article>
-                        <article class="program-card">
-                            <h4>SMA Kelas 10-12</h4>
-                            <p class="price">Rp 465<span style="font-size: 1rem; font-weight: 400;">/bulan</span></p>
-                            <ul>
-                                <li>Persiapan UTBK &amp; ujian mandiri</li>
-                                <li>Pemantauan progres real-time</li>
-                                <li>Try out berkala dan evaluasi</li>
-                            </ul>
-                            <a class="btn btn-outline" href="{{ route('packages.index') }}">Selengkapnya</a>
-                        </article>
+                    <div class="slider-controls" aria-hidden="true">
+                        <button type="button" data-slider-prev>&larr;</button>
+                        <button type="button" data-slider-next>&rarr;</button>
                     </div>
                 </div>
             </div>
@@ -799,99 +873,46 @@
 
         <section class="section" id="tentor">
             <div class="container">
-                <div class="content-width">
-                    <div class="section-header" style="text-align: center; margin: 0 auto;">
-                        <span class="pill">Tentor Berpengalaman</span>
-                        <h2 class="section-title">Super Tentor Berkualitas</h2>
-                        <p class="section-subtitle">
-                            Tim tentor kami terdiri dari lulusan terbaik dengan pengalaman mengajar dan sertifikasi
-                            profesional untuk memastikan pembelajaran efektif.
-                        </p>
-                    </div>
-                    <div class="slider" data-slider>
-                        <div class="slider-track">
-                            <article class="tutor-card">
-                                <img src="{{ \App\Support\ImageRepository::url('tutors.henny') }}" alt="Kak Henny" />
-                                <div>
-                                    <h4>Kak Henny</h4>
-                                    <p>Super Tutor Bahasa Indonesia &amp; Inggris</p>
-                                </div>
-                            </article>
-                            <article class="tutor-card">
-                                <img src="{{ \App\Support\ImageRepository::url('tutors.husein') }}" alt="Kak Husein" />
-                                <div>
-                                    <h4>Kak Husein</h4>
-                                    <p>Super Tutor Matematika &amp; Sains</p>
-                                </div>
-                            </article>
-                            <article class="tutor-card">
-                                <img src="{{ \App\Support\ImageRepository::url('tutors.pal') }}" alt="Kak Pal" />
-                                <div>
-                                    <h4>Kak Pal</h4>
-                                    <p>Super Tutor Fisika &amp; Kimia</p>
-                                </div>
-                            </article>
-                        </div>
-                        <div class="slider-controls" aria-hidden="true">
-                            <button type="button" data-slider-prev>&larr;</button>
-                            <button type="button" data-slider-next>&rarr;</button>
-                        </div>
-                    </div>
+                <div class="section-header">
+                    <span class="badge" style="background: rgba(142, 29, 36, 0.08); color: var(--maroon-800);">
+                        Super Teacher MayClass
+                    </span>
+                    <h2 class="section-title">Mentor Berkualitas Siap Mendampingi Belajarmu</h2>
+                    <p class="section-subtitle">
+                        Tenaga pendidik terbaik dari berbagai kampus unggulan siap memastikan setiap sesi belajar terasa dekat dan
+                        menyenangkan.
+                    </p>
                 </div>
-            </div>
-        </section>
-
-        <section class="section alt" id="testimoni">
-            <div class="container">
-                <div class="content-width">
-                    <div class="section-header" style="text-align: center; margin: 0 auto;">
-                        <span class="pill">Apa Kata Mereka</span>
-                        <h2 class="section-title">Cerita Sukses dari Para Siswa</h2>
-                        <p class="section-subtitle">
-                            Testimoni dari siswa dan orang tua yang merasakan langsung perubahan signifikan dalam proses
-                            belajar bersama MayClass.
-                        </p>
+                <div class="slider" data-slider>
+                    <div class="slider-track">
+                        <article class="mentor-card">
+                            <img src="{{ \App\Support\ImageRepository::url('tutors.henny') }}" alt="Tutor Henny" />
+                            <div>
+                                <strong>Kak Henny</strong>
+                                <div class="mentor-role">Mentor Bahasa Indonesia &amp; Inggris</div>
+                            </div>
+                            <p class="mentor-role">"Bangun mindset juara dengan konsistensi dan disiplin belajar."</p>
+                        </article>
+                        <article class="mentor-card">
+                            <img src="{{ \App\Support\ImageRepository::url('tutors.husein') }}" alt="Tutor Husein" />
+                            <div>
+                                <strong>Kak Husein</strong>
+                                <div class="mentor-role">Mentor Matematika &amp; TPS</div>
+                            </div>
+                            <p class="mentor-role">"Tidak ada perjalanan sulit jika kita fokus sama tujuan besar."</p>
+                        </article>
+                        <article class="mentor-card">
+                            <img src="{{ \App\Support\ImageRepository::url('tutors.pal') }}" alt="Tutor Pal" />
+                            <div>
+                                <strong>Kak Pal</strong>
+                                <div class="mentor-role">Mentor SKD &amp; TPA</div>
+                            </div>
+                            <p class="mentor-role">"Strategi tepat dan evaluasi rutin bikin kamu siap setiap ujian."</p>
+                        </article>
                     </div>
-                    <div class="slider" data-slider>
-                        <div class="slider-track">
-                            <article class="testimonial-card">
-                                <img src="{{ \App\Support\ImageRepository::url('testimonials.yohanna') }}" alt="Foto Yohanna" />
-                                <p>
-                                    “Saya merasa banyak kemajuan setelah mengikuti kelas online. Kakak tentor sangat sabar
-                                    menjelaskan dan materi tersedia lengkap.”
-                                </p>
-                                <div>
-                                    <strong>Yohanna</strong>
-                                    <div style="color: var(--text-muted);">SDN Makmur Cibinong</div>
-                                </div>
-                            </article>
-                            <article class="testimonial-card">
-                                <img src="{{ \App\Support\ImageRepository::url('testimonials.xavier') }}" alt="Foto Xavier" />
-                                <p>
-                                    “Pengajaran ini benar-benar membantu. Sistem belajarnya terstruktur dan memudahkan saya
-                                    memahami konsep yang sulit.”
-                                </p>
-                                <div>
-                                    <strong>Xavier</strong>
-                                    <div style="color: var(--text-muted);">SMA N 79 Jakarta</div>
-                                </div>
-                            </article>
-                            <article class="testimonial-card">
-                                <img src="{{ \App\Support\ImageRepository::url('testimonials.lisa') }}" alt="Foto Lisa" />
-                                <p>
-                                    “Laporan belajarnya detail sehingga saya bisa memantau perkembangan anak. Jadwal juga
-                                    fleksibel menyesuaikan kebutuhan kami.”
-                                </p>
-                                <div>
-                                    <strong>Lisa</strong>
-                                    <div style="color: var(--text-muted);">Orang tua siswa</div>
-                                </div>
-                            </article>
-                        </div>
-                        <div class="slider-controls" aria-hidden="true">
-                            <button type="button" data-slider-prev>&larr;</button>
-                            <button type="button" data-slider-next>&rarr;</button>
-                        </div>
+                    <div class="slider-controls" aria-hidden="true">
+                        <button type="button" data-slider-prev>&larr;</button>
+                        <button type="button" data-slider-next>&rarr;</button>
                     </div>
                 </div>
             </div>
@@ -899,119 +920,99 @@
 
         <section class="section" id="faq">
             <div class="container">
-                <div class="content-width">
-                    <div class="section-header" style="text-align: center; margin: 0 auto 48px;">
-                        <span class="pill">Pertanyaan Umum</span>
-                        <h2 class="section-title">Pertanyaan yang Sering Diajukan</h2>
-                        <p class="section-subtitle">
-                            Temukan jawaban dari pertanyaan yang sering kami terima dari siswa dan orang tua terkait layanan
-                            MayClass.
-                        </p>
-                    </div>
-                    <div class="faq-list">
-                        <details>
-                            <summary>Apakah tersedia bimbingan secara online?</summary>
-                            <p>
-                                Ya, MayClass menyediakan layanan online dan tatap muka. Jadwal dan metode bisa Anda pilih sesuai
-                                preferensi.
-                            </p>
-                        </details>
-                        <details>
-                            <summary>Bagaimana sistem penjadwalan kelasnya?</summary>
-                            <p>
-                                Penjadwalan dapat disesuaikan dengan kebutuhan siswa. Admin kami membantu memastikan koordinasi
-                                antara siswa dan tentor.
-                            </p>
-                        </details>
-                        <details>
-                            <summary>Apakah bisa pindah jadwal jika ada hal mendadak?</summary>
-                            <p>
-                                Tentu, cukup hubungi admin kami untuk melakukan penjadwalan ulang minimal 24 jam sebelum kelas
-                                dimulai.
-                            </p>
-                        </details>
-                        <details>
-                            <summary>Bagaimana cara mengakses materi setelah kelas selesai?</summary>
-                            <p>
-                                Seluruh materi dan rekaman kelas dapat diakses melalui dashboard siswa kapan pun dan di perangkat apa pun.
-                            </p>
-                        </details>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="section alt" id="kontak">
-            <div class="container">
-                <div class="content-width" style="text-align: center;">
-                    <span class="pill">Hubungi Kami</span>
-                    <h2 class="section-title" style="margin: 24px 0 16px;">Siap Memulai Bersama MayClass?</h2>
-                    <p class="section-subtitle" style="margin: 0 auto 32px; max-width: 620px;">
-                        Tim kami siap membantu Anda menentukan program terbaik. Hubungi kami untuk konsultasi gratis dan jadwalkan
-                        sesi percobaan sekarang juga.
+                <div class="section-header">
+                    <span class="badge" style="background: rgba(142, 29, 36, 0.08); color: var(--maroon-800);">
+                        Pertanyaan yang Sering Diajukan
+                    </span>
+                    <h2 class="section-title">FAQ MayClass</h2>
+                    <p class="section-subtitle">
+                        Temukan jawaban singkat terkait layanan, metode belajar, hingga cara mengakses materi di platform
+                        MayClass.
                     </p>
-                    <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-                        <a class="btn btn-primary" href="tel:+6281234567890">Hubungi Admin</a>
-                        <a class="btn btn-outline" href="mailto:hello@mayclass.id">Kirim Email</a>
-                    </div>
+                </div>
+                <div class="faq-grid">
+                    <details>
+                        <summary>Apakah MayClass menyediakan kelas online dan tatap muka?</summary>
+                        <p>
+                            Ya. Kamu bisa memilih mode belajar sesuai kebutuhan. Tim kami bantu atur jadwal dan mentor terbaik
+                            untukmu.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Bagaimana cara mengakses materi dan rekaman kelas?</summary>
+                        <p>
+                            Siswa dapat login ke dashboard MayClass untuk melihat materi, rekaman kelas, dan rangkuman progres
+                            belajar.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Apakah bisa reschedule jika ada jadwal mendadak?</summary>
+                        <p>
+                            Bisa. Hubungi admin maksimal 24 jam sebelum sesi dimulai dan kami akan bantu atur ulang jadwalmu.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Bagaimana sistem evaluasi progres siswa?</summary>
+                        <p>
+                            Kami menyediakan laporan mingguan, evaluasi tryout, dan coaching pribadi agar target belajar tercapai.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Apakah ada grup diskusi komunitas?</summary>
+                        <p>
+                            Ada. Semua siswa akan bergabung di komunitas eksklusif untuk diskusi, motivasi, dan info terbaru.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Metode pembayaran apa yang tersedia?</summary>
+                        <p>
+                            Pembayaran dapat melalui transfer bank, e-wallet, dan virtual account dengan konfirmasi otomatis.
+                        </p>
+                    </details>
                 </div>
             </div>
         </section>
 
         <footer>
             <div class="container">
-                <div class="content-width">
-                    <div class="footer-grid">
-                        <div class="footer-brand">
-                            <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                            <p>
-                                MayClass menghadirkan pengalaman belajar terpadu dengan tentor profesional, materi interaktif, dan
-                                dukungan admin yang responsif.
-                            </p>
-                        </div>
-                        <div>
-                            <h4>Program</h4>
-                            <div class="footer-links">
-                                <a href="{{ route('packages.index') }}">Katalog Paket</a>
-                                <a href="#tentor">Super Tentor</a>
-                                <a href="#testimoni">Testimoni</a>
-                            </div>
-                        </div>
-                        <div>
-                            <h4>Bantuan</h4>
-                            <div class="footer-links">
-                                <a href="#faq">FAQ</a>
-                                <a href="#kontak">Kontak</a>
-                                <a href="#">Panduan Pembayaran</a>
-                            </div>
-                        </div>
-                        <div>
-                            <h4>Ikuti Kami</h4>
-                            <div class="footer-links">
-                                <a href="#">Instagram</a>
-                                <a href="#">YouTube</a>
-                                <a href="#">TikTok</a>
-                            </div>
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <p>
+                            MayClass menghadirkan bimbingan belajar terpadu dengan tentor profesional, materi interaktif, dan
+                            layanan pelanggan responsif.
+                        </p>
+                    </div>
+                    <div>
+                        <h4>Produk</h4>
+                        <div class="footer-links">
+                            <a href="#paket">Tryout &amp; Paket Belajar</a>
+                            <a href="#tentor">Super Teacher</a>
+                            <a href="#testimoni">Testimoni</a>
                         </div>
                     </div>
-                    <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
+                    <div>
+                        <h4>Bantuan</h4>
+                        <div class="footer-links">
+                            <a href="#faq">FAQ</a>
+                            <a href="mailto:hello@mayclass.id">Email Support</a>
+                            <a href="tel:+6281234567890">Hubungi Admin</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Ikuti Kami</h4>
+                        <div class="footer-links">
+                            <a href="https://www.instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+                            <a href="https://www.tiktok.com" target="_blank" rel="noreferrer">TikTok</a>
+                            <a href="https://www.youtube.com" target="_blank" rel="noreferrer">YouTube</a>
+                        </div>
+                    </div>
                 </div>
+                <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
             </div>
         </footer>
 
         <script>
-            // Mobile nav toggle behavior: toggle `open` on .nav-inner
-            (function () {
-                const navToggle = document.querySelector('.nav-toggle');
-                const navInner = document.querySelector('.nav-inner');
-                if (navToggle && navInner) {
-                    navToggle.addEventListener('click', () => {
-                        const isOpen = navInner.classList.toggle('open');
-                        navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                    });
-                }
-            })();
-
             document.querySelectorAll('[data-slider]').forEach((slider) => {
                 const track = slider.querySelector('.slider-track');
                 if (!track) {
