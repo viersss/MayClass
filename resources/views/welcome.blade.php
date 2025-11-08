@@ -817,11 +817,7 @@
                     <a href="#faq">FAQ</a>
                 </div>
                 <div class="nav-actions">
-                    <a
-                        class="btn btn-primary"
-                        href="{{ route('login') }}"
-                        data-redirect="{{ route('login') }}"
-                    >
+                    <a class="btn btn-primary" href="{{ route('register') }}">
                         Gabung Sekarang
                     </a>
                 </div>
@@ -835,11 +831,7 @@
                         penuh dukungan menuju kampus impianmu.
                     </p>
                     <div class="hero-actions">
-                        <a
-                            class="btn btn-primary"
-                            href="{{ route('login') }}"
-                            data-redirect="{{ route('login') }}"
-                        >
+                        <a class="btn btn-primary" href="{{ route('register') }}">
                             Gabung Sekarang
                         </a>
                         <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
@@ -1290,18 +1282,6 @@
                 scrollToSlide(0);
             });
 
-            document.querySelectorAll('[data-redirect]').forEach((trigger) => {
-                trigger.addEventListener('click', (event) => {
-                    const target = trigger.getAttribute('data-redirect');
-
-                    if (!target) {
-                        return;
-                    }
-
-                    event.preventDefault();
-                    window.location.href = target;
-                });
-            });
         </script>
     </body>
 </html>
