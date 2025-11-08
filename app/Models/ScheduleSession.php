@@ -15,6 +15,9 @@ class ScheduleSession extends Model
         'package_id',
         'title',
         'category',
+        'class_level',
+        'location',
+        'student_count',
         'mentor_name',
         'start_at',
         'is_highlight',
@@ -23,6 +26,7 @@ class ScheduleSession extends Model
     protected $casts = [
         'start_at' => 'datetime',
         'is_highlight' => 'boolean',
+        'student_count' => 'integer',
     ];
 
     public function user(): BelongsTo
