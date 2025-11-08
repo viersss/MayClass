@@ -153,6 +153,70 @@
                 box-shadow: 0 30px 70px rgba(47, 143, 135, 0.18);
             }
 
+            .tutor-headline {
+                margin: 8px 0 16px;
+                font-weight: 600;
+                color: var(--accent);
+                font-size: 1.05rem;
+            }
+
+            .tutor-bio {
+                margin: 0 0 24px;
+                color: var(--text-muted);
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            .tutor-meta {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            .tutor-meta li {
+                flex: 1 1 140px;
+                background: rgba(56, 182, 178, 0.08);
+                border: 1px solid rgba(56, 182, 178, 0.16);
+                border-radius: 18px;
+                padding: 14px 16px;
+            }
+
+            .tutor-meta li span {
+                display: block;
+            }
+
+            .tutor-meta li span:first-child {
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--text-muted);
+            }
+
+            .tutor-meta li span:last-child {
+                font-weight: 600;
+                color: var(--midnight);
+            }
+
+            .tutor-certifications {
+                margin-top: 16px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .tutor-certifications span {
+                padding: 8px 14px;
+                border-radius: 999px;
+                border: 1px solid rgba(56, 182, 178, 0.18);
+                background: rgba(124, 93, 250, 0.08);
+                color: var(--accent);
+                font-size: 0.8rem;
+                font-weight: 500;
+            }
+
             .hero-card::after {
                 content: "";
                 position: absolute;
@@ -493,10 +557,52 @@
                 <div class="hero">
                     <div class="hero-card">
                         <h1>Hai {{ $tutor->name }}, selamat mengajar!</h1>
-                        <p>
-                            Pantau jadwal mengajar, perkembangan siswa, dan sumber belajar terbaru secara terpusat.
-                            Optimalkan setiap sesi agar siswa mencapai target terbaiknya.
-                        </p>
+                        @if ($tutorProfile)
+                            @if ($tutorProfile->headline)
+                                <p class="tutor-headline">{{ $tutorProfile->headline }}</p>
+                            @endif
+                            @if ($tutorProfile->bio)
+                                <p class="tutor-bio">{{ $tutorProfile->bio }}</p>
+                            @endif
+                            <ul class="tutor-meta">
+                                @if ($tutorProfile->specializations)
+                                    <li>
+                                        <span>Spesialisasi</span>
+                                        <span>{{ $tutorProfile->specializations }}</span>
+                                    </li>
+                                @endif
+                                <li>
+                                    <span>Pengalaman</span>
+                                    <span>{{ $tutorProfile->experience_years }} tahun</span>
+                                </li>
+                                <li>
+                                    <span>Siswa dibimbing</span>
+                                    <span>{{ number_format($tutorProfile->students_taught) }}</span>
+                                </li>
+                                <li>
+                                    <span>Jam mengajar</span>
+                                    <span>{{ number_format($tutorProfile->hours_taught) }}</span>
+                                </li>
+                                @if ($tutorProfile->rating)
+                                    <li>
+                                        <span>Rating</span>
+                                        <span>{{ number_format($tutorProfile->rating, 1) }} / 5</span>
+                                    </li>
+                                @endif
+                            </ul>
+                            @if (filled($tutorProfile->certifications))
+                                <div class="tutor-certifications">
+                                    @foreach ($tutorProfile->certifications as $certificate)
+                                        <span>{{ $certificate }}</span>
+                                    @endforeach
+                                </div>
+                            @endif
+                        @else
+                            <p>
+                                Pantau jadwal mengajar, perkembangan siswa, dan sumber belajar terbaru secara terpusat.
+                                Optimalkan setiap sesi agar siswa mencapai target terbaiknya.
+                            </p>
+                        @endif
                     </div>
                     <div class="hero-visual">
                         <div class="hero-visual-content">

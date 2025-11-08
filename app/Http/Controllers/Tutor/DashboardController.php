@@ -24,6 +24,10 @@ class DashboardController extends Controller
     {
         $tutor = Auth::user();
 
+        if ($tutor && Schema::hasTable('tutor_profiles')) {
+            $tutor->loadMissing('tutorProfile');
+        }
+
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
                 ->when($tutor, function ($query) use ($tutor) {
@@ -106,6 +110,7 @@ class DashboardController extends Controller
 
         return view('tutor.dashboard', [
             'tutor' => $tutor,
+            'tutorProfile' => Schema::hasTable('tutor_profiles') ? optional($tutor)->tutorProfile : null,
             'schedule' => $schedule,
             'todaySessions' => $todaySessions,
             'upcomingSessions' => $upcomingSessions,

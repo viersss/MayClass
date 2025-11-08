@@ -5,12 +5,13 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DemoTutorSeeder extends Seeder
 {
     public function run(): void
     {
-        User::updateOrCreate(
+        $tutor = User::updateOrCreate(
             ['email' => 'tentor@gmail.com'],
             [
                 'name' => 'Tentor Demo MayClass',
@@ -20,6 +21,24 @@ class DemoTutorSeeder extends Seeder
                 'gender' => 'other',
                 'student_id' => null,
                 'address' => 'Jl. Ilmu Pendidikan No. 10, Bandung',
+            ]
+        );
+
+        $tutor?->tutorProfile()->updateOrCreate(
+            ['user_id' => $tutor->id],
+            [
+                'slug' => Str::slug($tutor->name) ?: 'tutor-demo-mayclass',
+                'headline' => 'Tutor Sains & Matematika',
+                'bio' => 'Berpengalaman mendampingi siswa menyiapkan ujian masuk perguruan tinggi dan Olimpiade Sains dengan pendekatan belajar adaptif.',
+                'specializations' => 'Matematika SMA, Fisika SMA, TPS UTBK',
+                'experience_years' => 5,
+                'students_taught' => 128,
+                'hours_taught' => 860,
+                'rating' => 4.8,
+                'certifications' => [
+                    'Sertifikasi Pengajar Profesional 2023',
+                    'Pelatihan Kurikulum Merdeka',
+                ],
             ]
         );
     }
