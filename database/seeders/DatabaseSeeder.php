@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             PackageSeeder::class,
             MaterialSeeder::class,
             QuizSeeder::class,
+            DemoTutorSeeder::class,
             ScheduleSeeder::class,
             DemoStudentSeeder::class,
         ]);

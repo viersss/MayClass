@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ScheduleSession;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 
@@ -11,6 +12,7 @@ class ScheduleSeeder extends Seeder
     public function run(): void
     {
         $baseWeek = CarbonImmutable::now()->startOfWeek(CarbonImmutable::MONDAY)->addWeek();
+        $tutor = User::firstWhere('email', 'tentor@gmail.com');
 
         $sessions = [
             [
@@ -41,13 +43,56 @@ class ScheduleSeeder extends Seeder
         ];
 
         foreach ($sessions as $session) {
+            $payload = $session;
+
+            if ($tutor) {
+                $payload['user_id'] = $tutor->id;
+                $payload['mentor_name'] = $tutor->name;
+            }
+
             ScheduleSession::updateOrCreate(
                 [
                     'title' => $session['title'],
                     'start_at' => $session['start_at'],
                 ],
-                $session
+                $payload
             );
+        }
+
+        if ($tutor) {
+            $extraSessions = [
+                [
+                    'title' => 'Pendalaman Matematika Kelas 9',
+                    'category' => 'Matematika',
+                    'start_at' => $baseWeek->addDays(6)->setTime(10, 0),
+                ],
+                [
+                    'title' => 'Strategi UTBK 2025',
+                    'category' => 'UTBK',
+                    'start_at' => $baseWeek->addWeek()->addDays(1)->setTime(18, 30),
+                ],
+                [
+                    'title' => 'Bimbingan Essay Bahasa Inggris',
+                    'category' => 'Bahasa Inggris',
+                    'start_at' => $baseWeek->addWeek()->addDays(3)->setTime(16, 30),
+                ],
+            ];
+
+            foreach ($extraSessions as $session) {
+                ScheduleSession::updateOrCreate(
+                    [
+                        'title' => $session['title'],
+                        'start_at' => $session['start_at'],
+                    ],
+                    [
+                        'category' => $session['category'],
+                        'mentor_name' => $tutor->name,
+                        'start_at' => $session['start_at'],
+                        'user_id' => $tutor->id,
+                        'is_highlight' => false,
+                    ]
+                );
+            }
         }
     }
 }
