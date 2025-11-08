@@ -51,6 +51,7 @@ class DashboardController extends BaseTutorController
                     'time_range' => $start->format('H.i') . ' - ' . $end->format('H.i'),
                     'location' => $session->location ?? 'Ruang Virtual',
                     'student_count' => $session->student_count,
+                    'highlight' => (bool) $session->is_highlight,
                 ];
             })
             ->values();
@@ -68,16 +69,107 @@ class DashboardController extends BaseTutorController
                     'title' => $session->title,
                     'subject' => $session->category,
                     'class_level' => $session->class_level ?? '-',
+                    'date_label' => $start->locale('id')->translatedFormat('d F Y'),
                     'time_range' => $start->format('H.i') . ' - ' . $end->format('H.i'),
                 ];
             })
             ->values();
+
+        $totalStudentsToday = $todaySessions->sum('student_count');
+        $teachingHours = round($sessions->count() * 1.5, 1);
+
+        $highlightStats = [
+            [
+                'label' => 'Siswa Aktif',
+                'display' => number_format($stats['students']),
+                'suffix' => 'siswa',
+                'description' => 'Terdaftar mengikuti bimbingan MayClass',
+                'accent' => 'mint',
+            ],
+            [
+                'label' => 'Jam Mengajar',
+                'display' => number_format($teachingHours, 1, ',', '.'),
+                'suffix' => 'jam',
+                'description' => 'Akumulasi durasi dari seluruh sesi',
+                'accent' => 'indigo',
+            ],
+            [
+                'label' => 'Materi Aktif',
+                'display' => number_format($stats['materials']),
+                'suffix' => 'materi',
+                'description' => 'Siap dibagikan kepada siswa',
+                'accent' => 'orange',
+            ],
+            [
+                'label' => 'Quiz Siap Pakai',
+                'display' => number_format($stats['quizzes']),
+                'suffix' => 'kuis',
+                'description' => 'Evaluasi pembelajaran yang tersedia',
+                'accent' => 'purple',
+            ],
+        ];
+
+        $materialsShowcase = Schema::hasTable('materials')
+            ? Material::query()
+                ->latest('id')
+                ->take(3)
+                ->get()
+                ->map(function (Material $material) {
+                    return [
+                        'title' => $material->title,
+                        'subject' => $material->subject,
+                        'level' => $material->level,
+                        'thumbnail' => $material->thumbnail_asset,
+                        'link' => route('tutor.materials.edit', ['material' => $material->slug]),
+                    ];
+                })
+            : collect();
+
+        $quizShowcase = Schema::hasTable('quizzes')
+            ? Quiz::query()
+                ->latest('id')
+                ->take(3)
+                ->get()
+                ->map(function (Quiz $quiz) {
+                    return [
+                        'title' => $quiz->title,
+                        'subject' => $quiz->subject,
+                        'level' => $quiz->class_level,
+                        'thumbnail' => $quiz->thumbnail_asset,
+                        'link' => route('tutor.quizzes.edit', ['quiz' => $quiz->slug]),
+                    ];
+                })
+            : collect();
+
+        $quickActions = [
+            [
+                'label' => 'Buat Materi Baru',
+                'description' => 'Susun modul dan sumber belajar terkini.',
+                'href' => route('tutor.materials.create'),
+            ],
+            [
+                'label' => 'Jadwalkan Sesi',
+                'description' => 'Tambahkan pertemuan ke kalender belajar.',
+                'href' => route('tutor.schedule.index'),
+            ],
+            [
+                'label' => 'Rancang Quiz',
+                'description' => 'Siapkan evaluasi untuk siswa.',
+                'href' => route('tutor.quizzes.create'),
+            ],
+        ];
 
         return $this->render('tutor.dashboard', [
             'stats' => $stats,
             'todaySessions' => $todaySessions,
             'nextSessions' => $nextSessions,
             'todayLabel' => $today->locale('id')->translatedFormat('l, d F Y'),
+            'totalStudentsToday' => $totalStudentsToday,
+            'teachingHours' => $teachingHours,
+            'highlightStats' => $highlightStats,
+            'materialsShowcase' => $materialsShowcase,
+            'quizShowcase' => $quizShowcase,
+            'quickActions' => $quickActions,
         ]);
     }
 }
