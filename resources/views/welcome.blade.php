@@ -38,7 +38,7 @@
                 font-family: "Poppins", sans-serif;
                 color: var(--neutral-900);
                 background: #ffffff;
-                line-height: 1.6;
+                line-height: 1.7;
             }
 
             img {
@@ -86,7 +86,7 @@
             }
 
             .brand {
-                display: inline-flex;
+                display: flex;
                 align-items: center;
                 gap: 14px;
                 font-weight: 600;
@@ -243,8 +243,9 @@
                 box-shadow: var(--shadow-lg);
             }
 
-            .section {
-                padding: 96px 0;
+            .stat-card strong {
+                font-size: 1.4rem;
+                color: var(--primary-strong);
             }
 
             .section-header {
@@ -255,13 +256,13 @@
                 gap: 16px;
             }
 
-            .section-title {
+            .section-header h2 {
                 margin: 0;
                 font-size: clamp(2rem, 3vw, 2.7rem);
                 color: var(--neutral-900);
             }
 
-            .section-subtitle {
+            .section-header p {
                 margin: 0;
                 color: var(--neutral-700);
             }
@@ -442,8 +443,9 @@
                 transition: transform 0.2s ease;
             }
 
-            .slider button:hover {
-                transform: translateY(-2px);
+            .slide {
+                flex: 0 0 100%;
+                padding: 0 12px;
             }
 
             .testimonial-card,
@@ -490,8 +492,15 @@
                 box-shadow: var(--shadow-md);
             }
 
-            summary {
-                font-weight: 600;
+            .slider-button {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                border: none;
+                display: grid;
+                place-items: center;
+                background: rgba(61, 183, 173, 0.15);
+                color: var(--primary-strong);
                 cursor: pointer;
                 outline: none;
             }
@@ -512,8 +521,8 @@
                 gap: 16px;
             }
 
-            .footer-brand img {
-                width: 120px;
+            .slider-dot[aria-current="true"] {
+                background: var(--primary-strong);
             }
 
             .footer-links {
@@ -553,6 +562,7 @@
                 .hero-actions {
                     justify-content: center;
                 }
+            }
 
                 .hero-art::after {
                     inset: 12% 12% -6% 12%;
@@ -572,10 +582,9 @@
                     inset: -56px 24px auto auto;
                 }
 
-                .footer-grid {
-                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                nav {
+                    gap: 18px;
                 }
-            }
 
             @media (max-width: 760px) {
                 nav {
@@ -610,8 +619,8 @@
                     border-radius: 48px;
                 }
 
-                .slider-controls {
-                    display: none;
+                section {
+                    padding: 68px 0;
                 }
 
                 .footer-grid {
@@ -1006,6 +1015,7 @@
                             <a href="https://www.tiktok.com" target="_blank" rel="noreferrer">TikTok</a>
                             <a href="https://www.youtube.com" target="_blank" rel="noreferrer">YouTube</a>
                         </div>
+                        <div class="footer-meta">© {{ date('Y') }} MayClass. Semua hak cipta dilindungi.</div>
                     </div>
                 </div>
                 <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
@@ -1019,25 +1029,21 @@
                     return;
                 }
 
-                const prev = slider.querySelector('[data-slider-prev]');
-                const next = slider.querySelector('[data-slider-next]');
-                const itemWidth = () => {
-                    const firstItem = track.querySelector(':scope > *');
-                    return firstItem ? firstItem.getBoundingClientRect().width + 24 : track.clientWidth;
-                };
+                prevBtn.addEventListener('click', () => {
+                    index = (index - 1 + slides.length) % slides.length;
+                    update();
+                });
 
-                if (prev) {
-                    prev.addEventListener('click', () => {
-                        track.scrollBy({ left: -itemWidth(), behavior: 'smooth' });
-                    });
-                }
+                nextBtn.addEventListener('click', () => {
+                    index = (index + 1) % slides.length;
+                    update();
+                });
 
-                if (next) {
-                    next.addEventListener('click', () => {
-                        track.scrollBy({ left: itemWidth(), behavior: 'smooth' });
-                    });
-                }
-            });
+                renderDots();
+                update();
+            }
+
+            document.querySelectorAll('[data-slider]').forEach(initSlider);
         </script>
     </body>
 </html>
