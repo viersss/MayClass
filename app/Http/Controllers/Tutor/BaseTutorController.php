@@ -18,13 +18,16 @@ abstract class BaseTutorController extends Controller
     {
         $tutor = Auth::user();
 
+        $tutorProfile = null;
+
         if ($tutor && Schema::hasTable('tutor_profiles')) {
             $tutor->loadMissing('tutorProfile');
+            $tutorProfile = $tutor->tutorProfile;
         }
 
         return view($view, array_merge([
             'tutor' => $tutor,
-            'tutorProfile' => $tutor?->tutorProfile,
+            'tutorProfile' => $tutorProfile,
         ], $data));
     }
 }
