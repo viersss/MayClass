@@ -800,8 +800,7 @@
                     <a href="#faq">FAQ</a>
                 </div>
                 <div class="nav-actions">
-                    <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
-                    <a class="btn btn-primary" href="{{ route('register') }}">Daftar</a>
+                    <a class="btn btn-primary" href="{{ route('login') }}">Gabung Sekarang</a>
                 </div>
             </nav>
             <div class="hero" id="beranda">
@@ -813,8 +812,8 @@
                         penuh dukungan menuju kampus impianmu.
                     </p>
                     <div class="hero-actions">
-                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
-                        <a class="btn btn-outline" href="{{ route('login') }}">Masuk sebagai Siswa</a>
+                        <a class="btn btn-primary" href="{{ route('login') }}">Gabung Sekarang</a>
+                        <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
                     </div>
                     <div class="hero-stats">
                         <div>Dipercaya ribuan pelajar dan orang tua di seluruh Indonesia.</div>
@@ -851,7 +850,10 @@
                 </div>
                 <div class="articles-grid">
                     <article class="article-card">
-                        <img src="{{ \App\Support\ImageRepository::url('materials.persamaan_linear') }}" alt="Artikel UTBK" />
+                        <img
+                            src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=800&q=80"
+                            alt="Artikel UTBK"
+                        />
                         <div class="article-content">
                             <h3>Kenali 7 Subtes UTBK yang Harus Kamu Taklukkan</h3>
                             <p>
@@ -861,7 +863,10 @@
                         </div>
                     </article>
                     <article class="article-card">
-                        <img src="{{ \App\Support\ImageRepository::url('materials.kimia_termokimia') }}" alt="Artikel SKD" />
+                        <img
+                            src="https://images.unsplash.com/photo-1460518451285-97b6aa326961?auto=format&fit=crop&w=800&q=80"
+                            alt="Artikel SKD"
+                        />
                         <div class="article-content">
                             <h3>Strategi Lulus SKD ASN &amp; PPPK Bersama Mentor Ahli</h3>
                             <p>
@@ -871,7 +876,10 @@
                         </div>
                     </article>
                     <article class="article-card">
-                        <img src="{{ \App\Support\ImageRepository::url('materials.bahasa_grammar') }}" alt="Artikel motivasi" />
+                        <img
+                            src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80"
+                            alt="Artikel motivasi"
+                        />
                         <div class="article-content">
                             <h3>Cerita Alumni: Raih Kampus Impian dari Nol</h3>
                             <p>
@@ -992,7 +1000,10 @@
                     <div class="slider-track">
                         <div class="slide">
                             <article class="testimonial-card">
-                                <img src="{{ \App\Support\ImageRepository::url('testimonials.yohanna') }}" alt="Testimoni Yohanna" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80"
+                                    alt="Testimoni Yohanna"
+                                />
                                 <div style="display: grid; gap: 8px; flex: 1;">
                                     <strong>Yohanna • Skor UTBK 640</strong>
                                     <p>
@@ -1004,7 +1015,10 @@
                         </div>
                         <div class="slide">
                             <article class="testimonial-card">
-                                <img src="{{ \App\Support\ImageRepository::url('testimonials.xavier') }}" alt="Testimoni Xavier" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=600&q=80"
+                                    alt="Testimoni Xavier"
+                                />
                                 <div style="display: grid; gap: 8px; flex: 1;">
                                     <strong>Xavier • Skor SKD 433</strong>
                                     <p>
@@ -1016,7 +1030,10 @@
                         </div>
                         <div class="slide">
                             <article class="testimonial-card">
-                                <img src="{{ \App\Support\ImageRepository::url('testimonials.lisa') }}" alt="Testimoni Lisa" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=600&q=80"
+                                    alt="Testimoni Lisa"
+                                />
                                 <div style="display: grid; gap: 8px; flex: 1;">
                                     <strong>Lisa • Orang Tua Siswa</strong>
                                     <p>
@@ -1050,7 +1067,10 @@
                     <div class="slider-track">
                         <div class="slide">
                             <article class="mentor-card">
-                                <img src="{{ \App\Support\ImageRepository::url('tutors.henny') }}" alt="Tutor Henny" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80"
+                                    alt="Tutor Henny"
+                                />
                                 <div style="display: grid; gap: 4px;">
                                     <strong>Kak Henny</strong>
                                     <div class="mentor-role">Mentor Bahasa Indonesia &amp; Inggris</div>
@@ -1060,7 +1080,10 @@
                         </div>
                         <div class="slide">
                             <article class="mentor-card">
-                                <img src="{{ \App\Support\ImageRepository::url('tutors.husein') }}" alt="Tutor Husein" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=600&q=80"
+                                    alt="Tutor Husein"
+                                />
                                 <div style="display: grid; gap: 4px;">
                                     <strong>Kak Husein</strong>
                                     <div class="mentor-role">Mentor Matematika &amp; TPS</div>
@@ -1070,7 +1093,10 @@
                         </div>
                         <div class="slide">
                             <article class="mentor-card">
-                                <img src="{{ \App\Support\ImageRepository::url('tutors.pal') }}" alt="Tutor Pal" />
+                                <img
+                                    src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80"
+                                    alt="Tutor Pal"
+                                />
                                 <div style="display: grid; gap: 4px;">
                                     <strong>Kak Pal</strong>
                                     <div class="mentor-role">Mentor SKD &amp; TPA</div>
