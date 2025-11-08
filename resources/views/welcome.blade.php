@@ -802,6 +802,16 @@
         </style>
     </head>
     <body>
+        @php
+            $joinLink = route('register');
+
+            if (auth()->check()) {
+                $joinLink = auth()->user()->role === 'tutor'
+                    ? route('tutor.dashboard')
+                    : route('student.dashboard');
+            }
+        @endphp
+
         <header>
             <nav>
                 <a class="brand" href="/">
@@ -817,7 +827,7 @@
                     <a href="#faq">FAQ</a>
                 </div>
                 <div class="nav-actions">
-                    <a class="btn btn-primary" href="{{ route('register') }}">
+                    <a class="btn btn-primary" href="{{ $joinLink }}">
                         Gabung Sekarang
                     </a>
                 </div>
@@ -831,7 +841,7 @@
                         penuh dukungan menuju kampus impianmu.
                     </p>
                     <div class="hero-actions">
-                        <a class="btn btn-primary" href="{{ route('register') }}">
+                        <a class="btn btn-primary" href="{{ $joinLink }}">
                             Gabung Sekarang
                         </a>
                         <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
