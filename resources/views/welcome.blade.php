@@ -21,6 +21,8 @@
                 --neutral-700: #4d5660;
                 --neutral-100: #f6f7f8;
                 --surface: #ffffff;
+                --nav-surface: rgba(16, 78, 57, 0.92);
+                --footer-surface: #e8f3ef;
                 --shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
                 --shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
                 --radius-lg: 20px;
@@ -76,6 +78,7 @@
                 color: #ffffff;
                 overflow: hidden;
                 width: 100%;
+                padding: 16px 0 0;
             }
 
             /* Improved nav layout to be full-width properly */
@@ -85,24 +88,31 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 28px 32px;
+                padding: 24px 32px;
                 gap: 32px;
-                width: 100%;
-                max-width: none;
-                margin: 0;
+                width: calc(100% - 64px);
+                max-width: 1180px;
+                margin: 0 auto 32px;
                 flex-wrap: wrap;
+                background: var(--nav-surface);
+                border-radius: var(--radius-xl);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                box-shadow: 0 20px 48px rgba(8, 43, 31, 0.45);
+                backdrop-filter: blur(8px);
             }
 
             @media (max-width: 1280px) {
                 nav {
-                    padding: 28px 32px;
+                    padding: 24px 28px;
                 }
             }
 
             @media (max-width: 768px) {
                 nav {
-                    padding: 20px 16px;
+                    padding: 18px 18px;
                     justify-content: center;
+                    width: calc(100% - 32px);
+                    margin: 0 auto 24px;
                 }
             }
 
@@ -626,9 +636,10 @@
 
             /* Full-width footer */
             footer {
-                background: #f0f1f3;
-                padding: 72px 0 48px;
+                background: var(--footer-surface);
+                padding: 80px 0 52px;
                 width: 100%;
+                border-top: 1px solid rgba(31, 107, 79, 0.12);
             }
 
             .footer-grid {
@@ -644,6 +655,11 @@
             .footer-brand {
                 display: grid;
                 gap: 16px;
+            }
+
+            .footer-brand img {
+                width: 64px;
+                height: auto;
             }
 
             .footer-links {
@@ -700,8 +716,10 @@
 
             @media (max-width: 768px) {
                 nav {
-                    padding: 20px 16px;
+                    padding: 18px 18px;
                     gap: 16px;
+                    width: calc(100% - 32px);
+                    margin: 0 auto 24px;
                 }
 
                 .nav-links {
@@ -788,7 +806,7 @@
         <header>
             <nav>
                 <a class="brand" href="/">
-                    <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                    <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                     <span>MayClass</span>
                 </a>
                 <div class="nav-links">
@@ -1172,7 +1190,7 @@
             <div class="container">
                 <div class="footer-grid">
                     <div class="footer-brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                         <p>
                             MayClass menghadirkan bimbingan belajar terpadu dengan tentor profesional, materi interaktif, dan
                             layanan pelanggan responsif.
