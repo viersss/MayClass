@@ -40,7 +40,7 @@ class ProfileController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => ['nullable', 'string', 'max:255'],
             'gender' => ['nullable', Rule::in(array_keys($this->genderOptions()))],
             'parent_name' => ['nullable', 'string', 'max:255'],
