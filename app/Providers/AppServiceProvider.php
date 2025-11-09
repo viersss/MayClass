@@ -3,8 +3,6 @@
 namespace App\Providers;
 
 use App\Support\Database\FallbackMySqlConnector;
-use Illuminate\Database\Connection;
-use Illuminate\Database\MySqlConnection;
 use Illuminate\Support\ServiceProvider;
 use PDOException;
 
@@ -120,5 +118,16 @@ class AppServiceProvider extends ServiceProvider
 
         Connection::resolverFor('mysql', $resolver);
         Connection::resolverFor('mariadb', $resolver);
+    }
+
+    private function registerDatabaseFallbackConnector(): void
+    {
+        $this->app->extend('db.connector.mysql', function () {
+            return new FallbackMySqlConnector();
+        });
+
+        $this->app->extend('db.connector.mariadb', function () {
+            return new FallbackMySqlConnector();
+        });
     }
 }
