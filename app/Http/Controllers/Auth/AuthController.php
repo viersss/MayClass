@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use PDOException;
+use Throwable;
 
 class AuthController extends Controller
 {
@@ -79,10 +82,20 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
-            return back()->withErrors([
-                'email' => __('auth.failed'),
-            ])->onlyInput('email');
+        try {
+            if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+                return back()->withErrors([
+                    'email' => __('auth.failed'),
+                ])->onlyInput('email');
+            }
+        } catch (QueryException|PDOException $exception) {
+            if ($this->isDatabaseConnectionIssue($exception)) {
+                return back()->withErrors([
+                    'email' => __('Koneksi ke database gagal. Pastikan layanan MySQL/XAMPP sudah berjalan dan pengaturan DB_HOST, DB_PORT, DB_USERNAME di file .env sesuai.'),
+                ])->onlyInput('email');
+            }
+
+            throw $exception;
         }
 
         $request->session()->regenerate();
@@ -121,6 +134,25 @@ class AuthController extends Controller
             'admin' => route('admin.dashboard'),
             default => route('packages.index'),
         };
+    }
+
+    private function isDatabaseConnectionIssue(Throwable $exception): bool
+    {
+        $message = strtolower($exception->getMessage());
+
+        if (str_contains($message, 'connection refused') || str_contains($message, 'actively refused')) {
+            return true;
+        }
+
+        if ($exception instanceof QueryException && $exception->getPrevious()) {
+            return $this->isDatabaseConnectionIssue($exception->getPrevious());
+        }
+
+        if ($exception instanceof PDOException && (int) $exception->getCode() === 2002) {
+            return true;
+        }
+
+        return false;
     }
 }
 
