@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use PDOException;
 use Throwable;
 
 class AppServiceProvider extends ServiceProvider
@@ -26,8 +28,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->ensureDemoAccounts();
+        $this->ensureDatabaseHostFallback();
     }
 
+    /**
+     * Registrasi konektor fallback MySQL/MariaDB.
+     */
     private function registerDatabaseFallbackConnector(): void
     {
         $this->app->extend('db.connector.mysql', function () {
@@ -39,6 +45,9 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * Membuat akun demo (tidak untuk production).
+     */
     private function ensureDemoAccounts(): void
     {
         if (app()->environment('production')) {
@@ -103,6 +112,9 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
+    /**
+     * Fallback host database jika koneksi utama gagal.
+     */
     private function ensureDatabaseHostFallback(): void
     {
         $connection = config('database.default');
@@ -182,16 +194,5 @@ class AppServiceProvider extends ServiceProvider
 
         return str_contains($message, 'connection refused')
             || str_contains($message, 'actively refused');
-    }
-
-    private function registerDatabaseFallbackConnector(): void
-    {
-        $this->app->extend('db.connector.mysql', function () {
-            return new FallbackMySqlConnector();
-        });
-
-        $this->app->extend('db.connector.mariadb', function () {
-            return new FallbackMySqlConnector();
-        });
     }
 }
