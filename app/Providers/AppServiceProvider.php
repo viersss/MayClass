@@ -4,12 +4,11 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Support\Database\FallbackMySqlConnector;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use PDOException;
 use Throwable;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,12 +27,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->ensureDemoAccounts();
-        $this->ensureDatabaseHostFallback();
     }
 
-    /**
-     * Registrasi konektor fallback MySQL/MariaDB.
-     */
     private function registerDatabaseFallbackConnector(): void
     {
         $this->app->extend('db.connector.mysql', function () {
@@ -45,9 +40,6 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    /**
-     * Membuat akun demo (tidak untuk production).
-     */
     private function ensureDemoAccounts(): void
     {
         if (app()->environment('production')) {
@@ -66,11 +58,11 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
-        $tutor = User::updateOrCreate(
-            ['email' => 'tentor@gmail.com'],
+        $tutor = $this->ensureDemoUser(
+            'tentor@gmail.com',
+            'gatau123',
             [
                 'name' => 'Tentor Demo MayClass',
-                'password' => 'gatau123',
                 'role' => 'tutor',
                 'phone' => '0812-0000-1234',
                 'gender' => 'other',
@@ -99,11 +91,11 @@ class AppServiceProvider extends ServiceProvider
             );
         }
 
-        User::updateOrCreate(
-            ['email' => 'admin@gmail.com'],
+        $this->ensureDemoUser(
+            'admin@gmail.com',
+            'gatau123',
             [
                 'name' => 'Admin Utama MayClass',
-                'password' => 'gatau123',
                 'role' => 'admin',
                 'phone' => '0812-7777-1234',
                 'gender' => 'other',
@@ -112,87 +104,18 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
-    /**
-     * Fallback host database jika koneksi utama gagal.
-     */
-    private function ensureDatabaseHostFallback(): void
+    private function ensureDemoUser(string $email, string $plainPassword, array $attributes): ?User
     {
-        $connection = config('database.default');
+        $user = User::firstOrNew(['email' => $email]);
 
-        if (! in_array($connection, ['mysql', 'mariadb'], true)) {
-            return;
+        $user->fill($attributes);
+
+        if (! $user->exists || empty($user->password) || ! Hash::check($plainPassword, $user->password)) {
+            $user->password = Hash::make($plainPassword);
         }
 
-        $originalHost = config("database.connections.{$connection}.host");
+        $user->save();
 
-        try {
-            DB::connection($connection)->getPdo();
-            return;
-        } catch (PDOException $exception) {
-            if (! $this->isConnectionRefused($exception)) {
-                throw $exception;
-            }
-
-            $this->attemptFallbackHosts($connection, $originalHost, $exception);
-        }
-    }
-
-    private function attemptFallbackHosts(string $connection, ?string $originalHost, PDOException $originalException): void
-    {
-        $fallbackHosts = array_values(array_unique(array_filter([
-            env('DB_FAILOVER_HOST'),
-            '127.0.0.1',
-            'localhost',
-        ], fn ($host) => $host && $host !== $originalHost)));
-
-        $lastException = $originalException;
-
-        foreach ($fallbackHosts as $host) {
-            config(["database.connections.{$connection}.host" => $host]);
-            DB::purge($connection);
-
-            try {
-                DB::connection($connection)->getPdo();
-
-                if ($host !== $originalHost) {
-                    Log::notice('Database host fallback engaged for MayClass.', [
-                        'connection' => $connection,
-                        'from' => $originalHost,
-                        'to' => $host,
-                    ]);
-                }
-
-                return;
-            } catch (PDOException $exception) {
-                if (! $this->isConnectionRefused($exception)) {
-                    throw $exception;
-                }
-
-                $lastException = $exception;
-            }
-        }
-
-        config(["database.connections.{$connection}.host" => $originalHost]);
-        DB::purge($connection);
-
-        Log::warning('Unable to resolve database connection host for MayClass.', [
-            'connection' => $connection,
-            'tried_hosts' => $fallbackHosts,
-            'message' => $lastException->getMessage(),
-        ]);
-
-        throw $originalException;
-    }
-
-    private function isConnectionRefused(PDOException $exception): bool
-    {
-        if ((int) $exception->getCode() === 2002) {
-            return true;
-        }
-
-        $message = strtolower($exception->getMessage());
-
-        return str_contains($message, 'connection refused')
-            || str_contains($message, 'actively refused');
+        return $user->fresh();
     }
 }

@@ -89,4 +89,5 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/finance', [AdminFinanceController::class, 'index'])->name('finance.index');
     Route::post('/finance/{order}/approve', [AdminFinanceController::class, 'approve'])->name('finance.approve');
+    Route::post('/finance/{order}/reject', [AdminFinanceController::class, 'reject'])->name('finance.reject');
 });

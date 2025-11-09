@@ -44,6 +44,64 @@
             font-size: 1.6rem;
         }
 
+        .finance-status-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+            margin-bottom: 32px;
+        }
+
+        .status-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px 22px;
+            border: 1px solid rgba(84, 101, 255, 0.12);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .status-card header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-card h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .status-card strong {
+            font-size: 1.8rem;
+        }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .status-chip[data-type="pending"] {
+            background: rgba(249, 181, 59, 0.12);
+            color: #d97706;
+        }
+
+        .status-chip[data-type="paid"] {
+            background: rgba(59, 177, 118, 0.14);
+            color: #047857;
+        }
+
+        .status-chip[data-type="rejected"] {
+            background: rgba(248, 113, 113, 0.16);
+            color: #b91c1c;
+        }
+
         .finance-columns {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -111,14 +169,58 @@
             border-bottom: 1px solid rgba(15, 23, 42, 0.06);
         }
 
-        .approve-btn {
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 110px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .status-pill--pending {
+            background: rgba(249, 181, 59, 0.16);
+            color: #b45309;
+        }
+
+        .status-pill--paid {
+            background: rgba(59, 177, 118, 0.16);
+            color: #047857;
+        }
+
+        .status-pill--rejected {
+            background: rgba(248, 113, 113, 0.18);
+            color: #b91c1c;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .approve-btn,
+        .reject-btn {
             padding: 8px 16px;
             border-radius: 999px;
             border: none;
-            background: linear-gradient(135deg, rgba(31, 209, 161, 0.85), rgba(84, 101, 255, 0.85));
-            color: #fff;
             font-weight: 600;
             cursor: pointer;
+        }
+
+        .approve-btn {
+            background: linear-gradient(135deg, rgba(31, 209, 161, 0.85), rgba(84, 101, 255, 0.85));
+            color: #fff;
+        }
+
+        .reject-btn {
+            background: rgba(239, 68, 68, 0.12);
+            color: #b91c1c;
+        }
+
+        .reject-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
         }
 
         .proof-link {
@@ -131,6 +233,10 @@
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
+            .finance-status-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
             .finance-columns {
                 grid-template-columns: 1fr;
             }
@@ -138,6 +244,10 @@
 
         @media (max-width: 640px) {
             .finance-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .finance-status-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -162,12 +272,45 @@
             <strong>{{ $stats['yearRevenue'] }}</strong>
         </div>
         <div class="finance-card">
+            <span>Total Siswa Aktif</span>
+            <strong>{{ number_format($stats['totalStudents']) }}</strong>
+        </div>
+        <div class="finance-card">
             <span>Pembayaran Pending</span>
             <strong>{{ number_format($stats['pendingPayments']) }}</strong>
         </div>
-        <div class="finance-card">
-            <span>Rata-rata Nilai Transaksi</span>
-            <strong>{{ $stats['averageTicket'] }}</strong>
+    </div>
+
+    <div class="finance-status-grid">
+        <div class="status-card">
+            <header>
+                <h4>{{ $statusSummary['pending']['label'] }}</h4>
+                <span class="status-chip" data-type="pending">
+                    <span>⏳</span> Pending
+                </span>
+            </header>
+            <strong>{{ number_format($statusSummary['pending']['count']) }}</strong>
+            <p style="margin: 0; color: var(--text-muted);">{{ $statusSummary['pending']['description'] }}</p>
+        </div>
+        <div class="status-card">
+            <header>
+                <h4>{{ $statusSummary['paid']['label'] }}</h4>
+                <span class="status-chip" data-type="paid">
+                    <span>✔️</span> Paid
+                </span>
+            </header>
+            <strong>{{ number_format($statusSummary['paid']['count']) }}</strong>
+            <p style="margin: 0; color: var(--text-muted);">{{ $statusSummary['paid']['description'] }}</p>
+        </div>
+        <div class="status-card">
+            <header>
+                <h4>{{ $statusSummary['rejected']['label'] }}</h4>
+                <span class="status-chip" data-type="rejected">
+                    <span>⚠️</span> Rejected
+                </span>
+            </header>
+            <strong>{{ number_format($statusSummary['rejected']['count']) }}</strong>
+            <p style="margin: 0; color: var(--text-muted);">{{ $statusSummary['rejected']['description'] }}</p>
         </div>
     </div>
 
@@ -192,7 +335,7 @@
         </section>
         <section class="panel">
             <h3>Verifikasi Pembayaran</h3>
-            <p style="color: var(--text-muted);">Periksa bukti transfer dan setujui pembayaran siswa.</p>
+            <p style="color: var(--text-muted);">Periksa bukti transfer dan lakukan approval transaksi siswa.</p>
             <table class="pending-table">
                 <thead>
                     <tr>
@@ -200,35 +343,55 @@
                         <th>Siswa</th>
                         <th>Total</th>
                         <th>Tanggal</th>
+                        <th>Status</th>
                         <th>Bukti</th>
-                        <th></th>
+                        <th style="width: 180px;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($pendingOrders as $order)
+                    @forelse ($orders as $order)
                         <tr>
                             <td>{{ $order['package'] }}</td>
                             <td>{{ $order['student'] }}</td>
                             <td>{{ $order['total'] }}</td>
                             <td>{{ $order['due_at'] }}</td>
                             <td>
+                                <span class="{{ $order['status_class'] }}">{{ $order['status_label'] }}</span>
+                            </td>
+                            <td>
                                 @if ($order['proof'])
-                                    <a class="proof-link" href="{{ $order['proof'] }}" target="_blank" rel="noopener">Lihat</a>
+                                    <a class="proof-link" href="{{ $order['proof'] }}" target="_blank" rel="noopener">
+                                        {{ $order['proof_name'] ?? __('Lihat') }}
+                                    </a>
                                 @else
                                     <span style="color: var(--text-muted);">Tidak ada</span>
                                 @endif
                             </td>
                             <td>
-                                <form action="{{ route('admin.finance.approve', $order['id']) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="approve-btn">Verifikasi</button>
-                                </form>
+                                @if ($order['canApprove'] || $order['canReject'])
+                                    <div class="action-buttons">
+                                        @if ($order['canApprove'])
+                                            <form action="{{ route('admin.finance.approve', $order['id']) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="approve-btn">Verifikasi</button>
+                                            </form>
+                                        @endif
+                                        @if ($order['canReject'])
+                                            <form action="{{ route('admin.finance.reject', $order['id']) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="reject-btn">Tolak</button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                @else
+                                    <span style="color: var(--text-muted);">Tidak ada aksi</span>
+                                @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 36px 0;">
-                                Tidak ada pembayaran pending saat ini.
+                            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 36px 0;">
+                                Belum ada transaksi pembayaran yang tercatat.
                             </td>
                         </tr>
                     @endforelse
