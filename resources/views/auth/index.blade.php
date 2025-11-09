@@ -475,7 +475,14 @@
                         <button class="primary-action" type="submit">Daftar</button>
                         <div class="divider">atau</div>
                         <div class="social-buttons">
-                            <button class="social-button" type="button">
+                            <button
+                                class="social-button"
+                                type="button"
+                                data-google-login
+                                data-google-url="{{ route('auth.google.redirect', ['popup' => 1, 'from' => 'register']) }}"
+                                data-google-fallback-url="{{ route('auth.google.redirect', ['from' => 'register']) }}"
+                                aria-label="Daftar menggunakan Google"
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
                                     <path
                                         d="M21.35 11.1H12.2V13.7H18.6C18.3 15.3 16.9 17.4 14.2 17.4C11.2 17.4 8.9 15 8.9 12C8.9 9 11.2 6.6 14.2 6.6C15.9 6.6 17.1 7.3 17.8 7.9L19.8 5.9C18.3 4.6 16.4 3.8 14.2 3.8C9.7 3.8 6 7.5 6 12C6 16.5 9.7 20.2 14.2 20.2C19 20.2 22 16.8 22 12.2C22 11.6 21.9 11.3 21.9 11L21.35 11.1Z"
@@ -483,15 +490,6 @@
                                     />
                                 </svg>
                                 Google
-                            </button>
-                            <button class="social-button" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M15 4H18V0H15C12.2 0 10 2.2 10 5V7H7V11H10V24H14V11H17.3L18 7H14V5C14 4.4 14.4 4 15 4Z"
-                                        fill="#1877F2"
-                                    />
-                                </svg>
-                                Facebook
                             </button>
                         </div>
                         <p class="switch-message">
@@ -533,7 +531,14 @@
                         <button class="primary-action" type="submit">Masuk</button>
                         <div class="divider">atau</div>
                         <div class="social-buttons">
-                            <button class="social-button" type="button">
+                            <button
+                                class="social-button"
+                                type="button"
+                                data-google-login
+                                data-google-url="{{ route('auth.google.redirect', ['popup' => 1, 'from' => 'login']) }}"
+                                data-google-fallback-url="{{ route('auth.google.redirect', ['from' => 'login']) }}"
+                                aria-label="Masuk menggunakan Google"
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
                                     <path
                                         d="M21.35 11.1H12.2V13.7H18.6C18.3 15.3 16.9 17.4 14.2 17.4C11.2 17.4 8.9 15 8.9 12C8.9 9 11.2 6.6 14.2 6.6C15.9 6.6 17.1 7.3 17.8 7.9L19.8 5.9C18.3 4.6 16.4 3.8 14.2 3.8C9.7 3.8 6 7.5 6 12C6 16.5 9.7 20.2 14.2 20.2C19 20.2 22 16.8 22 12.2C22 11.6 21.9 11.3 21.9 11L21.35 11.1Z"
@@ -541,15 +546,6 @@
                                     />
                                 </svg>
                                 Google
-                            </button>
-                            <button class="social-button" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M15 4H18V0H15C12.2 0 10 2.2 10 5V7H7V11H10V24H14V11H17.3L18 7H14V5C14 4.4 14.4 4 15 4Z"
-                                        fill="#1877F2"
-                                    />
-                                </svg>
-                                Facebook
                             </button>
                         </div>
                         <p class="switch-message">
@@ -582,6 +578,40 @@
             });
 
             setMode(doc.getAttribute('data-mode'));
+
+            const googleButtons = document.querySelectorAll('[data-google-login]');
+
+            googleButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    const popupUrl = button.dataset.googleUrl;
+                    const fallbackUrl = button.dataset.googleFallbackUrl || popupUrl;
+
+                    if (!popupUrl) {
+                        return;
+                    }
+
+                    const width = 520;
+                    const height = 640;
+                    const left = window.screenX + (window.outerWidth - width) / 2;
+                    const top = window.screenY + (window.outerHeight - height) / 2;
+                    const features = [
+                        `width=${Math.round(width)}`,
+                        `height=${Math.round(height)}`,
+                        `left=${Math.max(Math.round(left), 0)}`,
+                        `top=${Math.max(Math.round(top), 0)}`,
+                        'resizable=yes',
+                        'scrollbars=yes',
+                    ].join(',');
+
+                    const popup = window.open(popupUrl, 'mayclass-google-signin', features);
+
+                    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+                        window.location.href = fallbackUrl || popupUrl;
+                    } else {
+                        popup.focus();
+                    }
+                });
+            });
 
         </script>
     </body>
