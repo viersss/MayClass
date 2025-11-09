@@ -118,6 +118,7 @@ class AuthController extends Controller
         return match ($user->role) {
             'tutor' => route('tutor.dashboard'),
             'student' => route('student.dashboard'),
+            'admin' => route('admin.dashboard'),
             default => route('packages.index'),
         };
     }

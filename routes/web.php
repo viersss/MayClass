@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\FinanceController as AdminFinanceController;
+use App\Http\Controllers\Admin\PackageController as AdminPackageController;
+use App\Http\Controllers\Admin\StudentController as AdminStudentController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PackageController;
@@ -68,4 +72,21 @@ Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->name('tutor.')->grou
 
     Route::get('/pengaturan', [TutorAccountController::class, 'edit'])->name('account.edit');
     Route::put('/pengaturan', [TutorAccountController::class, 'update'])->name('account.update');
+});
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/students', [AdminStudentController::class, 'index'])->name('students.index');
+    Route::get('/students/{student}', [AdminStudentController::class, 'show'])->name('students.show');
+
+    Route::get('/packages', [AdminPackageController::class, 'index'])->name('packages.index');
+    Route::get('/packages/create', [AdminPackageController::class, 'create'])->name('packages.create');
+    Route::post('/packages', [AdminPackageController::class, 'store'])->name('packages.store');
+    Route::get('/packages/{package}/edit', [AdminPackageController::class, 'edit'])->name('packages.edit');
+    Route::put('/packages/{package}', [AdminPackageController::class, 'update'])->name('packages.update');
+    Route::delete('/packages/{package}', [AdminPackageController::class, 'destroy'])->name('packages.destroy');
+
+    Route::get('/finance', [AdminFinanceController::class, 'index'])->name('finance.index');
+    Route::post('/finance/{order}/approve', [AdminFinanceController::class, 'approve'])->name('finance.approve');
 });
