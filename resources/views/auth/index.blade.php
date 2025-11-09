@@ -730,7 +730,7 @@
                     return true;
                 }
 
-                if (!prepared.client_id || !prepared.state || !prepared.redirect_uri) {
+                if (!prepared.client_id || !prepared.state || !prepared.redirect_uri || !prepared.code_challenge) {
                     showGoogleError(origin, googleMessages.generic);
                     return true;
                 }
@@ -751,6 +751,8 @@
                             scope: prepared.scope,
                             redirect_uri: prepared.redirect_uri,
                             state: prepared.state,
+                            code_challenge: prepared.code_challenge,
+                            code_challenge_method: prepared.code_challenge_method || 'S256',
                             ux_mode: 'popup',
                             prompt: 'select_account',
                             callback: async (response) => {

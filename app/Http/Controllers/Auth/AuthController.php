@@ -102,50 +102,6 @@ class AuthController extends Controller
             throw $exception;
         }
 
-        $user = User::where('email', $email)->first();
-
-        if (! $user) {
-            $user = new User();
-            $user->name = $this->resolveGoogleName($profile, $email);
-            $user->email = $email;
-            $user->role = 'student';
-            $user->student_id = $this->generateStudentId();
-            $user->password = Hash::make(Str::random(40));
-            $user->email_verified_at = ($profile['email_verified'] ?? false) ? now() : null;
-
-            if (! empty($profile['picture'])) {
-                $user->avatar_path = (string) $profile['picture'];
-            }
-
-            $user->save();
-        } else {
-            $hasChanges = false;
-
-            if (! $user->email_verified_at && ($profile['email_verified'] ?? false)) {
-                $user->email_verified_at = now();
-                $hasChanges = true;
-            }
-
-            if (! $user->name && ! empty($profile['name'])) {
-                $user->name = (string) $profile['name'];
-                $hasChanges = true;
-            }
-
-            if (! $user->student_id && $user->role === 'student') {
-                $user->student_id = $this->generateStudentId();
-                $hasChanges = true;
-            }
-
-            if (! $user->avatar_path && ! empty($profile['picture'])) {
-                $user->avatar_path = (string) $profile['picture'];
-                $hasChanges = true;
-            }
-
-            if ($hasChanges) {
-                $user->save();
-            }
-        }
-
         Auth::login($user);
         $request->session()->regenerate();
 
@@ -169,22 +125,19 @@ class AuthController extends Controller
                 ]);
         }
 
-        $state = Str::random(40);
-
-        $request->session()->put('google_auth_state', $state);
-        $request->session()->put('google_auth_popup', $request->boolean('popup'));
-        $request->session()->put('google_auth_origin', $origin);
-
+        $session = $this->initializeGoogleSession($request, $origin, $request->boolean('popup'));
         $query = http_build_query([
             'client_id' => $config['client_id'],
             'redirect_uri' => $config['redirect'],
             'response_type' => 'code',
             'scope' => $this->googleScope(),
-            'state' => $state,
+            'state' => $session['state'],
             'prompt' => 'select_account',
             'include_granted_scopes' => 'true',
             'access_type' => 'offline',
             'display' => 'popup',
+            'code_challenge' => $session['code_challenge'],
+            'code_challenge_method' => 'S256',
         ], '', '&', PHP_QUERY_RFC3986);
 
         return redirect()->away('https://accounts.google.com/o/oauth2/v2/auth?'.$query);
@@ -234,8 +187,18 @@ class AuthController extends Controller
                 ]);
         }
 
+        $codeVerifier = (string) $request->session()->pull('google_auth_code_verifier', '');
+
+        if ($codeVerifier === '') {
+            return redirect()
+                ->to($originRoute)
+                ->withErrors([
+                    'google' => __('Sesi login Google tidak valid. Silakan coba lagi.'),
+                ]);
+        }
+
         try {
-            $accessToken = $this->requestGoogleAccessToken($config, $code);
+            $accessToken = $this->requestGoogleAccessToken($config, $code, $codeVerifier);
             $profile = $this->requestGoogleProfile($accessToken);
             $redirectUrl = $this->authenticateWithGoogleProfile($request, $profile);
         } catch (RuntimeException $exception) {
@@ -271,18 +234,16 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $state = Str::random(40);
         $origin = $this->sanitizeAuthOrigin($request->input('from'));
-
-        $request->session()->put('google_auth_state', $state);
-        $request->session()->put('google_auth_popup', true);
-        $request->session()->put('google_auth_origin', $origin);
+        $session = $this->initializeGoogleSession($request, $origin, true);
 
         return response()->json([
-            'state' => $state,
+            'state' => $session['state'],
             'client_id' => $config['client_id'],
             'scope' => $this->googleScope(),
             'redirect_uri' => $config['redirect'],
+            'code_challenge' => $session['code_challenge'],
+            'code_challenge_method' => 'S256',
         ]);
     }
 
@@ -317,8 +278,17 @@ class AuthController extends Controller
             ], 419);
         }
 
+        $codeVerifier = (string) $request->session()->pull('google_auth_code_verifier', '');
+
+        if ($codeVerifier === '') {
+            return response()->json([
+                'message' => __('Sesi login Google tidak valid. Muat ulang halaman ini lalu coba lagi.'),
+                'redirect' => $originRoute,
+            ], 419);
+        }
+
         try {
-            $accessToken = $this->requestGoogleAccessToken($config, (string) $validated['code']);
+            $accessToken = $this->requestGoogleAccessToken($config, (string) $validated['code'], $codeVerifier);
             $profile = $this->requestGoogleProfile($accessToken);
             $redirectUrl = $this->authenticateWithGoogleProfile($request, $profile);
         } catch (RuntimeException $exception) {
@@ -393,11 +363,24 @@ class AuthController extends Controller
             return null;
         }
 
-        if (empty($config['client_id']) || empty($config['client_secret']) || empty($config['redirect'])) {
+        $clientId = trim((string) ($config['client_id'] ?? ''));
+
+        if ($clientId === '') {
             return null;
         }
 
-        return $config;
+        $clientSecret = trim((string) ($config['client_secret'] ?? ''));
+        $redirect = trim((string) ($config['redirect'] ?? ''));
+
+        if ($redirect === '') {
+            $redirect = route('auth.google.callback');
+        }
+
+        return [
+            'client_id' => $clientId,
+            'client_secret' => $clientSecret,
+            'redirect' => $redirect,
+        ];
     }
 
     private function googleScope(): string
@@ -405,16 +388,25 @@ class AuthController extends Controller
         return 'openid email profile';
     }
 
-    private function requestGoogleAccessToken(array $config, string $code): string
+    private function requestGoogleAccessToken(array $config, string $code, ?string $codeVerifier = null): string
     {
         try {
-            $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+            $payload = [
                 'code' => $code,
                 'client_id' => $config['client_id'],
-                'client_secret' => $config['client_secret'],
                 'redirect_uri' => $config['redirect'],
                 'grant_type' => 'authorization_code',
-            ]);
+            ];
+
+            if (! empty($config['client_secret'])) {
+                $payload['client_secret'] = $config['client_secret'];
+            }
+
+            if ($codeVerifier !== null && $codeVerifier !== '') {
+                $payload['code_verifier'] = $codeVerifier;
+            }
+
+            $response = Http::asForm()->post('https://oauth2.googleapis.com/token', $payload);
         } catch (Throwable $exception) {
             throw new RuntimeException(__('Gagal terhubung ke Google. Periksa koneksi internet Anda lalu coba lagi.'));
         }
@@ -532,6 +524,39 @@ class AuthController extends Controller
         }
 
         return $email;
+    }
+
+    private function initializeGoogleSession(Request $request, string $origin, bool $isPopup): array
+    {
+        $state = Str::random(40);
+        $codeVerifier = $this->generatePkceCodeVerifier();
+        $codeChallenge = $this->generatePkceCodeChallenge($codeVerifier);
+
+        $request->session()->put('google_auth_state', $state);
+        $request->session()->put('google_auth_popup', $isPopup);
+        $request->session()->put('google_auth_origin', $origin);
+        $request->session()->put('google_auth_code_verifier', $codeVerifier);
+
+        return [
+            'state' => $state,
+            'code_verifier' => $codeVerifier,
+            'code_challenge' => $codeChallenge,
+        ];
+    }
+
+    private function generatePkceCodeVerifier(): string
+    {
+        return Str::random(64);
+    }
+
+    private function generatePkceCodeChallenge(string $verifier): string
+    {
+        return $this->base64UrlEncode(hash('sha256', $verifier, true));
+    }
+
+    private function base64UrlEncode(string $value): string
+    {
+        return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
     }
 }
 
