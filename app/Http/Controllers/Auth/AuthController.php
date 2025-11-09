@@ -4,18 +4,21 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use PDOException;
+use Throwable;
 
 class AuthController extends Controller
 {
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('packages.index');
+            return redirect()->to($this->homeRouteFor(Auth::user()));
         }
 
         return view('auth.index', ['mode' => 'login']);
@@ -24,10 +27,22 @@ class AuthController extends Controller
     public function showRegister()
     {
         if (Auth::check()) {
-            return redirect()->route('packages.index');
+            return redirect()->to($this->homeRouteFor(Auth::user()));
         }
 
         return view('auth.index', ['mode' => 'register']);
+    }
+
+    public function join(Request $request): RedirectResponse
+    {
+        if (Auth::check()) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        return redirect()->route('login');
     }
 
     public function register(Request $request): RedirectResponse
@@ -67,15 +82,25 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
-            return back()->withErrors([
-                'email' => __('auth.failed'),
-            ])->onlyInput('email');
+        try {
+            if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+                return back()->withErrors([
+                    'email' => __('auth.failed'),
+                ])->onlyInput('email');
+            }
+        } catch (QueryException|PDOException $exception) {
+            if ($this->isDatabaseConnectionIssue($exception)) {
+                return back()->withErrors([
+                    'email' => __('Koneksi ke database gagal. Pastikan layanan MySQL/XAMPP sudah berjalan dan pengaturan DB_HOST, DB_PORT, DB_USERNAME di file .env sesuai.'),
+                ])->onlyInput('email');
+            }
+
+            throw $exception;
         }
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('packages.index'));
+        return redirect()->intended($this->homeRouteFor(Auth::user()));
     }
 
     public function logout(Request $request): RedirectResponse
@@ -96,4 +121,38 @@ class AuthController extends Controller
 
         return $id;
     }
+
+    private function homeRouteFor(?User $user): string
+    {
+        if (! $user) {
+            return route('login');
+        }
+
+        return match ($user->role) {
+            'tutor' => route('tutor.dashboard'),
+            'student' => route('student.dashboard'),
+            'admin' => route('admin.dashboard'),
+            default => route('packages.index'),
+        };
+    }
+
+    private function isDatabaseConnectionIssue(Throwable $exception): bool
+    {
+        $message = strtolower($exception->getMessage());
+
+        if (str_contains($message, 'connection refused') || str_contains($message, 'actively refused')) {
+            return true;
+        }
+
+        if ($exception instanceof QueryException && $exception->getPrevious()) {
+            return $this->isDatabaseConnectionIssue($exception->getPrevious());
+        }
+
+        if ($exception instanceof PDOException && (int) $exception->getCode() === 2002) {
+            return true;
+        }
+
+        return false;
+    }
 }
+
