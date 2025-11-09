@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Support\Database\FallbackMySqlConnector;
+use Illuminate\Database\Connection;
+use Illuminate\Database\MySqlConnection;
 use Illuminate\Support\ServiceProvider;
 use PDOException;
 
@@ -14,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->registerDatabaseFallbackConnector();
     }
 
     /**
@@ -105,5 +106,19 @@ class AppServiceProvider extends ServiceProvider
 
         return str_contains($message, 'connection refused')
             || str_contains($message, 'actively refused');
+    }
+
+    private function registerDatabaseFallbackConnector(): void
+    {
+        $resolver = static function ($connection, $database, $prefix, $config) {
+            $connector = new FallbackMySqlConnector();
+
+            $pdo = $connector->connect($config);
+
+            return new MySqlConnection($pdo, $database, $prefix, $config);
+        };
+
+        Connection::resolverFor('mysql', $resolver);
+        Connection::resolverFor('mariadb', $resolver);
     }
 }
