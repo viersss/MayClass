@@ -102,6 +102,51 @@ class AuthController extends Controller
             throw $exception;
         }
 
+        $user = User::where('email', $email)->first();
+
+        if (! $user) {
+            $user = new User();
+            $user->name = $this->resolveGoogleName($profile, $email);
+            $user->email = $email;
+            $user->role = 'student';
+            $user->student_id = $this->generateStudentId();
+            $user->password = Hash::make(Str::random(40));
+            $user->email_verified_at = ($profile['email_verified'] ?? false) ? now() : null;
+
+            if (! empty($profile['picture'])) {
+                $user->avatar_path = (string) $profile['picture'];
+            }
+
+            $user->save();
+        } else {
+            $hasChanges = false;
+
+            if (! $user->email_verified_at && ($profile['email_verified'] ?? false)) {
+                $user->email_verified_at = now();
+                $hasChanges = true;
+            }
+
+            if (! $user->name && ! empty($profile['name'])) {
+                $user->name = (string) $profile['name'];
+                $hasChanges = true;
+            }
+
+            if (! $user->student_id && $user->role === 'student') {
+                $user->student_id = $this->generateStudentId();
+                $hasChanges = true;
+            }
+
+            if (! $user->avatar_path && ! empty($profile['picture'])) {
+                $user->avatar_path = (string) $profile['picture'];
+                $hasChanges = true;
+            }
+
+            if ($hasChanges) {
+                $user->save();
+            }
+        }
+
+        Auth::login($user);
         $request->session()->regenerate();
 
         return redirect()->intended($this->homeRouteFor(Auth::user()));
