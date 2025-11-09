@@ -4,6 +4,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>MayClass - Masuk &amp; Registrasi</title>
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -187,6 +188,15 @@
                 font-size: 0.9rem;
                 line-height: 1.5;
                 text-align: center;
+            }
+
+            .google-error {
+                margin: 0;
+                margin-top: 12px;
+                text-align: center;
+                color: #dc2626;
+                font-size: 0.8rem;
+                line-height: 1.4;
             }
 
             .error-alert ul {
@@ -475,7 +485,15 @@
                         <button class="primary-action" type="submit">Daftar</button>
                         <div class="divider">atau</div>
                         <div class="social-buttons">
-                            <button class="social-button" type="button">
+                            <button
+                                class="social-button"
+                                type="button"
+                                data-google-login
+                                data-google-origin="register"
+                                data-google-url="{{ route('auth.google.redirect', ['popup' => 1, 'from' => 'register']) }}"
+                                data-google-fallback-url="{{ route('auth.google.redirect', ['from' => 'register']) }}"
+                                aria-label="Daftar menggunakan Google"
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
                                     <path
                                         d="M21.35 11.1H12.2V13.7H18.6C18.3 15.3 16.9 17.4 14.2 17.4C11.2 17.4 8.9 15 8.9 12C8.9 9 11.2 6.6 14.2 6.6C15.9 6.6 17.1 7.3 17.8 7.9L19.8 5.9C18.3 4.6 16.4 3.8 14.2 3.8C9.7 3.8 6 7.5 6 12C6 16.5 9.7 20.2 14.2 20.2C19 20.2 22 16.8 22 12.2C22 11.6 21.9 11.3 21.9 11L21.35 11.1Z"
@@ -484,16 +502,8 @@
                                 </svg>
                                 Google
                             </button>
-                            <button class="social-button" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M15 4H18V0H15C12.2 0 10 2.2 10 5V7H7V11H10V24H14V11H17.3L18 7H14V5C14 4.4 14.4 4 15 4Z"
-                                        fill="#1877F2"
-                                    />
-                                </svg>
-                                Facebook
-                            </button>
                         </div>
+                        <p class="google-error" data-google-error data-google-context="register" hidden></p>
                         <p class="switch-message">
                             Sudah punya akun?
                             <a href="{{ route('login') }}">Masuk Sekarang</a>
@@ -533,7 +543,15 @@
                         <button class="primary-action" type="submit">Masuk</button>
                         <div class="divider">atau</div>
                         <div class="social-buttons">
-                            <button class="social-button" type="button">
+                            <button
+                                class="social-button"
+                                type="button"
+                                data-google-login
+                                data-google-origin="login"
+                                data-google-url="{{ route('auth.google.redirect', ['popup' => 1, 'from' => 'login']) }}"
+                                data-google-fallback-url="{{ route('auth.google.redirect', ['from' => 'login']) }}"
+                                aria-label="Masuk menggunakan Google"
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
                                     <path
                                         d="M21.35 11.1H12.2V13.7H18.6C18.3 15.3 16.9 17.4 14.2 17.4C11.2 17.4 8.9 15 8.9 12C8.9 9 11.2 6.6 14.2 6.6C15.9 6.6 17.1 7.3 17.8 7.9L19.8 5.9C18.3 4.6 16.4 3.8 14.2 3.8C9.7 3.8 6 7.5 6 12C6 16.5 9.7 20.2 14.2 20.2C19 20.2 22 16.8 22 12.2C22 11.6 21.9 11.3 21.9 11L21.35 11.1Z"
@@ -542,16 +560,8 @@
                                 </svg>
                                 Google
                             </button>
-                            <button class="social-button" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M15 4H18V0H15C12.2 0 10 2.2 10 5V7H7V11H10V24H14V11H17.3L18 7H14V5C14 4.4 14.4 4 15 4Z"
-                                        fill="#1877F2"
-                                    />
-                                </svg>
-                                Facebook
-                            </button>
                         </div>
+                        <p class="google-error" data-google-error data-google-context="login" hidden></p>
                         <p class="switch-message">
                             Belum punya akun?
                             <a href="{{ route('register') }}">Daftar Sekarang</a>
@@ -582,6 +592,281 @@
             });
 
             setMode(doc.getAttribute('data-mode'));
+
+            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+            const googleButtons = document.querySelectorAll('[data-google-login]');
+            const googlePrepareUrl = @json(route('auth.google.popup.prepare'));
+            const googlePopupUrl = @json(route('auth.google.popup'));
+            const googleMessages = {
+                generic: @json(__('Terjadi kesalahan saat terhubung ke Google. Silakan coba lagi.')),
+                blocked: @json(__('Browser memblokir pop-up Google. Perbolehkan pop-up lalu coba lagi.')),
+                cancelled: @json(__('Login Google dibatalkan sebelum selesai.')),
+            };
+            let googleLibraryPromise;
+
+            function showGoogleError(origin, message) {
+                const target = document.querySelector(`[data-google-error][data-google-context="${origin}"]`);
+
+                if (!target) {
+                    return;
+                }
+
+                if (!message) {
+                    target.hidden = true;
+                    target.textContent = '';
+                    return;
+                }
+
+                target.hidden = false;
+                target.textContent = message;
+            }
+
+            function clearGoogleError(origin) {
+                showGoogleError(origin, '');
+            }
+
+            function ensureGoogleLibrary() {
+                if (window.google && window.google.accounts && window.google.accounts.oauth2 && typeof window.google.accounts.oauth2.initCodeClient === 'function') {
+                    return Promise.resolve(window.google);
+                }
+
+                if (googleLibraryPromise) {
+                    return googleLibraryPromise;
+                }
+
+                googleLibraryPromise = new Promise((resolve) => {
+                    const script = document.createElement('script');
+                    script.src = 'https://accounts.google.com/gsi/client';
+                    script.async = true;
+                    script.defer = true;
+                    script.onload = () => resolve(window.google);
+                    script.onerror = () => resolve(null);
+                    document.head.appendChild(script);
+                });
+
+                return googleLibraryPromise;
+            }
+
+            async function prepareGoogleState(origin) {
+                try {
+                    const response = await fetch(googlePrepareUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: JSON.stringify({ from: origin }),
+                    });
+
+                    const data = await response.json().catch(() => ({}));
+
+                    if (!response.ok) {
+                        if (data && typeof data.redirect === 'string' && data.redirect) {
+                            return { redirect: data.redirect };
+                        }
+
+                        showGoogleError(origin, data && data.message ? data.message : googleMessages.generic);
+                        return null;
+                    }
+
+                    if (data && typeof data.redirect === 'string' && data.redirect) {
+                        return { redirect: data.redirect };
+                    }
+
+                    return data;
+                } catch (error) {
+                    showGoogleError(origin, googleMessages.generic);
+                    return null;
+                }
+            }
+
+            async function exchangeGoogleCode(code, state, origin) {
+                try {
+                    const response = await fetch(googlePopupUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
+                        body: JSON.stringify({ code, state, from: origin }),
+                    });
+
+                    const data = await response.json().catch(() => ({}));
+
+                    if (!response.ok) {
+                        if (data && typeof data.redirect === 'string' && data.redirect) {
+                            return data.redirect;
+                        }
+
+                        showGoogleError(origin, data && data.message ? data.message : googleMessages.generic);
+                        return null;
+                    }
+
+                    return data && typeof data.redirect === 'string' ? data.redirect : null;
+                } catch (error) {
+                    showGoogleError(origin, googleMessages.generic);
+                    return null;
+                }
+            }
+
+            async function startGooglePopup(button, origin) {
+                const googleLib = await ensureGoogleLibrary();
+
+                if (!googleLib || !googleLib.accounts || !googleLib.accounts.oauth2 || typeof googleLib.accounts.oauth2.initCodeClient !== 'function') {
+                    return false;
+                }
+
+                const prepared = await prepareGoogleState(origin);
+
+                if (!prepared) {
+                    return true;
+                }
+
+                if (prepared.redirect) {
+                    window.location.href = prepared.redirect;
+                    return true;
+                }
+
+                if (!prepared.client_id || !prepared.state || !prepared.redirect_uri) {
+                    showGoogleError(origin, googleMessages.generic);
+                    return true;
+                }
+
+                return new Promise((resolve) => {
+                    let completed = false;
+
+                    const finish = (value) => {
+                        if (!completed) {
+                            completed = true;
+                            resolve(value);
+                        }
+                    };
+
+                    try {
+                        const client = google.accounts.oauth2.initCodeClient({
+                            client_id: prepared.client_id,
+                            scope: prepared.scope,
+                            redirect_uri: prepared.redirect_uri,
+                            state: prepared.state,
+                            ux_mode: 'popup',
+                            prompt: 'select_account',
+                            callback: async (response) => {
+                                if (!response) {
+                                    showGoogleError(origin, googleMessages.generic);
+                                    finish(true);
+                                    return;
+                                }
+
+                                if (response.error) {
+                                    if (response.error === 'access_denied') {
+                                        showGoogleError(origin, googleMessages.cancelled);
+                                    } else {
+                                        showGoogleError(origin, googleMessages.generic);
+                                    }
+
+                                    finish(true);
+                                    return;
+                                }
+
+                                if (!response.code) {
+                                    showGoogleError(origin, googleMessages.generic);
+                                    finish(true);
+                                    return;
+                                }
+
+                                const redirect = await exchangeGoogleCode(response.code, prepared.state, origin);
+
+                                if (redirect) {
+                                    window.location.href = redirect;
+                                }
+
+                                finish(true);
+                            },
+                            error_callback: (error) => {
+                                if (error && error.type === 'popup_blocked') {
+                                    showGoogleError(origin, googleMessages.blocked);
+                                } else if (error && error.type === 'popup_closed') {
+                                    showGoogleError(origin, googleMessages.cancelled);
+                                } else {
+                                    showGoogleError(origin, googleMessages.generic);
+                                }
+
+                                finish(true);
+                            },
+                        });
+
+                        client.requestCode();
+                    } catch (error) {
+                        showGoogleError(origin, googleMessages.generic);
+                        finish(true);
+                    }
+                });
+            }
+
+            function openGoogleFallback(button) {
+                const popupUrl = button.dataset.googleUrl;
+                const fallbackUrl = button.dataset.googleFallbackUrl || popupUrl;
+
+                if (!popupUrl) {
+                    return;
+                }
+
+                const width = 520;
+                const height = 640;
+                const left = window.screenX + (window.outerWidth - width) / 2;
+                const top = window.screenY + (window.outerHeight - height) / 2;
+                const features = [
+                    `width=${Math.round(width)}`,
+                    `height=${Math.round(height)}`,
+                    `left=${Math.max(Math.round(left), 0)}`,
+                    `top=${Math.max(Math.round(top), 0)}`,
+                    'resizable=yes',
+                    'scrollbars=yes',
+                ].join(',');
+
+                const popup = window.open(popupUrl, 'mayclass-google-signin', features);
+
+                if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+                    window.location.href = fallbackUrl || popupUrl;
+                } else {
+                    popup.focus();
+                }
+            }
+
+            googleButtons.forEach((button) => {
+                button.addEventListener('click', async () => {
+                    const origin = button.dataset.googleOrigin || 'login';
+
+                    clearGoogleError(origin);
+
+                    if (!csrfToken) {
+                        openGoogleFallback(button);
+                        return;
+                    }
+
+                    try {
+                        const handled = await startGooglePopup(button, origin);
+
+                        if (!handled) {
+                            openGoogleFallback(button);
+                        }
+                    } catch (error) {
+                        if (error && typeof error.redirect === 'string' && error.redirect) {
+                            window.location.href = error.redirect;
+                            return;
+                        }
+
+                        if (error && error.message) {
+                            showGoogleError(origin, error.message);
+                        } else {
+                            showGoogleError(origin, googleMessages.generic);
+                        }
+                    }
+                });
+            });
 
         </script>
     </body>
