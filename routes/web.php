@@ -33,6 +33,8 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
     Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+    Route::post('/auth/google/popup/prepare', [AuthController::class, 'prepareGooglePopup'])->name('auth.google.popup.prepare');
+    Route::post('/auth/google/popup', [AuthController::class, 'handleGooglePopup'])->name('auth.google.popup');
 });
 
 Route::middleware('auth')->group(function () {

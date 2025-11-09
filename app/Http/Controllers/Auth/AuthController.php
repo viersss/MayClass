@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use PDOException;
+use RuntimeException;
 use Throwable;
 
 class AuthController extends Controller
@@ -100,6 +102,51 @@ class AuthController extends Controller
             throw $exception;
         }
 
+        $user = User::where('email', $email)->first();
+
+        if (! $user) {
+            $user = new User();
+            $user->name = $this->resolveGoogleName($profile, $email);
+            $user->email = $email;
+            $user->role = 'student';
+            $user->student_id = $this->generateStudentId();
+            $user->password = Hash::make(Str::random(40));
+            $user->email_verified_at = ($profile['email_verified'] ?? false) ? now() : null;
+
+            if (! empty($profile['picture'])) {
+                $user->avatar_path = (string) $profile['picture'];
+            }
+
+            $user->save();
+        } else {
+            $hasChanges = false;
+
+            if (! $user->email_verified_at && ($profile['email_verified'] ?? false)) {
+                $user->email_verified_at = now();
+                $hasChanges = true;
+            }
+
+            if (! $user->name && ! empty($profile['name'])) {
+                $user->name = (string) $profile['name'];
+                $hasChanges = true;
+            }
+
+            if (! $user->student_id && $user->role === 'student') {
+                $user->student_id = $this->generateStudentId();
+                $hasChanges = true;
+            }
+
+            if (! $user->avatar_path && ! empty($profile['picture'])) {
+                $user->avatar_path = (string) $profile['picture'];
+                $hasChanges = true;
+            }
+
+            if ($hasChanges) {
+                $user->save();
+            }
+        }
+
+        Auth::login($user);
         $request->session()->regenerate();
 
         return redirect()->intended($this->homeRouteFor(Auth::user()));
@@ -132,11 +179,12 @@ class AuthController extends Controller
             'client_id' => $config['client_id'],
             'redirect_uri' => $config['redirect'],
             'response_type' => 'code',
-            'scope' => 'openid email profile',
+            'scope' => $this->googleScope(),
             'state' => $state,
             'prompt' => 'select_account',
             'include_granted_scopes' => 'true',
             'access_type' => 'offline',
+            'display' => 'popup',
         ], '', '&', PHP_QUERY_RFC3986);
 
         return redirect()->away('https://accounts.google.com/o/oauth2/v2/auth?'.$query);
@@ -187,125 +235,16 @@ class AuthController extends Controller
         }
 
         try {
-            $tokenResponse = Http::asForm()->post('https://oauth2.googleapis.com/token', [
-                'code' => $code,
-                'client_id' => $config['client_id'],
-                'client_secret' => $config['client_secret'],
-                'redirect_uri' => $config['redirect'],
-                'grant_type' => 'authorization_code',
-            ]);
-        } catch (Throwable $exception) {
+            $accessToken = $this->requestGoogleAccessToken($config, $code);
+            $profile = $this->requestGoogleProfile($accessToken);
+            $redirectUrl = $this->authenticateWithGoogleProfile($request, $profile);
+        } catch (RuntimeException $exception) {
             return redirect()
                 ->to($originRoute)
                 ->withErrors([
-                    'google' => __('Gagal terhubung ke Google. Periksa koneksi internet Anda lalu coba lagi.'),
+                    'google' => $exception->getMessage(),
                 ]);
         }
-
-        if (! $tokenResponse->successful()) {
-            return redirect()
-                ->to($originRoute)
-                ->withErrors([
-                    'google' => __('Google menolak permintaan login. Silakan coba lagi.'),
-                ]);
-        }
-
-        $accessToken = (string) ($tokenResponse->json('access_token') ?? '');
-
-        if ($accessToken === '') {
-            return redirect()
-                ->to($originRoute)
-                ->withErrors([
-                    'google' => __('Token akses Google tidak tersedia. Silakan coba lagi.'),
-                ]);
-        }
-
-        try {
-            $profileResponse = Http::withToken($accessToken)->get('https://openidconnect.googleapis.com/v1/userinfo');
-        } catch (Throwable $exception) {
-            return redirect()
-                ->to($originRoute)
-                ->withErrors([
-                    'google' => __('Gagal mengambil data profil Google. Silakan coba lagi.'),
-                ]);
-        }
-
-        if (! $profileResponse->successful()) {
-            return redirect()
-                ->to($originRoute)
-                ->withErrors([
-                    'google' => __('Google tidak mengembalikan profil pengguna. Silakan coba lagi.'),
-                ]);
-        }
-
-        $profile = $profileResponse->json();
-
-        if (! is_array($profile)) {
-            return redirect()
-                ->to($originRoute)
-                ->withErrors([
-                    'google' => __('Data profil Google tidak valid. Silakan coba lagi.'),
-                ]);
-        }
-
-        $email = (string) ($profile['email'] ?? '');
-
-        if ($email === '') {
-            return redirect()
-                ->to($originRoute)
-                ->withErrors([
-                    'google' => __('Google tidak menyediakan alamat email Anda. Gunakan cara login lain.'),
-                ]);
-        }
-
-        $user = User::where('email', $email)->first();
-
-        if (! $user) {
-            $user = new User();
-            $user->name = $this->resolveGoogleName($profile, $email);
-            $user->email = $email;
-            $user->role = 'student';
-            $user->student_id = $this->generateStudentId();
-            $user->password = Hash::make(Str::random(40));
-            $user->email_verified_at = ($profile['email_verified'] ?? false) ? now() : null;
-
-            if (! empty($profile['picture'])) {
-                $user->avatar_path = (string) $profile['picture'];
-            }
-
-            $user->save();
-        } else {
-            $hasChanges = false;
-
-            if (! $user->email_verified_at && ($profile['email_verified'] ?? false)) {
-                $user->email_verified_at = now();
-                $hasChanges = true;
-            }
-
-            if (! $user->name && ! empty($profile['name'])) {
-                $user->name = (string) $profile['name'];
-                $hasChanges = true;
-            }
-
-            if (! $user->student_id && $user->role === 'student') {
-                $user->student_id = $this->generateStudentId();
-                $hasChanges = true;
-            }
-
-            if (! $user->avatar_path && ! empty($profile['picture'])) {
-                $user->avatar_path = (string) $profile['picture'];
-                $hasChanges = true;
-            }
-
-            if ($hasChanges) {
-                $user->save();
-            }
-        }
-
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        $redirectUrl = $this->homeRouteFor($user);
 
         if ($isPopup) {
             return view('auth.google-close', [
@@ -314,6 +253,84 @@ class AuthController extends Controller
         }
 
         return redirect()->intended($redirectUrl);
+    }
+
+    public function prepareGooglePopup(Request $request): JsonResponse
+    {
+        if (Auth::check()) {
+            return response()->json([
+                'redirect' => $this->homeRouteFor(Auth::user()),
+            ]);
+        }
+
+        $config = $this->googleConfig();
+
+        if (! $config) {
+            return response()->json([
+                'message' => __('Konfigurasi Google Sign-In belum disetel. Hubungi administrator MayClass.'),
+            ], 422);
+        }
+
+        $state = Str::random(40);
+        $origin = $this->sanitizeAuthOrigin($request->input('from'));
+
+        $request->session()->put('google_auth_state', $state);
+        $request->session()->put('google_auth_popup', true);
+        $request->session()->put('google_auth_origin', $origin);
+
+        return response()->json([
+            'state' => $state,
+            'client_id' => $config['client_id'],
+            'scope' => $this->googleScope(),
+            'redirect_uri' => $config['redirect'],
+        ]);
+    }
+
+    public function handleGooglePopup(Request $request): JsonResponse
+    {
+        if (Auth::check()) {
+            return response()->json([
+                'redirect' => $this->homeRouteFor(Auth::user()),
+            ]);
+        }
+
+        $config = $this->googleConfig();
+
+        if (! $config) {
+            return response()->json([
+                'message' => __('Konfigurasi Google Sign-In belum disetel. Hubungi administrator MayClass.'),
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'code' => ['required', 'string'],
+            'state' => ['required', 'string'],
+        ]);
+
+        $expectedState = (string) $request->session()->pull('google_auth_state', '');
+        $origin = $this->sanitizeAuthOrigin($request->session()->pull('google_auth_origin'));
+        $originRoute = $this->authOriginRoute($origin);
+
+        if ($expectedState === '' || ! hash_equals($expectedState, (string) $validated['state'])) {
+            return response()->json([
+                'message' => __('Sesi login Google tidak valid. Muat ulang halaman ini lalu coba lagi.'),
+            ], 419);
+        }
+
+        try {
+            $accessToken = $this->requestGoogleAccessToken($config, (string) $validated['code']);
+            $profile = $this->requestGoogleProfile($accessToken);
+            $redirectUrl = $this->authenticateWithGoogleProfile($request, $profile);
+        } catch (RuntimeException $exception) {
+            return response()->json([
+                'message' => $exception->getMessage(),
+                'redirect' => $originRoute,
+            ], 422);
+        }
+
+        return response()->json([
+            'redirect' => $redirectUrl,
+        ]);
     }
 
     public function logout(Request $request): RedirectResponse
@@ -381,6 +398,117 @@ class AuthController extends Controller
         }
 
         return $config;
+    }
+
+    private function googleScope(): string
+    {
+        return 'openid email profile';
+    }
+
+    private function requestGoogleAccessToken(array $config, string $code): string
+    {
+        try {
+            $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+                'code' => $code,
+                'client_id' => $config['client_id'],
+                'client_secret' => $config['client_secret'],
+                'redirect_uri' => $config['redirect'],
+                'grant_type' => 'authorization_code',
+            ]);
+        } catch (Throwable $exception) {
+            throw new RuntimeException(__('Gagal terhubung ke Google. Periksa koneksi internet Anda lalu coba lagi.'));
+        }
+
+        if (! $response->successful()) {
+            throw new RuntimeException(__('Google menolak permintaan login. Silakan coba lagi.'));
+        }
+
+        $accessToken = (string) ($response->json('access_token') ?? '');
+
+        if ($accessToken === '') {
+            throw new RuntimeException(__('Token akses Google tidak tersedia. Silakan coba lagi.'));
+        }
+
+        return $accessToken;
+    }
+
+    private function requestGoogleProfile(string $accessToken): array
+    {
+        try {
+            $response = Http::withToken($accessToken)->get('https://openidconnect.googleapis.com/v1/userinfo');
+        } catch (Throwable $exception) {
+            throw new RuntimeException(__('Gagal mengambil data profil Google. Silakan coba lagi.'));
+        }
+
+        if (! $response->successful()) {
+            throw new RuntimeException(__('Google tidak mengembalikan profil pengguna. Silakan coba lagi.'));
+        }
+
+        $profile = $response->json();
+
+        if (! is_array($profile)) {
+            throw new RuntimeException(__('Data profil Google tidak valid. Silakan coba lagi.'));
+        }
+
+        return $profile;
+    }
+
+    private function authenticateWithGoogleProfile(Request $request, array $profile): string
+    {
+        $email = (string) ($profile['email'] ?? '');
+
+        if ($email === '') {
+            throw new RuntimeException(__('Google tidak menyediakan alamat email Anda. Gunakan cara login lain.'));
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (! $user) {
+            $user = new User();
+            $user->name = $this->resolveGoogleName($profile, $email);
+            $user->email = $email;
+            $user->role = 'student';
+            $user->student_id = $this->generateStudentId();
+            $user->password = Hash::make(Str::random(40));
+            $user->email_verified_at = ($profile['email_verified'] ?? false) ? now() : null;
+
+            if (! empty($profile['picture'])) {
+                $user->avatar_path = (string) $profile['picture'];
+            }
+
+            $user->save();
+        } else {
+            $hasChanges = false;
+
+            if (! $user->email_verified_at && ($profile['email_verified'] ?? false)) {
+                $user->email_verified_at = now();
+                $hasChanges = true;
+            }
+
+            if (! $user->name && ! empty($profile['name'])) {
+                $user->name = (string) $profile['name'];
+                $hasChanges = true;
+            }
+
+            if (! $user->student_id && $user->role === 'student') {
+                $user->student_id = $this->generateStudentId();
+                $hasChanges = true;
+            }
+
+            if (! $user->avatar_path && ! empty($profile['picture'])) {
+                $user->avatar_path = (string) $profile['picture'];
+                $hasChanges = true;
+            }
+
+            if ($hasChanges) {
+                $user->save();
+            }
+        }
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return $this->homeRouteFor($user);
     }
 
     private function sanitizeAuthOrigin(?string $origin): string
