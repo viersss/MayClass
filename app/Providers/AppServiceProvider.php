@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use App\Support\Database\FallbackMySqlConnector;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Connection;
+use Illuminate\Database\MySqlConnection;
 use Illuminate\Support\ServiceProvider;
 use PDOException;
 
@@ -36,7 +40,6 @@ class AppServiceProvider extends ServiceProvider
 
         try {
             DB::connection($connection)->getPdo();
-
             return;
         } catch (PDOException $exception) {
             if (! $this->isConnectionRefused($exception)) {
@@ -104,20 +107,6 @@ class AppServiceProvider extends ServiceProvider
 
         return str_contains($message, 'connection refused')
             || str_contains($message, 'actively refused');
-    }
-
-    private function registerDatabaseFallbackConnector(): void
-    {
-        $resolver = static function ($connection, $database, $prefix, $config) {
-            $connector = new FallbackMySqlConnector();
-
-            $pdo = $connector->connect($config);
-
-            return new MySqlConnection($pdo, $database, $prefix, $config);
-        };
-
-        Connection::resolverFor('mysql', $resolver);
-        Connection::resolverFor('mariadb', $resolver);
     }
 
     private function registerDatabaseFallbackConnector(): void
