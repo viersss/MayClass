@@ -102,11 +102,12 @@ class AuthController extends Controller
             throw $exception;
         }
 
-        Auth::login($user);
+        // ✅ Tidak perlu Auth::login($user)
         $request->session()->regenerate();
 
         return redirect()->intended($this->homeRouteFor(Auth::user()));
     }
+
 
     public function redirectToGoogle(Request $request)
     {
