@@ -59,6 +59,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $tutor = $this->ensureDemoUser(
+            'tentor_demo',
             'tentor@gmail.com',
             'gatau123',
             [
@@ -92,6 +93,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->ensureDemoUser(
+            'admin_utama',
             'admin@gmail.com',
             'gatau123',
             [
@@ -104,11 +106,14 @@ class AppServiceProvider extends ServiceProvider
         );
     }
 
-    private function ensureDemoUser(string $email, string $plainPassword, array $attributes): ?User
+    private function ensureDemoUser(string $username, string $email, string $plainPassword, array $attributes): ?User
     {
         $user = User::firstOrNew(['email' => $email]);
 
-        $user->fill($attributes);
+        $user->fill(array_merge($attributes, [
+            'email' => $email,
+            'username' => $username,
+        ]));
 
         if (! $user->exists || empty($user->password) || ! Hash::check($plainPassword, $user->password)) {
             $user->password = Hash::make($plainPassword);

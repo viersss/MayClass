@@ -265,49 +265,6 @@
                 box-shadow: 0 18px 35px rgba(66, 183, 173, 0.42);
             }
 
-            .divider {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                color: var(--text-muted);
-                font-size: 0.85rem;
-                margin: 8px 0;
-            }
-
-            .divider::before,
-            .divider::after {
-                content: "";
-                flex: 1;
-                height: 1px;
-                background: rgba(107, 114, 128, 0.2);
-            }
-
-            .social-buttons {
-                display: grid;
-                gap: 12px;
-            }
-
-            .social-button {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-                padding: 12px;
-                border-radius: 12px;
-                border: 1.5px solid rgba(66, 183, 173, 0.25);
-                background: #fff;
-                font-weight: 500;
-                color: var(--text);
-                font-size: 0.95rem;
-                cursor: pointer;
-                transition: border 0.2s ease, transform 0.15s ease;
-            }
-
-            .social-button:hover {
-                border-color: var(--accent);
-                transform: translateY(-1px);
-            }
-
             .switch-message {
                 text-align: center;
                 color: var(--text-muted);
@@ -427,21 +384,35 @@
                                 @enderror
                             </div>
                             <div class="input-group">
+                                <label for="register-username">Username</label>
+                                <input
+                                    id="register-username"
+                                    type="text"
+                                    name="username"
+                                    value="{{ old('username') }}"
+                                    placeholder="Pilih username unik"
+                                    required
+                                />
+                                @error('username')
+                                    <p class="input-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="two-column">
+                            <div class="input-group">
                                 <label for="register-email">Email</label>
                                 <input
                                     id="register-email"
                                     type="email"
                                     name="email"
                                     value="{{ old('email') }}"
-                                    placeholder="Masukkan email"
+                                    placeholder="Masukkan email aktif"
                                     required
                                 />
                                 @error('email')
                                     <p class="input-error">{{ $message }}</p>
                                 @enderror
                             </div>
-                        </div>
-                        <div class="two-column">
                             <div class="input-group">
                                 <label for="register-phone">No. Tlp / WA</label>
                                 <input
@@ -452,6 +423,21 @@
                                     placeholder="Masukkan nomor telepon"
                                 />
                                 @error('phone')
+                                    <p class="input-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="two-column">
+                            <div class="input-group">
+                                <label for="register-parent">Nama Orang Tua / Wali (Opsional)</label>
+                                <input
+                                    id="register-parent"
+                                    type="text"
+                                    name="parent_name"
+                                    value="{{ old('parent_name') }}"
+                                    placeholder="Masukkan nama orang tua / wali"
+                                />
+                                @error('parent_name')
                                     <p class="input-error">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -469,6 +455,19 @@
                             </div>
                         </div>
                         <div class="input-group">
+                            <label for="register-address">Alamat (Opsional)</label>
+                            <input
+                                id="register-address"
+                                type="text"
+                                name="address"
+                                value="{{ old('address') }}"
+                                placeholder="Masukkan alamat lengkap"
+                            />
+                            @error('address')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="input-group">
                             <label for="register-password">Password</label>
                             <input
                                 id="register-password"
@@ -483,27 +482,6 @@
                             @enderror
                         </div>
                         <button class="primary-action" type="submit">Daftar</button>
-                        <div class="divider">atau</div>
-                        <div class="social-buttons">
-                            <button
-                                class="social-button"
-                                type="button"
-                                data-google-login
-                                data-google-origin="register"
-                                data-google-url="{{ route('auth.google.redirect', ['popup' => 1, 'from' => 'register']) }}"
-                                data-google-fallback-url="{{ route('auth.google.redirect', ['from' => 'register']) }}"
-                                aria-label="Daftar menggunakan Google"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M21.35 11.1H12.2V13.7H18.6C18.3 15.3 16.9 17.4 14.2 17.4C11.2 17.4 8.9 15 8.9 12C8.9 9 11.2 6.6 14.2 6.6C15.9 6.6 17.1 7.3 17.8 7.9L19.8 5.9C18.3 4.6 16.4 3.8 14.2 3.8C9.7 3.8 6 7.5 6 12C6 16.5 9.7 20.2 14.2 20.2C19 20.2 22 16.8 22 12.2C22 11.6 21.9 11.3 21.9 11L21.35 11.1Z"
-                                        fill="#4285F4"
-                                    />
-                                </svg>
-                                Google
-                            </button>
-                        </div>
-                        <p class="google-error" data-google-error data-google-context="register" hidden></p>
                         <p class="switch-message">
                             Sudah punya akun?
                             <a href="{{ route('login') }}">Masuk Sekarang</a>
@@ -513,16 +491,16 @@
                     <form data-mode="login" method="post" action="{{ route('login.perform') }}" novalidate>
                         @csrf
                         <div class="input-group">
-                            <label for="login-email">Email</label>
+                            <label for="login-username">Username</label>
                             <input
-                                id="login-email"
-                                type="email"
-                                name="email"
-                                value="{{ old('email') }}"
-                                placeholder="Masukkan email"
+                                id="login-username"
+                                type="text"
+                                name="username"
+                                value="{{ old('username') }}"
+                                placeholder="Masukkan username"
                                 required
                             />
-                            @error('email')
+                            @error('username')
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -541,27 +519,6 @@
                             @enderror
                         </div>
                         <button class="primary-action" type="submit">Masuk</button>
-                        <div class="divider">atau</div>
-                        <div class="social-buttons">
-                            <button
-                                class="social-button"
-                                type="button"
-                                data-google-login
-                                data-google-origin="login"
-                                data-google-url="{{ route('auth.google.redirect', ['popup' => 1, 'from' => 'login']) }}"
-                                data-google-fallback-url="{{ route('auth.google.redirect', ['from' => 'login']) }}"
-                                aria-label="Masuk menggunakan Google"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M21.35 11.1H12.2V13.7H18.6C18.3 15.3 16.9 17.4 14.2 17.4C11.2 17.4 8.9 15 8.9 12C8.9 9 11.2 6.6 14.2 6.6C15.9 6.6 17.1 7.3 17.8 7.9L19.8 5.9C18.3 4.6 16.4 3.8 14.2 3.8C9.7 3.8 6 7.5 6 12C6 16.5 9.7 20.2 14.2 20.2C19 20.2 22 16.8 22 12.2C22 11.6 21.9 11.3 21.9 11L21.35 11.1Z"
-                                        fill="#4285F4"
-                                    />
-                                </svg>
-                                Google
-                            </button>
-                        </div>
-                        <p class="google-error" data-google-error data-google-context="login" hidden></p>
                         <p class="switch-message">
                             Belum punya akun?
                             <a href="{{ route('register') }}">Daftar Sekarang</a>
@@ -592,284 +549,6 @@
             });
 
             setMode(doc.getAttribute('data-mode'));
-
-            const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
-            const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
-            const googleButtons = document.querySelectorAll('[data-google-login]');
-            const googlePrepareUrl = @json(route('auth.google.popup.prepare'));
-            const googlePopupUrl = @json(route('auth.google.popup'));
-            const googleMessages = {
-                generic: @json(__('Terjadi kesalahan saat terhubung ke Google. Silakan coba lagi.')),
-                blocked: @json(__('Browser memblokir pop-up Google. Perbolehkan pop-up lalu coba lagi.')),
-                cancelled: @json(__('Login Google dibatalkan sebelum selesai.')),
-            };
-            let googleLibraryPromise;
-
-            function showGoogleError(origin, message) {
-                const target = document.querySelector(`[data-google-error][data-google-context="${origin}"]`);
-
-                if (!target) {
-                    return;
-                }
-
-                if (!message) {
-                    target.hidden = true;
-                    target.textContent = '';
-                    return;
-                }
-
-                target.hidden = false;
-                target.textContent = message;
-            }
-
-            function clearGoogleError(origin) {
-                showGoogleError(origin, '');
-            }
-
-            function ensureGoogleLibrary() {
-                if (window.google && window.google.accounts && window.google.accounts.oauth2 && typeof window.google.accounts.oauth2.initCodeClient === 'function') {
-                    return Promise.resolve(window.google);
-                }
-
-                if (googleLibraryPromise) {
-                    return googleLibraryPromise;
-                }
-
-                googleLibraryPromise = new Promise((resolve) => {
-                    const script = document.createElement('script');
-                    script.src = 'https://accounts.google.com/gsi/client';
-                    script.async = true;
-                    script.defer = true;
-                    script.onload = () => resolve(window.google);
-                    script.onerror = () => resolve(null);
-                    document.head.appendChild(script);
-                });
-
-                return googleLibraryPromise;
-            }
-
-            async function prepareGoogleState(origin) {
-                try {
-                    const response = await fetch(googlePrepareUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
-                        },
-                        body: JSON.stringify({ from: origin }),
-                    });
-
-                    const data = await response.json().catch(() => ({}));
-
-                    if (!response.ok) {
-                        if (data && typeof data.redirect === 'string' && data.redirect) {
-                            return { redirect: data.redirect };
-                        }
-
-                        showGoogleError(origin, data && data.message ? data.message : googleMessages.generic);
-                        return null;
-                    }
-
-                    if (data && typeof data.redirect === 'string' && data.redirect) {
-                        return { redirect: data.redirect };
-                    }
-
-                    return data;
-                } catch (error) {
-                    showGoogleError(origin, googleMessages.generic);
-                    return null;
-                }
-            }
-
-            async function exchangeGoogleCode(code, state, origin) {
-                try {
-                    const response = await fetch(googlePopupUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Accept: 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
-                        },
-                        body: JSON.stringify({ code, state, from: origin }),
-                    });
-
-                    const data = await response.json().catch(() => ({}));
-
-                    if (!response.ok) {
-                        if (data && typeof data.redirect === 'string' && data.redirect) {
-                            return data.redirect;
-                        }
-
-                        showGoogleError(origin, data && data.message ? data.message : googleMessages.generic);
-                        return null;
-                    }
-
-                    return data && typeof data.redirect === 'string' ? data.redirect : null;
-                } catch (error) {
-                    showGoogleError(origin, googleMessages.generic);
-                    return null;
-                }
-            }
-
-            async function startGooglePopup(button, origin) {
-                const googleLib = await ensureGoogleLibrary();
-
-                if (!googleLib || !googleLib.accounts || !googleLib.accounts.oauth2 || typeof googleLib.accounts.oauth2.initCodeClient !== 'function') {
-                    return false;
-                }
-
-                const prepared = await prepareGoogleState(origin);
-
-                if (!prepared) {
-                    return true;
-                }
-
-                if (prepared.redirect) {
-                    window.location.href = prepared.redirect;
-                    return true;
-                }
-
-                if (!prepared.client_id || !prepared.state || !prepared.redirect_uri || !prepared.code_challenge) {
-                    showGoogleError(origin, googleMessages.generic);
-                    return true;
-                }
-
-                return new Promise((resolve) => {
-                    let completed = false;
-
-                    const finish = (value) => {
-                        if (!completed) {
-                            completed = true;
-                            resolve(value);
-                        }
-                    };
-
-                    try {
-                        const client = google.accounts.oauth2.initCodeClient({
-                            client_id: prepared.client_id,
-                            scope: prepared.scope,
-                            redirect_uri: prepared.redirect_uri,
-                            state: prepared.state,
-                            code_challenge: prepared.code_challenge,
-                            code_challenge_method: prepared.code_challenge_method || 'S256',
-                            ux_mode: 'popup',
-                            prompt: 'select_account',
-                            callback: async (response) => {
-                                if (!response) {
-                                    showGoogleError(origin, googleMessages.generic);
-                                    finish(true);
-                                    return;
-                                }
-
-                                if (response.error) {
-                                    if (response.error === 'access_denied') {
-                                        showGoogleError(origin, googleMessages.cancelled);
-                                    } else {
-                                        showGoogleError(origin, googleMessages.generic);
-                                    }
-
-                                    finish(true);
-                                    return;
-                                }
-
-                                if (!response.code) {
-                                    showGoogleError(origin, googleMessages.generic);
-                                    finish(true);
-                                    return;
-                                }
-
-                                const redirect = await exchangeGoogleCode(response.code, prepared.state, origin);
-
-                                if (redirect) {
-                                    window.location.href = redirect;
-                                }
-
-                                finish(true);
-                            },
-                            error_callback: (error) => {
-                                if (error && error.type === 'popup_blocked') {
-                                    showGoogleError(origin, googleMessages.blocked);
-                                } else if (error && error.type === 'popup_closed') {
-                                    showGoogleError(origin, googleMessages.cancelled);
-                                } else {
-                                    showGoogleError(origin, googleMessages.generic);
-                                }
-
-                                finish(true);
-                            },
-                        });
-
-                        client.requestCode();
-                    } catch (error) {
-                        showGoogleError(origin, googleMessages.generic);
-                        finish(true);
-                    }
-                });
-            }
-
-            function openGoogleFallback(button) {
-                const popupUrl = button.dataset.googleUrl;
-                const fallbackUrl = button.dataset.googleFallbackUrl || popupUrl;
-
-                if (!popupUrl) {
-                    return;
-                }
-
-                const width = 520;
-                const height = 640;
-                const left = window.screenX + (window.outerWidth - width) / 2;
-                const top = window.screenY + (window.outerHeight - height) / 2;
-                const features = [
-                    `width=${Math.round(width)}`,
-                    `height=${Math.round(height)}`,
-                    `left=${Math.max(Math.round(left), 0)}`,
-                    `top=${Math.max(Math.round(top), 0)}`,
-                    'resizable=yes',
-                    'scrollbars=yes',
-                ].join(',');
-
-                const popup = window.open(popupUrl, 'mayclass-google-signin', features);
-
-                if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-                    window.location.href = fallbackUrl || popupUrl;
-                } else {
-                    popup.focus();
-                }
-            }
-
-            googleButtons.forEach((button) => {
-                button.addEventListener('click', async () => {
-                    const origin = button.dataset.googleOrigin || 'login';
-
-                    clearGoogleError(origin);
-
-                    if (!csrfToken) {
-                        openGoogleFallback(button);
-                        return;
-                    }
-
-                    try {
-                        const handled = await startGooglePopup(button, origin);
-
-                        if (!handled) {
-                            openGoogleFallback(button);
-                        }
-                    } catch (error) {
-                        if (error && typeof error.redirect === 'string' && error.redirect) {
-                            window.location.href = error.redirect;
-                            return;
-                        }
-
-                        if (error && error.message) {
-                            showGoogleError(origin, error.message);
-                        } else {
-                            showGoogleError(origin, googleMessages.generic);
-                        }
-                    }
-                });
-            });
-
         </script>
     </body>
 </html>
