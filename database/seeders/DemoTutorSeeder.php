@@ -15,6 +15,8 @@ class DemoTutorSeeder extends Seeder
             ['email' => 'tentor@gmail.com'],
             [
                 'name' => 'Tentor Demo MayClass',
+                'username' => 'tentor_demo',
+                'email' => 'tentor@gmail.com',
                 'password' => Hash::make('gatau123'),
                 'role' => 'tutor',
                 'phone' => '0812-0000-1234',
