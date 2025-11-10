@@ -14,8 +14,10 @@ class Quiz extends Model
     protected $fillable = [
         'slug',
         'subject',
+        'class_level',
         'title',
         'summary',
+        'link_url',
         'thumbnail_url',
         'duration_label',
         'question_count',
@@ -36,5 +38,10 @@ class Quiz extends Model
         $key = $this->attributes['thumbnail_url'] ?? '';
 
         return ImageRepository::url("quizzes.$key");
+    }
+
+    public function getLinkAttribute(): ?string
+    {
+        return $this->attributes['link_url'] ?? null;
     }
 }
