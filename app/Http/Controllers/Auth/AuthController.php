@@ -55,8 +55,6 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)],
             'phone' => ['nullable', 'string', 'max:30'],
             'gender' => ['nullable', Rule::in(['male', 'female', 'other'])],
-            'parent_name' => ['nullable', 'string', 'max:255'],
-            'address' => ['nullable', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
         ]);
 
@@ -68,8 +66,6 @@ class AuthController extends Controller
             'role' => 'student',
             'phone' => $data['phone'] ?? null,
             'gender' => $data['gender'] ?? null,
-            'parent_name' => $data['parent_name'] ?? null,
-            'address' => $data['address'] ?? null,
             'student_id' => $this->generateStudentId(),
         ]);
 

@@ -427,32 +427,17 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="two-column">
-                            <div class="input-group">
-                                <label for="register-parent">Nama Orang Tua / Wali (Opsional)</label>
-                                <input
-                                    id="register-parent"
-                                    type="text"
-                                    name="parent_name"
-                                    value="{{ old('parent_name') }}"
-                                    placeholder="Masukkan nama orang tua / wali"
-                                />
-                                @error('parent_name')
-                                    <p class="input-error">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div class="input-group">
-                                <label for="register-gender">Jenis Kelamin</label>
-                                <select id="register-gender" name="gender">
-                                    <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Pilih Jenis Kelamin</option>
-                                    <option value="female" @selected(old('gender') === 'female')>Perempuan</option>
-                                    <option value="male" @selected(old('gender') === 'male')>Laki-laki</option>
-                                    <option value="other" @selected(old('gender') === 'other')>Lainnya</option>
-                                </select>
-                                @error('gender')
-                                    <p class="input-error">{{ $message }}</p>
-                                @enderror
-                            </div>
+                        <div class="input-group">
+                            <label for="register-gender">Jenis Kelamin</label>
+                            <select id="register-gender" name="gender">
+                                <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Pilih Jenis Kelamin</option>
+                                <option value="female" @selected(old('gender') === 'female')>Perempuan</option>
+                                <option value="male" @selected(old('gender') === 'male')>Laki-laki</option>
+                                <option value="other" @selected(old('gender') === 'other')>Lainnya</option>
+                            </select>
+                            @error('gender')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div class="input-group">
                             <label for="register-address">Alamat (Opsional)</label>
