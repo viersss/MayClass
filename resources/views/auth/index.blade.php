@@ -190,6 +190,15 @@
                 text-align: center;
             }
 
+            .google-error {
+                margin: 0;
+                margin-top: 12px;
+                text-align: center;
+                color: #dc2626;
+                font-size: 0.8rem;
+                line-height: 1.4;
+            }
+
             .error-alert ul {
                 margin: 0;
                 padding-left: 20px;
