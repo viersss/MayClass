@@ -20,6 +20,7 @@
                 --text-muted: #6b7280;
                 --bg-soft: #f3fbfb;
                 --card: #ffffff;
+                --page-padding: clamp(16px, 3vw, 40px);
             }
 
             * {
@@ -45,15 +46,14 @@
 
             .container {
                 width: 100%;
-                max-width: 1180px;
-                margin: 0 auto;
-                padding: 0 24px;
+                margin: 0;
+                padding: 0;
             }
 
             nav {
                 background: var(--card);
                 border-radius: 20px;
-                padding: 18px 26px;
+                padding: 18px var(--page-padding);
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -141,7 +141,7 @@
             }
 
             main {
-                padding: 48px 0 80px;
+                padding: 48px var(--page-padding) 80px;
                 display: grid;
                 gap: 48px;
             }
@@ -315,7 +315,7 @@
             }
 
             footer {
-                padding: 32px 0 48px;
+                padding: 32px var(--page-padding) 48px;
                 text-align: center;
                 color: var(--text-muted);
                 font-size: 0.85rem;
