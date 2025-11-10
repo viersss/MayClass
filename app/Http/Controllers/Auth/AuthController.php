@@ -9,6 +9,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use PDOException;
 use Throwable;
@@ -100,6 +102,7 @@ class AuthController extends Controller
             throw $exception;
         }
 
+        // ✅ Tidak perlu Auth::login($user)
         $request->session()->regenerate();
 
         return redirect()->intended($this->homeRouteFor(Auth::user()));
@@ -157,3 +160,4 @@ class AuthController extends Controller
         return false;
     }
 }
+
