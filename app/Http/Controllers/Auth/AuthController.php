@@ -4,18 +4,25 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Database\Schema\Blueprint;
+use PDOException;
+use Throwable;
 
 class AuthController extends Controller
 {
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('packages.index');
+            return redirect()->to($this->homeRouteFor(Auth::user()));
         }
 
         return view('auth.index', ['mode' => 'login']);
@@ -24,58 +31,82 @@ class AuthController extends Controller
     public function showRegister()
     {
         if (Auth::check()) {
-            return redirect()->route('packages.index');
+            return redirect()->to($this->homeRouteFor(Auth::user()));
         }
 
         return view('auth.index', ['mode' => 'register']);
     }
 
+    public function join(Request $request): RedirectResponse
+    {
+        if (Auth::check()) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        return redirect()->route('login');
+    }
+
     public function register(Request $request): RedirectResponse
     {
+        $this->ensureUsernameSupport();
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'alpha_dash', 'min:4', 'max:50', Rule::unique(User::class, 'username')],
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)],
             'phone' => ['nullable', 'string', 'max:30'],
             'gender' => ['nullable', Rule::in(['male', 'female', 'other'])],
-            'parent_name' => ['nullable', 'string', 'max:255'],
-            'address' => ['nullable', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
         ]);
 
         User::create([
             'name' => $data['name'],
+            'username' => $data['username'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => 'student',
             'phone' => $data['phone'] ?? null,
             'gender' => $data['gender'] ?? null,
-            'parent_name' => $data['parent_name'] ?? null,
-            'address' => $data['address'] ?? null,
             'student_id' => $this->generateStudentId(),
         ]);
 
         return redirect()
             ->route('login')
             ->with('status', __('Akun berhasil dibuat. Silakan login untuk mulai belajar.'))
-            ->withInput(['email' => $data['email']]);
+            ->withInput(['username' => $data['username']]);
     }
 
     public function login(Request $request): RedirectResponse
     {
+        $this->ensureUsernameSupport();
+
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'username' => ['required', 'string'],
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
-            return back()->withErrors([
-                'email' => __('auth.failed'),
-            ])->onlyInput('email');
+        try {
+            if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+                return back()->withErrors([
+                    'username' => __('auth.failed'),
+                ])->onlyInput('username');
+            }
+        } catch (QueryException|PDOException $exception) {
+            if ($this->isDatabaseConnectionIssue($exception)) {
+                return back()->withErrors([
+                    'username' => __('Koneksi ke database gagal. Pastikan layanan MySQL/XAMPP sudah berjalan dan pengaturan DB_HOST, DB_PORT, DB_USERNAME di file .env sesuai.'),
+                ])->onlyInput('username');
+            }
+
+            throw $exception;
         }
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('packages.index'));
+        return redirect()->intended($this->homeRouteFor(Auth::user()));
     }
 
     public function logout(Request $request): RedirectResponse
@@ -95,5 +126,96 @@ class AuthController extends Controller
         } while (User::where('student_id', $id)->exists());
 
         return $id;
+    }
+
+    private function homeRouteFor(?User $user): string
+    {
+        if (! $user) {
+            return route('login');
+        }
+
+        return match ($user->role) {
+            'tutor' => route('tutor.dashboard'),
+            'student' => route('student.dashboard'),
+            'admin' => route('admin.dashboard'),
+            default => route('packages.index'),
+        };
+    }
+
+    private function isDatabaseConnectionIssue(Throwable $exception): bool
+    {
+        $message = strtolower($exception->getMessage());
+
+        if (str_contains($message, 'connection refused') || str_contains($message, 'actively refused')) {
+            return true;
+        }
+
+        if ($exception instanceof QueryException && $exception->getPrevious()) {
+            return $this->isDatabaseConnectionIssue($exception->getPrevious());
+        }
+
+        if ($exception instanceof PDOException && (int) $exception->getCode() === 2002) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function ensureUsernameSupport(): void
+    {
+        try {
+            if (! Schema::hasTable('users')) {
+                return;
+            }
+
+            if (Schema::hasColumn('users', 'username')) {
+                return;
+            }
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('username', 50)->nullable()->unique()->after('name');
+            });
+
+            User::query()
+                ->whereNull('username')
+                ->orderBy('id')
+                ->chunkById(100, function ($users) {
+                    foreach ($users as $user) {
+                        $user->forceFill([
+                            'username' => $this->generateFallbackUsername($user),
+                        ])->save();
+                    }
+                });
+        } catch (Throwable $exception) {
+            Log::error('Unable to ensure username support for authentication.', [
+                'message' => $exception->getMessage(),
+            ]);
+
+            abort(500, __('Kolom username belum tersedia di database. Jalankan migrasi database MayClass kemudian coba lagi.'));
+        }
+    }
+
+    private function generateFallbackUsername(User $user): string
+    {
+        $base = Str::slug($user->name) ?: 'user';
+        $base = substr($base, 0, 40);
+
+        if ($base === '') {
+            $base = 'user';
+        }
+
+        $candidate = $base;
+
+        if (! User::where('username', $candidate)->exists()) {
+            return $candidate;
+        }
+
+        $candidate = rtrim(substr($base, 0, 32), '-') . '-' . $user->id;
+
+        while (User::where('username', $candidate)->exists()) {
+            $candidate = rtrim(substr($base, 0, 30), '-') . '-' . random_int(1000, 9999);
+        }
+
+        return $candidate;
     }
 }
