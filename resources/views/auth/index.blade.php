@@ -190,6 +190,15 @@
                 text-align: center;
             }
 
+            .google-error {
+                margin: 0;
+                margin-top: 12px;
+                text-align: center;
+                color: #dc2626;
+                font-size: 0.8rem;
+                line-height: 1.4;
+            }
+
             .error-alert ul {
                 margin: 0;
                 padding-left: 20px;
@@ -427,6 +436,19 @@
                                 <option value="other" @selected(old('gender') === 'other')>Lainnya</option>
                             </select>
                             @error('gender')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="input-group">
+                            <label for="register-address">Alamat (Opsional)</label>
+                            <input
+                                id="register-address"
+                                type="text"
+                                name="address"
+                                value="{{ old('address') }}"
+                                placeholder="Masukkan alamat lengkap"
+                            />
+                            @error('address')
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
                         </div>
