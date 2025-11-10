@@ -108,7 +108,6 @@ class AuthController extends Controller
         return redirect()->intended($this->homeRouteFor(Auth::user()));
     }
 
-
     public function redirectToGoogle(Request $request)
     {
         if (Auth::check()) {

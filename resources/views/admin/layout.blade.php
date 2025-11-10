@@ -335,12 +335,6 @@
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
                         $menuItems = [
                             [
-                                'label' => 'Dashboard',
-                                'abbr' => 'DB',
-                                'route' => 'admin.dashboard',
-                                'patterns' => ['admin.dashboard'],
-                            ],
-                            [
                                 'label' => 'Manajemen Siswa',
                                 'abbr' => 'MS',
                                 'route' => 'admin.students.index',
