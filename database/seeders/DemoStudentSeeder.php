@@ -24,6 +24,8 @@ class DemoStudentSeeder extends Seeder
             ['email' => 'demo@student.mayclass.test'],
             [
                 'name' => 'Ahmad Rizki',
+                'username' => 'siswa_demo',
+                'email' => 'demo@student.mayclass.test',
                 'password' => Hash::make('password123'),
                 'role' => 'student',
                 'student_id' => 'MC-102938',
