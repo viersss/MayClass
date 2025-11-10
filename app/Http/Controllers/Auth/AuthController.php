@@ -9,9 +9,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Database\Schema\Blueprint;
 use PDOException;
 use Throwable;
 
@@ -49,6 +51,8 @@ class AuthController extends Controller
 
     public function register(Request $request): RedirectResponse
     {
+        $this->ensureUsernameSupport();
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'alpha_dash', 'min:4', 'max:50', Rule::unique(User::class, 'username')],
@@ -77,6 +81,8 @@ class AuthController extends Controller
 
     public function login(Request $request): RedirectResponse
     {
+        $this->ensureUsernameSupport();
+
         $credentials = $request->validate([
             'username' => ['required', 'string'],
             'password' => ['required', 'string'],
@@ -154,6 +160,64 @@ class AuthController extends Controller
         }
 
         return false;
+    }
+
+    private function ensureUsernameSupport(): void
+    {
+        try {
+            if (! Schema::hasTable('users')) {
+                return;
+            }
+
+            if (Schema::hasColumn('users', 'username')) {
+                return;
+            }
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('username', 50)->nullable()->unique()->after('name');
+            });
+
+            User::query()
+                ->whereNull('username')
+                ->orderBy('id')
+                ->chunkById(100, function ($users) {
+                    foreach ($users as $user) {
+                        $user->forceFill([
+                            'username' => $this->generateFallbackUsername($user),
+                        ])->save();
+                    }
+                });
+        } catch (Throwable $exception) {
+            Log::error('Unable to ensure username support for authentication.', [
+                'message' => $exception->getMessage(),
+            ]);
+
+            abort(500, __('Kolom username belum tersedia di database. Jalankan migrasi database MayClass kemudian coba lagi.'));
+        }
+    }
+
+    private function generateFallbackUsername(User $user): string
+    {
+        $base = Str::slug($user->name) ?: 'user';
+        $base = substr($base, 0, 40);
+
+        if ($base === '') {
+            $base = 'user';
+        }
+
+        $candidate = $base;
+
+        if (! User::where('username', $candidate)->exists()) {
+            return $candidate;
+        }
+
+        $candidate = rtrim(substr($base, 0, 32), '-') . '-' . $user->id;
+
+        while (User::where('username', $candidate)->exists()) {
+            $candidate = rtrim(substr($base, 0, 30), '-') . '-' . random_int(1000, 9999);
+        }
+
+        return $candidate;
     }
 }
 

@@ -440,19 +440,6 @@
                             @enderror
                         </div>
                         <div class="input-group">
-                            <label for="register-address">Alamat (Opsional)</label>
-                            <input
-                                id="register-address"
-                                type="text"
-                                name="address"
-                                value="{{ old('address') }}"
-                                placeholder="Masukkan alamat lengkap"
-                            />
-                            @error('address')
-                                <p class="input-error">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="input-group">
                             <label for="register-password">Password</label>
                             <input
                                 id="register-password"
