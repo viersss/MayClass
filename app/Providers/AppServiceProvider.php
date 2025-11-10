@@ -110,10 +110,15 @@ class AppServiceProvider extends ServiceProvider
     {
         $user = User::firstOrNew(['email' => $email]);
 
-        $user->fill(array_merge($attributes, [
+        $payload = array_merge($attributes, [
             'email' => $email,
-            'username' => $username,
-        ]));
+        ]);
+
+        if (Schema::hasColumn('users', 'username')) {
+            $payload['username'] = $username;
+        }
+
+        $user->fill($payload);
 
         if (! $user->exists || empty($user->password) || ! Hash::check($plainPassword, $user->password)) {
             $user->password = Hash::make($plainPassword);
