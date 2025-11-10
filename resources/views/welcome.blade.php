@@ -390,6 +390,10 @@
         </style>
     </head>
     <body>
+        @php
+            $joinLink = route('join');
+        @endphp
+
         <header>
             <div class="container">
                 <nav>
