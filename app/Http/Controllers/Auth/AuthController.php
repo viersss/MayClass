@@ -104,6 +104,7 @@ class AuthController extends Controller
             throw $exception;
         }
 
+        // ✅ Tidak perlu Auth::login($user)
         $request->session()->regenerate();
 
         return redirect()->intended($this->homeRouteFor(Auth::user()));
@@ -219,3 +220,4 @@ class AuthController extends Controller
         return $candidate;
     }
 }
+
