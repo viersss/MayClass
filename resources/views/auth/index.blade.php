@@ -4,12 +4,14 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>MayClass - Masuk &amp; Registrasi</title>
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
             rel="stylesheet"
         />
+        <link rel="stylesheet" href="{{ asset('css/theme.css') }}" />
         <style>
             :root {
                 color-scheme: light;
@@ -255,49 +257,6 @@
                 box-shadow: 0 18px 35px rgba(66, 183, 173, 0.42);
             }
 
-            .divider {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                color: var(--text-muted);
-                font-size: 0.85rem;
-                margin: 8px 0;
-            }
-
-            .divider::before,
-            .divider::after {
-                content: "";
-                flex: 1;
-                height: 1px;
-                background: rgba(107, 114, 128, 0.2);
-            }
-
-            .social-buttons {
-                display: grid;
-                gap: 12px;
-            }
-
-            .social-button {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-                padding: 12px;
-                border-radius: 12px;
-                border: 1.5px solid rgba(66, 183, 173, 0.25);
-                background: #fff;
-                font-weight: 500;
-                color: var(--text);
-                font-size: 0.95rem;
-                cursor: pointer;
-                transition: border 0.2s ease, transform 0.15s ease;
-            }
-
-            .social-button:hover {
-                border-color: var(--accent);
-                transform: translateY(-1px);
-            }
-
             .switch-message {
                 text-align: center;
                 color: var(--text-muted);
@@ -417,21 +376,35 @@
                                 @enderror
                             </div>
                             <div class="input-group">
+                                <label for="register-username">Username</label>
+                                <input
+                                    id="register-username"
+                                    type="text"
+                                    name="username"
+                                    value="{{ old('username') }}"
+                                    placeholder="Pilih username unik"
+                                    required
+                                />
+                                @error('username')
+                                    <p class="input-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="two-column">
+                            <div class="input-group">
                                 <label for="register-email">Email</label>
                                 <input
                                     id="register-email"
                                     type="email"
                                     name="email"
                                     value="{{ old('email') }}"
-                                    placeholder="Masukkan email"
+                                    placeholder="Masukkan email aktif"
                                     required
                                 />
                                 @error('email')
                                     <p class="input-error">{{ $message }}</p>
                                 @enderror
                             </div>
-                        </div>
-                        <div class="two-column">
                             <div class="input-group">
                                 <label for="register-phone">No. Tlp / WA</label>
                                 <input
@@ -445,18 +418,18 @@
                                     <p class="input-error">{{ $message }}</p>
                                 @enderror
                             </div>
-                            <div class="input-group">
-                                <label for="register-gender">Jenis Kelamin</label>
-                                <select id="register-gender" name="gender">
-                                    <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Pilih Jenis Kelamin</option>
-                                    <option value="female" @selected(old('gender') === 'female')>Perempuan</option>
-                                    <option value="male" @selected(old('gender') === 'male')>Laki-laki</option>
-                                    <option value="other" @selected(old('gender') === 'other')>Lainnya</option>
-                                </select>
-                                @error('gender')
-                                    <p class="input-error">{{ $message }}</p>
-                                @enderror
-                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-gender">Jenis Kelamin</label>
+                            <select id="register-gender" name="gender">
+                                <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Pilih Jenis Kelamin</option>
+                                <option value="female" @selected(old('gender') === 'female')>Perempuan</option>
+                                <option value="male" @selected(old('gender') === 'male')>Laki-laki</option>
+                                <option value="other" @selected(old('gender') === 'other')>Lainnya</option>
+                            </select>
+                            @error('gender')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div class="input-group">
                             <label for="register-password">Password</label>
@@ -473,27 +446,6 @@
                             @enderror
                         </div>
                         <button class="primary-action" type="submit">Daftar</button>
-                        <div class="divider">atau</div>
-                        <div class="social-buttons">
-                            <button class="social-button" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M21.35 11.1H12.2V13.7H18.6C18.3 15.3 16.9 17.4 14.2 17.4C11.2 17.4 8.9 15 8.9 12C8.9 9 11.2 6.6 14.2 6.6C15.9 6.6 17.1 7.3 17.8 7.9L19.8 5.9C18.3 4.6 16.4 3.8 14.2 3.8C9.7 3.8 6 7.5 6 12C6 16.5 9.7 20.2 14.2 20.2C19 20.2 22 16.8 22 12.2C22 11.6 21.9 11.3 21.9 11L21.35 11.1Z"
-                                        fill="#4285F4"
-                                    />
-                                </svg>
-                                Google
-                            </button>
-                            <button class="social-button" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M15 4H18V0H15C12.2 0 10 2.2 10 5V7H7V11H10V24H14V11H17.3L18 7H14V5C14 4.4 14.4 4 15 4Z"
-                                        fill="#1877F2"
-                                    />
-                                </svg>
-                                Facebook
-                            </button>
-                        </div>
                         <p class="switch-message">
                             Sudah punya akun?
                             <a href="{{ route('login') }}">Masuk Sekarang</a>
@@ -503,16 +455,16 @@
                     <form data-mode="login" method="post" action="{{ route('login.perform') }}" novalidate>
                         @csrf
                         <div class="input-group">
-                            <label for="login-email">Email</label>
+                            <label for="login-username">Username</label>
                             <input
-                                id="login-email"
-                                type="email"
-                                name="email"
-                                value="{{ old('email') }}"
-                                placeholder="Masukkan email"
+                                id="login-username"
+                                type="text"
+                                name="username"
+                                value="{{ old('username') }}"
+                                placeholder="Masukkan username"
                                 required
                             />
-                            @error('email')
+                            @error('username')
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
                         </div>
@@ -531,27 +483,6 @@
                             @enderror
                         </div>
                         <button class="primary-action" type="submit">Masuk</button>
-                        <div class="divider">atau</div>
-                        <div class="social-buttons">
-                            <button class="social-button" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M21.35 11.1H12.2V13.7H18.6C18.3 15.3 16.9 17.4 14.2 17.4C11.2 17.4 8.9 15 8.9 12C8.9 9 11.2 6.6 14.2 6.6C15.9 6.6 17.1 7.3 17.8 7.9L19.8 5.9C18.3 4.6 16.4 3.8 14.2 3.8C9.7 3.8 6 7.5 6 12C6 16.5 9.7 20.2 14.2 20.2C19 20.2 22 16.8 22 12.2C22 11.6 21.9 11.3 21.9 11L21.35 11.1Z"
-                                        fill="#4285F4"
-                                    />
-                                </svg>
-                                Google
-                            </button>
-                            <button class="social-button" type="button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M15 4H18V0H15C12.2 0 10 2.2 10 5V7H7V11H10V24H14V11H17.3L18 7H14V5C14 4.4 14.4 4 15 4Z"
-                                        fill="#1877F2"
-                                    />
-                                </svg>
-                                Facebook
-                            </button>
-                        </div>
                         <p class="switch-message">
                             Belum punya akun?
                             <a href="{{ route('register') }}">Daftar Sekarang</a>
@@ -582,7 +513,6 @@
             });
 
             setMode(doc.getAttribute('data-mode'));
-
         </script>
     </body>
 </html>
