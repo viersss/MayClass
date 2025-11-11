@@ -4,18 +4,12 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
+use App\Support\SubjectPalette;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Schema;
 
 class QuizController extends Controller
 {
-    private const SUBJECT_ACCENTS = [
-        'Matematika' => '#37b6ad',
-        'Kimia' => '#5f6af8',
-        'Bahasa Inggris' => '#f1a82e',
-        'SD Terpadu' => '#8e65d4',
-    ];
-
     public function __construct()
     {
         $this->middleware('auth');
@@ -23,29 +17,66 @@ class QuizController extends Controller
 
     public function index()
     {
-        $collections = Schema::hasTable('quizzes')
-            ? Quiz::with(['levels', 'takeaways'])
-                ->orderBy('subject')
-                ->get()
-                ->groupBy('subject')
-                ->map(function ($quizzes, $subject) {
-                    return [
-                        'label' => $subject,
-                        'accent' => self::SUBJECT_ACCENTS[$subject] ?? '#37b6ad',
-                        'items' => $quizzes->map(fn ($quiz) => [
-                            'slug' => $quiz->slug,
-                            'title' => $quiz->title,
-                            'summary' => $quiz->summary,
-                            'duration' => $quiz->duration_label,
-                            'questions' => $quiz->question_count,
-                            'levels' => $quiz->levels->sortBy('position')->pluck('label')->all(),
-                        ])->values()->all(),
-                    ];
-                })
-                ->values()
-            : collect();
+        $materialsLink = (string) config('mayclass.links.materials_drive');
+        $quizLink = (string) config('mayclass.links.quiz_platform');
 
-        return view('student.quiz.index', ['collections' => $collections]);
+        if (! Schema::hasTable('quizzes')) {
+            return view('student.quiz.index', [
+                'page' => 'quiz',
+                'title' => 'Koleksi Quiz',
+                'collections' => collect(),
+                'stats' => [
+                    'total' => 0,
+                    'total_questions' => 0,
+                    'levels' => [],
+                ],
+                'materialsLink' => $materialsLink,
+                'quizLink' => $quizLink,
+            ]);
+        }
+
+        $quizzes = Quiz::with(['levels' => fn ($query) => $query->orderBy('position')])
+            ->orderBy('subject')
+            ->orderBy('title')
+            ->get();
+
+        $collections = $quizzes
+            ->groupBy('subject')
+            ->map(function ($items, $subject) use ($quizLink) {
+                return [
+                    'label' => $subject,
+                    'accent' => SubjectPalette::accent($subject),
+                    'items' => $items->map(fn ($quiz) => [
+                        'slug' => $quiz->slug,
+                        'title' => $quiz->title,
+                        'summary' => $quiz->summary,
+                        'duration' => $quiz->duration_label,
+                        'questions' => $quiz->question_count,
+                        'levels' => $quiz->levels->pluck('label')->all(),
+                        'link' => $quiz->link ?? $quizLink,
+                    ])->values()->all(),
+                ];
+            })
+            ->values();
+
+        $stats = [
+            'total' => $quizzes->count(),
+            'total_questions' => $quizzes->sum(fn ($quiz) => (int) $quiz->question_count),
+            'levels' => $quizzes->pluck('class_level')->merge($quizzes->flatMap(fn ($quiz) => $quiz->levels->pluck('label')))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all(),
+        ];
+
+        return view('student.quiz.index', [
+            'page' => 'quiz',
+            'title' => 'Koleksi Quiz',
+            'collections' => $collections,
+            'stats' => $stats,
+            'materialsLink' => $materialsLink,
+            'quizLink' => $quizLink,
+        ]);
     }
 
     public function show(string $slug): RedirectResponse
