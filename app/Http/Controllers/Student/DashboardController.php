@@ -31,22 +31,27 @@ class DashboardController extends Controller
         $quizLink = (string) config('mayclass.links.quiz_platform');
 
         $materialsAvailable = Schema::hasTable('materials');
+        $materialChaptersReady = Schema::hasTable('material_chapters');
+        $materialObjectivesReady = Schema::hasTable('material_objectives');
         $quizzesAvailable = Schema::hasTable('quizzes');
+        $quizLevelsReady = Schema::hasTable('quiz_levels');
 
         $recentMaterials = $materialsAvailable
-            ? Material::withCount(['chapters', 'objectives'])
+            ? Material::query()
+                ->when($materialChaptersReady, fn ($query) => $query->withCount('chapters'))
+                ->when($materialObjectivesReady, fn ($query) => $query->withCount('objectives'))
                 ->orderByDesc('created_at')
                 ->take(4)
                 ->get()
-                ->map(function (Material $material) use ($materialsLink) {
+                ->map(function (Material $material) use ($materialsLink, $materialChaptersReady, $materialObjectivesReady) {
                     return [
                         'slug' => $material->slug,
                         'subject' => $material->subject,
                         'title' => $material->title,
                         'summary' => $material->summary,
                         'level' => $material->level,
-                        'chapter_count' => $material->chapters_count,
-                        'objective_count' => $material->objectives_count,
+                        'chapter_count' => $materialChaptersReady ? (int) $material->chapters_count : 0,
+                        'objective_count' => $materialObjectivesReady ? (int) $material->objectives_count : 0,
                         'resource' => $material->resource_url ?? $materialsLink,
                         'accent' => SubjectPalette::accent($material->subject),
                     ];
@@ -54,18 +59,19 @@ class DashboardController extends Controller
             : collect();
 
         $recentQuizzes = $quizzesAvailable
-            ? Quiz::with(['levels' => fn ($query) => $query->orderBy('position')])
+            ? Quiz::query()
+                ->when($quizLevelsReady, fn ($query) => $query->with(['levels' => fn ($levels) => $levels->orderBy('position')]))
                 ->orderByDesc('created_at')
                 ->take(4)
                 ->get()
-                ->map(function (Quiz $quiz) use ($quizLink) {
+                ->map(function (Quiz $quiz) use ($quizLink, $quizLevelsReady) {
                     return [
                         'slug' => $quiz->slug,
                         'title' => $quiz->title,
                         'summary' => $quiz->summary,
                         'duration' => $quiz->duration_label,
                         'questions' => $quiz->question_count,
-                        'levels' => $quiz->levels->pluck('label')->all(),
+                        'levels' => $quizLevelsReady ? $quiz->levels->pluck('label')->all() : [],
                         'link' => $quiz->link ?? $quizLink,
                         'accent' => SubjectPalette::accent($quiz->subject),
                     ];
@@ -89,22 +95,32 @@ class DashboardController extends Controller
             ? Quiz::select('class_level')->distinct()->pluck('class_level')->filter()->values()->all()
             : [];
 
-        $levelSet = collect($materialLevels)->merge($quizLevels)->filter()->unique()->values();
+        $levelSet = collect($materialLevels)->merge($quizLevels);
+
+        if ($quizLevelsReady && $quizzesAvailable) {
+            $levelSet = $levelSet->merge(
+                Quiz::query()
+                    ->with(['levels' => fn ($levels) => $levels->orderBy('position')])
+                    ->get()
+                    ->flatMap(fn ($quiz) => $quiz->levels->pluck('label'))
+            );
+        }
+
+        $levelSet = $levelSet->filter()->unique()->values();
 
         $upcomingTotal = $sessions
-            ->filter(fn ($session) => $session->start_at && CarbonImmutable::parse($session->start_at)->isFuture())
+            ->filter(function ($session) {
+                $start = $this->parseDate($session->start_at ?? null);
+
+                return $start ? $start->isFuture() : false;
+            })
             ->count();
 
         $weekSessions = $sessions
             ->filter(function ($session) {
-                if (! $session->start_at) {
-                    return false;
-                }
+                $start = $this->parseDate($session->start_at ?? null);
 
-                $start = CarbonImmutable::parse($session->start_at);
-                $now = CarbonImmutable::now();
-
-                return $start->isSameWeek($now);
+                return $start ? $start->isSameWeek(CarbonImmutable::now()) : false;
             })
             ->count();
 
@@ -157,5 +173,18 @@ class DashboardController extends Controller
             'period' => 'Aktif hingga ' . ScheduleViewData::formatFullDate($endDate),
             'status' => $endDate->isFuture() ? 'Berjalan' : 'Berakhir',
         ];
+    }
+
+    private function parseDate($value): ?CarbonImmutable
+    {
+        if (! $value) {
+            return null;
+        }
+
+        try {
+            return CarbonImmutable::parse($value);
+        } catch (\Throwable $exception) {
+            return null;
+        }
     }
 }
