@@ -112,8 +112,6 @@ Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
 9.  Buka aplikasi di `http://localhost:8000`.
 
-<<<<<<< HEAD
-=======
 ## 🔧 Troubleshooting
 
 ### Error `HY000/1045` saat login MySQL atau phpMyAdmin
@@ -143,7 +141,27 @@ dengan database:
 Apabila Anda tidak ingin menggunakan akun `root`, buat pengguna baru di MySQL dengan hak akses yang dibutuhkan dan masukkan
 credential tersebut ke dalam file `.env`.
 
->>>>>>> b1b87020df4bf884b750831709f40722cf4fa98d
+### Error `SQLSTATE[42S02]: Base table or view not found: 1146 Table 'mayclass.sessions' doesn't exist`
+
+Laravel MayClass dikonfigurasi menggunakan **database session driver**, sehingga tabel `sessions` wajib ada di database Anda.
+Jika Anda melihat error di atas ketika menjalankan `php artisan serve`, lakukan langkah-langkah berikut:
+
+1. Pastikan database yang dirujuk di `.env` sudah dibuat di MySQL/Laragon Anda.
+2. Jalankan migrasi terbaru untuk membuat tabel `sessions` dan tabel lainnya yang mungkin tertinggal:
+
+   ```bash
+   php artisan migrate
+   ```
+
+3. Apabila Anda mengimpor `database/schema.sql` secara manual, pastikan skrip tersebut berhasil membuat tabel `sessions`.
+   Anda dapat mengeceknya melalui phpMyAdmin atau menjalankan query berikut di MySQL:
+
+   ```sql
+   SHOW TABLES LIKE 'sessions';
+   ```
+
+4. Setelah tabel tersedia, restart server dengan perintah `php artisan serve` dan muat ulang halaman aplikasi.
+
 ## 👥 Tim Pengembang (Kelompok 1 - 3SD2)
 
 Proyek ini dikerjakan oleh:
