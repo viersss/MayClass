@@ -253,10 +253,23 @@
                 margin-bottom: 24px;
                 padding: 16px 20px;
                 border-radius: 16px;
-                background: rgba(61, 183, 173, 0.14);
-                border: 1px solid rgba(61, 183, 173, 0.24);
-                color: var(--primary-dark);
                 font-weight: 500;
+                border: 1px solid transparent;
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .flash-message[data-variant='success'] {
+                background: rgba(61, 183, 173, 0.14);
+                border-color: rgba(61, 183, 173, 0.24);
+                color: var(--primary-dark);
+            }
+
+            .flash-message[data-variant='error'] {
+                background: rgba(220, 38, 38, 0.12);
+                border-color: rgba(220, 38, 38, 0.18);
+                color: #991b1b;
             }
 
             @media (max-width: 1240px) {
@@ -427,7 +440,10 @@
                     <div class="page-wrapper">
                         <div class="page-content">
                             @if (session('status'))
-                                <div class="flash-message">{{ session('status') }}</div>
+                                <div class="flash-message" data-variant="success">{{ session('status') }}</div>
+                            @endif
+                            @if (session('alert'))
+                                <div class="flash-message" data-variant="error">{{ session('alert') }}</div>
                             @endif
                             @yield('content')
                         </div>
