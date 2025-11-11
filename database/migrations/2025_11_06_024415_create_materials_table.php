@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('level');
             $table->text('summary');
             $table->string('thumbnail_url');
+            $table->string('resource_path')->nullable();
             $table->timestamps();
         });
     }
