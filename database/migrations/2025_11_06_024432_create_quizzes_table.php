@@ -12,8 +12,10 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->unique();
             $table->string('subject');
+            $table->string('class_level')->nullable();
             $table->string('title');
             $table->text('summary');
+            $table->string('link_url')->nullable();
             $table->string('thumbnail_url');
             $table->string('duration_label');
             $table->unsignedInteger('question_count');
