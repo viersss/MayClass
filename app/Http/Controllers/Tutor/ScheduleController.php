@@ -27,17 +27,19 @@ class ScheduleController extends BaseTutorController
 
         $grouped = $sessions
             ->map(function (ScheduleSession $session) {
-                $start = CarbonImmutable::parse($session->start_at);
-                $end = $start->addMinutes(90);
+                $start = $this->parseDate($session->start_at ?? null);
+                $end = $start ? $start->addMinutes(90) : null;
 
                 return [
-                    'day_key' => $start->format('Y-m-d'),
-                    'day_label' => $start->locale('id')->translatedFormat('l'),
-                    'date_label' => $start->translatedFormat('d F Y'),
+                    'day_key' => $start ? $start->format('Y-m-d') : spl_object_id($session),
+                    'day_label' => $start ? $start->locale('id')->translatedFormat('l') : '-',
+                    'date_label' => $start ? $start->translatedFormat('d F Y') : '-',
                     'subject' => $session->category,
                     'title' => $session->title,
                     'class_level' => $session->class_level ?? '-',
-                    'time_range' => $start->format('H.i') . ' - ' . $end->format('H.i'),
+                    'time_range' => $start && $end
+                        ? $start->format('H.i') . ' - ' . $end->format('H.i')
+                        : 'Jadwal belum tersedia',
                     'location' => $session->location ?? 'Ruang Virtual',
                     'student_count' => $session->student_count,
                 ];
@@ -67,14 +69,16 @@ class ScheduleController extends BaseTutorController
         $nextSessionHighlight = null;
 
         if ($nextSession) {
-            $start = CarbonImmutable::parse($nextSession->start_at);
-            $end = $start->addMinutes(90);
+            $start = $this->parseDate($nextSession->start_at ?? null);
+            $end = $start ? $start->addMinutes(90) : null;
 
             $nextSessionHighlight = [
                 'title' => $nextSession->title,
                 'subject' => $nextSession->category,
-                'date_label' => $start->locale('id')->translatedFormat('l, d F Y'),
-                'time_range' => $start->format('H.i') . ' - ' . $end->format('H.i') . ' WIB',
+                'date_label' => $start ? $start->locale('id')->translatedFormat('l, d F Y') : '-',
+                'time_range' => $start && $end
+                    ? $start->format('H.i') . ' - ' . $end->format('H.i') . ' WIB'
+                    : 'Jadwal belum tersedia',
                 'location' => $nextSession->location ?? 'Ruang Virtual',
                 'class_level' => $nextSession->class_level ?? '-',
                 'student_count' => $nextSession->student_count,
@@ -86,5 +90,18 @@ class ScheduleController extends BaseTutorController
             'metrics' => $metrics,
             'nextSessionHighlight' => $nextSessionHighlight,
         ]);
+    }
+
+    private function parseDate($value): ?CarbonImmutable
+    {
+        if (! $value) {
+            return null;
+        }
+
+        try {
+            return CarbonImmutable::parse($value);
+        } catch (\Throwable $exception) {
+            return null;
+        }
     }
 }
