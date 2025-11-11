@@ -178,6 +178,13 @@ color-scheme: light;
                 }
             }
 
+            @media (max-width: 768px) {
+                .nav-actions {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+
             .btn {
                 display: inline-flex;
                 align-items: center;
