@@ -298,3 +298,19 @@ INSERT INTO `users` (`name`, `username`, `email`, `password`, `role`)
 VALUES ('Admin MayClass', 'admin', 'admin@mayclass.com', '$2y$10$kU9mXLgNoycC6s5yGswB0OfmZ7Nfq1qAhdgLoM9JykOYoP7jN2qZy', 'admin');
 
 -- Password di atas = "admin123" (bcrypt)
+
+-- --------------------------------------------------------
+-- TABLE: sessions
+-- --------------------------------------------------------
+CREATE TABLE `sessions` (
+  `id` varchar(255) NOT NULL,
+  `user_id` bigint UNSIGNED DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `payload` longtext NOT NULL,
+  `last_activity` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sessions_user_id_index` (`user_id`),
+  KEY `sessions_last_activity_index` (`last_activity`),
+  CONSTRAINT `sessions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
