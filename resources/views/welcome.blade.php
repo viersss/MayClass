@@ -12,6 +12,7 @@
         />
         <style>
             :root {
+                 --nav-height: 64px;
 color-scheme: light;
 --primary-dark: #1b6d4f;
 --primary-main: #3fa67e;
@@ -72,31 +73,41 @@ color-scheme: light;
                 width: 100%;
             }
 
-            header {
-                position: relative;
-                background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-main) 100%);
-                color: #ffffff;
-                overflow: hidden;
-                width: 100%;
-                padding: 16px 0 0;
-            }
+            /* ==== NAVBAR TRANSLUCENT + BLUR ==== */
+header {
+  overflow: visible;           /* biar elemen nav tidak ter-clipping */
+  padding-top: 0;
+}
 
-            /* Nav uses clean layout without boxed background */
-            nav {
-                position: relative;
-                z-index: 1;
-                padding: 28px clamp(8px, 2.5vw, 24px);
-                margin: 0 0 32px;
-                width: 100%;
-            }
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  width: 100%;
+  padding: 12px clamp(12px, 3vw, 24px);
+  
+  /* 🔸 Glassmorphism putih */
+  background: rgba(255, 255, 255, 0.4); /* putih transparan */
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 
-            .nav-inner {
-                display: grid;
-                grid-template-columns: auto 1fr auto;
-                align-items: center;
-                gap: clamp(20px, 4vw, 48px);
-                width: 100%;
-            }
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+
+.nav-inner {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* kiri - tengah - kanan */
+  align-items: center;
+  width: 100%;
+  padding: 0 32px; /* tidak terlalu besar */
+  gap: 20px;
+}
 
             @media (max-width: 1024px) {
                 nav {
@@ -136,23 +147,22 @@ color-scheme: light;
                 justify-self: start;
             }
 
-            .brand img {
-                width: 48px;
-                height: 48px;
-                object-fit: contain;
-            }
+.brand img {
+    width: 130px;    /* 🔸 dari 48px → 72px (lebih besar tapi masih proporsional) */
+    height: auto;   /* biar tinggi menyesuaikan proporsi */
+    object-fit: contain;
+}
 
-            .nav-links {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex: 1 1 auto;
-                gap: 28px;
-                row-gap: 14px;
-                font-size: 0.95rem;
-                flex-wrap: wrap;
-                justify-self: center;
-            }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 🔸 dorong ke kanan */
+  gap: 28px;
+  font-size: 0.95rem;
+  margin-left: 115px;
+}
+
 
             .nav-links a {
                 color: rgba(255, 255, 255, 0.78);
@@ -220,20 +230,29 @@ color-scheme: light;
                 transform: translateY(-1px);
             }
 
-            /* Hero section as flex container inside full-width header */
-            .hero {
-                position: relative;
-                z-index: 1;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                width: 100%;
-                padding: 80px 32px;
-                min-height: 90vh;
-                background: linear-gradient(to bottom, rgba(27, 109, 79, 0.85), rgba(63, 166, 126, 0.75)),
-                    url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1600') center/cover no-repeat;
-            }
+.hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* konten selalu di tengah vertikal */
+  text-align: center;
+  width: 100%;
+  min-height: calc(100vh + 120px); /* 🟢 lebih tinggi dari viewport */
+  padding-top: calc(var(--nav-height) + 40px); /* aman dari navbar */
+  padding-bottom: 100px;
+background: 
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.35),   /* 🔸 lapisan gelap lembut di atas */
+      rgba(0, 0, 0, 0.65)    /* 🔸 sedikit lebih pekat di bawah */
+    ),
+url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1600')
+  center/cover no-repeat;
+
+}
+
 
             .hero-content {
                 max-width: 800px;
@@ -769,10 +788,12 @@ color-scheme: light;
                     padding: 60px 0;
                 }
 
-                .hero {
-                    padding: 50px 16px;
-                    gap: 40px;
-                }
+.hero {
+  height: 900px;
+  padding-top: calc(var(--nav-height) + 60px);
+}
+
+
 
                 .highlight-section {
                     padding: 60px 16px;
