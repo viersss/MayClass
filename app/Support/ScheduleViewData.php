@@ -45,13 +45,21 @@ class ScheduleViewData
 
     public static function fromCollection(Collection $sessions): array
     {
-        $referenceDate = $sessions->min('start_at')
-            ? CarbonImmutable::parse($sessions->min('start_at'))
-            : CarbonImmutable::now();
+        $validSessions = $sessions->filter(fn ($session) => self::parseDate($session->start_at ?? null));
 
-        $highlightSession = $sessions->firstWhere('is_highlight', true)
-            ?? $sessions->firstWhere(fn ($session) => CarbonImmutable::parse($session->start_at)->isFuture())
-            ?? $sessions->first();
+        $referenceDate = $validSessions
+            ->map(fn ($session) => self::parseDate($session->start_at ?? null))
+            ->filter()
+            ->sortBy(fn (CarbonImmutable $date) => $date->timestamp)
+            ->first() ?? CarbonImmutable::now();
+
+        $highlightSession = $validSessions->firstWhere('is_highlight', true)
+            ?? $validSessions->firstWhere(function ($session) {
+                $start = self::parseDate($session->start_at ?? null);
+
+                return $start ? $start->isFuture() : false;
+            })
+            ?? $validSessions->first();
 
         $highlight = $highlightSession
             ? self::formatSession($highlightSession)
@@ -63,8 +71,12 @@ class ScheduleViewData
                 'mentor' => '-',
             ];
 
-        $upcoming = $sessions
-            ->filter(fn ($session) => CarbonImmutable::parse($session->start_at)->isFuture())
+        $upcoming = $validSessions
+            ->filter(function ($session) {
+                $start = self::parseDate($session->start_at ?? null);
+
+                return $start ? $start->isFuture() : false;
+            })
             ->sortBy('start_at')
             ->map(fn ($session) => self::formatSession($session))
             ->values()
@@ -74,7 +86,7 @@ class ScheduleViewData
             $upcoming = collect([$highlight]);
         }
 
-        $calendar = self::buildCalendar($referenceDate, $sessions);
+        $calendar = self::buildCalendar($referenceDate, $validSessions);
 
         return [
             'highlight' => $highlight,
@@ -96,7 +108,18 @@ class ScheduleViewData
 
     public static function formatSession(ScheduleSession $session): array
     {
-        $startAt = CarbonImmutable::parse($session->start_at);
+        $startAt = self::parseDate($session->start_at ?? null);
+
+        if (! $startAt) {
+            return [
+                'title' => $session->title,
+                'category' => $session->category,
+                'date' => '-',
+                'time' => '-',
+                'mentor' => $session->mentor_name,
+            ];
+        }
+
         $endAt = $startAt->addMinutes(90);
 
         return [
@@ -132,8 +155,9 @@ class ScheduleViewData
         }
 
         $activeDays = $sessions
-            ->filter(fn ($session) => CarbonImmutable::parse($session->start_at)->month === $referenceDate->month)
-            ->map(fn ($session) => CarbonImmutable::parse($session->start_at)->day)
+            ->map(fn ($session) => self::parseDate($session->start_at ?? null))
+            ->filter(fn ($date) => $date && $date->month === $referenceDate->month)
+            ->map(fn ($date) => $date->day)
             ->unique()
             ->values()
             ->all();
@@ -144,5 +168,18 @@ class ScheduleViewData
             'activeDays' => $activeDays,
             'monthLabel' => self::MONTH_NAMES[$referenceDate->month] . ' ' . $referenceDate->year,
         ];
+    }
+
+    private static function parseDate($value): ?CarbonImmutable
+    {
+        if (! $value) {
+            return null;
+        }
+
+        try {
+            return CarbonImmutable::parse($value);
+        } catch (\Throwable $exception) {
+            return null;
+        }
     }
 }

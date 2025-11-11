@@ -112,6 +112,35 @@ Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
 9.  Buka aplikasi di `http://localhost:8000`.
 
+## 🔧 Troubleshooting
+
+### Error `HY000/1045` saat login MySQL atau phpMyAdmin
+
+Apabila phpMyAdmin menampilkan pesan `Access denied for user 'root'@'localhost' (using password: NO)` berarti server
+MySQL Anda membutuhkan kata sandi untuk akun `root`. Laragon secara bawaan memperbolehkan login tanpa kata sandi, namun
+pengaturan lokal Anda bisa saja sudah berubah. Lakukan langkah-langkah berikut untuk memastikan aplikasi dapat terhubung
+dengan database:
+
+1.  Buka **Laragon → Menu → Database → mysql → Reset/Change password** lalu tentukan kata sandi baru untuk pengguna
+    `root`.
+2.  Setelah password diperbarui, sesuaikan kredensial pada file `.env`:
+
+    ```ini
+    DB_USERNAME=root
+    DB_PASSWORD=kata_sandi_baru_anda
+    ```
+
+3.  Restart layanan MySQL melalui Laragon agar konfigurasi baru diterapkan.
+4.  Uji kembali koneksi melalui phpMyAdmin menggunakan username dan kata sandi yang sama seperti di `.env`.
+5.  Jalankan kembali migrasi aplikasi apabila sebelumnya gagal:
+
+    ```bash
+    php artisan migrate
+    ```
+
+Apabila Anda tidak ingin menggunakan akun `root`, buat pengguna baru di MySQL dengan hak akses yang dibutuhkan dan masukkan
+credential tersebut ke dalam file `.env`.
+
 ## 👥 Tim Pengembang (Kelompok 1 - 3SD2)
 
 Proyek ini dikerjakan oleh:
