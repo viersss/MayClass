@@ -85,38 +85,44 @@ color-scheme: light;
             nav {
                 position: relative;
                 z-index: 1;
-                padding: 28px 0;
+                padding: 28px clamp(8px, 2.5vw, 24px);
                 margin: 0 0 32px;
                 width: 100%;
             }
 
             .nav-inner {
-                display: flex;
+                display: grid;
+                grid-template-columns: auto 1fr auto;
                 align-items: center;
-                justify-content: space-between;
-                gap: 32px;
+                gap: clamp(20px, 4vw, 48px);
                 width: 100%;
-                flex-wrap: wrap;
             }
 
             @media (max-width: 1024px) {
                 nav {
-                    padding: 24px 0;
+                    padding: 24px clamp(8px, 4vw, 20px);
                 }
 
                 .nav-inner {
-                    gap: 24px;
+                    gap: clamp(18px, 4vw, 32px);
                 }
             }
 
             @media (max-width: 768px) {
                 nav {
-                    padding: 20px 0;
+                    padding: 20px clamp(8px, 6vw, 16px);
                     margin-bottom: 24px;
                 }
 
                 .nav-inner {
-                    justify-content: center;
+                    grid-template-columns: 1fr;
+                    justify-items: center;
+                    gap: 18px;
+                }
+
+                .nav-inner > * {
+                    width: 100%;
+                    justify-self: center;
                 }
             }
 
@@ -127,6 +133,7 @@ color-scheme: light;
                 font-weight: 600;
                 font-size: 1.25rem;
                 flex-shrink: 0;
+                justify-self: start;
             }
 
             .brand img {
@@ -144,6 +151,7 @@ color-scheme: light;
                 row-gap: 14px;
                 font-size: 0.95rem;
                 flex-wrap: wrap;
+                justify-self: center;
             }
 
             .nav-links a {
@@ -159,6 +167,15 @@ color-scheme: light;
                 display: flex;
                 align-items: center;
                 gap: 16px;
+                justify-content: flex-end;
+                justify-self: end;
+            }
+
+            @media (max-width: 768px) {
+                .nav-actions {
+                    width: 100%;
+                    justify-content: center;
+                }
             }
 
             @media (max-width: 768px) {
@@ -825,7 +842,7 @@ color-scheme: light;
 
         <header>
             <nav>
-                <div class="container nav-inner">
+                <div class="nav-inner">
                     <a class="brand" href="/">
                         <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" width="200" height="auto" />
                     </a>
