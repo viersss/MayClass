@@ -227,7 +227,7 @@ class DashboardController extends BaseAdminController
             return collect();
         }
 
-        $start = now()->startOfMonth()->subMonths(5);
+        $start = CarbonImmutable::now()->startOfMonth()->subMonths(5);
         $periods = collect(range(0, 5))->map(fn ($i) => $start->addMonths($i));
 
         $raw = User::query()
