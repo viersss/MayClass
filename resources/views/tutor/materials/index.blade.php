@@ -94,6 +94,25 @@
             margin-bottom: 24px;
         }
 
+        .system-alert strong {
+            display: block;
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+        }
+
+        .system-alert ol {
+            margin: 12px 0 0 18px;
+            padding: 0;
+            font-weight: 400;
+        }
+
+        .system-alert code {
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.55);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
         .material-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -224,8 +243,15 @@
     </div>
 
     @if (! $tableReady)
-        <div class="system-alert">Tabel materi belum tersedia. Jalankan perintah <code>php artisan migrate</code> untuk mulai
-            mengelola materi.</div>
+        <div class="system-alert">
+            <strong>Database materi belum siap.</strong>
+            <p>Jalankan migrasi sekali saja agar tutor dapat menambahkan dan mengelola materi langsung dari dashboard.</p>
+            <ol>
+                <li>Buka terminal pada root project MayClass.</li>
+                <li>Jalankan perintah <code>php artisan migrate</code> (gunakan opsi <code>--force</code> pada production).</li>
+                <li>Muat ulang halaman ini dan mulai unggah materi baru.</li>
+            </ol>
+        </div>
     @elseif ($materials->isEmpty())
         <div class="empty-state">
             <strong>Belum ada materi terdaftar</strong>

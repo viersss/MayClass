@@ -94,6 +94,25 @@
             margin-bottom: 24px;
         }
 
+        .system-alert strong {
+            display: block;
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+        }
+
+        .system-alert ol {
+            margin: 12px 0 0 18px;
+            padding: 0;
+            font-weight: 400;
+        }
+
+        .system-alert code {
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.55);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
         .quiz-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -224,8 +243,15 @@
     </div>
 
     @if (! $tableReady)
-        <div class="system-alert">Tabel quiz belum tersedia. Jalankan perintah <code>php artisan migrate</code> untuk mulai
-            mengelola evaluasi.</div>
+        <div class="system-alert">
+            <strong>Database kuis belum siap.</strong>
+            <p>Selesaikan migrasi agar tutor dapat membuat kuis, mengatur jenjang, dan mempublikasikan evaluasi ke siswa.</p>
+            <ol>
+                <li>Buka terminal pada root project MayClass.</li>
+                <li>Eksekusi <code>php artisan migrate</code> (tambahkan <code>--force</code> saat di production).</li>
+                <li>Segarkan halaman ini dan mulai buat kuis pertama.</li>
+            </ol>
+        </div>
     @elseif ($quizzes->isEmpty())
         <div class="empty-state">
             <strong>Belum ada quiz terdaftar</strong>
