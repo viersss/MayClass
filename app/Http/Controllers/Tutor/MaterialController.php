@@ -6,6 +6,7 @@ use App\Models\Material;
 use App\Support\UnsplashPlaceholder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -15,20 +16,25 @@ class MaterialController extends BaseTutorController
     {
         $search = (string) $request->input('q', '');
 
-        $materials = Material::query()
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($inner) use ($search) {
-                    $inner->where('title', 'like', "%{$search}%")
-                        ->orWhere('subject', 'like', "%{$search}%")
-                        ->orWhere('level', 'like', "%{$search}%");
-                });
-            })
-            ->orderByDesc('created_at')
-            ->get();
+        $tableReady = Schema::hasTable('materials');
+
+        $materials = $tableReady
+            ? Material::query()
+                ->when($search, function ($query) use ($search) {
+                    $query->where(function ($inner) use ($search) {
+                        $inner->where('title', 'like', "%{$search}%")
+                            ->orWhere('subject', 'like', "%{$search}%")
+                            ->orWhere('level', 'like', "%{$search}%");
+                    });
+                })
+                ->orderByDesc('created_at')
+                ->get()
+            : collect();
 
         return $this->render('tutor.materials.index', [
             'materials' => $materials,
             'search' => $search,
+            'tableReady' => $tableReady,
         ]);
     }
 
@@ -39,6 +45,12 @@ class MaterialController extends BaseTutorController
 
     public function store(Request $request): RedirectResponse
     {
+        if (! Schema::hasTable('materials')) {
+            return redirect()
+                ->route('tutor.materials.index')
+                ->with('alert', __('Tabel materi belum siap. Jalankan migrasi database terlebih dahulu.'));
+        }
+
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'subject' => ['required', 'string', 'max:120'],
@@ -83,6 +95,12 @@ class MaterialController extends BaseTutorController
 
     public function update(Request $request, Material $material): RedirectResponse
     {
+        if (! Schema::hasTable('materials')) {
+            return redirect()
+                ->route('tutor.materials.index')
+                ->with('alert', __('Tabel materi belum siap. Jalankan migrasi database terlebih dahulu.'));
+        }
+
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'subject' => ['required', 'string', 'max:120'],
