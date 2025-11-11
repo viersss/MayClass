@@ -12,23 +12,23 @@
         />
         <style>
             :root {
-                color-scheme: light;
-                --primary-dark: #1b6d4f;
-                --primary-main: #3fa67e;
-                --primary-light: #84d986;
-                --primary-accent: #a8e6a1;
-                --neutral-900: #1f2328;
-                --neutral-700: #4d5660;
-                --neutral-100: #f6f7f8;
-                --surface: #ffffff;
-                --nav-surface: rgba(16, 78, 57, 0.92);
-                --footer-surface: #e8f3ef;
-                --shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
-                --shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
-                --radius-lg: 20px;
-                --radius-xl: 28px;
-            }
-
+color-scheme: light;
+--primary-dark: #1b6d4f;
+--primary-main: #3fa67e;
+--primary-light: #84d986;
+--primary-accent: #a8e6a1;
+--neutral-900: #1f2328;
+--neutral-700: #4d5660;
+--neutral-100: #f6f7f8;
+--surface: #ffffff;
+/* NAV lebih terang agar logo kontras */
+--nav-surface: linear-gradient(135deg, rgba(80, 190, 150, 0.98), rgba(63, 166, 126, 0.98));
+--footer-surface: #e8f3ef;
+--shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
+--shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
+--radius-lg: 20px;
+--radius-xl: 28px;
+}
             *,
             *::before,
             *::after {
@@ -809,8 +809,7 @@
         <header>
             <nav>
                 <a class="brand" href="/">
-                    <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
-                    <span>MayClass</span>
+                    <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" width="200" height="auto" />
                 </a>
                 <div class="nav-links">
                     <a href="#beranda">Beranda</a>
@@ -829,17 +828,11 @@
             <div class="hero" id="beranda">
                 <div class="hero-content">
                     <span class="badge">Bimbel Digital MayClass</span>
-                    <h1>Belajar Nyaman, Prestasi Mengesankan</h1>
+                    <h1>Langkah Pasti Menuju Prestasi</h1>
                     <p>
                         Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel, dan
                         penuh dukungan menuju kampus impianmu.
                     </p>
-                    <div class="hero-actions">
-                        <a class="btn btn-primary" href="{{ $joinLink }}">
-                            Gabung Sekarang
-                        </a>
-                        <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Belajar</a>
-                    </div>
                     <div class="hero-stats">
                         <div>Dipercaya ribuan pelajar dan orang tua di seluruh Indonesia.</div>
                         <div class="hero-stats-row">
