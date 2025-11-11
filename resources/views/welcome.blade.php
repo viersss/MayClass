@@ -98,16 +98,22 @@ nav {
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
+            /* Nav uses clean layout without boxed background */
+            nav {
+                position: relative;
+                z-index: 1;
+                padding: 28px clamp(8px, 2.5vw, 24px);
+                margin: 0 0 32px;
+                width: 100%;
+            }
 
-
-.nav-inner {
-  display: grid;
-  grid-template-columns: auto 1fr auto; /* kiri - tengah - kanan */
-  align-items: center;
-  width: 100%;
-  padding: 0 32px; /* tidak terlalu besar */
-  gap: 20px;
-}
+            .nav-inner {
+                display: grid;
+                grid-template-columns: auto 1fr auto;
+                align-items: center;
+                gap: clamp(20px, 4vw, 48px);
+                width: 100%;
+            }
 
             @media (max-width: 1024px) {
                 nav {
@@ -163,6 +169,17 @@ nav {
   margin-left: 115px;
 }
 
+            .nav-links {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex: 1 1 auto;
+                gap: 28px;
+                row-gap: 14px;
+                font-size: 0.95rem;
+                flex-wrap: wrap;
+                justify-self: center;
+            }
 
             .nav-links a {
                 color: rgba(255, 255, 255, 0.78);
@@ -179,13 +196,6 @@ nav {
                 gap: 16px;
                 justify-content: flex-end;
                 justify-self: end;
-            }
-
-            @media (max-width: 768px) {
-                .nav-actions {
-                    width: 100%;
-                    justify-content: center;
-                }
             }
 
             @media (max-width: 768px) {

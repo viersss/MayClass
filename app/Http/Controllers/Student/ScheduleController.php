@@ -21,8 +21,11 @@ class ScheduleController extends Controller
             ? ScheduleSession::orderBy('start_at')->get()
             : collect();
 
-        $upcomingSessions = $sessions
-            ->filter(fn ($session) => $session->start_at && CarbonImmutable::parse($session->start_at)->isFuture());
+        $upcomingSessions = $sessions->filter(function ($session) {
+            $start = $this->parseDate($session->start_at ?? null);
+
+            return $start ? $start->isFuture() : false;
+        });
 
         $stats = [
             'total' => $sessions->count(),
@@ -36,5 +39,18 @@ class ScheduleController extends Controller
             'schedule' => ScheduleViewData::fromCollection($sessions),
             'stats' => $stats,
         ]);
+    }
+
+    private function parseDate($value): ?CarbonImmutable
+    {
+        if (! $value) {
+            return null;
+        }
+
+        try {
+            return CarbonImmutable::parse($value);
+        } catch (\Throwable $exception) {
+            return null;
+        }
     }
 }

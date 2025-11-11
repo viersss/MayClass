@@ -20,7 +20,11 @@ class MaterialController extends Controller
         $materialsLink = (string) config('mayclass.links.materials_drive');
         $quizLink = (string) config('mayclass.links.quiz_platform');
 
-        if (! Schema::hasTable('materials')) {
+        $materialsReady = Schema::hasTable('materials');
+        $chaptersReady = Schema::hasTable('material_chapters');
+        $objectivesReady = Schema::hasTable('material_objectives');
+
+        if (! $materialsReady) {
             return view('student.materials.index', [
                 'page' => 'materials',
                 'title' => 'Materi Pembelajaran',
@@ -35,14 +39,16 @@ class MaterialController extends Controller
             ]);
         }
 
-        $materials = Material::withCount(['objectives', 'chapters'])
+        $materials = Material::query()
+            ->when($objectivesReady, fn ($query) => $query->withCount('objectives'))
+            ->when($chaptersReady, fn ($query) => $query->withCount('chapters'))
             ->orderBy('subject')
             ->orderBy('title')
             ->get();
 
         $collections = $materials
             ->groupBy('subject')
-            ->map(function ($items, $subject) use ($materialsLink) {
+            ->map(function ($items, $subject) use ($materialsLink, $chaptersReady, $objectivesReady) {
                 return [
                     'label' => $subject,
                     'accent' => SubjectPalette::accent($subject),
@@ -52,8 +58,8 @@ class MaterialController extends Controller
                         'title' => $material->title,
                         'summary' => $material->summary,
                         'resource' => $material->resource_url ?? $materialsLink,
-                        'chapter_count' => $material->chapters_count,
-                        'objective_count' => $material->objectives_count,
+                        'chapter_count' => $chaptersReady ? (int) $material->chapters_count : 0,
+                        'objective_count' => $objectivesReady ? (int) $material->objectives_count : 0,
                     ])->values()->all(),
                 ];
             })

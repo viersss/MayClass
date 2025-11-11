@@ -20,7 +20,10 @@ class QuizController extends Controller
         $materialsLink = (string) config('mayclass.links.materials_drive');
         $quizLink = (string) config('mayclass.links.quiz_platform');
 
-        if (! Schema::hasTable('quizzes')) {
+        $quizzesReady = Schema::hasTable('quizzes');
+        $quizLevelsReady = Schema::hasTable('quiz_levels');
+
+        if (! $quizzesReady) {
             return view('student.quiz.index', [
                 'page' => 'quiz',
                 'title' => 'Koleksi Quiz',
@@ -35,14 +38,15 @@ class QuizController extends Controller
             ]);
         }
 
-        $quizzes = Quiz::with(['levels' => fn ($query) => $query->orderBy('position')])
+        $quizzes = Quiz::query()
+            ->when($quizLevelsReady, fn ($query) => $query->with(['levels' => fn ($levels) => $levels->orderBy('position')]))
             ->orderBy('subject')
             ->orderBy('title')
             ->get();
 
         $collections = $quizzes
             ->groupBy('subject')
-            ->map(function ($items, $subject) use ($quizLink) {
+            ->map(function ($items, $subject) use ($quizLink, $quizLevelsReady) {
                 return [
                     'label' => $subject,
                     'accent' => SubjectPalette::accent($subject),
@@ -52,21 +56,23 @@ class QuizController extends Controller
                         'summary' => $quiz->summary,
                         'duration' => $quiz->duration_label,
                         'questions' => $quiz->question_count,
-                        'levels' => $quiz->levels->pluck('label')->all(),
+                        'levels' => $quizLevelsReady ? $quiz->levels->pluck('label')->all() : [],
                         'link' => $quiz->link ?? $quizLink,
                     ])->values()->all(),
                 ];
             })
             ->values();
 
+        $levelSources = $quizzes->pluck('class_level');
+
+        if ($quizLevelsReady) {
+            $levelSources = $levelSources->merge($quizzes->flatMap(fn ($quiz) => $quiz->levels->pluck('label')));
+        }
+
         $stats = [
             'total' => $quizzes->count(),
             'total_questions' => $quizzes->sum(fn ($quiz) => (int) $quiz->question_count),
-            'levels' => $quizzes->pluck('class_level')->merge($quizzes->flatMap(fn ($quiz) => $quiz->levels->pluck('label')))
-                ->filter()
-                ->unique()
-                ->values()
-                ->all(),
+            'levels' => $levelSources->filter()->unique()->values()->all(),
         ];
 
         return view('student.quiz.index', [
