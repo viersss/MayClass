@@ -593,29 +593,44 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
             .testimonial-card,
             .mentor-card {
-                background: #ffffff;
-                border-radius: var(--radius-xl);
+                --card-border: rgba(31, 107, 79, 0.12);
+                --card-shadow: 0 18px 42px rgba(17, 57, 41, 0.14);
+                background: linear-gradient(145deg, rgba(242, 252, 247, 0.9) 0%, #ffffff 55%, rgba(236, 250, 244, 0.95) 100%);
+                border-radius: calc(var(--radius-xl) + 4px);
                 padding: 32px;
                 display: flex;
                 flex-direction: column;
                 gap: 18px;
-                box-shadow: var(--shadow-md);
+                box-shadow: var(--card-shadow);
                 height: 100%;
-                transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+                transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
                 position: relative;
                 overflow: hidden;
-                border: 1px solid rgba(31, 107, 79, 0.08);
+                border: 1px solid var(--card-border);
+                isolation: isolate;
             }
 
             .testimonial-card::before,
             .mentor-card::before {
                 content: "";
                 position: absolute;
-                inset: -40%;
-                background: radial-gradient(circle at top left, rgba(63, 166, 126, 0.2), transparent 65%);
+                inset: -45% -30% 40% -30%;
+                background: radial-gradient(circle at top left, rgba(63, 166, 126, 0.32), transparent 60%);
                 opacity: 0;
-                transform: scale(0.9);
-                transition: opacity 0.4s ease, transform 0.4s ease;
+                transform: translate3d(-10%, -10%, 0) scale(0.85);
+                transition: opacity 0.45s ease, transform 0.45s ease;
+                z-index: 0;
+            }
+
+            .testimonial-card::after,
+            .mentor-card::after {
+                content: "";
+                position: absolute;
+                inset: 65% -30% -45% 45%;
+                background: radial-gradient(circle at bottom right, rgba(16, 76, 55, 0.25), transparent 70%);
+                opacity: 0;
+                transform: translate3d(10%, 10%, 0) scale(0.8);
+                transition: opacity 0.45s ease, transform 0.45s ease;
                 z-index: 0;
             }
 
@@ -627,15 +642,17 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
             .testimonial-card:hover,
             .mentor-card:hover {
-                transform: translateY(-6px);
-                box-shadow: 0 28px 56px rgba(31, 107, 79, 0.18);
-                border-color: rgba(63, 166, 126, 0.32);
+                transform: translateY(-10px);
+                box-shadow: 0 32px 68px rgba(17, 57, 41, 0.22);
+                border-color: rgba(63, 166, 126, 0.45);
             }
 
             .testimonial-card:hover::before,
-            .mentor-card:hover::before {
+            .mentor-card:hover::before,
+            .testimonial-card:hover::after,
+            .mentor-card:hover::after {
                 opacity: 1;
-                transform: scale(1.05);
+                transform: translate3d(0, 0, 0) scale(1.05);
             }
 
             .testimonial-card img,
@@ -643,15 +660,18 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 width: 100%;
                 height: 200px;
                 object-fit: cover;
-                border-radius: var(--radius-lg);
-                transition: transform 0.35s ease, box-shadow 0.35s ease;
-                box-shadow: 0 12px 24px rgba(15, 52, 38, 0.08);
+                border-radius: calc(var(--radius-lg) + 4px);
+                transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
+                box-shadow: 0 14px 28px rgba(15, 52, 38, 0.12);
+                border: 1px solid rgba(63, 166, 126, 0.2);
+                filter: saturate(0.96);
             }
 
             .testimonial-card:hover img,
             .mentor-card:hover img {
-                transform: scale(1.03);
-                box-shadow: 0 18px 36px rgba(15, 52, 38, 0.14);
+                transform: translateY(-4px) scale(1.04);
+                box-shadow: 0 22px 42px rgba(15, 52, 38, 0.18);
+                filter: saturate(1.05);
             }
 
             .testimonial-card p {
