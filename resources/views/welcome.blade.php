@@ -81,37 +81,42 @@ color-scheme: light;
                 padding: 16px 0 0;
             }
 
-            /* Improved nav layout to be full-width properly */
+            /* Nav uses clean layout without boxed background */
             nav {
                 position: relative;
                 z-index: 1;
+                padding: 28px 0;
+                margin: 0 0 32px;
+                width: 100%;
+            }
+
+            .nav-inner {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                padding: 24px clamp(20px, 5vw, 40px);
                 gap: 32px;
                 width: 100%;
-                margin: 0 0 32px;
                 flex-wrap: wrap;
-                background: var(--nav-surface);
-                border-radius: 0;
-                border: 1px solid rgba(255, 255, 255, 0.18);
-                box-shadow: 0 20px 48px rgba(8, 43, 31, 0.45);
-                backdrop-filter: blur(8px);
             }
 
-            @media (max-width: 1280px) {
+            @media (max-width: 1024px) {
                 nav {
-                    padding: 22px 28px;
+                    padding: 24px 0;
+                }
+
+                .nav-inner {
+                    gap: 24px;
                 }
             }
 
             @media (max-width: 768px) {
                 nav {
-                    padding: 18px 18px;
+                    padding: 20px 0;
+                    margin-bottom: 24px;
+                }
+
+                .nav-inner {
                     justify-content: center;
-                    width: 100%;
-                    margin: 0 0 24px;
                 }
             }
 
@@ -121,6 +126,7 @@ color-scheme: light;
                 gap: 14px;
                 font-weight: 600;
                 font-size: 1.25rem;
+                flex-shrink: 0;
             }
 
             .brand img {
@@ -132,8 +138,12 @@ color-scheme: light;
             .nav-links {
                 display: flex;
                 align-items: center;
+                justify-content: center;
+                flex: 1 1 auto;
                 gap: 28px;
+                row-gap: 14px;
                 font-size: 0.95rem;
+                flex-wrap: wrap;
             }
 
             .nav-links a {
@@ -149,6 +159,13 @@ color-scheme: light;
                 display: flex;
                 align-items: center;
                 gap: 16px;
+            }
+
+            @media (max-width: 768px) {
+                .nav-actions {
+                    width: 100%;
+                    justify-content: center;
+                }
             }
 
             .btn {
@@ -808,21 +825,23 @@ color-scheme: light;
 
         <header>
             <nav>
-                <a class="brand" href="/">
-                    <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" width="200" height="auto" />
-                </a>
-                <div class="nav-links">
-                    <a href="#beranda">Beranda</a>
-                    <a href="#artikel">Artikel</a>
-                    <a href="#paket">Paket Belajar</a>
-                    <a href="#keunggulan">Keunggulan</a>
-                    <a href="#testimoni">Testimoni</a>
-                    <a href="#faq">FAQ</a>
-                </div>
-                <div class="nav-actions">
-                    <a class="btn btn-primary" href="{{ $joinLink }}">
-                        Gabung Sekarang
+                <div class="container nav-inner">
+                    <a class="brand" href="/">
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" width="200" height="auto" />
                     </a>
+                    <div class="nav-links">
+                        <a href="#beranda">Beranda</a>
+                        <a href="#artikel">Artikel</a>
+                        <a href="#paket">Paket Belajar</a>
+                        <a href="#keunggulan">Keunggulan</a>
+                        <a href="#testimoni">Testimoni</a>
+                        <a href="#faq">FAQ</a>
+                    </div>
+                    <div class="nav-actions">
+                        <a class="btn btn-primary" href="{{ $joinLink }}">
+                            Gabung Sekarang
+                        </a>
+                    </div>
                 </div>
             </nav>
             <div class="hero" id="beranda">
