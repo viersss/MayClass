@@ -39,16 +39,22 @@ class DashboardController extends BaseTutorController
             : collect();
 
         $todaySessions = $sessions
-            ->filter(fn ($session) => CarbonImmutable::parse($session->start_at)->isSameDay($today))
+            ->filter(function ($session) use ($today) {
+                $start = $this->parseDate($session->start_at ?? null);
+
+                return $start ? $start->isSameDay($today) : false;
+            })
             ->map(function (ScheduleSession $session) {
-                $start = CarbonImmutable::parse($session->start_at);
-                $end = $start->addMinutes(90);
+                $start = $this->parseDate($session->start_at ?? null);
+                $end = $start ? $start->addMinutes(90) : null;
 
                 return [
                     'subject' => $session->category,
                     'title' => $session->title,
                     'class_level' => $session->class_level ?? 'Kelas',
-                    'time_range' => $start->format('H.i') . ' - ' . $end->format('H.i'),
+                    'time_range' => $start && $end
+                        ? $start->format('H.i') . ' - ' . $end->format('H.i')
+                        : 'Jadwal belum tersedia',
                     'location' => $session->location ?? 'Ruang Virtual',
                     'student_count' => $session->student_count,
                     'highlight' => (bool) $session->is_highlight,
@@ -57,26 +63,35 @@ class DashboardController extends BaseTutorController
             ->values();
 
         $nextSessions = $sessions
-            ->reject(fn ($session) => CarbonImmutable::parse($session->start_at)->isSameDay($today))
+            ->reject(function ($session) use ($today) {
+                $start = $this->parseDate($session->start_at ?? null);
+
+                return $start ? $start->isSameDay($today) : false;
+            })
             ->sortBy('start_at')
             ->take(6)
             ->map(function (ScheduleSession $session) {
-                $start = CarbonImmutable::parse($session->start_at);
-                $end = $start->addMinutes(90);
+                $start = $this->parseDate($session->start_at ?? null);
+                $end = $start ? $start->addMinutes(90) : null;
 
                 return [
-                    'day' => $start->locale('id')->translatedFormat('l'),
+                    'day' => $start ? $start->locale('id')->translatedFormat('l') : '-',
                     'title' => $session->title,
                     'subject' => $session->category,
                     'class_level' => $session->class_level ?? '-',
-                    'date_label' => $start->locale('id')->translatedFormat('d F Y'),
-                    'time_range' => $start->format('H.i') . ' - ' . $end->format('H.i'),
+                    'date_label' => $start ? $start->locale('id')->translatedFormat('d F Y') : '-',
+                    'time_range' => $start && $end
+                        ? $start->format('H.i') . ' - ' . $end->format('H.i')
+                        : 'Jadwal belum tersedia',
                 ];
             })
             ->values();
 
         $totalStudentsToday = $todaySessions->sum('student_count');
-        $teachingHours = round($sessions->count() * 1.5, 1);
+        $teachingHours = round($sessions
+            ->map(fn ($session) => $this->parseDate($session->start_at ?? null))
+            ->filter()
+            ->count() * 1.5, 1);
 
         $highlightStats = [
             [
@@ -171,5 +186,18 @@ class DashboardController extends BaseTutorController
             'quizShowcase' => $quizShowcase,
             'quickActions' => $quickActions,
         ]);
+    }
+
+    private function parseDate($value): ?CarbonImmutable
+    {
+        if (! $value) {
+            return null;
+        }
+
+        try {
+            return CarbonImmutable::parse($value);
+        } catch (\Throwable $exception) {
+            return null;
+        }
     }
 }
