@@ -6,39 +6,63 @@
     <style>
         .page-heading {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 24px;
+            gap: 24px;
+            margin-bottom: 32px;
         }
 
         .page-heading h1 {
             margin: 0;
-            font-size: 1.8rem;
+            font-size: 2rem;
         }
 
         .page-heading p {
-            margin: 6px 0 0;
-            color: #6b7280;
+            margin: 10px 0 0;
+            color: var(--text-muted);
         }
 
-        .search-bar {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
+        .page-heading .stats-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 999px;
+            background: rgba(155, 93, 229, 0.14);
+            color: #6d28d9;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .content-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 26px;
         }
 
-        .search-bar input[type="search"] {
+        .search-field {
+            flex: 1 1 320px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+        }
+
+        .search-field input[type='search'] {
             border: 1px solid #d9e0ea;
             border-radius: 14px;
             padding: 14px 18px;
             font-family: inherit;
             font-size: 1rem;
+            background: #fff;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.04);
         }
 
-        .search-bar button,
-        .page-heading a.button {
-            background: var(--primary);
+        .search-field button,
+        .content-toolbar .primary-action {
+            background: linear-gradient(135deg, #9b5de5, #6d28d9);
             color: #fff;
             border: none;
             border-radius: 14px;
@@ -46,29 +70,64 @@
             font-weight: 600;
             cursor: pointer;
             font-family: inherit;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 14px 35px rgba(155, 93, 229, 0.28);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
         }
 
-        .search-bar button:hover,
-        .page-heading a.button:hover {
+        .search-field button:hover,
+        .content-toolbar .primary-action:hover {
             transform: translateY(-2px);
+            box-shadow: 0 18px 45px rgba(109, 40, 217, 0.35);
         }
 
-        .quiz-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .system-alert {
+            background: rgba(250, 204, 21, 0.18);
+            border: 1px solid rgba(250, 204, 21, 0.35);
+            color: #854d0e;
+            border-radius: 18px;
+            padding: 20px 22px;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .quiz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
         }
 
         .quiz-card {
             background: #fff;
-            border-radius: 18px;
-            padding: 20px 22px;
+            border-radius: 24px;
+            padding: 22px;
             display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 16px;
+            grid-template-columns: 120px 1fr;
+            gap: 18px;
             align-items: center;
-            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+            box-shadow: 0 24px 55px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(15, 23, 42, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top right, rgba(155, 93, 229, 0.12), transparent 60%);
+            pointer-events: none;
+        }
+
+        .quiz-thumbnail {
+            width: 120px;
+            height: 120px;
+            border-radius: 18px;
+            object-fit: cover;
+            box-shadow: 0 18px 35px rgba(15, 23, 42, 0.15);
         }
 
         .quiz-card h3 {
@@ -77,72 +136,118 @@
         }
 
         .quiz-card .meta {
-            color: #6b7280;
+            margin: 8px 0 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .quiz-card .summary {
+            color: #4b5563;
             font-size: 0.95rem;
-            margin-top: 6px;
+            line-height: 1.55;
         }
 
         .quiz-card .actions {
-            display: inline-flex;
-            align-items: center;
+            display: flex;
             gap: 12px;
+            margin-top: 18px;
         }
 
         .quiz-card .actions a {
             padding: 10px 18px;
             border-radius: 12px;
-            border: 1px solid #d9e0ea;
+            border: 1px solid rgba(15, 23, 42, 0.08);
             font-weight: 500;
             color: #1f2937;
+            background: rgba(15, 23, 42, 0.02);
+            transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
         }
 
         .quiz-card .actions a:hover {
-            border-color: var(--primary);
-            color: var(--primary-dark);
+            border-color: #9b5de5;
+            color: #6d28d9;
+            background: rgba(155, 93, 229, 0.1);
         }
 
         .empty-state {
-            text-align: center;
-            padding: 48px;
             background: #fff;
-            border-radius: 20px;
-            color: #6b7280;
-            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.05);
+            border-radius: 24px;
+            padding: 48px;
+            text-align: center;
+            color: var(--text-muted);
+            box-shadow: 0 22px 55px rgba(15, 23, 42, 0.08);
+        }
+
+        .empty-state strong {
+            display: block;
+            font-size: 1.2rem;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 720px) {
+            .page-heading {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .quiz-card {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+
+            .quiz-thumbnail {
+                width: 100%;
+                height: 200px;
+            }
         }
     </style>
 @endpush
 
 @section('content')
+    @php($tableReady = $tableReady ?? true)
+
     <div class="page-heading">
         <div>
+            <span class="stats-pill">{{ $tableReady ? $quizzes->count() : 0 }} quiz aktif</span>
             <h1>Manajemen Quiz</h1>
-            <p>Buat dan kelola quiz untuk siswa Anda.</p>
+            <p>Siapkan evaluasi pembelajaran yang terstruktur untuk seluruh jenjang.</p>
         </div>
-        <a href="{{ route('tutor.quizzes.create') }}" class="button">+ Tambah Quiz</a>
+        <a href="{{ route('tutor.quizzes.create') }}" class="primary-action">+ Tambah Quiz</a>
     </div>
 
-    <form method="GET" class="search-bar">
-        <input type="search" name="q" value="{{ $search }}" placeholder="Cari quiz..." />
-        <button type="submit">Cari</button>
-    </form>
+    <div class="content-toolbar">
+        <form method="GET" class="search-field">
+            <input type="search" name="q" value="{{ $search }}" placeholder="Cari judul, pelajaran, atau jenjang..." />
+            <button type="submit">Cari</button>
+        </form>
+    </div>
 
-    @if ($quizzes->isEmpty())
-        <div class="empty-state">Belum ada quiz terdaftar. Mulai buat quiz pertama Anda.</div>
+    @if (! $tableReady)
+        <div class="system-alert">Tabel quiz belum tersedia. Jalankan perintah <code>php artisan migrate</code> untuk mulai
+            mengelola evaluasi.</div>
+    @elseif ($quizzes->isEmpty())
+        <div class="empty-state">
+            <strong>Belum ada quiz terdaftar</strong>
+            Buat quiz pertama Anda dan bagikan tautan evaluasi kepada siswa.
+        </div>
     @else
-        <div class="quiz-list">
+        <div class="quiz-grid">
             @foreach ($quizzes as $quiz)
-                <div class="quiz-card">
+                <article class="quiz-card">
+                    <img src="{{ $quiz->thumbnail_asset }}" alt="{{ $quiz->title }}" class="quiz-thumbnail" />
                     <div>
                         <h3>{{ $quiz->title }}</h3>
                         <div class="meta">{{ $quiz->subject }} &middot; {{ $quiz->class_level ?? 'Semua Kelas' }}</div>
+                        <p class="summary">{{ Str::limit($quiz->summary, 140) }}</p>
+                        <div class="actions">
+                            <a href="{{ route('tutor.quizzes.edit', $quiz) }}">Edit Quiz</a>
+                            @if ($quiz->link)
+                                <a href="{{ $quiz->link }}" target="_blank" rel="noopener">Buka Quiz</a>
+                            @endif
+                        </div>
                     </div>
-                    <div class="actions">
-                        <a href="{{ route('tutor.quizzes.edit', $quiz) }}">Edit Quiz</a>
-                        @if ($quiz->link)
-                            <a href="{{ $quiz->link }}" target="_blank" rel="noopener">Buka Quiz</a>
-                        @endif
-                    </div>
-                </div>
+                </article>
             @endforeach
         </div>
     @endif
