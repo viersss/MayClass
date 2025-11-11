@@ -203,11 +203,11 @@ class DashboardController extends BaseAdminController
         }
 
         return Package::query()
-            ->select('packages.id', 'packages.title')
+            ->select('packages.id', 'packages.detail_title as title')
             ->selectRaw('COUNT(orders.id) as orders_count')
             ->selectRaw('COALESCE(SUM(CASE WHEN orders.status = ? THEN orders.total ELSE 0 END), 0) as revenue', ['paid'])
             ->leftJoin('orders', 'orders.package_id', '=', 'packages.id')
-            ->groupBy('packages.id', 'packages.title')
+            ->groupBy('packages.id', 'packages.detail_title')
             ->orderByDesc('revenue')
             ->orderByDesc('orders_count')
             ->take(4)
