@@ -12,6 +12,7 @@
         />
         <style>
             :root {
+                 --nav-height: 64px;
 color-scheme: light;
 --primary-dark: #1b6d4f;
 --primary-main: #3fa67e;
@@ -72,46 +73,67 @@ color-scheme: light;
                 width: 100%;
             }
 
-            header {
-                position: relative;
-                background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-main) 100%);
-                color: #ffffff;
-                overflow: hidden;
-                width: 100%;
-                padding: 16px 0 0;
-            }
+            /* ==== NAVBAR TRANSLUCENT + BLUR ==== */
+header {
+  overflow: visible;           /* biar elemen nav tidak ter-clipping */
+  padding-top: 0;
+}
 
-            /* Improved nav layout to be full-width properly */
-            nav {
-                position: relative;
-                z-index: 1;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 24px clamp(20px, 5vw, 40px);
-                gap: 32px;
-                width: 100%;
-                margin: 0 0 32px;
-                flex-wrap: wrap;
-                background: var(--nav-surface);
-                border-radius: 0;
-                border: 1px solid rgba(255, 255, 255, 0.18);
-                box-shadow: 0 20px 48px rgba(8, 43, 31, 0.45);
-                backdrop-filter: blur(8px);
-            }
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  width: 100%;
+  padding: 12px clamp(12px, 3vw, 24px);
+  
+  /* 🔸 Glassmorphism putih */
+  background: rgba(255, 255, 255, 0.4); /* putih transparan */
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 
-            @media (max-width: 1280px) {
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+
+.nav-inner {
+  display: grid;
+  grid-template-columns: auto 1fr auto; /* kiri - tengah - kanan */
+  align-items: center;
+  width: 100%;
+  padding: 0 32px; /* tidak terlalu besar */
+  gap: 20px;
+}
+
+            @media (max-width: 1024px) {
                 nav {
-                    padding: 22px 28px;
+                    padding: 24px clamp(8px, 4vw, 20px);
+                }
+
+                .nav-inner {
+                    gap: clamp(18px, 4vw, 32px);
                 }
             }
 
             @media (max-width: 768px) {
                 nav {
-                    padding: 18px 18px;
-                    justify-content: center;
+                    padding: 20px clamp(8px, 6vw, 16px);
+                    margin-bottom: 24px;
+                }
+
+                .nav-inner {
+                    grid-template-columns: 1fr;
+                    justify-items: center;
+                    gap: 18px;
+                }
+
+                .nav-inner > * {
                     width: 100%;
-                    margin: 0 0 24px;
+                    justify-self: center;
                 }
             }
 
@@ -121,20 +143,26 @@ color-scheme: light;
                 gap: 14px;
                 font-weight: 600;
                 font-size: 1.25rem;
+                flex-shrink: 0;
+                justify-self: start;
             }
 
-            .brand img {
-                width: 48px;
-                height: 48px;
-                object-fit: contain;
-            }
+.brand img {
+    width: 130px;    /* 🔸 dari 48px → 72px (lebih besar tapi masih proporsional) */
+    height: auto;   /* biar tinggi menyesuaikan proporsi */
+    object-fit: contain;
+}
 
-            .nav-links {
-                display: flex;
-                align-items: center;
-                gap: 28px;
-                font-size: 0.95rem;
-            }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 🔸 dorong ke kanan */
+  gap: 28px;
+  font-size: 0.95rem;
+  margin-left: 57px;
+}
+
 
             .nav-links a {
                 color: rgba(255, 255, 255, 0.78);
@@ -149,6 +177,22 @@ color-scheme: light;
                 display: flex;
                 align-items: center;
                 gap: 16px;
+                justify-content: flex-end;
+                justify-self: end;
+            }
+
+            @media (max-width: 768px) {
+                .nav-actions {
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .nav-actions {
+                    width: 100%;
+                    justify-content: center;
+                }
             }
 
             .btn {
@@ -186,20 +230,29 @@ color-scheme: light;
                 transform: translateY(-1px);
             }
 
-            /* Hero section as flex container inside full-width header */
-            .hero {
-                position: relative;
-                z-index: 1;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                width: 100%;
-                padding: 80px 32px;
-                min-height: 90vh;
-                background: linear-gradient(to bottom, rgba(27, 109, 79, 0.85), rgba(63, 166, 126, 0.75)),
-                    url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1600') center/cover no-repeat;
-            }
+.hero {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* konten selalu di tengah vertikal */
+  text-align: center;
+  width: 100%;
+  min-height: calc(100vh + 120px); /* 🟢 lebih tinggi dari viewport */
+  padding-top: calc(var(--nav-height) + 40px); /* aman dari navbar */
+  padding-bottom: 100px;
+background: 
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.35),   /* 🔸 lapisan gelap lembut di atas */
+      rgba(0, 0, 0, 0.65)    /* 🔸 sedikit lebih pekat di bawah */
+    ),
+url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1600')
+  center/cover no-repeat;
+
+}
+
 
             .hero-content {
                 max-width: 800px;
@@ -735,10 +788,12 @@ color-scheme: light;
                     padding: 60px 0;
                 }
 
-                .hero {
-                    padding: 50px 16px;
-                    gap: 40px;
-                }
+.hero {
+  height: 900px;
+  padding-top: calc(var(--nav-height) + 60px);
+}
+
+
 
                 .highlight-section {
                     padding: 60px 16px;
@@ -808,21 +863,23 @@ color-scheme: light;
 
         <header>
             <nav>
-                <a class="brand" href="/">
-                    <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" width="200" height="auto" />
-                </a>
-                <div class="nav-links">
-                    <a href="#beranda">Beranda</a>
-                    <a href="#artikel">Artikel</a>
-                    <a href="#paket">Paket Belajar</a>
-                    <a href="#keunggulan">Keunggulan</a>
-                    <a href="#testimoni">Testimoni</a>
-                    <a href="#faq">FAQ</a>
-                </div>
-                <div class="nav-actions">
-                    <a class="btn btn-primary" href="{{ $joinLink }}">
-                        Gabung Sekarang
+                <div class="nav-inner">
+                    <a class="brand" href="/">
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" width="200" height="auto" />
                     </a>
+                    <div class="nav-links">
+                        <a href="#beranda">Beranda</a>
+                        <a href="#artikel">Artikel</a>
+                        <a href="#paket">Paket Belajar</a>
+                        <a href="#keunggulan">Keunggulan</a>
+                        <a href="#testimoni">Testimoni</a>
+                        <a href="#faq">FAQ</a>
+                    </div>
+                    <div class="nav-actions">
+                        <a class="btn btn-primary" href="{{ $joinLink }}">
+                            Gabung Sekarang
+                        </a>
+                    </div>
                 </div>
             </nav>
             <div class="hero" id="beranda">
@@ -1282,3 +1339,4 @@ color-scheme: light;
         </script>
     </body>
 </html>
+
