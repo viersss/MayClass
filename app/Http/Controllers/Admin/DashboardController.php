@@ -178,16 +178,37 @@ class DashboardController extends BaseAdminController
             return collect();
         }
 
-        return Order::query()
-            ->with(['user:id,name', 'package:id,title'])
+        $query = Order::query();
+
+        $usersReady = Schema::hasTable('users');
+
+        if ($usersReady) {
+            $query->with(['user:id,name']);
+        }
+
+        $packagesReady = Schema::hasTable('packages');
+
+        if ($packagesReady) {
+            $query->with(['package:id,detail_title']);
+        }
+
+        return $query
             ->latest('created_at')
             ->take(6)
             ->get()
-            ->map(function (Order $order) {
+            ->map(function (Order $order) use ($packagesReady, $usersReady) {
+                $packageTitle = $packagesReady
+                    ? optional($order->getRelationValue('package'))->detail_title ?? 'Paket tidak tersedia'
+                    : 'Tabel paket belum tersedia';
+
+                $studentName = $usersReady
+                    ? optional($order->getRelationValue('user'))->name ?? 'Tanpa nama'
+                    : 'Data siswa belum tersedia';
+
                 return [
                     'invoice' => 'INV-' . str_pad((string) $order->id, 5, '0', STR_PAD_LEFT),
-                    'student' => $order->user?->name ?? 'Tanpa nama',
-                    'package' => $order->package?->title ?? 'Paket tidak tersedia',
+                    'student' => $studentName,
+                    'package' => $packageTitle,
                     'total' => $this->formatCurrency((float) $order->total),
                     'status' => $order->status,
                     'status_label' => $this->statusLabel($order->status),
