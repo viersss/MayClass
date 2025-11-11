@@ -120,14 +120,27 @@ class AppServiceProvider extends ServiceProvider
             $columns = [];
         }
 
-        $allowedAttributes = array_intersect_key($attributes, array_flip($columns));
-
-        $payload = array_merge($allowedAttributes, [
-            'email' => $email,
-        ]);
+        $payload = ['email' => $email];
 
         if (in_array('username', $columns, true)) {
             $payload['username'] = $username;
+        }
+
+        foreach ($attributes as $key => $value) {
+            try {
+                $columnExists = Schema::hasColumn('users', $key);
+            } catch (Throwable $exception) {
+                Log::debug('Unable to verify user column while provisioning demo accounts.', [
+                    'column' => $key,
+                    'message' => $exception->getMessage(),
+                ]);
+
+                $columnExists = false;
+            }
+
+            if ($columnExists) {
+                $payload[$key] = $value;
+            }
         }
 
         $user->fill($payload);
