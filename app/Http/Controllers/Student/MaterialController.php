@@ -4,18 +4,12 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\Material;
+use App\Support\SubjectPalette;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Schema;
 
 class MaterialController extends Controller
 {
-    private const SUBJECT_ACCENTS = [
-        'Matematika' => '#37b6ad',
-        'Kimia' => '#5f6af8',
-        'Bahasa Inggris' => '#f1a82e',
-        'SD Terpadu' => '#8e65d4',
-    ];
-
     public function __construct()
     {
         $this->middleware('auth');
@@ -23,27 +17,68 @@ class MaterialController extends Controller
 
     public function index()
     {
-        $collections = Schema::hasTable('materials')
-            ? Material::with('objectives', 'chapters')
-                ->orderBy('subject')
-                ->get()
-                ->groupBy('subject')
-                ->map(function ($materials, $subject) {
-                    return [
-                        'label' => $subject,
-                        'accent' => self::SUBJECT_ACCENTS[$subject] ?? '#37b6ad',
-                        'items' => $materials->map(fn ($material) => [
-                            'slug' => $material->slug,
-                            'level' => $material->level,
-                            'title' => $material->title,
-                            'summary' => $material->summary,
-                        ])->values()->all(),
-                    ];
-                })
-                ->values()
-            : collect();
+        $materialsLink = (string) config('mayclass.links.materials_drive');
+        $quizLink = (string) config('mayclass.links.quiz_platform');
 
-        return view('student.materials.index', ['collections' => $collections]);
+        $materialsReady = Schema::hasTable('materials');
+        $chaptersReady = Schema::hasTable('material_chapters');
+        $objectivesReady = Schema::hasTable('material_objectives');
+
+        if (! $materialsReady) {
+            return view('student.materials.index', [
+                'page' => 'materials',
+                'title' => 'Materi Pembelajaran',
+                'collections' => collect(),
+                'stats' => [
+                    'total' => 0,
+                    'subjects' => 0,
+                    'levels' => [],
+                ],
+                'materialsLink' => $materialsLink,
+                'quizLink' => $quizLink,
+            ]);
+        }
+
+        $materials = Material::query()
+            ->when($objectivesReady, fn ($query) => $query->withCount('objectives'))
+            ->when($chaptersReady, fn ($query) => $query->withCount('chapters'))
+            ->orderBy('subject')
+            ->orderBy('title')
+            ->get();
+
+        $collections = $materials
+            ->groupBy('subject')
+            ->map(function ($items, $subject) use ($materialsLink, $chaptersReady, $objectivesReady) {
+                return [
+                    'label' => $subject,
+                    'accent' => SubjectPalette::accent($subject),
+                    'items' => $items->map(fn ($material) => [
+                        'slug' => $material->slug,
+                        'level' => $material->level,
+                        'title' => $material->title,
+                        'summary' => $material->summary,
+                        'resource' => $material->resource_url ?? $materialsLink,
+                        'chapter_count' => $chaptersReady ? (int) $material->chapters_count : 0,
+                        'objective_count' => $objectivesReady ? (int) $material->objectives_count : 0,
+                    ])->values()->all(),
+                ];
+            })
+            ->values();
+
+        $stats = [
+            'total' => $materials->count(),
+            'subjects' => $collections->count(),
+            'levels' => $materials->pluck('level')->filter()->unique()->values()->all(),
+        ];
+
+        return view('student.materials.index', [
+            'page' => 'materials',
+            'title' => 'Materi Pembelajaran',
+            'collections' => $collections,
+            'stats' => $stats,
+            'materialsLink' => $materialsLink,
+            'quizLink' => $quizLink,
+        ]);
     }
 
     public function show(string $slug): RedirectResponse
