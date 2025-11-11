@@ -57,8 +57,34 @@ class ScheduleController extends BaseTutorController
             ->sortKeys()
             ->values();
 
+        $metrics = [
+            'session_count' => $sessions->count(),
+            'day_count' => $grouped->count(),
+            'subject_count' => $sessions->pluck('category')->filter()->unique()->count(),
+        ];
+
+        $nextSession = $sessions->first();
+        $nextSessionHighlight = null;
+
+        if ($nextSession) {
+            $start = CarbonImmutable::parse($nextSession->start_at);
+            $end = $start->addMinutes(90);
+
+            $nextSessionHighlight = [
+                'title' => $nextSession->title,
+                'subject' => $nextSession->category,
+                'date_label' => $start->locale('id')->translatedFormat('l, d F Y'),
+                'time_range' => $start->format('H.i') . ' - ' . $end->format('H.i') . ' WIB',
+                'location' => $nextSession->location ?? 'Ruang Virtual',
+                'class_level' => $nextSession->class_level ?? '-',
+                'student_count' => $nextSession->student_count,
+            ];
+        }
+
         return $this->render('tutor.schedule.index', [
             'days' => $grouped,
+            'metrics' => $metrics,
+            'nextSessionHighlight' => $nextSessionHighlight,
         ]);
     }
 }
