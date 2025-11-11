@@ -1,0 +1,141 @@
+<?php
+
+namespace App\Http\Controllers\Tutor;
+
+use App\Models\Material;
+use App\Support\UnsplashPlaceholder;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+class MaterialController extends BaseTutorController
+{
+    public function index(Request $request)
+    {
+        $search = (string) $request->input('q', '');
+
+        $tableReady = Schema::hasTable('materials');
+
+        $materials = $tableReady
+            ? Material::query()
+                ->when($search, function ($query) use ($search) {
+                    $query->where(function ($inner) use ($search) {
+                        $inner->where('title', 'like', "%{$search}%")
+                            ->orWhere('subject', 'like', "%{$search}%")
+                            ->orWhere('level', 'like', "%{$search}%");
+                    });
+                })
+                ->orderByDesc('created_at')
+                ->get()
+            : collect();
+
+        return $this->render('tutor.materials.index', [
+            'materials' => $materials,
+            'search' => $search,
+            'tableReady' => $tableReady,
+        ]);
+    }
+
+    public function create()
+    {
+        return $this->render('tutor.materials.create');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        if (! Schema::hasTable('materials')) {
+            return redirect()
+                ->route('tutor.materials.index')
+                ->with('alert', __('Tabel materi belum siap. Jalankan migrasi database terlebih dahulu.'));
+        }
+
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'subject' => ['required', 'string', 'max:120'],
+            'level' => ['required', 'string', 'max:120'],
+            'summary' => ['required', 'string'],
+            'attachment' => ['nullable', 'file', 'mimes:pdf,ppt,pptx,doc,docx', 'max:10240'],
+        ]);
+
+        $slug = Str::slug($data['title']) ?: 'materi-' . Str::random(6);
+        $uniqueSlug = $slug;
+        $counter = 1;
+        while (Material::where('slug', $uniqueSlug)->exists()) {
+            $uniqueSlug = $slug . '-' . $counter++;
+        }
+
+        $path = null;
+        if ($request->file('attachment')) {
+            $path = $request->file('attachment')->store('materials', 'public');
+        }
+
+        Material::create([
+            'slug' => $uniqueSlug,
+            'subject' => $data['subject'],
+            'title' => $data['title'],
+            'level' => $data['level'],
+            'summary' => $data['summary'],
+            'thumbnail_url' => UnsplashPlaceholder::material($data['subject']),
+            'resource_path' => $path,
+        ]);
+
+        return redirect()
+            ->route('tutor.materials.index')
+            ->with('status', __('Materi baru berhasil disimpan.'));
+    }
+
+    public function edit(Material $material)
+    {
+        return $this->render('tutor.materials.edit', [
+            'material' => $material,
+        ]);
+    }
+
+    public function update(Request $request, Material $material): RedirectResponse
+    {
+        if (! Schema::hasTable('materials')) {
+            return redirect()
+                ->route('tutor.materials.index')
+                ->with('alert', __('Tabel materi belum siap. Jalankan migrasi database terlebih dahulu.'));
+        }
+
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'subject' => ['required', 'string', 'max:120'],
+            'level' => ['required', 'string', 'max:120'],
+            'summary' => ['required', 'string'],
+            'attachment' => ['nullable', 'file', 'mimes:pdf,ppt,pptx,doc,docx', 'max:10240'],
+        ]);
+
+        $payload = [
+            'subject' => $data['subject'],
+            'title' => $data['title'],
+            'level' => $data['level'],
+            'summary' => $data['summary'],
+        ];
+
+        if (! $material->resource_path || $request->hasFile('attachment')) {
+            if ($material->resource_path && ! str_starts_with($material->resource_path, 'http')) {
+                Storage::disk('public')->delete($material->resource_path);
+            }
+
+            if ($request->file('attachment')) {
+                $payload['resource_path'] = $request->file('attachment')->store('materials', 'public');
+            } else {
+                $payload['resource_path'] = null;
+            }
+        }
+
+        if ($material->subject !== $data['subject']) {
+            $payload['thumbnail_url'] = UnsplashPlaceholder::material($data['subject']);
+        }
+
+        $material->update($payload);
+
+        return redirect()
+            ->route('tutor.materials.index')
+            ->with('status', __('Materi berhasil diperbarui.'));
+    }
+}
