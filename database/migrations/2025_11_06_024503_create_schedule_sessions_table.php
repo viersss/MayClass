@@ -14,10 +14,15 @@ return new class extends Migration
             $table->foreignId('package_id')->nullable()->constrained()->nullOnDelete();
             $table->string('title');
             $table->string('category');
+            $table->string('class_level')->nullable();
+            $table->string('location')->nullable();
+            $table->unsignedSmallInteger('student_count')->nullable();
             $table->string('mentor_name');
             $table->dateTime('start_at');
             $table->boolean('is_highlight')->default(false);
             $table->timestamps();
+
+            $table->index(['start_at', 'is_highlight']);
         });
     }
 

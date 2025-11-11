@@ -1,458 +1,372 @@
-<!DOCTYPE html>
-<html lang="id" data-page="dashboard">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Beranda Siswa - MayClass</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-            rel="stylesheet"
-        />
-        <style>
-            :root {
-                --primary: #3db7ad;
-                --primary-dark: #2c938b;
-                --accent: #5f6af8;
-                --sunrise: #f9b233;
-                --night: #1f2a37;
-                --text-muted: #6b7280;
-                --bg-soft: #f3fbfb;
-                --card: #ffffff;
-                --page-padding: clamp(16px, 3vw, 40px);
-            }
+@extends('student.layouts.app')
 
-            * {
-                box-sizing: border-box;
-            }
+@section('title', 'Dashboard Siswa')
 
-            body {
-                margin: 0;
-                font-family: "Poppins", sans-serif;
-                background: linear-gradient(180deg, #eff9f8 0%, #ffffff 40%);
-                color: var(--night);
-                min-height: 100vh;
-            }
+@push('styles')
+    <style>
+        .student-dashboard__hero {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: clamp(20px, 4vw, 40px);
+        }
 
-            a {
-                color: inherit;
-                text-decoration: none;
-            }
+        .student-dashboard__summary {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
 
-            header {
-                padding: 28px 0 0;
-            }
+        .student-dashboard__summary h1 {
+            margin: 0;
+            font-size: clamp(1.9rem, 4vw, 2.6rem);
+            line-height: 1.18;
+        }
 
-            .container {
-                width: 100%;
-                margin: 0;
-                padding: 0;
-            }
+        .student-dashboard__summary p {
+            margin: 0;
+            color: var(--student-text-muted);
+            font-size: 1rem;
+        }
 
-            nav {
-                background: var(--card);
-                border-radius: 20px;
-                padding: 18px var(--page-padding);
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                box-shadow: 0 24px 60px rgba(45, 133, 126, 0.12);
-                gap: 24px;
-            }
+        .student-dashboard__chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
 
-            .brand {
-                display: inline-flex;
-                align-items: center;
-                gap: 12px;
-                font-weight: 600;
-                font-size: 1.1rem;
-                color: var(--primary-dark);
-            }
+        .student-dashboard__highlight {
+            position: relative;
+            padding: clamp(24px, 4vw, 32px);
+            border-radius: var(--student-radius-lg);
+            background: linear-gradient(140deg, rgba(47, 152, 140, 0.12), rgba(95, 106, 248, 0.16));
+            box-shadow: 0 32px 68px rgba(33, 115, 105, 0.16);
+            overflow: hidden;
+            display: grid;
+            gap: 12px;
+        }
 
-            .brand img {
-                width: 40px;
-                height: 40px;
-                object-fit: contain;
-            }
+        .student-dashboard__highlight::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: url("{{ \App\Support\ImageRepository::url('dashboard_banner') }}") center/cover;
+            opacity: 0.18;
+        }
 
-            .nav-links {
-                display: flex;
-                gap: 28px;
-                align-items: center;
-                font-size: 0.95rem;
-                color: var(--text-muted);
-            }
+        .student-dashboard__highlight > * {
+            position: relative;
+        }
 
-            .nav-links a {
-                position: relative;
-                padding-bottom: 4px;
-            }
+        .student-dashboard__stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: clamp(16px, 3vw, 28px);
+        }
 
-            .nav-links a[data-active="true"] {
-                color: var(--primary-dark);
-                font-weight: 600;
-            }
+        .student-dashboard__calendar {
+            display: grid;
+            gap: 20px;
+        }
 
-            .nav-links a[data-active="true"]::after {
-                content: "";
-                position: absolute;
-                left: 0;
-                right: 0;
-                bottom: -8px;
-                height: 4px;
-                border-radius: 999px;
-                background: linear-gradient(120deg, var(--primary), var(--accent));
-            }
+        .student-dashboard__calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 12px;
+        }
 
-            .nav-actions {
-                display: inline-flex;
-                align-items: center;
-                gap: 16px;
-            }
+        .student-dashboard__calendar-cell {
+            text-align: center;
+            padding: 14px 0;
+            border-radius: 16px;
+            font-size: 0.92rem;
+            color: var(--student-text-muted);
+        }
 
-            .nav-actions form {
-                margin: 0;
-            }
+        .student-dashboard__calendar-cell.is-active {
+            background: linear-gradient(120deg, var(--student-primary), var(--student-primary-soft));
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 18px 32px rgba(27, 119, 110, 0.22);
+        }
 
-            .profile-chip {
-                display: inline-flex;
-                align-items: center;
-                gap: 12px;
-                padding: 10px 16px;
-                border-radius: 999px;
-                background: rgba(61, 183, 173, 0.12);
-                font-size: 0.9rem;
-                color: var(--primary-dark);
-            }
+        .student-dashboard__calendar-cell.is-muted {
+            opacity: 0.45;
+        }
 
-            .logout-button {
-                padding: 10px 18px;
-                border-radius: 999px;
-                border: 1px solid rgba(61, 183, 173, 0.25);
-                background: rgba(61, 183, 173, 0.12);
-                color: var(--primary-dark);
-                font-weight: 600;
-            }
+        .student-dashboard__list {
+            display: grid;
+            gap: 16px;
+        }
 
-            .logout-button:hover {
-                background: rgba(44, 147, 139, 0.2);
-                border-color: rgba(44, 147, 139, 0.3);
-            }
+        .student-dashboard__list-item {
+            display: grid;
+            gap: 8px;
+            background: var(--student-surface);
+            border-radius: var(--student-radius-lg);
+            padding: clamp(18px, 2vw, 24px);
+            box-shadow: 0 22px 48px rgba(33, 115, 105, 0.12);
+        }
 
-            main {
-                padding: 48px var(--page-padding) 80px;
-                display: grid;
-                gap: 48px;
-            }
+        .student-dashboard__list-item h3 {
+            margin: 0;
+            font-size: 1.05rem;
+        }
 
-            .hero {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 36px;
-                align-items: center;
-            }
+        .student-dashboard__materials,
+        .student-dashboard__quizzes {
+            display: grid;
+            gap: 20px;
+        }
 
-            .hero h1 {
-                margin: 0 0 18px;
-                font-size: clamp(2.1rem, 3.6vw, 3rem);
-                line-height: 1.2;
-            }
+        .student-dashboard__card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: clamp(18px, 3vw, 28px);
+        }
 
-            .hero p {
-                margin: 0 0 28px;
-                color: var(--text-muted);
-                max-width: 520px;
-            }
+        .student-dashboard__material-card,
+        .student-dashboard__quiz-card {
+            position: relative;
+            border-radius: var(--student-radius-lg);
+            overflow: hidden;
+            background: var(--student-surface);
+            box-shadow: 0 24px 52px rgba(33, 115, 105, 0.14);
+            display: grid;
+            gap: 14px;
+            padding: clamp(18px, 3vw, 26px);
+        }
 
-            .hero-cta {
-                display: inline-flex;
-                align-items: center;
-                gap: 12px;
-            }
+        .student-dashboard__material-card::before,
+        .student-dashboard__quiz-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: 0.18;
+            pointer-events: none;
+            background: linear-gradient(160deg, var(--accent, rgba(47, 152, 140, 0.45)), rgba(255, 255, 255, 0));
+        }
 
-            .btn {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                padding: 14px 28px;
-                border-radius: 999px;
-                font-weight: 500;
-                border: 1px solid transparent;
-                cursor: pointer;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-            }
+        .student-dashboard__material-card h4,
+        .student-dashboard__quiz-card h4 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
 
-            .btn-primary {
-                background: linear-gradient(120deg, var(--primary) 0%, #58d2c5 100%);
-                color: #ffffff;
-                box-shadow: 0 20px 40px rgba(61, 183, 173, 0.28);
-            }
+        .student-dashboard__material-card p,
+        .student-dashboard__quiz-card p {
+            margin: 0;
+            color: var(--student-text-muted);
+            font-size: 0.92rem;
+        }
 
-            .btn-outline {
-                background: rgba(61, 183, 173, 0.1);
-                color: var(--primary-dark);
-                border-color: rgba(61, 183, 173, 0.25);
-            }
+        .student-dashboard__meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--student-text-muted);
+        }
 
-            .btn:hover {
-                transform: translateY(-2px);
-            }
+        .student-dashboard__empty {
+            padding: clamp(24px, 4vw, 32px);
+            border-radius: var(--student-radius-lg);
+            background: rgba(47, 152, 140, 0.08);
+            text-align: center;
+            color: var(--student-text-muted);
+            display: grid;
+            gap: 12px;
+        }
+    </style>
+@endpush
 
-            .hero-visual {
-                position: relative;
-                background: linear-gradient(150deg, rgba(61, 183, 173, 0.18), rgba(95, 106, 248, 0.15));
-                border-radius: 28px;
-                padding: 32px;
-                min-height: 280px;
-                box-shadow: 0 32px 68px rgba(32, 96, 92, 0.12);
-                overflow: hidden;
-            }
+@php($user = auth()->user())
+@php($materialsLink = $materialsLink ?? config('mayclass.links.materials_drive'))
+@php($quizLink = $quizLink ?? config('mayclass.links.quiz_platform'))
 
-            .hero-visual::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background: url("{{ \App\Support\ImageRepository::url('dashboard_banner') }}") center/cover;
-                opacity: 0.32;
-            }
-
-            .hero-visual-inner {
-                position: relative;
-                display: grid;
-                gap: 16px;
-                color: #ffffff;
-            }
-
-            .badge {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 8px 16px;
-                border-radius: 999px;
-                background: rgba(255, 255, 255, 0.2);
-                font-size: 0.85rem;
-                width: max-content;
-            }
-
-            .schedule-grid {
-                display: grid;
-                gap: 28px;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-
-            .schedule-card {
-                background: var(--card);
-                border-radius: 24px;
-                padding: 24px;
-                display: grid;
-                gap: 12px;
-                box-shadow: 0 28px 60px rgba(45, 133, 126, 0.12);
-            }
-
-            .schedule-card h3 {
-                margin: 0;
-                font-size: 1.15rem;
-            }
-
-            .schedule-card span {
-                color: var(--text-muted);
-                font-size: 0.9rem;
-            }
-
-            .materials {
-                display: grid;
-                gap: 24px;
-            }
-
-            .section-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 16px;
-            }
-
-            .cards-row {
-                display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 24px;
-            }
-
-            .material-card {
-                background: var(--card);
-                padding: 24px;
-                border-radius: 24px;
-                display: grid;
-                gap: 14px;
-                box-shadow: 0 24px 48px rgba(95, 106, 248, 0.12);
-                border-top: 5px solid rgba(95, 106, 248, 0.3);
-            }
-
-            .material-card h4 {
-                margin: 0;
-                font-size: 1.1rem;
-            }
-
-            .material-card p {
-                margin: 0;
-                color: var(--text-muted);
-                font-size: 0.92rem;
-            }
-
-            .status-card {
-                background: linear-gradient(140deg, rgba(61, 183, 173, 0.18), rgba(95, 106, 248, 0.18));
-                border-radius: 24px;
-                padding: 28px;
-                color: var(--night);
-                display: grid;
-                gap: 12px;
-            }
-
-            .status-card h3 {
-                margin: 0;
-                font-size: 1.2rem;
-            }
-
-            footer {
-                padding: 32px var(--page-padding) 48px;
-                text-align: center;
-                color: var(--text-muted);
-                font-size: 0.85rem;
-            }
-
-            @media (max-width: 960px) {
-                nav {
-                    flex-wrap: wrap;
-                    gap: 16px 24px;
-                }
-
-                .hero,
-                .cards-row,
-                .schedule-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .hero-visual {
-                    min-height: 220px;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        @php($materialsLink = config('mayclass.links.materials_drive'))
-        @php($quizLink = config('mayclass.links.quiz_platform'))
-        <header>
-            <div class="container">
-                <nav>
-                    <a href="{{ route('student.dashboard') }}" class="brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+@section('content')
+    <section class="student-section">
+        <div class="student-dashboard__hero">
+            <div class="student-dashboard__summary">
+                <span class="student-chip">Portal belajar pribadi</span>
+                <h1>Hai, {{ $user?->name ?? 'Siswa' }}</h1>
+                <p>
+                    Tersedia {{ number_format($metrics['materials_total']) }} materi, {{ number_format($metrics['quizzes_total']) }}
+                    kuis, dan {{ number_format($metrics['upcoming_total']) }} sesi yang dijadwalkan.
+                </p>
+                <div class="student-dashboard__chips">
+                    <span class="student-chip">{{ number_format($metrics['subjects_total']) }} mata pelajaran</span>
+                    <span class="student-chip">{{ number_format($metrics['levels_total']) }} jenjang belajar</span>
+                    <span class="student-chip">{{ number_format($metrics['week_sessions']) }} sesi minggu ini</span>
+                </div>
+                <div class="student-dashboard__chips">
+                    <a class="student-button student-button--primary" href="{{ $materialsLink }}" target="_blank" rel="noopener">
+                        Buka bank materi
                     </a>
-                    <div class="nav-links">
-                        <a href="{{ route('student.dashboard') }}" data-active="true">Beranda</a>
-                        <a href="{{ route('student.materials') }}">Materi</a>
-                        <a href="{{ route('student.quiz') }}">Quiz</a>
-                        <a href="{{ route('student.schedule') }}">Jadwal</a>
-                    </div>
-                    <div class="nav-actions">
-                        <a class="profile-chip" href="{{ route('student.profile') }}">
-                            <span>👋</span>
-                            <span>Siswa</span>
-                        </a>
-                        <form method="post" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="logout-button">Keluar</button>
-                        </form>
-                    </div>
-                </nav>
+                    <a class="student-button student-button--outline" href="{{ $quizLink }}" target="_blank" rel="noopener">
+                        Mulai latihan soal
+                    </a>
+                    <a class="student-button student-button--outline" href="{{ route('student.schedule') }}">
+                        Kelola jadwal
+                    </a>
+                </div>
             </div>
-        </header>
-        <main class="container">
-            <section class="hero">
-                <div>
-                    <div class="badge">Jadwal Terdekat</div>
-                    <h1>Siap menjadi juara?</h1>
-                    <p>
-                        Pelajari materi TWK, TIU, dan TKP dengan struktur yang terorganisir serta mentor profesional.
-                        Mulai dari jadwal live class hingga bank soal adaptif, semuanya ada dalam satu dashboard.
-                    </p>
-                    <div class="hero-cta">
-                        <a class="btn btn-primary" href="{{ $materialsLink }}" target="_blank" rel="noopener">Mulai Belajar</a>
-                        <a class="btn btn-outline" href="{{ route('student.schedule') }}">Lihat Jadwal</a>
-                    </div>
+            <div class="student-dashboard__highlight">
+                <span class="student-chip">Sesi terdekat</span>
+                <h2 style="margin: 0; font-size: 1.4rem;">{{ $schedule['highlight']['title'] }}</h2>
+                <div class="student-dashboard__meta">
+                    <span>{{ $schedule['highlight']['date'] }}</span>
+                    <span>{{ $schedule['highlight']['time'] }}</span>
+                    <span>Mentor {{ $schedule['highlight']['mentor'] }}</span>
+                    <span>Kategori {{ $schedule['highlight']['category'] }}</span>
                 </div>
-                <div class="hero-visual">
-                    <div class="hero-visual-inner">
-                        <div class="badge">{{ $schedule['highlight']['category'] }}</div>
-                        <h3 style="margin: 0; font-size: 1.5rem;">{{ $schedule['highlight']['title'] }}</h3>
-                        <p style="margin: 0; color: rgba(255, 255, 255, 0.85);">
-                            {{ $schedule['highlight']['date'] }} · {{ $schedule['highlight']['time'] }}
-                        </p>
-                        <p style="margin: 0; color: rgba(255, 255, 255, 0.7);">Mentor: {{ $schedule['highlight']['mentor'] }}</p>
-                    </div>
-                </div>
-            </section>
+                <a class="student-button student-button--primary" style="width: max-content;" href="{{ route('student.schedule') }}">
+                    Lihat detail jadwal
+                </a>
+            </div>
+        </div>
+    </section>
 
-            <section class="schedule">
-                <div class="section-header">
-                    <h2 style="margin: 0; font-size: 1.4rem;">Jadwal Terdekat</h2>
-                    <a class="btn btn-outline" href="{{ route('student.schedule') }}">Lihat Semua</a>
+    <section class="student-section">
+        <div class="student-section__header">
+            <h2 class="student-section__title">Ringkasan aktivitas</h2>
+        </div>
+        <div class="student-dashboard__stats">
+            <div class="student-card">
+                <p class="student-card__subtitle">Sesi terencana (7 hari)</p>
+                <h3 class="student-card__title">{{ number_format($metrics['upcoming_total']) }}</h3>
+                <div class="student-card__meta">
+                    <span>{{ $schedule['monthLabel'] }}</span>
                 </div>
-                <div class="schedule-grid">
-                    @foreach ($schedule['upcoming'] as $session)
-                        <article class="schedule-card">
-                            <div class="badge" style="background: rgba(61, 183, 173, 0.12); color: var(--primary-dark);">
-                                {{ $session['category'] }}
-                            </div>
-                            <h3>{{ $session['title'] }}</h3>
+            </div>
+            <div class="student-card">
+                <p class="student-card__subtitle">Materi aktif</p>
+                <h3 class="student-card__title">{{ number_format($metrics['materials_total']) }}</h3>
+                <div class="student-card__meta">
+                    <span>{{ number_format($metrics['recent_materials']) }} materi baru 14 hari terakhir</span>
+                </div>
+                <a class="student-button student-button--outline" href="{{ route('student.materials') }}">Kelola materi</a>
+            </div>
+            <div class="student-card">
+                <p class="student-card__subtitle">Koleksi kuis</p>
+                <h3 class="student-card__title">{{ number_format($metrics['quizzes_total']) }}</h3>
+                <div class="student-card__meta">
+                    <span>{{ number_format($metrics['recent_quizzes']) }} kuis baru 14 hari terakhir</span>
+                </div>
+                <a class="student-button student-button--outline" href="{{ route('student.quiz') }}">Kelola kuis</a>
+            </div>
+            <div class="student-card">
+                <p class="student-card__subtitle">Paket aktif</p>
+                <h3 class="student-card__title">{{ $activePackage['title'] }}</h3>
+                <div class="student-card__meta">
+                    <span>{{ $activePackage['period'] }}</span>
+                    <span>Status: {{ $activePackage['status'] }}</span>
+                </div>
+                <a class="student-button student-button--outline" href="{{ route('student.profile') }}">Kelola profil</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="student-section">
+        <div class="student-section__header">
+            <h2 class="student-section__title">Jadwal terdekat</h2>
+            <a class="student-button student-button--outline" href="{{ route('student.schedule') }}">Lihat kalender</a>
+        </div>
+        @if (! empty($schedule['upcoming']) && count($schedule['upcoming']) > 0)
+            <div class="student-dashboard__list">
+                @foreach ($schedule['upcoming'] as $session)
+                    <article class="student-dashboard__list-item">
+                        <h3>{{ $session['title'] }}</h3>
+                        <div class="student-dashboard__meta">
                             <span>{{ $session['date'] }}</span>
                             <span>{{ $session['time'] }}</span>
-                            <span>Mentor: {{ $session['mentor'] }}</span>
-                        </article>
-                    @endforeach
-                </div>
-            </section>
+                            <span>Mentor {{ $session['mentor'] }}</span>
+                            <span>{{ $session['category'] }}</span>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        @else
+            <div class="student-dashboard__empty">
+                <p>Belum ada sesi dijadwalkan. Tambahkan jadwal baru melalui menu Jadwal.</p>
+                <a class="student-button student-button--primary" href="{{ route('student.schedule') }}">Tambah jadwal</a>
+            </div>
+        @endif
+    </section>
 
-            <section class="materials">
-                <div class="section-header">
-                    <h2 style="margin: 0; font-size: 1.4rem;">Materi Terbaru</h2>
-                    <a class="btn btn-outline" href="{{ $materialsLink }}" target="_blank" rel="noopener">Lihat Materi</a>
-                </div>
-                <div class="cards-row">
-                    @foreach ($recentMaterials as $material)
-                        <article class="material-card">
-                            <div class="badge" style="background: rgba(95, 106, 248, 0.12); color: var(--accent);">
-                                {{ $material['subject'] }}
-                            </div>
-                            <h4>{{ $material['title'] }}</h4>
-                            <p>{{ $material['summary'] }}</p>
-                            <div style="display: flex; gap: 12px;">
-                                <a class="btn btn-primary" style="padding: 12px 20px; font-size: 0.9rem;" href="{{ $materialsLink }}" target="_blank" rel="noopener">
-                                    Lihat Materi
-                                </a>
-                                <a class="btn btn-outline" style="padding: 12px 20px; font-size: 0.9rem;" href="{{ $quizLink }}" target="_blank" rel="noopener">
-                                    Mulai Quiz
-                                </a>
-                            </div>
-                        </article>
-                    @endforeach
-                </div>
-            </section>
+    <section class="student-section student-dashboard__materials">
+        <div class="student-section__header">
+            <h2 class="student-section__title">Materi terbaru</h2>
+            <a class="student-button student-button--outline" href="{{ $materialsLink }}" target="_blank" rel="noopener">Buka arsip</a>
+        </div>
+        @if ($recentMaterials->isNotEmpty())
+            <div class="student-dashboard__card-grid">
+                @foreach ($recentMaterials as $material)
+                    <article class="student-dashboard__material-card" style="--accent: {{ $material['accent'] }};">
+                        <span class="student-chip" style="background: rgba(47, 152, 140, 0.14); color: var(--student-primary);">{{ $material['subject'] }}</span>
+                        <h4>{{ $material['title'] }}</h4>
+                        <p>{{ $material['summary'] }}</p>
+                        <div class="student-dashboard__meta">
+                            <span>Level {{ $material['level'] }}</span>
+                            <span>{{ $material['chapter_count'] }} bab</span>
+                        </div>
+                        <a class="student-button student-button--primary" href="{{ $material['resource'] }}" target="_blank" rel="noopener">Lihat materi</a>
+                    </article>
+                @endforeach
+            </div>
+        @else
+            <div class="student-dashboard__empty">
+                <p>Belum ada materi diterbitkan. Tambahkan melalui dashboard tutor.</p>
+            </div>
+        @endif
+    </section>
 
-            <section class="status-card">
-                <h3>Paket Aktif</h3>
-                <p style="margin: 0; color: rgba(31, 42, 55, 0.78);">{{ $activePackage['title'] }}</p>
-                <p style="margin: 0; color: rgba(31, 42, 55, 0.6);">{{ $activePackage['period'] }}</p>
-                <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px;">
-                    <span class="badge" style="background: rgba(255, 255, 255, 0.35); color: var(--primary-dark);">
-                        Status: {{ $activePackage['status'] }}
-                    </span>
-                    <a class="btn btn-primary" style="padding: 12px 24px; font-size: 0.9rem;" href="{{ route('student.profile') }}">
-                        Kelola Profil
-                    </a>
-                </div>
-            </section>
-        </main>
-        <footer>© {{ now()->year }} MayClass. Semua hak dilindungi.</footer>
-    </body>
-</html>
+    <section class="student-section student-dashboard__quizzes">
+        <div class="student-section__header">
+            <h2 class="student-section__title">Quiz terbaru</h2>
+            <a class="student-button student-button--outline" href="{{ $quizLink }}" target="_blank" rel="noopener">Buka platform</a>
+        </div>
+        @if ($recentQuizzes->isNotEmpty())
+            <div class="student-dashboard__card-grid">
+                @foreach ($recentQuizzes as $quiz)
+                    <article class="student-dashboard__quiz-card" style="--accent: {{ $quiz['accent'] }};">
+                        <span class="student-chip" style="background: rgba(95, 106, 248, 0.14); color: var(--student-accent);">
+                            {{ $quiz['duration'] }} • {{ $quiz['questions'] }} soal
+                        </span>
+                        <h4>{{ $quiz['title'] }}</h4>
+                        <p>{{ $quiz['summary'] }}</p>
+                        <div class="student-dashboard__meta">
+                            @foreach ($quiz['levels'] as $level)
+                                <span>Level {{ $level }}</span>
+                            @endforeach
+                        </div>
+                        <a class="student-button student-button--primary" href="{{ $quiz['link'] }}" target="_blank" rel="noopener">Mulai kuis</a>
+                    </article>
+                @endforeach
+            </div>
+        @else
+            <div class="student-dashboard__empty">
+                <p>Belum ada kuis diterbitkan. Tambahkan kuis melalui dashboard tutor.</p>
+            </div>
+        @endif
+    </section>
+
+    <section class="student-section">
+        <div class="student-section__header">
+            <h2 class="student-section__title">Kalender belajar</h2>
+            <span class="student-chip">{{ $schedule['monthLabel'] }}</span>
+        </div>
+        <div class="student-dashboard__calendar">
+            <div class="student-dashboard__calendar-grid">
+                @foreach ($schedule['calendar'] as $column)
+                    @foreach ($column['days'] as $day)
+                        @php($isActive = in_array($day, $schedule['activeDays'], true))
+                        @php($isMuted = in_array($day, $schedule['mutedCells'][$column['label']] ?? [], true))
+                        <div class="student-dashboard__calendar-cell {{ $isActive ? 'is-active' : '' }} {{ $isMuted ? 'is-muted' : '' }}">
+                            {{ $day }}
+                        </div>
+                    @endforeach
+                @endforeach
+            </div>
+        </div>
+    </section>
+@endsection
