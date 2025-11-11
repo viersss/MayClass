@@ -160,7 +160,7 @@ nav {
   justify-content: center; /* 🔸 dorong ke kanan */
   gap: 28px;
   font-size: 0.95rem;
-  margin-left: 115px;
+  margin-left: 57px;
 }
 
 
