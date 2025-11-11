@@ -1,371 +1,169 @@
-<!DOCTYPE html>
-<html lang="id" data-page="quiz">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Quiz Pembelajaran - MayClass</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-            rel="stylesheet"
-        />
-        <style>
-            :root {
-                --primary: #3db7ad;
-                --primary-dark: #2c938b;
-                --accent: #5f6af8;
-                --text-dark: #1f2a37;
-                --text-muted: #6b7280;
-                --card: #ffffff;
-                --page-padding: clamp(16px, 3vw, 40px);
-            }
+@extends('student.layouts.app')
 
-            * {
-                box-sizing: border-box;
-            }
+@section('title', 'Koleksi Quiz')
 
-            body {
-                margin: 0;
-                font-family: "Poppins", sans-serif;
-                background: linear-gradient(180deg, #eff9f8 0%, #ffffff 40%);
-                color: var(--text-dark);
-                min-height: 100vh;
-            }
+@push('styles')
+    <style>
+        .student-quiz__hero {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: clamp(20px, 4vw, 40px);
+            align-items: center;
+        }
 
-            a {
-                color: inherit;
-                text-decoration: none;
-            }
+        .student-quiz__hero h1 {
+            margin: 0;
+            font-size: clamp(1.9rem, 4vw, 2.6rem);
+        }
 
-            header {
-                padding: 28px 0 0;
-            }
+        .student-quiz__hero p {
+            margin: 0;
+            color: var(--student-text-muted);
+        }
 
+        .student-quiz__stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+        }
 
-.container {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
+        .student-quiz__collections {
+            display: grid;
+            gap: clamp(24px, 4vw, 40px);
+        }
 
-            nav {
-                background: var(--card);
-                border-radius: 20px;
-                padding: 18px var(--page-padding);
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                box-shadow: 0 24px 60px rgba(45, 133, 126, 0.12);
-                gap: 24px;
-            }
+        .student-quiz__collection-card {
+            display: grid;
+            gap: 18px;
+            background: var(--student-surface);
+            border-radius: var(--student-radius-lg);
+            padding: clamp(22px, 4vw, 32px);
+            box-shadow: 0 28px 56px rgba(34, 118, 108, 0.14);
+        }
 
+        .student-quiz__collection-header {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
-.brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--primary-dark);
-}
+        .student-quiz__collection-title {
+            margin: 0;
+            font-size: 1.4rem;
+        }
 
-.brand img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-}
+        .student-quiz__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: clamp(18px, 3vw, 28px);
+        }
 
-            .nav-links {
-                display: flex;
-                gap: 28px;
-                align-items: center;
-                font-size: 0.95rem;
-                color: var(--text-muted);
-            }
+        .student-quiz__card {
+            display: grid;
+            gap: 12px;
+            border-radius: var(--student-radius-md);
+            padding: clamp(18px, 3vw, 24px);
+            background: rgba(95, 106, 248, 0.08);
+            border: 1px solid rgba(95, 106, 248, 0.12);
+        }
 
-            .nav-links a[data-active="true"] {
-                color: var(--primary-dark);
-                font-weight: 600;
-            }
+        .student-quiz__card h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
 
-            .nav-links a[data-active="true"]::after {
-                content: "";
-                display: block;
-                height: 4px;
-                border-radius: 999px;
-                margin-top: 8px;
-                background: linear-gradient(120deg, var(--primary), var(--accent));
-            }
+        .student-quiz__card p {
+            margin: 0;
+            color: var(--student-text-muted);
+            font-size: 0.92rem;
+        }
 
-            .nav-actions {
-                display: inline-flex;
-                align-items: center;
-                gap: 16px;
-            }
+        .student-quiz__meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--student-text-muted);
+        }
 
-            .nav-actions form {
-                margin: 0;
-            }
+        .student-quiz__empty {
+            padding: clamp(24px, 4vw, 32px);
+            border-radius: var(--student-radius-lg);
+            background: rgba(95, 106, 248, 0.08);
+            text-align: center;
+            color: var(--student-text-muted);
+            display: grid;
+            gap: 12px;
+        }
+    </style>
+@endpush
 
-            .profile-chip {
-                display: inline-flex;
-                align-items: center;
-                gap: 12px;
-                padding: 10px 16px;
-                border-radius: 999px;
-                background: rgba(61, 183, 173, 0.12);
-                font-size: 0.9rem;
-                color: var(--primary-dark);
-            }
+@php($materialsLink = $materialsLink ?? config('mayclass.links.materials_drive'))
+@php($quizLink = $quizLink ?? config('mayclass.links.quiz_platform'))
 
-            .logout-button {
-                padding: 10px 18px;
-                border-radius: 999px;
-                border: 1px solid rgba(61, 183, 173, 0.25);
-                background: rgba(61, 183, 173, 0.12);
-                color: var(--primary-dark);
-                font-weight: 600;
-            }
-
-            .logout-button:hover {
-                background: rgba(44, 147, 139, 0.2);
-                border-color: rgba(44, 147, 139, 0.3);
-            }
-
-            main {
-                padding: 48px var(--page-padding) 80px;
-                display: grid;
-                gap: 48px;
-            }
-
-            .hero {
-                background: linear-gradient(140deg, rgba(61, 183, 173, 0.18), rgba(95, 106, 248, 0.16));
-                border-radius: 32px;
-                padding: clamp(32px, 5vw, 56px);
-                display: flex;
-                flex-direction: column;
-                gap: 18px;
-                box-shadow: 0 32px 68px rgba(32, 96, 92, 0.12);
-            }
-
-            .hero h1 {
-                margin: 0;
-                font-size: clamp(2rem, 3vw, 2.8rem);
-            }
-
-            .hero p {
-                margin: 0;
-                color: rgba(31, 42, 55, 0.78);
-            }
-
-            .hero-actions {
-                display: flex;
-                gap: 16px;
-                flex-wrap: wrap;
-            }
-
-            .btn {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: 14px 28px;
-                border-radius: 999px;
-                font-weight: 500;
-                border: 1px solid transparent;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-            }
-
-            .btn-primary {
-                background: linear-gradient(120deg, var(--primary) 0%, #58d2c5 100%);
-                color: #ffffff;
-                box-shadow: 0 20px 40px rgba(61, 183, 173, 0.28);
-            }
-
-            .btn-outline {
-                background: rgba(61, 183, 173, 0.08);
-                border-color: rgba(61, 183, 173, 0.22);
-                color: var(--primary-dark);
-            }
-
-            .btn:hover {
-                transform: translateY(-2px);
-            }
-
-            .collection {
-                background: var(--card);
-                border-radius: 28px;
-                padding: 32px;
-                box-shadow: 0 28px 60px rgba(45, 133, 126, 0.12);
-                display: grid;
-                gap: 24px;
-            }
-
-            .collection-header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 16px;
-            }
-
-            .collection-header h2 {
-                margin: 0;
-                font-size: 1.4rem;
-            }
-
-            .cards-grid {
-                display: grid;
-                grid-template-columns: repeat(4, minmax(0, 1fr));
-                gap: 24px;
-            }
-
-            .quiz-card {
-                border-radius: 24px;
-                padding: 24px;
-                display: grid;
-                gap: 14px;
-                background: rgba(95, 106, 248, 0.08);
-                position: relative;
-                overflow: hidden;
-            }
-
-            .quiz-card::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(140deg, rgba(255, 255, 255, 0.4), transparent 60%);
-                pointer-events: none;
-            }
-
-            .quiz-card h3 {
-                margin: 0;
-                font-size: 1.15rem;
-            }
-
-            .quiz-card p {
-                margin: 0;
-                color: var(--text-muted);
-                font-size: 0.92rem;
-            }
-
-            .quiz-card .badge {
-                display: inline-flex;
-                padding: 6px 14px;
-                border-radius: 999px;
-                font-size: 0.8rem;
-                font-weight: 500;
-                background: rgba(255, 255, 255, 0.55);
-                width: max-content;
-            }
-
-            .quiz-card .meta {
-                display: flex;
-                gap: 12px;
-                flex-wrap: wrap;
-                font-size: 0.85rem;
-                color: var(--text-muted);
-            }
-
-            footer {
-                padding: 32px var(--page-padding) 48px;
-                text-align: center;
-                color: var(--text-muted);
-                font-size: 0.85rem;
-            }
-
-            @media (max-width: 1024px) {
-                .cards-grid {
-                    grid-template-columns: repeat(2, minmax(0, 1fr));
-                }
-            }
-
-            @media (max-width: 640px) {
-                .cards-grid {
-                    grid-template-columns: repeat(1, minmax(0, 1fr));
-                }
-            }
-        </style>
-    </head>
-    <body>
-        @php($materialsLink = config('mayclass.links.materials_drive'))
-        @php($quizLink = config('mayclass.links.quiz_platform'))
-        <header>
-            <div class="container">
-                <nav>
-                    <a href="{{ route('student.dashboard') }}" class="brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                    </a>
-                    <div class="nav-links">
-                        <a href="{{ route('student.dashboard') }}">Beranda</a>
-                        <a href="{{ route('student.materials') }}">Materi</a>
-                        <a href="{{ route('student.quiz') }}" data-active="true">Quiz</a>
-                        <a href="{{ route('student.schedule') }}">Jadwal</a>
-                    </div>
-                    <div class="nav-actions">
-                        <a class="profile-chip" href="{{ route('student.profile') }}">
-                            <span>👋</span>
-                            <span>Siswa</span>
-                        </a>
-                        <form method="post" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="logout-button">Keluar</button>
-                        </form>
-                    </div>
-                </nav>
-            </div>
-        </header>
-        <main class="container">
-            <section class="hero">
-                <h1>Mulai Quiz</h1>
+@section('content')
+    <section class="student-section">
+        <div class="student-quiz__hero">
+            <div>
+                <span class="student-chip">Bank soal MayClass</span>
+                <h1>Koleksi quiz siap pakai</h1>
                 <p>
-                    Tingkatkan pemahamanmu melalui kuis interaktif yang adaptif. Cocok untuk siswa SD, SMP, SMA, dan
-                    pejuang seleksi kedinasan agar siap menghadapi materi TWK, TIU, dan TKP.
+                    {{ number_format($stats['total']) }} kuis aktif dengan {{ number_format($stats['total_questions']) }} soal dan
+                    dukungan {{ number_format(count($stats['levels'])) }} jenjang belajar.
                 </p>
-                <div class="hero-actions">
-                    <a class="btn btn-primary" href="{{ $quizLink }}" target="_blank" rel="noopener">Mulai Quiz</a>
-                    <a class="btn btn-outline" href="{{ $materialsLink }}" target="_blank" rel="noopener">Lihat Materi</a>
-                    <a class="btn btn-outline" href="{{ route('student.dashboard') }}">Kembali ke Beranda</a>
+                <div class="student-quiz__stats">
+                    @foreach ($stats['levels'] as $level)
+                        <span class="student-chip">Level {{ $level }}</span>
+                    @endforeach
                 </div>
-            </section>
+            </div>
+            <div style="display: grid; gap: 12px; justify-items: start;">
+                <a class="student-button student-button--primary" href="{{ $quizLink }}" target="_blank" rel="noopener">Buka platform quiz</a>
+                <a class="student-button student-button--outline" href="{{ $materialsLink }}" target="_blank" rel="noopener">Lihat materi pendamping</a>
+            </div>
+        </div>
+    </section>
 
-            <section id="collections" style="display: grid; gap: 32px;">
-                @forelse ($collections as $collection)
-                    <article class="collection">
-                        <div class="collection-header">
-                            <h2>{{ $collection['label'] }}</h2>
-                            <a class="btn btn-outline" href="{{ $materialsLink }}" target="_blank" rel="noopener">Lihat Materi</a>
+    <section class="student-section">
+        <div class="student-section__header">
+            <h2 class="student-section__title">Daftar quiz</h2>
+        </div>
+        @if ($collections->isNotEmpty())
+            <div class="student-quiz__collections">
+                @foreach ($collections as $collection)
+                    <article class="student-quiz__collection-card">
+                        <div class="student-quiz__collection-header">
+                            <span class="student-chip" style="background: rgba(95, 106, 248, 0.12); color: var(--student-accent);">{{ $collection['label'] }}</span>
+                            <h3 class="student-quiz__collection-title">{{ $collection['label'] }}</h3>
+                            <span class="student-card__subtitle">{{ count($collection['items']) }} kuis tersedia</span>
                         </div>
-                        <div class="cards-grid">
+                        <div class="student-quiz__grid">
                             @foreach ($collection['items'] as $quiz)
-                                <div class="quiz-card" style="background: linear-gradient(150deg, {{ $collection['accent'] }}22, rgba(255, 255, 255, 0.85));">
-                                    <span class="badge">{{ $quiz['duration'] }} · {{ $quiz['questions'] }} soal</span>
+                                <article class="student-quiz__card" style="border-color: {{ $collection['accent'] }}33; background: {{ $collection['accent'] }}14;">
+                                    <span class="student-chip" style="background: #ffffff; color: {{ $collection['accent'] }};">{{ $quiz['duration'] }} • {{ $quiz['questions'] }} soal</span>
                                     <h3>{{ $quiz['title'] }}</h3>
                                     <p>{{ $quiz['summary'] }}</p>
-                                    <div class="meta">
+                                    <div class="student-quiz__meta">
                                         @foreach ($quiz['levels'] as $level)
                                             <span>Level {{ $level }}</span>
                                         @endforeach
                                     </div>
-                                    <a class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;" href="{{ $quizLink }}" target="_blank" rel="noopener">
-                                        Mulai Quiz
-                                    </a>
-                                </div>
+                                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                        <a class="student-button student-button--primary" style="padding: 10px 20px;" href="{{ $quiz['link'] }}" target="_blank" rel="noopener">Mulai kuis</a>
+                                        <a class="student-button student-button--outline" style="padding: 10px 20px;" href="{{ $materialsLink }}" target="_blank" rel="noopener">Materi pendamping</a>
+                                    </div>
+                                </article>
                             @endforeach
                         </div>
                     </article>
-                @empty
-                    <article class="collection" style="text-align: center;">
-                        <h2 style="margin: 0 0 12px;">Quiz siap dimainkan</h2>
-                        <p style="margin: 0 0 18px; color: var(--text-muted);">
-                            Bank soal interaktif tersedia langsung melalui platform Wayground.
-                        </p>
-                        <a class="btn btn-primary" style="justify-self: center;" href="{{ $quizLink }}" target="_blank" rel="noopener">
-                            Buka Platform Quiz
-                        </a>
-                    </article>
-                @endforelse
-            </section>
-        </main>
-        <footer>© {{ now()->year }} MayClass. Selamat mengasah kemampuanmu!</footer>
-    </body>
-</html>
+                @endforeach
+            </div>
+        @else
+            <div class="student-quiz__empty">
+                <p>Belum ada kuis yang tercatat. Tambahkan kuis melalui dashboard tutor untuk memulai latihan.</p>
+                <a class="student-button student-button--primary" href="{{ $quizLink }}" target="_blank" rel="noopener">Buka platform quiz</a>
+            </div>
+        @endif
+    </section>
+@endsection
