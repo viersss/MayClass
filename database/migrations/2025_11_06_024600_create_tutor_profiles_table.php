@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('headline')->nullable();
             $table->text('bio')->nullable();
             $table->string('specializations')->nullable();
+            $table->string('education')->nullable();
             $table->unsignedTinyInteger('experience_years')->default(0);
             $table->unsignedInteger('students_taught')->default(0);
             $table->unsignedInteger('hours_taught')->default(0);
