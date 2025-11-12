@@ -208,6 +208,27 @@
 
         .dashboard-steps {
             display: grid;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--student-text-muted);
+        }
+
+        .student-visitor__features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .student-visitor__features li::before {
+            content: "•";
+            color: var(--student-accent);
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .student-visitor__actions {
+            display: inline-flex;
+            flex-wrap: wrap;
             gap: 12px;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         }
