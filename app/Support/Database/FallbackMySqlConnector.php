@@ -21,10 +21,11 @@ class FallbackMySqlConnector extends MySqlConnector
         $lastException = null;
 
         foreach ($hosts as $host) {
-            $config['host'] = $host;
+            $activeConfig = $config;
+            $activeConfig['host'] = $host;
 
             try {
-                $connection = parent::connect($config);
+                $connection = parent::connect($activeConfig);
 
                 if ($host !== Arr::first($hosts)) {
                     Log::notice('Database host fallback engaged for MayClass.', [
@@ -35,6 +36,24 @@ class FallbackMySqlConnector extends MySqlConnector
 
                 return $connection;
             } catch (PDOException $exception) {
+                if ($this->shouldRetryWithoutPassword($activeConfig, $exception)) {
+                    try {
+                        $retryConfig = $activeConfig;
+                        $retryConfig['password'] = '';
+
+                        $connection = parent::connect($retryConfig);
+
+                        Log::notice('Retried MySQL connection with empty password for local root user.', [
+                            'hosts' => $hosts,
+                            'selected_host' => $host,
+                        ]);
+
+                        return $connection;
+                    } catch (PDOException $retryException) {
+                        $exception = $retryException;
+                    }
+                }
+
                 if (! $this->isConnectionRefused($exception)) {
                     throw $exception;
                 }
@@ -84,6 +103,38 @@ class FallbackMySqlConnector extends MySqlConnector
 
         return str_contains($message, 'connection refused')
             || str_contains($message, 'actively refused');
+    }
+
+    private function shouldRetryWithoutPassword(array $config, PDOException $exception): bool
+    {
+        if ($this->isInvalidCredentials($exception) === false) {
+            return false;
+        }
+
+        if (! app()->environment('local', 'development')) {
+            return false;
+        }
+
+        if (($config['username'] ?? null) !== 'root') {
+            return false;
+        }
+
+        $password = $config['password'] ?? null;
+
+        if ($password === null || $password === '') {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isInvalidCredentials(PDOException $exception): bool
+    {
+        if ((int) $exception->getCode() === 1045) {
+            return true;
+        }
+
+        return str_contains(strtolower($exception->getMessage()), 'access denied');
     }
 }
 
