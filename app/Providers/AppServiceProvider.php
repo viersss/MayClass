@@ -31,47 +31,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->ensureSessionDriverFallback();
+        $this->guardSessionDriverFallback();
         $this->ensureDemoAccounts();
         $this->shareStudentAccessState();
     }
 
-    private function ensureSessionDriverFallback(): void
-    {
-        if (config('session.driver') !== 'database') {
-            return;
-        }
-
-        $table = config('session.table', 'sessions');
-
-        try {
-            if (Schema::hasTable($table)) {
-                return;
-            }
-
-            $this->activateFileSessionDriver('database_table_missing', $table);
-        } catch (Throwable $exception) {
-            $this->activateFileSessionDriver('database_check_failed', $table, $exception->getMessage());
-        }
-    }
-
-    private function activateFileSessionDriver(string $reason, string $table, ?string $message = null): void
-    {
-        if (config('session.driver') === 'file') {
-            return;
-        }
-
-        Config::set('session.driver', 'file');
-        Session::setDefaultDriver('file');
-
-        Log::warning('Falling back to file session driver for MayClass.', array_filter([
-            'reason' => $reason,
-            'table' => $table,
-            'message' => $message,
-        ]));
-    }
-
-    private function ensureSessionDriverFallback(): void
+    private function guardSessionDriverFallback(): void
     {
         if (config('session.driver') !== 'database') {
             return;
