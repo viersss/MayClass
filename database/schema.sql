@@ -66,6 +66,7 @@ CREATE TABLE `packages` (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `slug` varchar(255) NOT NULL,
   `level` varchar(255) NOT NULL,
+  `grade_range` varchar(255) DEFAULT NULL,
   `tag` varchar(255) DEFAULT NULL,
   `card_price_label` varchar(255) NOT NULL,
   `detail_title` varchar(255) NOT NULL,

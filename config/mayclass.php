@@ -132,6 +132,20 @@ return [
             ],
         ],
     ],
+    'package_stages' => [
+        'SD' => [
+            'label' => 'Sekolah Dasar (SD)',
+            'description' => 'Bangun fondasi literasi dan numerasi dengan pendampingan ramah dari mentor terbaik.',
+        ],
+        'SMP' => [
+            'label' => 'Sekolah Menengah Pertama (SMP)',
+            'description' => 'Perkuat pemahaman konsep dan strategi belajar untuk hadapi ujian kenaikan kelas dan AKM.',
+        ],
+        'SMA' => [
+            'label' => 'Sekolah Menengah Atas (SMA)',
+            'description' => 'Siapkan diri ke kampus impian dengan program intensif, tryout UTBK, dan mentoring karier.',
+        ],
+    ],
     'links' => [
         'materials_drive' => 'https://drive.google.com/drive/u/0/folders/1oZ3MIlb9T5LvPefjrdX4n9eE06INrZbu',
         'quiz_platform' => 'https://wayground.com/join',

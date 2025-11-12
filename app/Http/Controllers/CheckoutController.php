@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Enrollment;
 use App\Models\Order;
 use App\Models\Package;
+use App\Support\PackagePresenter;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -92,19 +93,6 @@ class CheckoutController extends Controller
 
     private function formatPackage(Package $package): array
     {
-        return [
-            'id' => $package->id,
-            'slug' => $package->slug,
-            'level' => $package->level,
-            'tag' => $package->tag,
-            'card_price' => $package->card_price_label,
-            'detail_title' => $package->detail_title,
-            'detail_price' => $package->detail_price_label,
-            'summary' => $package->summary,
-            'image' => $package->image_asset,
-            'card_features' => $package->cardFeatures->sortBy('position')->pluck('label')->all(),
-            'included' => $package->inclusions->sortBy('position')->pluck('label')->all(),
-            'price_numeric' => (int) round($package->price),
-        ];
+        return PackagePresenter::detail($package);
     }
 }

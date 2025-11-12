@@ -8,6 +8,7 @@ use App\Models\Material;
 use App\Models\Package;
 use App\Models\Quiz;
 use App\Models\ScheduleSession;
+use App\Support\PackagePresenter;
 use App\Support\ScheduleViewData;
 use App\Support\StudentAccess;
 use App\Support\SubjectPalette;
@@ -200,25 +201,7 @@ class DashboardController extends Controller
                 $query->with(['cardFeatures' => fn ($features) => $features->orderBy('position')]);
             }
 
-            return $query->get()->map(function (Package $package) {
-                $features = $package->relationLoaded('cardFeatures')
-                    ? $package->cardFeatures->pluck('label')->all()
-                    : [];
-
-                return [
-                    'slug' => $package->slug,
-                    'title' => $package->detail_title,
-                    'level' => $package->level,
-                    'tag' => $package->tag,
-                    'card_price' => $package->card_price_label,
-                    'price' => $package->card_price_label,
-                    'detail_price' => $package->detail_price_label,
-                    'summary' => $package->summary,
-                    'image' => $package->image_asset,
-                    'features' => $features,
-                    'price_numeric' => (int) round($package->price),
-                ];
-            })->values();
+            return $query->get()->map(fn (Package $package) => PackagePresenter::card($package))->values();
         } catch (Throwable $exception) {
             return collect();
         }

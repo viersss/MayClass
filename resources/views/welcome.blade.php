@@ -230,6 +230,17 @@ nav {
                 transform: translateY(-1px);
             }
 
+            .btn-ghost {
+                border-color: rgba(63, 166, 126, 0.35);
+                background: rgba(63, 166, 126, 0.08);
+                color: var(--primary-dark);
+            }
+
+            .btn-ghost:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 14px 32px rgba(63, 166, 126, 0.2);
+            }
+
 .hero {
   position: relative;
   z-index: 1;
@@ -418,10 +429,26 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 padding: 96px 0;
             }
 
+            .pricing-group {
+                display: grid;
+                gap: 24px;
+                margin-top: 48px;
+            }
+
+            .pricing-group h3 {
+                margin: 0;
+                font-size: 1.6rem;
+            }
+
+            .pricing-group p {
+                margin: 6px 0 0;
+                color: var(--neutral-700);
+            }
+
             .pricing-grid {
                 display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 32px;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 28px;
                 width: 100%;
             }
 
@@ -454,6 +481,14 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 font-weight: 700;
             }
 
+            .pricing-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                font-size: 0.9rem;
+                color: var(--neutral-700);
+            }
+
             .pricing-features {
                 list-style: none;
                 margin: 0;
@@ -467,6 +502,19 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 content: "•";
                 margin-right: 8px;
                 color: var(--primary-light);
+            }
+
+            .pricing-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-top: 8px;
+            }
+
+            .pricing-actions a {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
             }
 
             /* Highlight section as full-width block */
@@ -999,44 +1047,70 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         interaktif dan laporan perkembangan rutin.
                     </p>
                 </div>
-                <div class="pricing-grid">
-                    <article class="pricing-card">
-                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">Tryout SKD</span>
-                        <strong>Simulasi Premium</strong>
-                        <div class="pricing-price">Rp30K</div>
-                        <div style="color: var(--neutral-700);">Diskon spesial dari Rp60K/paket</div>
-                        <ul class="pricing-features">
-                            <li>Bank soal HOTS + pembahasan video</li>
-                            <li>Analisis skor otomatis &amp; ranking nasional</li>
-                            <li>Group coaching bersama mentor ASN</li>
-                        </ul>
-                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Beli Paket</a>
-                    </article>
-                    <article class="pricing-card">
-                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">Tryout TPA</span>
-                        <strong>Bundling Stan/Polstat</strong>
-                        <div class="pricing-price">Rp30K</div>
-                        <div style="color: var(--neutral-700);">Diskon spesial dari Rp60K/paket</div>
-                        <ul class="pricing-features">
-                            <li>8 set TO intensif + pembahasan LIVE</li>
-                            <li>Pembinaan mindset &amp; habit belajar</li>
-                            <li>Prediksi soal dari mentor berpengalaman</li>
-                        </ul>
-                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Beli Paket</a>
-                    </article>
-                    <article class="pricing-card">
-                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">Tryout Matematika</span>
-                        <strong>Spesialis STIS</strong>
-                        <div class="pricing-price">Rp20K</div>
-                        <div style="color: var(--neutral-700);">Diskon spesial dari Rp40K/paket</div>
-                        <ul class="pricing-features">
-                            <li>Pembahasan konsep mendalam setiap sesi</li>
-                            <li>Latihan adaptif sesuai level kemampuan</li>
-                            <li>Group diskusi eksklusif bersama mentor</li>
-                        </ul>
-                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Beli Paket</a>
-                    </article>
-                </div>
+                @php($packageCatalog = collect($landingPackages ?? []))
+
+                @if ($packageCatalog->isNotEmpty())
+                    @foreach ($packageCatalog as $group)
+                        <div class="pricing-group">
+                            <div>
+                                <h3>{{ $group['stage_label'] ?? $group['stage'] }}</h3>
+                                @php($stageDescription = $group['stage_description'] ?? '')
+                                @if (! empty($stageDescription))
+                                    <p>{{ $stageDescription }}</p>
+                                @endif
+                            </div>
+                            <div class="pricing-grid">
+                                @foreach ($group['packages'] as $package)
+                                    @php($features = collect($package['card_features'] ?? $package['features'] ?? [])->take(3))
+                                    <article class="pricing-card">
+                                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">
+                                            {{ $package['tag'] ?? ($group['stage_label'] ?? $group['stage']) }}
+                                        </span>
+                                        <strong>{{ $package['detail_title'] }}</strong>
+                                        <div class="pricing-price">{{ $package['card_price'] }}</div>
+                                        <div class="pricing-meta">
+                                            <span>{{ $group['stage_label'] ?? $group['stage'] }}</span>
+                                            @if (! empty($package['grade_range']))
+                                                <span>• {{ $package['grade_range'] }}</span>
+                                            @endif
+                                        </div>
+                                        @if ($package['summary'] ?? false)
+                                            <p style="margin: 0; color: var(--neutral-700); font-size: 0.95rem;">
+                                                {{ $package['summary'] }}
+                                            </p>
+                                        @endif
+                                        @if ($features->isNotEmpty())
+                                            <ul class="pricing-features">
+                                                @foreach ($features as $feature)
+                                                    <li>{{ $feature }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                        <div class="pricing-actions">
+                                            <a class="btn btn-ghost" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
+                                            @auth
+                                                <a class="btn btn-primary" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
+                                            @else
+                                                <a class="btn btn-primary" href="{{ route('register') }}">Daftar &amp; Checkout</a>
+                                            @endauth
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="pricing-grid">
+                        <article class="pricing-card">
+                            <strong>Paket sedang disiapkan</strong>
+                            <div class="pricing-price">Segera hadir</div>
+                            <p style="color: var(--neutral-700);">Tim MayClass dapat menambahkan paket melalui dashboard admin untuk menampilkan katalog otomatis di halaman ini.</p>
+                            <div class="pricing-actions">
+                                <a class="btn btn-primary" href="{{ route('login') }}">Masuk Dashboard</a>
+                            </div>
+                        </article>
+                    </div>
+                @endif
             </div>
         </section>
 

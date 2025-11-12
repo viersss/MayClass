@@ -208,27 +208,6 @@
 
         .dashboard-steps {
             display: grid;
-            gap: 8px;
-            font-size: 0.9rem;
-            color: var(--student-text-muted);
-        }
-
-        .student-visitor__features li {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .student-visitor__features li::before {
-            content: "•";
-            color: var(--student-accent);
-            font-size: 1.2rem;
-            line-height: 1;
-        }
-
-        .student-visitor__actions {
-            display: inline-flex;
-            flex-wrap: wrap;
             gap: 12px;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         }
@@ -436,13 +415,18 @@
                             @if (! empty($package['image']))
                                 <img class="package-card__image" src="{{ $package['image'] }}" alt="Ilustrasi paket {{ $package['title'] }}" />
                             @endif
-                            @if (! empty($package['tag']) || ! empty($package['level']))
+                            @if (! empty($package['tag']) || ! empty($package['stage_label'] ?? $package['stage']))
                                 <div class="package-card__meta">
                                     @if (! empty($package['tag']))
                                         <span class="package-card__tag">{{ $package['tag'] }}</span>
                                     @endif
-                                    @if (! empty($package['level']))
-                                        <span class="package-card__level">{{ $package['level'] }}</span>
+                                    @if (! empty($package['stage_label'] ?? $package['stage']))
+                                        <span class="package-card__level">
+                                            {{ $package['stage_label'] ?? $package['stage'] }}
+                                            @if (! empty($package['grade_range']))
+                                                • {{ $package['grade_range'] }}
+                                            @endif
+                                        </span>
                                     @endif
                                 </div>
                             @endif
