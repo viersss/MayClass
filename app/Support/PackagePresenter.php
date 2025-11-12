@@ -86,6 +86,7 @@ class PackagePresenter
             'stage_label' => self::stageLabel($package->level),
             'grade_range' => $package->grade_range,
             'tag' => $package->tag,
+            'title' => $package->detail_title,
             'card_price' => $package->card_price_label,
             'detail_title' => $package->detail_title,
             'detail_price' => $package->detail_price_label,
