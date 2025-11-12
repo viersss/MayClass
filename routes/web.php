@@ -46,11 +46,13 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/jadwal', [ScheduleController::class, 'index'])->name('schedule');
-    Route::get('/materi', [MaterialController::class, 'index'])->name('materials');
-    Route::get('/materi/{slug}', [MaterialController::class, 'show'])->name('materials.show');
-    Route::get('/quiz', [QuizController::class, 'index'])->name('quiz');
-    Route::get('/quiz/{slug}', [QuizController::class, 'show'])->name('quiz.show');
+    Route::middleware('subscribed')->group(function () {
+        Route::get('/jadwal', [ScheduleController::class, 'index'])->name('schedule');
+        Route::get('/materi', [MaterialController::class, 'index'])->name('materials');
+        Route::get('/materi/{slug}', [MaterialController::class, 'show'])->name('materials.show');
+        Route::get('/quiz', [QuizController::class, 'index'])->name('quiz');
+        Route::get('/quiz/{slug}', [QuizController::class, 'show'])->name('quiz.show');
+    });
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
