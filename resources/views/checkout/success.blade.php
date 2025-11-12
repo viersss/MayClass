@@ -241,10 +241,18 @@
                 <p>
                     Terima kasih telah mempercayakan perjalanan belajar bersama MayClass. Akses paket
                     <strong>{{ $package['detail_title'] }}</strong> kini tercatat sebagai <strong>{{ ucfirst($order->status) }}</strong>.
+                    <br />
+                    <span style="display: inline-block; margin-top: 8px; font-size: 0.95rem; color: rgba(100, 116, 139, 0.9);">
+                        {{ $package['stage_label'] ?? $package['stage'] ?? 'Program' }}@if (! empty($package['grade_range'])) • {{ $package['grade_range'] }} @endif
+                    </span>
                     Silakan masuk kembali untuk menikmati materi, quiz, dan jadwal terbaru sesuai akunmu.
                 </p>
                 <div class="order-summary">
                     <div><strong>Paket:</strong> {{ $package['detail_title'] }}</div>
+                    <div><strong>Jenjang:</strong> {{ $package['stage_label'] ?? $package['stage'] ?? '—' }}</div>
+                    @if (! empty($package['grade_range']))
+                        <div><strong>Rentang kelas:</strong> {{ $package['grade_range'] }}</div>
+                    @endif
                     <div><strong>ID Pesanan:</strong> MC-{{ str_pad((string) $order->id, 6, '0', STR_PAD_LEFT) }}</div>
                     <div><strong>Total Dibayar:</strong> Rp {{ number_format((int) $order->total, 0, ',', '.') }}</div>
                     <div><strong>Email Konfirmasi:</strong> {{ optional($order->user)->email ?? 'Akun MayClass Anda' }}</div>

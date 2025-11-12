@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Enrollment;
 use App\Models\Material;
+use App\Models\Package;
 use App\Models\Quiz;
 use App\Models\ScheduleSession;
+use App\Support\PackagePresenter;
 use App\Support\ScheduleViewData;
+use App\Support\StudentAccess;
 use App\Support\SubjectPalette;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
+use Throwable;
 
 class DashboardController extends Controller
 {
@@ -22,13 +26,29 @@ class DashboardController extends Controller
 
     public function index()
     {
+        $user = Auth::user();
+        $materialsLink = (string) config('mayclass.links.materials_drive');
+        $quizLink = (string) config('mayclass.links.quiz_platform');
+
+        $activeEnrollment = StudentAccess::activeEnrollment($user);
+        $hasActivePackage = StudentAccess::hasActivePackage($user);
+
+        if (! $hasActivePackage) {
+            return view('student.dashboard', [
+                'page' => 'dashboard',
+                'title' => 'Dashboard Siswa',
+                'hasActivePackage' => false,
+                'activePackage' => $this->formatActivePackage($activeEnrollment),
+                'packages' => $this->packagesForUpsell(),
+                'materialsLink' => $materialsLink,
+                'quizLink' => $quizLink,
+            ]);
+        }
+
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::orderBy('start_at')->get()
             : collect();
         $schedule = ScheduleViewData::fromCollection($sessions);
-
-        $materialsLink = (string) config('mayclass.links.materials_drive');
-        $quizLink = (string) config('mayclass.links.quiz_platform');
 
         $materialsAvailable = Schema::hasTable('materials');
         $materialChaptersReady = Schema::hasTable('material_chapters');
@@ -124,15 +144,6 @@ class DashboardController extends Controller
             })
             ->count();
 
-        $activeEnrollment = Schema::hasTable('enrollments')
-            ? Auth::user()
-                ->enrollments()
-                ->with('package')
-                ->where('is_active', true)
-                ->orderByDesc('ends_at')
-                ->first()
-            : null;
-
         return view('student.dashboard', [
             'page' => 'dashboard',
             'title' => 'Dashboard Siswa',
@@ -152,6 +163,8 @@ class DashboardController extends Controller
             'activePackage' => $this->formatActivePackage($activeEnrollment),
             'materialsLink' => $materialsLink,
             'quizLink' => $quizLink,
+            'hasActivePackage' => true,
+            'packages' => collect(),
         ]);
     }
 
@@ -173,6 +186,25 @@ class DashboardController extends Controller
             'period' => 'Aktif hingga ' . ScheduleViewData::formatFullDate($endDate),
             'status' => $endDate->isFuture() ? 'Berjalan' : 'Berakhir',
         ];
+    }
+
+    private function packagesForUpsell()
+    {
+        if (! Schema::hasTable('packages')) {
+            return collect();
+        }
+
+        try {
+            $query = Package::query()->orderBy('price');
+
+            if (Schema::hasTable('package_features')) {
+                $query->with(['cardFeatures' => fn ($features) => $features->orderBy('position')]);
+            }
+
+            return $query->get()->map(fn (Package $package) => PackagePresenter::card($package))->values();
+        } catch (Throwable $exception) {
+            return collect();
+        }
     }
 
     private function parseDate($value): ?CarbonImmutable

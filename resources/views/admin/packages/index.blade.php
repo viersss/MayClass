@@ -91,7 +91,7 @@
         <thead>
             <tr>
                 <th>Nama Paket</th>
-                <th>Level</th>
+                <th>Jenjang &amp; Kelas</th>
                 <th>Label Harga</th>
                 <th>Harga</th>
                 <th>Tag</th>
@@ -102,7 +102,12 @@
             @forelse ($packages as $package)
                 <tr>
                     <td>{{ $package->detail_title }}</td>
-                    <td>{{ $package->level }}</td>
+                    <td>
+                        <strong>{{ \App\Support\PackagePresenter::stageLabel($package->level) }}</strong>
+                        @if ($package->grade_range)
+                            <div style="color: var(--text-muted); font-size: 0.85rem;">{{ $package->grade_range }}</div>
+                        @endif
+                    </td>
                     <td>{{ $package->detail_price_label }}</td>
                     <td>Rp {{ number_format($package->price, 0, ',', '.') }}</td>
                     <td>{{ $package->tag ?? '—' }}</td>
