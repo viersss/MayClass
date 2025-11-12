@@ -82,7 +82,8 @@ Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
     * ```bash
         cp .env.example .env
         ```
-    * Buka file `.env` dan konfigurasikan koneksi database Anda (DB_DATABASE, DB_USERNAME, DB_PASSWORD).
+    * Buka file `.env` dan konfigurasikan koneksi database Anda (DB_DATABASE, DB_USERNAME, DB_PASSWORD). Untuk Laragon,
+      gunakan username `root` dengan password **kosong** kecuali Anda sudah menentukannya secara manual.
 
 5.  **Generate Kunci Aplikasi Laravel:**
     ```bash
@@ -116,23 +117,27 @@ Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
 ### Error `HY000/1045` saat login MySQL atau phpMyAdmin
 
-Apabila phpMyAdmin menampilkan pesan `Access denied for user 'root'@'localhost' (using password: NO)` berarti server
-MySQL Anda membutuhkan kata sandi untuk akun `root`. Laragon secara bawaan memperbolehkan login tanpa kata sandi, namun
-pengaturan lokal Anda bisa saja sudah berubah. Lakukan langkah-langkah berikut untuk memastikan aplikasi dapat terhubung
-dengan database:
+Pesan `Access denied for user 'root'@'localhost'` akan muncul apabila kredensial MySQL Anda tidak cocok dengan konfigurasi
+server lokal. Terkadang phpMyAdmin menampilkan variasi pesan seperti `(using password: YES)` ataupun `(using password: NO)`.
+Ikuti panduan berikut supaya aplikasi dapat terhubung kembali:
 
-1.  Buka **Laragon → Menu → Database → mysql → Reset/Change password** lalu tentukan kata sandi baru untuk pengguna
-    `root`.
-2.  Setelah password diperbarui, sesuaikan kredensial pada file `.env`:
+1.  Coba login di phpMyAdmin menggunakan **username `root`** dan **password kosong** terlebih dahulu. Laragon secara bawaan
+    tidak memberikan password pada akun `root`. Pastikan opsi "Remember me" dinonaktifkan ketika mencoba.
+2.  Jika login masih gagal, buka **Laragon → Menu → Database → mysql → Reset/Change password** kemudian atur password baru
+    untuk akun `root`.
+3.  Perbarui file `.env` agar menggunakan kredensial terbaru:
 
     ```ini
     DB_USERNAME=root
     DB_PASSWORD=kata_sandi_baru_anda
     ```
 
-3.  Restart layanan MySQL melalui Laragon agar konfigurasi baru diterapkan.
-4.  Uji kembali koneksi melalui phpMyAdmin menggunakan username dan kata sandi yang sama seperti di `.env`.
-5.  Jalankan kembali migrasi aplikasi apabila sebelumnya gagal:
+4.  Restart layanan MySQL melalui Laragon agar pengaturan baru aktif.
+5.  Uji kembali login via phpMyAdmin dengan username dan password yang sama seperti di `.env`.
+6.  Jika Anda hanya ingin menjalankan proyek secara cepat, biarkan password di `.env` tetap kosong. Aplikasi kini akan
+    secara otomatis mencoba ulang koneksi MySQL tanpa password ketika mendeteksi Anda menggunakan akun `root` di lingkungan
+    lokal.
+7.  Jalankan kembali migrasi aplikasi apabila sebelumnya gagal:
 
     ```bash
     php artisan migrate
@@ -161,6 +166,10 @@ Jika Anda melihat error di atas ketika menjalankan `php artisan serve`, lakukan 
    ```
 
 4. Setelah tabel tersedia, restart server dengan perintah `php artisan serve` dan muat ulang halaman aplikasi.
+
+**Catatan:** Mulai sekarang MayClass akan secara otomatis menggunakan _file session driver_ sementara apabila tabel
+`sessions` belum ada atau pemeriksaan tabel gagal akibat kredensial database yang salah. Hal ini membuat aplikasi tetap
+dapat dijalankan, namun pastikan Anda tetap menjalankan migrasi agar session kembali tersimpan di database.
 
 ## 👥 Tim Pengembang (Kelompok 1 - 3SD2)
 
