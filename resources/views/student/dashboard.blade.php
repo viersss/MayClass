@@ -395,9 +395,11 @@
                 </article>
                 <article class="dashboard-card">
                     <p class="dashboard-eyebrow" style="color: var(--student-accent);">Status langganan</p>
-                    <h2 class="dashboard-card__title">{{ $activePackage['title'] }}</h2>
-                    <p class="dashboard-card__text">{{ $activePackage['period'] }}</p>
-                    <p class="dashboard-card__text">Status: {{ $activePackage['status'] }}</p>
+                    <h2 class="dashboard-card__title">Belum ada paket aktif</h2>
+                    <p class="dashboard-card__text">
+                        Aktivasi salah satu paket di MayClass untuk membuka materi eksklusif, kuis interaktif, dan jadwal
+                        belajar bersama tutor profesional.
+                    </p>
                     <a class="student-button student-button--primary" href="{{ route('packages.index') }}">Pilih paket belajar</a>
                 </article>
             </div>
