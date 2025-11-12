@@ -316,6 +316,14 @@
                         <p style="color: var(--text-muted); margin: 12px 0 0;">
                             Lengkapi detail pembayaranmu untuk mengamankan akses ke {{ $package['detail_title'] }}.
                         </p>
+                        <div
+                            style="margin-top: 16px; display: inline-flex; flex-wrap: wrap; gap: 10px 14px; padding: 12px 18px; border-radius: 18px; background: rgba(61, 183, 173, 0.08); color: var(--text-muted); font-size: 0.95rem;"
+                        >
+                            <span>{{ $package['stage_label'] ?? $package['stage'] ?? 'Program' }}</span>
+                            @if (! empty($package['grade_range']))
+                                <span>• {{ $package['grade_range'] }}</span>
+                            @endif
+                        </div>
                     </div>
 
                     @if ($errors->any())
@@ -421,8 +429,15 @@
                     <div>
                         <h2>Ringkasan Pembayaran</h2>
                         <p style="margin: 8px 0 0; color: var(--text-muted);">{{ $package['detail_title'] }}</p>
+                        <p style="margin: 6px 0 0; color: var(--text-muted); font-size: 0.85rem;">
+                            {{ $package['stage_label'] ?? $package['stage'] ?? 'Program' }}@if (! empty($package['grade_range'])) • {{ $package['grade_range'] }} @endif
+                        </p>
                     </div>
                     <ul>
+                        <li><span>Jenjang</span><span>{{ $package['stage_label'] ?? $package['stage'] ?? '—' }}</span></li>
+                        @if (! empty($package['grade_range']))
+                            <li><span>Rentang kelas</span><span>{{ $package['grade_range'] }}</span></li>
+                        @endif
                         @php
                             $subtotal = $package['price_numeric'];
                             $tax = round($subtotal * 0.11);
