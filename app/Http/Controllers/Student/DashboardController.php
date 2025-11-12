@@ -210,6 +210,7 @@ class DashboardController extends Controller
                     'title' => $package->detail_title,
                     'level' => $package->level,
                     'tag' => $package->tag,
+                    'card_price' => $package->card_price_label,
                     'price' => $package->card_price_label,
                     'detail_price' => $package->detail_price_label,
                     'summary' => $package->summary,
