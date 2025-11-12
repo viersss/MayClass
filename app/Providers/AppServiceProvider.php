@@ -71,6 +71,41 @@ class AppServiceProvider extends ServiceProvider
         ]));
     }
 
+    private function ensureSessionDriverFallback(): void
+    {
+        if (config('session.driver') !== 'database') {
+            return;
+        }
+
+        $table = config('session.table', 'sessions');
+
+        try {
+            if (Schema::hasTable($table)) {
+                return;
+            }
+
+            $this->activateFileSessionDriver('database_table_missing', $table);
+        } catch (Throwable $exception) {
+            $this->activateFileSessionDriver('database_check_failed', $table, $exception->getMessage());
+        }
+    }
+
+    private function activateFileSessionDriver(string $reason, string $table, ?string $message = null): void
+    {
+        if (config('session.driver') === 'file') {
+            return;
+        }
+
+        Config::set('session.driver', 'file');
+        Session::setDefaultDriver('file');
+
+        Log::warning('Falling back to file session driver for MayClass.', array_filter([
+            'reason' => $reason,
+            'table' => $table,
+            'message' => $message,
+        ]));
+    }
+
     private function registerDatabaseFallbackConnector(): void
     {
         $this->app->extend('db.connector.mysql', function () {
