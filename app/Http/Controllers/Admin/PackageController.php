@@ -24,7 +24,9 @@ class PackageController extends BaseAdminController
 
     public function create(): View
     {
-        return $this->render('admin.packages.create');
+        return $this->render('admin.packages.create', [
+            'stages' => $this->stageOptions(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -40,6 +42,7 @@ class PackageController extends BaseAdminController
     {
         return $this->render('admin.packages.edit', [
             'package' => $package,
+            'stages' => $this->stageOptions(),
         ]);
     }
 
@@ -61,9 +64,12 @@ class PackageController extends BaseAdminController
 
     private function validatePayload(Request $request, ?int $packageId = null): array
     {
+        $stageKeys = array_keys($this->stageOptions());
+
         return $request->validate([
             'slug' => ['required', 'string', 'max:255', Rule::unique(Package::class)->ignore($packageId)],
-            'level' => ['required', 'string', 'max:255'],
+            'level' => ['required', 'string', 'max:255', Rule::in($stageKeys)],
+            'grade_range' => ['required', 'string', 'max:255'],
             'tag' => ['nullable', 'string', 'max:50'],
             'card_price_label' => ['required', 'string', 'max:50'],
             'detail_title' => ['required', 'string', 'max:255'],
@@ -72,5 +78,30 @@ class PackageController extends BaseAdminController
             'price' => ['required', 'numeric', 'min:0'],
             'summary' => ['required', 'string'],
         ]);
+    }
+
+    private function stageOptions(): array
+    {
+        $definitions = config('mayclass.package_stages');
+
+        if (! is_array($definitions) || empty($definitions)) {
+            $definitions = [
+                'SD' => ['label' => 'Sekolah Dasar (SD)'],
+                'SMP' => ['label' => 'Sekolah Menengah Pertama (SMP)'],
+                'SMA' => ['label' => 'Sekolah Menengah Atas (SMA)'],
+            ];
+        }
+
+        $options = [];
+
+        foreach ($definitions as $key => $definition) {
+            if (is_array($definition)) {
+                $options[$key] = $definition['label'] ?? (string) $key;
+            } else {
+                $options[$key] = (string) $definition;
+            }
+        }
+
+        return $options;
     }
 }

@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Support\SubjectPalette;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\View\View;
 
 class QuizController extends Controller
 {
@@ -85,9 +85,40 @@ class QuizController extends Controller
         ]);
     }
 
-    public function show(string $slug): RedirectResponse
+    public function show(string $slug): View
     {
-        return redirect()->away($this->quizLink());
+        if (! Schema::hasTable('quizzes')) {
+            abort(404);
+        }
+
+        $levelsReady = Schema::hasTable('quiz_levels');
+        $takeawaysReady = Schema::hasTable('quiz_takeaways');
+
+        $quiz = Quiz::query()
+            ->where('slug', $slug)
+            ->when($levelsReady, fn ($query) => $query->with('levels'))
+            ->when($takeawaysReady, fn ($query) => $query->with('takeaways'))
+            ->firstOrFail();
+
+        $platformLink = $quiz->link ?? $this->quizLink();
+
+        return view('student.quiz.show', [
+            'page' => 'quiz',
+            'title' => $quiz->title,
+            'quiz' => [
+                'subject' => $quiz->subject,
+                'level' => $quiz->class_level,
+                'title' => $quiz->title,
+                'summary' => $quiz->summary,
+                'thumbnail' => $quiz->thumbnail_asset,
+                'duration' => $quiz->duration_label,
+                'questions' => (int) $quiz->question_count,
+                'levels' => $levelsReady ? $quiz->levels->pluck('label')->filter()->values()->all() : [],
+                'takeaways' => $takeawaysReady ? $quiz->takeaways->pluck('description')->filter()->values()->all() : [],
+                'link' => $platformLink,
+            ],
+            'quizLink' => $this->quizLink(),
+        ]);
     }
 
     private function quizLink(): string

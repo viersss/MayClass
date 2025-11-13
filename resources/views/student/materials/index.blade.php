@@ -149,7 +149,7 @@
                                         <span>{{ $material['objective_count'] }} tujuan</span>
                                     </div>
                                     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                                        <a class="student-button student-button--primary" style="padding: 10px 20px;" href="{{ $material['resource'] }}" target="_blank" rel="noopener">Lihat materi</a>
+                                        <a class="student-button student-button--primary" style="padding: 10px 20px;" href="{{ route('student.materials.show', $material['slug']) }}">Detail materi</a>
                                         <a class="student-button student-button--outline" style="padding: 10px 20px;" href="{{ $materialsLink }}" target="_blank" rel="noopener">Kelola file</a>
                                     </div>
                                 </article>
