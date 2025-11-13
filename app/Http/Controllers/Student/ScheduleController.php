@@ -35,6 +35,11 @@ class ScheduleController extends Controller
 
         $schedule = ScheduleViewData::compose($sessions, $viewMode, $referenceDate);
 
+        $viewMode = $this->resolveViewMode($request->query('view'));
+        $referenceDate = $this->parseDate($request->query('date'));
+
+        $schedule = ScheduleViewData::compose($sessions, $viewMode, $referenceDate);
+
         $upcomingSessions = $sessions->filter(function ($session) {
             $start = $this->parseDate($session->start_at ?? null);
 
