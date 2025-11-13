@@ -128,11 +128,28 @@
                 font-size: 1rem;
             }
 
+            .stage-group {
+                margin: 48px 0 64px;
+                display: grid;
+                gap: 24px;
+            }
+
+            .stage-group__header {
+                display: grid;
+                gap: 8px;
+            }
+
+            .stage-group__description {
+                color: var(--text-muted);
+                font-size: 0.95rem;
+                margin: 0;
+            }
+
             .packages-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                gap: 24px;
-                margin: 40px 0 64px;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 28px;
+                margin: 0;
             }
 
             .package-card {
@@ -178,6 +195,14 @@
                 color: var(--primary-dark);
             }
 
+            .package-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px 12px;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+            }
+
             .features {
                 list-style: none;
                 padding: 0;
@@ -209,8 +234,8 @@
 
             .card-footer {
                 display: flex;
-                justify-content: space-between;
-                align-items: center;
+                flex-wrap: wrap;
+                justify-content: flex-start;
                 gap: 12px;
                 margin-top: auto;
             }
@@ -221,15 +246,34 @@
                 gap: 8px;
                 padding: 10px 18px;
                 border-radius: 999px;
+                border: 1px solid rgba(61, 183, 173, 0.35);
+                background: rgba(61, 183, 173, 0.08);
+                color: var(--primary-dark);
+                font-weight: 500;
+                font-size: 0.92rem;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .more-link:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 18px 36px rgba(47, 137, 131, 0.2);
+            }
+
+            .checkout-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 18px;
+                border-radius: 999px;
                 background: var(--primary);
                 color: #fff;
-                font-weight: 500;
+                font-weight: 600;
                 font-size: 0.92rem;
                 box-shadow: 0 18px 35px rgba(61, 183, 173, 0.28);
                 transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
 
-            .more-link:hover {
+            .checkout-link:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 24px 45px rgba(34, 108, 104, 0.25);
             }
@@ -339,23 +383,69 @@
         </header>
 
         <main class="container">
-            <div class="packages-grid">
-                @foreach ($packages as $package)
-                    <article class="package-card" data-tag="{{ $package['tag'] }}">
-                        <span class="badge">{{ $package['tag'] }}</span>
-                        <h3>{{ $package['level'] }}</h3>
-                        <p class="price">{{ $package['card_price'] }}</p>
-                        <ul class="features">
-                            @foreach ($package['card_features'] as $feature)
-                                <li><span>✓</span>{{ $feature }}</li>
-                            @endforeach
-                        </ul>
-                        <div class="card-footer">
-                            <a class="more-link" href="{{ route('packages.show', $package['slug']) }}">Selengkapnya</a>
+            @php($catalog = collect($catalog ?? []))
+
+            @if ($catalog->isNotEmpty())
+                @foreach ($catalog as $group)
+                    <section class="stage-group">
+                        <div class="stage-group__header">
+                            <h2 style="margin: 0; font-size: clamp(1.8rem, 3vw, 2.2rem);">
+                                {{ $group['stage_label'] ?? $group['stage'] }}
+                            </h2>
+                            @php($stageDescription = $group['stage_description'] ?? '')
+                            @if (! empty($stageDescription))
+                                <p class="stage-group__description">{{ $stageDescription }}</p>
+                            @endif
                         </div>
-                    </article>
+                        <div class="packages-grid">
+                            @foreach ($group['packages'] as $package)
+                                @php($features = collect($package['card_features'] ?? $package['features'] ?? [])->take(4))
+                                <article class="package-card" data-tag="{{ $package['tag'] }}">
+                                    @if (! empty($package['tag']))
+                                        <span class="badge">{{ $package['tag'] }}</span>
+                                    @endif
+                                    <h3 style="margin: 0; font-size: 1.3rem;">{{ $package['detail_title'] }}</h3>
+                                    <div class="package-meta">
+                                        <span>{{ $group['stage_label'] ?? $group['stage'] }}</span>
+                                        @if (! empty($package['grade_range']))
+                                            <span>• {{ $package['grade_range'] }}</span>
+                                        @endif
+                                    </div>
+                                    <p class="price">{{ $package['card_price'] }}</p>
+                                    @if (! empty($package['detail_price']))
+                                        <p style="margin: -10px 0 0; color: var(--text-muted); font-size: 0.9rem;">{{ $package['detail_price'] }}</p>
+                                    @endif
+                                    @if ($package['summary'] ?? false)
+                                        <p style="margin: 12px 0 0; color: var(--text-muted);">{{ $package['summary'] }}</p>
+                                    @endif
+                                    @if ($features->isNotEmpty())
+                                        <ul class="features">
+                                            @foreach ($features as $feature)
+                                                <li><span>✓</span>{{ $feature }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
+                                    <div class="card-footer">
+                                        <a class="more-link" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
+                                        @auth
+                                            <a class="checkout-link" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
+                                        @else
+                                            <a class="checkout-link" href="{{ route('register') }}">Daftar &amp; Checkout</a>
+                                        @endauth
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+                    </section>
                 @endforeach
-            </div>
+            @else
+                <section class="stage-group" style="text-align: center;">
+                    <h2 style="margin: 0 0 12px;">Paket belum tersedia</h2>
+                    <p class="stage-group__description" style="margin: 0 auto; max-width: 560px;">
+                        Admin MayClass dapat menambahkan paket melalui dashboard untuk menampilkan katalog jenjang SD, SMP, dan SMA secara otomatis.
+                    </p>
+                </section>
+            @endif
         </main>
 
         <footer>

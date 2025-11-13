@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Tutor;
 
 use App\Models\Material;
+use App\Models\Package;
 use App\Support\UnsplashPlaceholder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -40,7 +42,13 @@ class MaterialController extends BaseTutorController
 
     public function create()
     {
-        return $this->render('tutor.materials.create');
+        $packages = Schema::hasTable('packages')
+            ? Package::orderBy('level')->orderBy('price')->get()
+            : collect();
+
+        return $this->render('tutor.materials.create', [
+            'packages' => $packages,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -51,12 +59,24 @@ class MaterialController extends BaseTutorController
                 ->with('alert', __('Tabel materi belum siap. Jalankan migrasi database terlebih dahulu.'));
         }
 
+        if (! Schema::hasTable('packages')) {
+            return redirect()
+                ->route('tutor.materials.index')
+                ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
+        }
+
         $data = $request->validate([
+            'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
             'subject' => ['required', 'string', 'max:120'],
             'level' => ['required', 'string', 'max:120'],
             'summary' => ['required', 'string'],
             'attachment' => ['nullable', 'file', 'mimes:pdf,ppt,pptx,doc,docx', 'max:10240'],
+            'objectives' => ['nullable', 'array'],
+            'objectives.*' => ['nullable', 'string', 'max:255'],
+            'chapters' => ['nullable', 'array'],
+            'chapters.*.title' => ['nullable', 'string', 'max:255'],
+            'chapters.*.description' => ['nullable', 'string'],
         ]);
 
         $slug = Str::slug($data['title']) ?: 'materi-' . Str::random(6);
@@ -71,15 +91,21 @@ class MaterialController extends BaseTutorController
             $path = $request->file('attachment')->store('materials', 'public');
         }
 
-        Material::create([
-            'slug' => $uniqueSlug,
-            'subject' => $data['subject'],
-            'title' => $data['title'],
-            'level' => $data['level'],
-            'summary' => $data['summary'],
-            'thumbnail_url' => UnsplashPlaceholder::material($data['subject']),
-            'resource_path' => $path,
-        ]);
+        DB::transaction(function () use ($data, $path, $uniqueSlug, $request) {
+            $material = Material::create([
+                'slug' => $uniqueSlug,
+                'package_id' => $data['package_id'],
+                'subject' => $data['subject'],
+                'title' => $data['title'],
+                'level' => $data['level'],
+                'summary' => $data['summary'],
+                'thumbnail_url' => UnsplashPlaceholder::material($data['subject']),
+                'resource_path' => $path,
+            ]);
+
+            $this->syncObjectives($material, $request->input('objectives', []));
+            $this->syncChapters($material, $request->input('chapters', []));
+        });
 
         return redirect()
             ->route('tutor.materials.index')
@@ -88,8 +114,15 @@ class MaterialController extends BaseTutorController
 
     public function edit(Material $material)
     {
+        $material->load(['objectives', 'chapters']);
+
+        $packages = Schema::hasTable('packages')
+            ? Package::orderBy('level')->orderBy('price')->get()
+            : collect();
+
         return $this->render('tutor.materials.edit', [
             'material' => $material,
+            'packages' => $packages,
         ]);
     }
 
@@ -101,15 +134,28 @@ class MaterialController extends BaseTutorController
                 ->with('alert', __('Tabel materi belum siap. Jalankan migrasi database terlebih dahulu.'));
         }
 
+        if (! Schema::hasTable('packages')) {
+            return redirect()
+                ->route('tutor.materials.index')
+                ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
+        }
+
         $data = $request->validate([
+            'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
             'subject' => ['required', 'string', 'max:120'],
             'level' => ['required', 'string', 'max:120'],
             'summary' => ['required', 'string'],
             'attachment' => ['nullable', 'file', 'mimes:pdf,ppt,pptx,doc,docx', 'max:10240'],
+            'objectives' => ['nullable', 'array'],
+            'objectives.*' => ['nullable', 'string', 'max:255'],
+            'chapters' => ['nullable', 'array'],
+            'chapters.*.title' => ['nullable', 'string', 'max:255'],
+            'chapters.*.description' => ['nullable', 'string'],
         ]);
 
         $payload = [
+            'package_id' => $data['package_id'],
             'subject' => $data['subject'],
             'title' => $data['title'],
             'level' => $data['level'],
@@ -132,10 +178,64 @@ class MaterialController extends BaseTutorController
             $payload['thumbnail_url'] = UnsplashPlaceholder::material($data['subject']);
         }
 
-        $material->update($payload);
+        DB::transaction(function () use ($material, $payload, $request) {
+            $material->update($payload);
+
+            $material->objectives()->delete();
+            $material->chapters()->delete();
+
+            $this->syncObjectives($material, $request->input('objectives', []));
+            $this->syncChapters($material, $request->input('chapters', []));
+        });
 
         return redirect()
             ->route('tutor.materials.index')
             ->with('status', __('Materi berhasil diperbarui.'));
+    }
+
+    private function syncObjectives(Material $material, array $objectives): void
+    {
+        $payloads = collect($objectives)
+            ->map(fn ($value) => trim((string) $value))
+            ->filter()
+            ->values()
+            ->map(fn ($description, $index) => [
+                'description' => $description,
+                'position' => $index + 1,
+            ]);
+
+        if ($payloads->isEmpty()) {
+            return;
+        }
+
+        $payloads->each(fn ($attributes) => $material->objectives()->create($attributes));
+    }
+
+    private function syncChapters(Material $material, array $chapters): void
+    {
+        $payloads = collect($chapters)
+            ->map(function ($chapter) {
+                return [
+                    'title' => trim((string) ($chapter['title'] ?? '')),
+                    'description' => trim((string) ($chapter['description'] ?? '')),
+                ];
+            })
+            ->filter(fn ($chapter) => $chapter['title'] !== '' || $chapter['description'] !== '')
+            ->values()
+            ->map(function ($chapter, $index) {
+                return [
+                    'title' => $chapter['title'] !== ''
+                        ? $chapter['title']
+                        : __('Bab :number', ['number' => $index + 1]),
+                    'description' => $chapter['description'] !== '' ? $chapter['description'] : null,
+                    'position' => $index + 1,
+                ];
+            });
+
+        if ($payloads->isEmpty()) {
+            return;
+        }
+
+        $payloads->each(fn ($attributes) => $material->chapters()->create($attributes));
     }
 }

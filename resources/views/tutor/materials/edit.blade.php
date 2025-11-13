@@ -42,6 +42,70 @@
             resize: vertical;
         }
 
+        .dynamic-group {
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 18px;
+            background: rgba(249, 250, 251, 0.8);
+        }
+
+        .dynamic-group__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .dynamic-group__header span {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .dynamic-group__items {
+            display: grid;
+            gap: 12px;
+        }
+
+        .dynamic-item {
+            display: grid;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 14px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+        }
+
+        .dynamic-item__row {
+            display: grid;
+            gap: 12px;
+        }
+
+        .dynamic-item__actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .dynamic-item__remove {
+            appearance: none;
+            border: none;
+            background: transparent;
+            color: #ef4444;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .dynamic-add {
+            appearance: none;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 18px;
+            background: rgba(61, 183, 173, 0.12);
+            color: var(--primary-dark);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
         .upload-field {
             border: 2px dashed #d9e0ea;
             border-radius: 18px;
@@ -92,6 +156,31 @@
 @endpush
 
 @section('content')
+    @php
+        $objectiveValues = collect(old('objectives', $material->objectives->pluck('description')->all()))
+            ->map(fn($value) => is_string($value) ? $value : '');
+        if ($objectiveValues->isEmpty()) {
+            $objectiveValues = collect(['']);
+        }
+
+        $chapterValues = collect(old('chapters', $material->chapters->map(fn($chapter) => [
+            'title' => $chapter->title,
+            'description' => $chapter->description,
+        ])->all()))
+            ->map(function ($chapter) {
+                return [
+                    'title' => is_array($chapter) ? ($chapter['title'] ?? '') : '',
+                    'description' => is_array($chapter) ? ($chapter['description'] ?? '') : '',
+                ];
+            });
+
+        if ($chapterValues->isEmpty()) {
+            $chapterValues = collect([['title' => '', 'description' => '']]);
+        }
+
+        $chapterNextIndex = $chapterValues->keys()->map(fn ($key) => (int) $key)->max();
+        $chapterNextIndex = is_null($chapterNextIndex) ? $chapterValues->count() : $chapterNextIndex + 1;
+    @endphp
     <div class="form-card">
         <h1>Edit Materi</h1>
         <p>Perbarui informasi materi pembelajaran.</p>
@@ -99,6 +188,22 @@
         <form method="POST" action="{{ route('tutor.materials.update', $material) }}" enctype="multipart/form-data" class="form-grid">
             @csrf
             @method('PUT')
+            <label>
+                <span>Paket Belajar</span>
+                <select name="package_id" required style="width: 100%; padding: 14px 18px; border: 1px solid #d9e0ea; border-radius: 16px; font-family: inherit; font-size: 1rem;">
+                    <option value="">Pilih paket yang tersedia</option>
+                    @forelse ($packages as $package)
+                        <option value="{{ $package->id }}" @selected(old('package_id', $material->package_id) == $package->id)>
+                            {{ $package->detail_title ?? $package->title }}
+                        </option>
+                    @empty
+                        <option value="" disabled>Belum ada paket yang tersedia</option>
+                    @endforelse
+                </select>
+                @error('package_id')
+                    <div class="error-text">{{ $message }}</div>
+                @enderror
+            </label>
             <label>
                 <span>Judul Materi</span>
                 <input type="text" name="title" value="{{ old('title', $material->title) }}" required />
@@ -131,6 +236,57 @@
                 @enderror
             </label>
 
+            <div class="dynamic-group">
+                <div class="dynamic-group__header">
+                    <span>Tujuan Pembelajaran</span>
+                    <button class="dynamic-add" data-add-objective>Tambah tujuan</button>
+                </div>
+                <div class="dynamic-group__items" data-objectives>
+                    @foreach ($objectiveValues as $value)
+                        <div class="dynamic-item" data-objective-row>
+                            <div class="dynamic-item__row">
+                                <input type="text" name="objectives[]" value="{{ $value }}" placeholder="Contoh: Memahami konsep persamaan linear" />
+                            </div>
+                            <div class="dynamic-item__actions">
+                                <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                @php
+                    $objectiveError = $errors->first('objectives') ?: $errors->first('objectives.*');
+                @endphp
+                @if ($objectiveError)
+                    <div class="error-text" style="margin-top: 10px;">{{ $objectiveError }}</div>
+                @endif
+            </div>
+
+            <div class="dynamic-group">
+                <div class="dynamic-group__header">
+                    <span>Rangkuman Bab</span>
+                    <button class="dynamic-add" data-add-chapter>Tambah bab</button>
+                </div>
+                <div class="dynamic-group__items" data-chapters data-next-index="{{ $chapterNextIndex }}">
+                    @foreach ($chapterValues as $index => $chapter)
+                        <div class="dynamic-item" data-chapter-row>
+                            <div class="dynamic-item__row">
+                                <input type="text" name="chapters[{{ $index }}][title]" value="{{ $chapter['title'] }}" placeholder="Judul bab" />
+                                <textarea name="chapters[{{ $index }}][description]" placeholder="Ringkasan singkat bab">{{ $chapter['description'] }}</textarea>
+                            </div>
+                            <div class="dynamic-item__actions">
+                                <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                @php
+                    $chapterError = $errors->first('chapters') ?: $errors->first('chapters.*.title') ?: $errors->first('chapters.*.description');
+                @endphp
+                @if ($chapterError)
+                    <div class="error-text" style="margin-top: 10px;">{{ $chapterError }}</div>
+                @endif
+            </div>
+
             <label>
                 <span>Upload File (PDF, PPT, DOC)</span>
                 <div class="upload-field">
@@ -154,3 +310,85 @@
         </form>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const objectiveContainer = document.querySelector('[data-objectives]');
+            const chapterContainer = document.querySelector('[data-chapters]');
+
+            const templateObjective = () => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'dynamic-item';
+                wrapper.dataset.objectiveRow = 'true';
+                wrapper.innerHTML = `
+                    <div class="dynamic-item__row">
+                        <input type="text" name="objectives[]" placeholder="Contoh: Memahami konsep persamaan linear" />
+                    </div>
+                    <div class="dynamic-item__actions">
+                        <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
+                    </div>
+                `;
+                return wrapper;
+            };
+
+            const templateChapter = (index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'dynamic-item';
+                wrapper.dataset.chapterRow = 'true';
+                wrapper.innerHTML = `
+                    <div class="dynamic-item__row">
+                        <input type="text" name="chapters[${index}][title]" placeholder="Judul bab" />
+                        <textarea name="chapters[${index}][description]" placeholder="Ringkasan singkat bab"></textarea>
+                    </div>
+                    <div class="dynamic-item__actions">
+                        <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
+                    </div>
+                `;
+                return wrapper;
+            };
+
+            document.querySelectorAll('[data-remove-row]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const row = button.closest('.dynamic-item');
+                    if (row && row.parentElement.children.length > 1) {
+                        row.remove();
+                    }
+                });
+            });
+
+            const addObjectiveBtn = document.querySelector('[data-add-objective]');
+            addObjectiveBtn?.addEventListener('click', (event) => {
+                event.preventDefault();
+                if (!objectiveContainer) return;
+
+                const row = templateObjective();
+                objectiveContainer.appendChild(row);
+                row.querySelector('[data-remove-row]')?.addEventListener('click', () => {
+                    if (row.parentElement.children.length > 1) {
+                        row.remove();
+                    }
+                });
+            });
+
+            const addChapterBtn = document.querySelector('[data-add-chapter]');
+            let nextChapterIndex = Number(chapterContainer?.dataset.nextIndex || chapterContainer?.children.length || 0);
+
+            addChapterBtn?.addEventListener('click', (event) => {
+                event.preventDefault();
+                if (!chapterContainer) return;
+
+                const row = templateChapter(nextChapterIndex++);
+                chapterContainer.appendChild(row);
+                row.querySelector('[data-remove-row]')?.addEventListener('click', () => {
+                    if (row.parentElement.children.length > 1) {
+                        row.remove();
+                    }
+                });
+                if (chapterContainer) {
+                    chapterContainer.dataset.nextIndex = String(nextChapterIndex);
+                }
+            });
+        });
+    </script>
+@endpush
