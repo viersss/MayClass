@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Enrollment;
 use App\Models\Material;
+use App\Models\Package;
 use App\Models\Quiz;
 use App\Models\ScheduleSession;
+use App\Support\PackagePresenter;
 use App\Support\ScheduleViewData;
 use App\Support\StudentAccess;
 use App\Support\SubjectPalette;
@@ -182,6 +184,25 @@ class DashboardController extends Controller
             'period' => 'Aktif hingga ' . ScheduleViewData::formatFullDate($endDate),
             'status' => $endDate->isFuture() ? 'Berjalan' : 'Berakhir',
         ];
+    }
+
+    private function packagesForUpsell()
+    {
+        if (! Schema::hasTable('packages')) {
+            return collect();
+        }
+
+        try {
+            $query = Package::query()->orderBy('price');
+
+            if (Schema::hasTable('package_features')) {
+                $query->with(['cardFeatures' => fn ($features) => $features->orderBy('position')]);
+            }
+
+            return $query->get()->map(fn (Package $package) => PackagePresenter::card($package))->values();
+        } catch (Throwable $exception) {
+            return collect();
+        }
     }
 
     private function parseDate($value): ?CarbonImmutable
