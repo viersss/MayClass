@@ -1105,7 +1105,9 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             <strong>Paket sedang disiapkan</strong>
                             <div class="pricing-price">Segera hadir</div>
                             <p style="color: var(--neutral-700);">Tim MayClass dapat menambahkan paket melalui dashboard admin untuk menampilkan katalog otomatis di halaman ini.</p>
-
+                            <div class="pricing-actions">
+                                <a class="btn btn-primary" href="{{ route('login') }}">Masuk Dashboard</a>
+                            </div>
                         </article>
                     </div>
                 @endif

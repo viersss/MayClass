@@ -63,6 +63,18 @@
             gap: 12px;
         }
 
+        .dashboard-link {
+            font-size: 0.9rem;
+            color: var(--student-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .dashboard-link:hover,
+        .dashboard-link:focus {
+            text-decoration: underline;
+        }
+
         .dashboard-stats {
             display: flex;
             flex-wrap: wrap;
@@ -252,7 +264,7 @@
                             Mulai kuis
                         </a>
                         <a class="student-button student-button--outline" href="{{ route('student.schedule') }}">
-                            Kelola jadwal
+                            Lihat jadwal belajar
                         </a>
                     </div>
                 </article>
@@ -284,7 +296,7 @@
         <section class="student-section">
             <div class="dashboard-section__header">
                 <h2 class="dashboard-section__title">Jadwal terdekat</h2>
-                <a class="student-button student-button--outline" href="{{ route('student.schedule') }}">Kelola jadwal</a>
+                <a class="student-button student-button--outline" href="{{ route('student.schedule') }}">Lihat semua jadwal</a>
             </div>
             @if (! empty($schedule['upcoming']) && count($schedule['upcoming']) > 0)
                 <div class="dashboard-list">
@@ -302,8 +314,7 @@
                 </div>
             @else
                 <div class="dashboard-empty">
-                    <p>Belum ada sesi dijadwalkan. Tambahkan jadwal baru melalui menu Jadwal.</p>
-                    <a class="student-button student-button--primary" href="{{ route('student.schedule') }}">Tambah jadwal</a>
+                    <p>Belum ada sesi dijadwalkan. Jadwal akan muncul otomatis setelah tutor atau admin menambahkannya.</p>
                 </div>
             @endif
         </section>
@@ -369,7 +380,6 @@
             @endif
         </section>
     @else
-        @php($featuredPackage = $packages->first())
         <section class="student-section dashboard-wrapper">
             <div class="visitor-grid">
                 <article class="dashboard-card dashboard-card--accent">
@@ -386,11 +396,6 @@
                     </ul>
                     <div class="dashboard-actions">
                         <a class="student-button student-button--primary" href="{{ route('packages.index') }}">Lihat semua paket</a>
-                        @if ($featuredPackage)
-                            <a class="student-button student-button--outline" href="{{ route('checkout.show', $featuredPackage['slug']) }}">
-                                Checkout {{ $featuredPackage['title'] }}
-                            </a>
-                        @endif
                     </div>
                 </article>
                 <article class="dashboard-card">
@@ -448,9 +453,9 @@
                                 </ul>
                             @endif
                             <div class="dashboard-actions">
-                                <a class="student-button student-button--primary" href="{{ route('checkout.show', $package['slug']) }}">Checkout sekarang</a>
-                                <a class="student-button student-button--outline" href="{{ route('packages.show', $package['slug']) }}">Lihat detail</a>
+                                <a class="student-button student-button--primary" href="{{ route('checkout.show', $package['slug']) }}">Checkout paket</a>
                             </div>
+                            <a class="dashboard-link" href="{{ route('packages.show', $package['slug']) }}">Lihat detail paket</a>
                         </article>
                     @endforeach
                 </div>
