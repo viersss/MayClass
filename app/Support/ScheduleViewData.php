@@ -143,7 +143,9 @@ class ScheduleViewData
             ];
         }
 
-        $endAt = $startAt->addMinutes(90);
+        $duration = (int) ($session->duration_minutes ?? 90);
+        $duration = $duration > 0 ? $duration : 90;
+        $endAt = $startAt->addMinutes($duration);
 
         return [
             'title' => $session->title,

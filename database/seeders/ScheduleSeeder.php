@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Package;
 use App\Models\ScheduleSession;
+use App\Models\ScheduleTemplate;
+use App\Models\User;
+use App\Support\ScheduleTemplateGenerator;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 
@@ -11,7 +14,21 @@ class ScheduleSeeder extends Seeder
 {
     public function run(): void
     {
-        if (! Schema::hasTable('schedule_sessions')) {
+        if (! Schema::hasTable('schedule_sessions') || ! Schema::hasTable('schedule_templates')) {
+            return;
+        }
+
+        if (! Schema::hasTable('users')) {
+            return;
+        }
+
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
+        $tutor = User::query()->where('role', 'tutor')->first();
+
+        if (! $tutor) {
             return;
         }
 
@@ -20,18 +37,19 @@ class ScheduleSeeder extends Seeder
             : collect();
 
         ScheduleSession::query()->delete();
+        ScheduleTemplate::query()->where('user_id', $tutor->id)->delete();
 
-        $sessions = [
+        $templates = [
             [
                 'package_slug' => 'mayclass-sd-fundamental',
                 'title' => 'Kelas Numerasi Dasar',
                 'category' => 'Matematika',
                 'class_level' => 'SD',
                 'location' => 'Zoom Meeting',
+                'day_of_week' => 2,
+                'start_time' => '16:00',
+                'duration_minutes' => 90,
                 'student_count' => 18,
-                'mentor_name' => 'Kak Dina',
-                'start_at' => now()->addDays(2)->setTime(16, 0, 0),
-                'is_highlight' => true,
             ],
             [
                 'package_slug' => 'mayclass-sd-unggul',
@@ -39,10 +57,10 @@ class ScheduleSeeder extends Seeder
                 'category' => 'IPA',
                 'class_level' => 'SD',
                 'location' => 'Studio MayClass Bandung',
+                'day_of_week' => 3,
+                'start_time' => '15:30',
+                'duration_minutes' => 90,
                 'student_count' => 20,
-                'mentor_name' => 'Kak Mira',
-                'start_at' => now()->addDays(3)->setTime(15, 30, 0),
-                'is_highlight' => false,
             ],
             [
                 'package_slug' => 'mayclass-smp-eksplor',
@@ -50,10 +68,10 @@ class ScheduleSeeder extends Seeder
                 'category' => 'IPA',
                 'class_level' => 'SMP',
                 'location' => 'Google Meet',
+                'day_of_week' => 4,
+                'start_time' => '18:30',
+                'duration_minutes' => 90,
                 'student_count' => 22,
-                'mentor_name' => 'Kak Rafi',
-                'start_at' => now()->addDays(4)->setTime(18, 30, 0),
-                'is_highlight' => false,
             ],
             [
                 'package_slug' => 'mayclass-sma-premium',
@@ -61,32 +79,44 @@ class ScheduleSeeder extends Seeder
                 'category' => 'UTBK',
                 'class_level' => 'SMA',
                 'location' => 'MayClass Learning Hub',
+                'day_of_week' => 5,
+                'start_time' => '19:00',
+                'duration_minutes' => 120,
                 'student_count' => 15,
-                'mentor_name' => 'Kak Naya',
-                'start_at' => now()->addDays(6)->setTime(19, 0, 0),
-                'is_highlight' => false,
             ],
         ];
 
-        foreach ($sessions as $session) {
-            $package = $packages->get($session['package_slug']);
+        foreach ($templates as $templateData) {
+            $package = $packages->get($templateData['package_slug']);
 
             if (! $package) {
                 continue;
             }
 
-            ScheduleSession::create([
+            $template = ScheduleTemplate::create([
+                'user_id' => $tutor->id,
                 'package_id' => $package->id,
-                'user_id' => null,
-                'title' => $session['title'],
-                'category' => $session['category'],
-                'class_level' => $session['class_level'],
-                'location' => $session['location'],
-                'student_count' => $session['student_count'],
-                'mentor_name' => $session['mentor_name'],
-                'start_at' => $session['start_at'],
-                'is_highlight' => $session['is_highlight'],
+                'title' => $templateData['title'],
+                'category' => $templateData['category'],
+                'class_level' => $templateData['class_level'],
+                'location' => $templateData['location'],
+                'day_of_week' => $templateData['day_of_week'],
+                'start_time' => $templateData['start_time'],
+                'duration_minutes' => $templateData['duration_minutes'],
+                'student_count' => $templateData['student_count'],
+                'is_active' => true,
             ]);
+
+            ScheduleTemplateGenerator::refreshTemplate($template);
+        }
+
+        $firstSession = ScheduleSession::query()
+            ->where('user_id', $tutor->id)
+            ->orderBy('start_at')
+            ->first();
+
+        if ($firstSession) {
+            $firstSession->update(['is_highlight' => true]);
         }
     }
 }

@@ -249,12 +249,37 @@ CREATE TABLE `quiz_takeaways` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
+-- TABLE: schedule_templates
+CREATE TABLE `schedule_templates` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `package_id` bigint UNSIGNED DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `category` varchar(255) DEFAULT NULL,
+  `class_level` varchar(255) DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `day_of_week` tinyint UNSIGNED NOT NULL,
+  `start_time` time NOT NULL,
+  `duration_minutes` smallint UNSIGNED NOT NULL DEFAULT 90,
+  `student_count` smallint UNSIGNED DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `schedule_templates_user_id_day_of_week_index` (`user_id`,`day_of_week`),
+  KEY `schedule_templates_package_id_foreign` (`package_id`),
+  CONSTRAINT `schedule_templates_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `schedule_templates_package_id_foreign` FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
 -- TABLE: schedule_sessions
 -- --------------------------------------------------------
 CREATE TABLE `schedule_sessions` (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` bigint UNSIGNED DEFAULT NULL,
   `package_id` bigint UNSIGNED DEFAULT NULL,
+  `schedule_template_id` bigint UNSIGNED DEFAULT NULL,
   `title` varchar(255) NOT NULL,
   `category` varchar(255) NOT NULL,
   `class_level` varchar(255) DEFAULT NULL,
@@ -262,15 +287,21 @@ CREATE TABLE `schedule_sessions` (
   `student_count` smallint UNSIGNED DEFAULT NULL,
   `mentor_name` varchar(255) NOT NULL,
   `start_at` datetime NOT NULL,
+  `duration_minutes` smallint UNSIGNED NOT NULL DEFAULT 90,
   `is_highlight` tinyint(1) NOT NULL DEFAULT 0,
+  `status` varchar(50) NOT NULL DEFAULT 'scheduled',
+  `cancelled_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `schedule_sessions_user_id_foreign` (`user_id`),
   KEY `schedule_sessions_package_id_foreign` (`package_id`),
+  KEY `schedule_sessions_schedule_template_id_foreign` (`schedule_template_id`),
+  KEY `schedule_sessions_status_index` (`status`),
   KEY `schedule_sessions_start_at_is_highlight_index` (`start_at`,`is_highlight`),
   CONSTRAINT `schedule_sessions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `schedule_sessions_package_id_foreign` FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`) ON DELETE SET NULL
+  CONSTRAINT `schedule_sessions_package_id_foreign` FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `schedule_sessions_schedule_template_id_foreign` FOREIGN KEY (`schedule_template_id`) REFERENCES `schedule_templates` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

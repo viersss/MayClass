@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\ScheduleSession;
+use App\Support\ScheduleTemplateGenerator;
 use App\Support\ScheduleViewData;
 use App\Support\StudentAccess;
 use Carbon\CarbonImmutable;
@@ -23,17 +24,20 @@ class ScheduleController extends Controller
     {
         $package = $this->currentPackage();
 
+        if ($package && Schema::hasTable('schedule_templates')) {
+            ScheduleTemplateGenerator::ensureForPackage($package->id);
+        }
+
         $sessions = (! $package || ! Schema::hasTable('schedule_sessions'))
             ? collect()
             : ScheduleSession::query()
                 ->where('package_id', $package->id)
+                ->when(
+                    Schema::hasColumn('schedule_sessions', 'status'),
+                    fn ($query) => $query->where('status', 'scheduled')
+                )
                 ->orderBy('start_at')
                 ->get();
-
-        $viewMode = $this->resolveViewMode($request->query('view'));
-        $referenceDate = $this->parseDate($request->query('date'));
-
-        $schedule = ScheduleViewData::compose($sessions, $viewMode, $referenceDate);
 
         $viewMode = $this->resolveViewMode($request->query('view'));
         $referenceDate = $this->parseDate($request->query('date'));

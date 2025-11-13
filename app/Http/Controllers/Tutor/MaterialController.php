@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MaterialController extends BaseTutorController
 {
@@ -193,6 +194,16 @@ class MaterialController extends BaseTutorController
             ->with('status', __('Materi berhasil diperbarui.'));
     }
 
+    public function preview(Material $material)
+    {
+        return $this->serveAttachment($material, false);
+    }
+
+    public function download(Material $material): StreamedResponse|RedirectResponse
+    {
+        return $this->serveAttachment($material, true);
+    }
+
     private function syncObjectives(Material $material, array $objectives): void
     {
         $payloads = collect($objectives)
@@ -237,5 +248,30 @@ class MaterialController extends BaseTutorController
         }
 
         $payloads->each(fn ($attributes) => $material->chapters()->create($attributes));
+    }
+
+    private function serveAttachment(Material $material, bool $download)
+    {
+        $path = $material->resource_path;
+
+        if (! $path) {
+            return redirect()->route('tutor.materials.index')
+                ->with('alert', __('Tidak ada lampiran untuk materi ini.'));
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return redirect()->away($path);
+        }
+
+        if (! Storage::disk('public')->exists($path)) {
+            return redirect()->route('tutor.materials.index')
+                ->with('alert', __('Berkas lampiran tidak ditemukan di penyimpanan.'));
+        }
+
+        $filename = Str::slug($material->title) . '.' . strtolower(pathinfo($path, PATHINFO_EXTENSION) ?: 'pdf');
+
+        return $download
+            ? Storage::disk('public')->download($path, $filename)
+            : Storage::disk('public')->response($path, $filename);
     }
 }

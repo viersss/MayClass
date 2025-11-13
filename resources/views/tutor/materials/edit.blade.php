@@ -292,8 +292,9 @@
                 <div class="upload-field">
                     <input type="file" name="attachment" accept=".pdf,.ppt,.pptx,.doc,.docx" />
                     <div style="margin-top: 8px; font-size: 0.85rem;">Unggah file baru untuk mengganti lampiran.</div>
-                    @if ($material->resource_url)
-                        <div class="current-file">File saat ini: <a href="{{ $material->resource_url }}" target="_blank" rel="noopener">Lihat Lampiran</a></div>
+                    @if ($material->resource_path)
+                        @php($isExternal = str_starts_with($material->resource_path, 'http'))
+                        <div class="current-file">File saat ini: <a href="{{ $isExternal ? $material->resource_path : route('tutor.materials.preview', $material->slug) }}" target="_blank" rel="noopener">Lihat Lampiran</a></div>
                     @else
                         <div class="current-file">Belum ada file terunggah.</div>
                     @endif
