@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Tutor;
 
 use App\Models\Quiz;
 use App\Support\UnsplashPlaceholder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -56,6 +57,12 @@ class QuizController extends BaseTutorController
             'class_level' => ['required', 'string', 'max:120'],
             'summary' => ['required', 'string'],
             'link_url' => ['required', 'url', 'max:255'],
+            'duration_label' => ['required', 'string', 'max:120'],
+            'question_count' => ['required', 'integer', 'min:1', 'max:200'],
+            'levels' => ['nullable', 'array'],
+            'levels.*' => ['nullable', 'string', 'max:120'],
+            'takeaways' => ['nullable', 'array'],
+            'takeaways.*' => ['nullable', 'string', 'max:255'],
         ]);
 
         $slug = Str::slug($data['title']) ?: 'quiz-' . Str::random(6);
@@ -65,17 +72,22 @@ class QuizController extends BaseTutorController
             $uniqueSlug = $slug . '-' . $counter++;
         }
 
-        Quiz::create([
-            'slug' => $uniqueSlug,
-            'subject' => $data['subject'],
-            'class_level' => $data['class_level'],
-            'title' => $data['title'],
-            'summary' => $data['summary'],
-            'link_url' => $data['link_url'],
-            'thumbnail_url' => UnsplashPlaceholder::quiz($data['subject']),
-            'duration_label' => '45 Menit',
-            'question_count' => 20,
-        ]);
+        DB::transaction(function () use ($data, $request, $uniqueSlug) {
+            $quiz = Quiz::create([
+                'slug' => $uniqueSlug,
+                'subject' => $data['subject'],
+                'class_level' => $data['class_level'],
+                'title' => $data['title'],
+                'summary' => $data['summary'],
+                'link_url' => $data['link_url'],
+                'thumbnail_url' => UnsplashPlaceholder::quiz($data['subject']),
+                'duration_label' => $data['duration_label'],
+                'question_count' => $data['question_count'],
+            ]);
+
+            $this->syncLevels($quiz, $request->input('levels', []));
+            $this->syncTakeaways($quiz, $request->input('takeaways', []));
+        });
 
         return redirect()
             ->route('tutor.quizzes.index')
@@ -84,6 +96,8 @@ class QuizController extends BaseTutorController
 
     public function edit(Quiz $quiz)
     {
+        $quiz->load(['levels', 'takeaways']);
+
         return $this->render('tutor.quizzes.edit', [
             'quiz' => $quiz,
         ]);
@@ -103,6 +117,12 @@ class QuizController extends BaseTutorController
             'class_level' => ['required', 'string', 'max:120'],
             'summary' => ['required', 'string'],
             'link_url' => ['required', 'url', 'max:255'],
+            'duration_label' => ['required', 'string', 'max:120'],
+            'question_count' => ['required', 'integer', 'min:1', 'max:200'],
+            'levels' => ['nullable', 'array'],
+            'levels.*' => ['nullable', 'string', 'max:120'],
+            'takeaways' => ['nullable', 'array'],
+            'takeaways.*' => ['nullable', 'string', 'max:255'],
         ]);
 
         $payload = [
@@ -111,16 +131,62 @@ class QuizController extends BaseTutorController
             'title' => $data['title'],
             'summary' => $data['summary'],
             'link_url' => $data['link_url'],
+            'duration_label' => $data['duration_label'],
+            'question_count' => $data['question_count'],
         ];
 
         if ($quiz->subject !== $data['subject']) {
             $payload['thumbnail_url'] = UnsplashPlaceholder::quiz($data['subject']);
         }
 
-        $quiz->update($payload);
+        DB::transaction(function () use ($quiz, $payload, $request) {
+            $quiz->update($payload);
+
+            $quiz->levels()->delete();
+            $quiz->takeaways()->delete();
+
+            $this->syncLevels($quiz, $request->input('levels', []));
+            $this->syncTakeaways($quiz, $request->input('takeaways', []));
+        });
 
         return redirect()
             ->route('tutor.quizzes.index')
             ->with('status', __('Quiz berhasil diperbarui.'));
+    }
+
+    private function syncLevels(Quiz $quiz, array $levels): void
+    {
+        $payloads = collect($levels)
+            ->map(fn ($value) => trim((string) $value))
+            ->filter()
+            ->values()
+            ->map(fn ($label, $index) => [
+                'label' => $label,
+                'position' => $index + 1,
+            ]);
+
+        if ($payloads->isEmpty()) {
+            return;
+        }
+
+        $payloads->each(fn ($attributes) => $quiz->levels()->create($attributes));
+    }
+
+    private function syncTakeaways(Quiz $quiz, array $takeaways): void
+    {
+        $payloads = collect($takeaways)
+            ->map(fn ($value) => trim((string) $value))
+            ->filter()
+            ->values()
+            ->map(fn ($description, $index) => [
+                'description' => $description,
+                'position' => $index + 1,
+            ]);
+
+        if ($payloads->isEmpty()) {
+            return;
+        }
+
+        $payloads->each(fn ($attributes) => $quiz->takeaways()->create($attributes));
     }
 }
