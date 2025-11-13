@@ -14,6 +14,7 @@ class Package extends Model
     protected $fillable = [
         'slug',
         'level',
+        'grade_range',
         'tag',
         'card_price_label',
         'detail_title',
