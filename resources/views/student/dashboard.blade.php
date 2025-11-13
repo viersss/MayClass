@@ -185,6 +185,31 @@
         .dashboard-step strong {
             font-size: 0.95rem;
         }
+
+        .visitor-grid {
+            display: grid;
+            gap: clamp(18px, 4vw, 28px);
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+
+        .dashboard-steps {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .dashboard-step {
+            border: 1px solid var(--student-border);
+            border-radius: var(--student-radius-sm);
+            padding: clamp(16px, 3vw, 22px);
+            background: rgba(47, 152, 140, 0.05);
+            display: grid;
+            gap: 8px;
+        }
+
+        .dashboard-step strong {
+            font-size: 0.95rem;
+        }
     </style>
 @endpush
 
@@ -285,7 +310,7 @@
                                 <span>Level {{ $material['level'] }}</span>
                                 <span>{{ $material['chapter_count'] }} bab</span>
                             </div>
-                            <a class="student-button student-button--primary" href="{{ $material['resource'] }}" target="_blank" rel="noopener">Lihat materi</a>
+                            <a class="student-button student-button--primary" href="{{ route('student.materials.show', $material['slug']) }}">Detail materi</a>
                         </article>
                     @endforeach
                 </div>
@@ -317,7 +342,7 @@
                                     @endforeach
                                 </div>
                             @endif
-                            <a class="student-button student-button--outline" href="{{ $quiz['link'] }}" target="_blank" rel="noopener">Mulai latihan</a>
+                            <a class="student-button student-button--outline" href="{{ route('student.quiz.show', $quiz['slug']) }}">Detail kuis</a>
                         </article>
                     @endforeach
                 </div>
