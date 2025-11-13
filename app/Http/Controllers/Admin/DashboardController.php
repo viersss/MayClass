@@ -35,7 +35,7 @@ class DashboardController extends BaseAdminController
                     return [
                         'name' => $user->name,
                         'email' => $user->email,
-                        'joined_at' => optional($user->created_at)->locale('id')->translatedFormat('d F Y'),
+                        'joined_at' => $user->created_at ? $user->created_at->locale('id')->translatedFormat('d F Y') : 'N/A',
                         'student_id' => $user->student_id,
                     ];
                 })
@@ -212,7 +212,7 @@ class DashboardController extends BaseAdminController
                     'total' => $this->formatCurrency((float) $order->total),
                     'status' => $order->status,
                     'status_label' => $this->statusLabel($order->status),
-                    'paid_at' => optional($order->paid_at)->locale('id')->translatedFormat('d M Y') ?? 'Belum dibayar',
+                    'paid_at' => $order->paid_at ? $order->paid_at->locale('id')->translatedFormat('d M Y') : 'Belum dibayar',
                 ];
             });
     }

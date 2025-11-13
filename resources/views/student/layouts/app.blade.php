@@ -313,6 +313,9 @@
                     @endif
                 </nav>
                 <div class="student-navbar__actions">
+                    @unless ($hasActivePackage)
+                        <a class="student-button student-button--primary" href="{{ route('packages.index') }}">Beli paket</a>
+                    @endunless
                     <a class="student-navbar__profile" href="{{ route('student.profile') }}">
                         <span>👋</span>
                         <span>{{ $user?->name ?? 'Siswa' }}</span>

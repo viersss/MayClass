@@ -32,6 +32,10 @@ class ScheduleSeeder extends Seeder
             return;
         }
 
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
         ScheduleSession::query()->delete();
         ScheduleTemplate::query()->where('user_id', $tutor->id)->delete();
 
