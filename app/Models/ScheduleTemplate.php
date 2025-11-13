@@ -5,39 +5,32 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ScheduleSession extends Model
+class ScheduleTemplate extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'package_id',
-        'schedule_template_id',
         'title',
         'category',
         'class_level',
         'location',
-        'student_count',
-        'mentor_name',
-        'start_at',
+        'day_of_week',
+        'start_time',
         'duration_minutes',
-        'is_highlight',
-        'status',
-        'cancelled_at',
+        'student_count',
+        'is_active',
     ];
 
     protected $casts = [
-        'start_at' => 'datetime',
-        'is_highlight' => 'boolean',
-        'student_count' => 'integer',
+        'day_of_week' => 'integer',
         'duration_minutes' => 'integer',
+        'student_count' => 'integer',
+        'is_active' => 'boolean',
     ];
-
-    public function template(): BelongsTo
-    {
-        return $this->belongsTo(ScheduleTemplate::class, 'schedule_template_id');
-    }
 
     public function user(): BelongsTo
     {
@@ -47,5 +40,10 @@ class ScheduleSession extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(Package::class);
+    }
+
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(ScheduleSession::class, 'schedule_template_id');
     }
 }

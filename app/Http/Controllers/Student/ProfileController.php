@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Support\StudentAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -31,6 +33,8 @@ class ProfileController extends Controller
                 'address' => $user->address,
             ],
             'genderOptions' => $this->genderOptions(),
+            'avatarUrl' => $user->avatar_path ? asset('storage/' . $user->avatar_path) : null,
+            'hasActivePackage' => StudentAccess::hasActivePackage($user),
         ]);
     }
 
@@ -45,7 +49,20 @@ class ProfileController extends Controller
             'gender' => ['nullable', Rule::in(array_keys($this->genderOptions()))],
             'parent_name' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        $avatarPath = $user->avatar_path;
+
+        if ($request->hasFile('avatar')) {
+            $newAvatar = $request->file('avatar')->store('avatars', 'public');
+
+            if ($user->avatar_path) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
+
+            $avatarPath = $newAvatar;
+        }
 
         $user->forceFill([
             'name' => $data['name'],
@@ -54,6 +71,7 @@ class ProfileController extends Controller
             'gender' => $data['gender'] ?? null,
             'parent_name' => $data['parent_name'] ?? null,
             'address' => $data['address'] ?? null,
+            'avatar_path' => $avatarPath,
         ])->save();
 
         return redirect()
