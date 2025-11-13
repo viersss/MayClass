@@ -34,6 +34,8 @@ class DashboardController extends Controller
         $hasActivePackage = StudentAccess::hasActivePackage($user);
 
         if (! $hasActivePackage) {
+            $packages = $this->packagesForUpsell();
+
             return view('student.dashboard', [
                 'page' => 'dashboard',
                 'title' => 'Dashboard Siswa',
@@ -41,6 +43,7 @@ class DashboardController extends Controller
                 'activePackage' => $this->formatActivePackage($activeEnrollment),
                 'materialsLink' => $materialsLink,
                 'quizLink' => $quizLink,
+                'packages' => $packages,
             ]);
         }
 

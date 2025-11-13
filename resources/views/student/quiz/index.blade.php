@@ -4,97 +4,208 @@
 
 @push('styles')
     <style>
+        /* Layout Umum */
+        .student-section {
+            margin-bottom: 60px;
+        }
+
+        /* 1. Hero Section (Banner Style) */
         .student-quiz__hero {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: clamp(20px, 4vw, 40px);
-            align-items: center;
+            background: linear-gradient(135deg, var(--student-primary) 0%, #2a8c82 100%); /* Menggunakan warna primary seperti materi */
+            border-radius: 24px;
+            padding: clamp(30px, 5vw, 60px);
+            color: white;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(47, 152, 140, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
         .student-quiz__hero h1 {
             margin: 0;
-            font-size: clamp(1.9rem, 4vw, 2.6rem);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.2;
         }
 
         .student-quiz__hero p {
             margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .student-quiz__actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        /* Tombol Custom untuk Hero */
+        .hero-btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-btn--primary {
+            background: #FFA726; /* Warna aksen oranye */
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4);
+        }
+
+        .hero-btn--outline {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* 2. Section Header (Centered) */
+        .section-header-center {
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-header-center h2 {
+            font-size: 2rem;
+            color: var(--student-accent);
+            margin-bottom: 12px;
+        }
+
+        .section-header-center p {
             color: var(--student-text-muted);
         }
 
-        .student-quiz__stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 16px;
-        }
-
+        /* 3. Grid Kartu Koleksi Quiz (Blue Cards Style) */
         .student-quiz__collections {
             display: grid;
-            gap: clamp(24px, 4vw, 40px);
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
         }
 
         .student-quiz__collection-card {
-            display: grid;
-            gap: 18px;
             background: var(--student-surface);
-            border-radius: var(--student-radius-lg);
-            padding: clamp(22px, 4vw, 32px);
-            box-shadow: 0 28px 56px rgba(34, 118, 108, 0.14);
-        }
-
-        .student-quiz__collection-header {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            gap: 8px;
         }
 
-        .student-quiz__collection-title {
-            margin: 0;
-            font-size: 1.4rem;
-        }
-
-        .student-quiz__grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: clamp(18px, 3vw, 28px);
-        }
-
-        .student-quiz__card {
-            display: grid;
-            gap: 12px;
-            border-radius: var(--student-radius-md);
-            padding: clamp(18px, 3vw, 24px);
-            background: rgba(95, 106, 248, 0.08);
-            border: 1px solid rgba(95, 106, 248, 0.12);
-        }
-
-        .student-quiz__card h3 {
-            margin: 0;
-            font-size: 1.1rem;
-        }
-
-        .student-quiz__card p {
-            margin: 0;
-            color: var(--student-text-muted);
-            font-size: 0.92rem;
-        }
-
-        .student-quiz__meta {
+        /* Header Kartu (Bagian Berwarna) */
+        .collection-header {
+            background: var(--student-primary); /* Warna primary seperti materi */
+            padding: 30px;
+            color: white;
+            position: relative;
+            min-height: 160px;
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .collection-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px);
+            padding: 6px 16px;
+            border-radius: 20px;
             font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .collection-title {
+            margin: 0 0 8px 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .collection-desc {
+            margin: 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* Body Kartu (List Item) */
+        .collection-body {
+            padding: 20px;
+            background: #f8f9fa; /* Background abu sangat muda */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Item Quiz (Baris Putih) */
+        .quiz-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--student-text-main, #333);
+            border: 1px solid rgba(0,0,0,0.04);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .quiz-list-item:hover {
+            transform: translateX(5px);
+            border-color: var(--student-accent);
+            box-shadow: 0 4px 12px rgba(95, 106, 248, 0.1);
+        }
+
+        .quiz-list-item span {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .quiz-arrow {
             color: var(--student-text-muted);
         }
 
+        /* Empty State */
         .student-quiz__empty {
-            padding: clamp(24px, 4vw, 32px);
-            border-radius: var(--student-radius-lg);
-            background: rgba(95, 106, 248, 0.08);
             text-align: center;
-            color: var(--student-text-muted);
-            display: grid;
-            gap: 12px;
+            padding: 40px;
+            background: var(--student-surface);
+            border-radius: 20px;
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .student-quiz__collections {
+                grid-template-columns: 1fr;
+            }
+            .collection-header {
+                min-height: auto;
+                padding: 24px;
+            }
         }
     </style>
 @endpush
@@ -106,58 +217,68 @@
     <section class="student-section">
         <div class="student-quiz__hero">
             <div>
-                <span class="student-chip">Bank soal MayClass</span>
-                <h1>Koleksi quiz siap pakai</h1>
+                <h1>Mulai Latihan</h1>
                 <p>
+                    Tantang dirimu dengan kuis
                     @if (! empty($activePackage))
-                        Tantangan khusus untuk paket {{ $activePackage->detail_title ?? $activePackage->title }}.
+                        paket {{ $activePackage->detail_title ?? $activePackage->title }}.
                     @endif
-                    {{ number_format($stats['total']) }} kuis aktif dengan {{ number_format($stats['total_questions']) }} soal dan
-                    dukungan {{ number_format(count($stats['levels'])) }} jenjang belajar.
+                    Akses {{ number_format($stats['total']) }} kuis interaktif untuk persiapan ujianmu.
                 </p>
-                <div class="student-quiz__stats">
-                    @foreach ($stats['levels'] as $level)
-                        <span class="student-chip">Level {{ $level }}</span>
-                    @endforeach
-                </div>
             </div>
-            <div style="display: grid; gap: 12px; justify-items: start;">
-                <a class="student-button student-button--primary" href="{{ $quizLink }}" target="_blank" rel="noopener">Buka platform quiz</a>
-                <a class="student-button student-button--outline" href="{{ $materialsLink }}" target="_blank" rel="noopener">Lihat materi pendamping</a>
+
+            <div class="student-quiz__actions">
+                <a class="hero-btn hero-btn--primary" href="{{ $quizLink }}" target="_blank" rel="noopener">
+                    Mulai Latihan
+                </a>
+                <a class="hero-btn hero-btn--outline" href="{{ route('student.dashboard') }}">
+                    Kembali ke Beranda
+                </a>
             </div>
         </div>
     </section>
 
     <section class="student-section">
-        <div class="student-section__header">
-            <h2 class="student-section__title">Daftar quiz</h2>
+        <div class="section-header-center">
+            <h2>Koleksi Quiz & Bank Soal</h2>
+            <p>
+                Latihan terarah dan menyenangkan. Kuasai materi pelajaran serta TWK, TIU, dan TKP dengan metode yang mudah dipahami.
+            </p>
         </div>
+
         @if ($collections->isNotEmpty())
             <div class="student-quiz__collections">
                 @foreach ($collections as $collection)
                     <article class="student-quiz__collection-card">
-                        <div class="student-quiz__collection-header">
-                            <span class="student-chip" style="background: rgba(95, 106, 248, 0.12); color: var(--student-accent);">{{ $collection['label'] }}</span>
-                            <h3 class="student-quiz__collection-title">{{ $collection['label'] }}</h3>
-                            <span class="student-card__subtitle">{{ count($collection['items']) }} kuis tersedia</span>
+                        <div class="collection-header">
+                            <span class="collection-badge">
+                                {{ count($collection['items']) }} Kuis
+                            </span>
+                            <h3 class="collection-title">{{ $collection['label'] }}</h3>
+                            <p class="collection-desc">
+                                Kuis tentang {{ $collection['label'] }}, Peluang, Aritmatika dll.
+                            </p>
                         </div>
-                        <div class="student-quiz__grid">
+
+                        <div class="collection-body">
                             @foreach ($collection['items'] as $quiz)
-                                <article class="student-quiz__card" style="border-color: {{ $collection['accent'] }}33; background: {{ $collection['accent'] }}14;">
-                                    <span class="student-chip" style="background: #ffffff; color: {{ $collection['accent'] }};">{{ $quiz['duration'] }} • {{ $quiz['questions'] }} soal</span>
-                                    <h3>{{ $quiz['title'] }}</h3>
-                                    <p>{{ $quiz['summary'] }}</p>
-                                    <div class="student-quiz__meta">
-                                        @foreach ($quiz['levels'] as $level)
-                                            <span>Level {{ $level }}</span>
-                                        @endforeach
+                                <a href="{{ route('student.quiz.show', $quiz['slug']) }}" class="quiz-list-item">
+                                    <div style="display: flex; flex-direction: column;">
+                                        <span>{{ $quiz['title'] }}</span>
+                                        <small style="color: var(--student-text-muted); font-size: 0.8rem;">{{ $quiz['duration'] }} • {{ $quiz['questions'] }} soal</small>
                                     </div>
-                                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                                        <a class="student-button student-button--primary" style="padding: 10px 20px;" href="{{ route('student.quiz.show', $quiz['slug']) }}">Detail kuis</a>
-                                        <a class="student-button student-button--outline" style="padding: 10px 20px;" href="{{ $quiz['link'] }}" target="_blank" rel="noopener">Mulai latihan</a>
-                                    </div>
-                                </article>
+
+                                    <svg class="quiz-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </a>
                             @endforeach
+
+                            @if(count($collection['items']) === 0)
+                                <div style="text-align: center; padding: 20px; color: var(--student-text-muted);">
+                                    Belum ada kuis
+                                </div>
+                            @endif
                         </div>
                     </article>
                 @endforeach
@@ -165,7 +286,7 @@
         @else
             <div class="student-quiz__empty">
                 <p>Belum ada kuis yang tercatat. Tambahkan kuis melalui dashboard tutor untuk memulai latihan.</p>
-                <a class="student-button student-button--primary" href="{{ $quizLink }}" target="_blank" rel="noopener">Buka platform quiz</a>
+                <a class="student-button student-button--primary" href="{{ $quizLink }}" target="_blank" rel="noopener">Buka Google Drive</a>
             </div>
         @endif
     </section>

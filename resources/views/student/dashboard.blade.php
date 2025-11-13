@@ -442,9 +442,7 @@
                         <li>Latihan soal interaktif sesuai jenjang belajarmu</li>
                         <li>Kalender belajar terstruktur bersama tutor MayClass</li>
                     </ul>
-                    <div class="dashboard-actions">
-                        <a class="student-button student-button--primary" href="{{ route('packages.index') }}">Lihat semua paket</a>
-                    </div>
+
                 </article>
                 <article class="dashboard-card">
                     <p class="dashboard-eyebrow" style="color: var(--student-accent);">Status langganan</p>
@@ -456,6 +454,54 @@
                 </article>
             </div>
         </section>
+
+        @if (($packages ?? collect())->isNotEmpty())
+            <section class="student-section">
+                <div class="dashboard-section__header">
+                    <h2 class="dashboard-section__title">Pilih Paket Belajar</h2>
+                    <a class="student-button student-button--outline" href="{{ route('packages.index') }}">Lihat Semua Paket</a>
+                </div>
+                <div class="dashboard-grid dashboard-grid--cards">
+                    @foreach ($packages as $package)
+                        <article class="dashboard-card">
+                            @if (! empty($package['tag']))
+                                <span class="student-chip" style="background: rgba(249, 178, 51, 0.14); color: #d97706;">
+                                    {{ $package['tag'] }}
+                                </span>
+                            @endif
+                            <h3 class="dashboard-card__title">{{ $package['detail_title'] }}</h3>
+                            <div class="dashboard-list__meta">
+                                <span>{{ $package['stage'] }}</span>
+                                @if (! empty($package['grade_range']))
+                                    <span>• {{ $package['grade_range'] }}</span>
+                                @endif
+                            </div>
+                            <p style="margin: 8px 0; font-size: 1.4rem; font-weight: 600; color: var(--student-primary);">{{ $package['card_price'] }}</p>
+                            @if (! empty($package['detail_price']))
+                                <p style="margin: -6px 0 0; color: var(--student-text-muted); font-size: 0.9rem;">{{ $package['detail_price'] }}</p>
+                            @endif
+                            @if ($package['summary'] ?? false)
+                                <p style="margin: 12px 0 0; color: var(--student-text-muted);">{{ $package['summary'] }}</p>
+                            @endif
+                            @if (! empty($package['card_features']))
+                                <ul style="list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px;">
+                                    @foreach (collect($package['card_features'])->take(3) as $feature)
+                                        <li style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--student-text-muted);">
+                                            <span style="width: 20px; height: 20px; border-radius: 50%; background: rgba(47, 152, 140, 0.14); display: grid; place-items: center; color: var(--student-primary); font-size: 0.7rem; font-weight: 600;">✓</span>
+                                            {{ $feature }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                            <div style="display: flex; gap: 8px; margin-top: auto;">
+                                <a class="student-button student-button--outline" href="{{ route('packages.show', $package['slug']) }}">Detail</a>
+                                <a class="student-button student-button--primary" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </section>
+        @endif
 
         <section class="student-section">
             <div class="dashboard-section__header">
