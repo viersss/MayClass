@@ -44,8 +44,13 @@ class DashboardController extends Controller
             ]);
         }
 
+        $packageId = optional($activeEnrollment)->package_id;
+
         $sessions = Schema::hasTable('schedule_sessions')
-            ? ScheduleSession::orderBy('start_at')->get()
+            ? ScheduleSession::query()
+                ->where('package_id', $packageId)
+                ->orderBy('start_at')
+                ->get()
             : collect();
         $schedule = ScheduleViewData::fromCollection($sessions);
 
@@ -57,6 +62,7 @@ class DashboardController extends Controller
 
         $recentMaterials = $materialsAvailable
             ? Material::query()
+                ->where('package_id', $packageId)
                 ->when($materialChaptersReady, fn ($query) => $query->withCount('chapters'))
                 ->when($materialObjectivesReady, fn ($query) => $query->withCount('objectives'))
                 ->orderByDesc('created_at')
@@ -79,6 +85,7 @@ class DashboardController extends Controller
 
         $recentQuizzes = $quizzesAvailable
             ? Quiz::query()
+                ->where('package_id', $packageId)
                 ->when($quizLevelsReady, fn ($query) => $query->with(['levels' => fn ($levels) => $levels->orderBy('position')]))
                 ->orderByDesc('created_at')
                 ->take(4)
@@ -97,21 +104,31 @@ class DashboardController extends Controller
                 })
             : collect();
 
-        $materialsTotal = $materialsAvailable ? Material::count() : 0;
-        $recentMaterialsCount = $materialsAvailable
-            ? Material::where('created_at', '>=', now()->subDays(14))->count()
+        $materialsTotal = $materialsAvailable
+            ? Material::where('package_id', $packageId)->count()
             : 0;
-        $subjectsTotal = $materialsAvailable ? Material::distinct('subject')->count('subject') : 0;
+        $recentMaterialsCount = $materialsAvailable
+            ? Material::where('package_id', $packageId)
+                ->where('created_at', '>=', now()->subDays(14))
+                ->count()
+            : 0;
+        $subjectsTotal = $materialsAvailable
+            ? Material::where('package_id', $packageId)->distinct('subject')->count('subject')
+            : 0;
         $materialLevels = $materialsAvailable
-            ? Material::select('level')->distinct()->pluck('level')->filter()->values()->all()
+            ? Material::where('package_id', $packageId)->select('level')->distinct()->pluck('level')->filter()->values()->all()
             : [];
 
-        $quizzesTotal = $quizzesAvailable ? Quiz::count() : 0;
+        $quizzesTotal = $quizzesAvailable
+            ? Quiz::where('package_id', $packageId)->count()
+            : 0;
         $recentQuizzesCount = $quizzesAvailable
-            ? Quiz::where('created_at', '>=', now()->subDays(14))->count()
+            ? Quiz::where('package_id', $packageId)
+                ->where('created_at', '>=', now()->subDays(14))
+                ->count()
             : 0;
         $quizLevels = $quizzesAvailable
-            ? Quiz::select('class_level')->distinct()->pluck('class_level')->filter()->values()->all()
+            ? Quiz::where('package_id', $packageId)->select('class_level')->distinct()->pluck('class_level')->filter()->values()->all()
             : [];
 
         $levelSet = collect($materialLevels)->merge($quizLevels);
@@ -119,6 +136,7 @@ class DashboardController extends Controller
         if ($quizLevelsReady && $quizzesAvailable) {
             $levelSet = $levelSet->merge(
                 Quiz::query()
+                    ->where('package_id', $packageId)
                     ->with(['levels' => fn ($levels) => $levels->orderBy('position')])
                     ->get()
                     ->flatMap(fn ($quiz) => $quiz->levels->pluck('label'))
@@ -177,12 +195,16 @@ class DashboardController extends Controller
         }
 
         $package = $enrollment->package;
-        $endDate = CarbonImmutable::parse($enrollment->ends_at);
+        $endDate = $enrollment->ends_at ? CarbonImmutable::parse($enrollment->ends_at) : null;
 
         return [
             'title' => $package->detail_title,
-            'period' => 'Aktif hingga ' . ScheduleViewData::formatFullDate($endDate),
-            'status' => $endDate->isFuture() ? 'Berjalan' : 'Berakhir',
+            'period' => $endDate
+                ? 'Aktif hingga ' . ScheduleViewData::formatFullDate($endDate)
+                : __('Berlangganan aktif'),
+            'status' => $endDate
+                ? ($endDate->isFuture() ? 'Berjalan' : 'Berakhir')
+                : 'Berjalan',
         ];
     }
 

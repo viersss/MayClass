@@ -92,8 +92,8 @@
                 <h1 style="margin: 0; font-size: clamp(2rem, 4vw, 2.8rem);">{{ $material['title'] }}</h1>
                 <p style="margin: 0; color: var(--student-text-muted); font-size: 1rem;">{{ $material['summary'] }}</p>
                 <div class="student-material-detail__actions">
-                    <a class="student-button student-button--primary" href="{{ $material['resource_url'] }}" target="_blank" rel="noopener">Lihat materi</a>
-                    <a class="student-button student-button--outline" href="{{ $material['resource_url'] }}" target="_blank" rel="noopener" download>
+                    <a class="student-button student-button--primary" href="{{ $material['view_url'] }}" target="_blank" rel="noopener">Lihat materi</a>
+                    <a class="student-button student-button--outline" href="{{ $material['download_url'] }}" target="_blank" rel="noopener" download>
                         Download materi ({{ $material['download_label'] }})
                     </a>
                     <a class="student-button student-button--ghost" href="{{ $materialsLink }}" target="_blank" rel="noopener">Kelola di Google Drive</a>

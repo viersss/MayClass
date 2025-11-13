@@ -69,6 +69,8 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::middleware('subscribed')->group(function () {
         Route::get('/jadwal', [ScheduleController::class, 'index'])->name('schedule');
         Route::get('/materi', [MaterialController::class, 'index'])->name('materials');
+        Route::get('/materi/{slug}/open', [MaterialController::class, 'open'])->name('materials.open');
+        Route::get('/materi/{slug}/download', [MaterialController::class, 'download'])->name('materials.download');
         Route::get('/materi/{slug}', [MaterialController::class, 'show'])->name('materials.show');
         Route::get('/quiz', [QuizController::class, 'index'])->name('quiz');
         Route::get('/quiz/{slug}', [QuizController::class, 'show'])->name('quiz.show');

@@ -109,6 +109,9 @@
                 <span class="student-chip">Koleksi materi</span>
                 <h1>Materi siap dipelajari</h1>
                 <p>
+                    @if (! empty($activePackage))
+                        Materi eksklusif untuk paket {{ $activePackage->detail_title ?? $activePackage->title }}.
+                    @endif
                     {{ number_format($stats['total']) }} materi aktif mencakup {{ number_format($stats['subjects']) }} mata pelajaran
                     dan {{ number_format(count($stats['levels'])) }} jenjang belajar.
                 </p>
@@ -150,7 +153,7 @@
                                     </div>
                                     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                                         <a class="student-button student-button--primary" style="padding: 10px 20px;" href="{{ route('student.materials.show', $material['slug']) }}">Detail materi</a>
-                                        <a class="student-button student-button--outline" style="padding: 10px 20px;" href="{{ $materialsLink }}" target="_blank" rel="noopener">Kelola file</a>
+                                        <a class="student-button student-button--outline" style="padding: 10px 20px;" href="{{ $material['view_url'] }}" target="_blank" rel="noopener">Lihat materi</a>
                                     </div>
                                 </article>
                             @endforeach

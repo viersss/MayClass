@@ -148,6 +148,7 @@ CREATE TABLE `enrollments` (
 -- --------------------------------------------------------
 CREATE TABLE `materials` (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `package_id` bigint UNSIGNED DEFAULT NULL,
   `slug` varchar(255) NOT NULL,
   `subject` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -158,7 +159,9 @@ CREATE TABLE `materials` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `materials_slug_unique` (`slug`)
+  UNIQUE KEY `materials_slug_unique` (`slug`),
+  KEY `materials_package_id_foreign` (`package_id`),
+  CONSTRAINT `materials_package_id_foreign` FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -197,6 +200,7 @@ CREATE TABLE `material_chapters` (
 -- --------------------------------------------------------
 CREATE TABLE `quizzes` (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `package_id` bigint UNSIGNED DEFAULT NULL,
   `slug` varchar(255) NOT NULL,
   `subject` varchar(255) NOT NULL,
   `class_level` varchar(255) DEFAULT NULL,
@@ -209,7 +213,9 @@ CREATE TABLE `quizzes` (
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `quizzes_slug_unique` (`slug`)
+  UNIQUE KEY `quizzes_slug_unique` (`slug`),
+  KEY `quizzes_package_id_foreign` (`package_id`),
+  CONSTRAINT `quizzes_package_id_foreign` FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

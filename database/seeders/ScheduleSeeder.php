@@ -34,6 +34,17 @@ class ScheduleSeeder extends Seeder
                 'is_highlight' => true,
             ],
             [
+                'package_slug' => 'mayclass-sd-unggul',
+                'title' => 'Lab Sains Terapan',
+                'category' => 'IPA',
+                'class_level' => 'SD',
+                'location' => 'Studio MayClass Bandung',
+                'student_count' => 20,
+                'mentor_name' => 'Kak Mira',
+                'start_at' => now()->addDays(3)->setTime(15, 30, 0),
+                'is_highlight' => false,
+            ],
+            [
                 'package_slug' => 'mayclass-smp-eksplor',
                 'title' => 'Klinik IPA: Sistem Tata Surya',
                 'category' => 'IPA',
@@ -60,8 +71,12 @@ class ScheduleSeeder extends Seeder
         foreach ($sessions as $session) {
             $package = $packages->get($session['package_slug']);
 
+            if (! $package) {
+                continue;
+            }
+
             ScheduleSession::create([
-                'package_id' => $package?->id,
+                'package_id' => $package->id,
                 'user_id' => null,
                 'title' => $session['title'],
                 'category' => $session['category'],

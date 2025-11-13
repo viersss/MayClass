@@ -155,6 +155,23 @@
         <form method="POST" action="{{ route('tutor.quizzes.store') }}" class="form-grid">
             @csrf
             <label>
+                <span>Paket Belajar</span>
+                <select name="package_id" required style="width: 100%; padding: 14px 18px; border: 1px solid #d9e0ea; border-radius: 16px; font-family: inherit; font-size: 1rem;">
+                    <option value="">Pilih paket yang tersedia</option>
+                    @forelse ($packages as $package)
+                        <option value="{{ $package->id }}" @selected(old('package_id') == $package->id)>
+                            {{ $package->detail_title ?? $package->title }}
+                        </option>
+                    @empty
+                        <option value="" disabled>Belum ada paket yang tersedia</option>
+                    @endforelse
+                </select>
+                @error('package_id')
+                    <div class="error-text">{{ $message }}</div>
+                @enderror
+            </label>
+
+            <label>
                 <span>Judul Quiz</span>
                 <input type="text" name="title" value="{{ old('title') }}" placeholder="Contoh: Quiz Persamaan Linear" required />
                 @error('title')

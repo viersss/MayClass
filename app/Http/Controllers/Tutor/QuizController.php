@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Tutor;
 
+use App\Models\Package;
 use App\Models\Quiz;
 use App\Support\UnsplashPlaceholder;
 use Illuminate\Support\Facades\DB;
@@ -40,7 +41,13 @@ class QuizController extends BaseTutorController
 
     public function create()
     {
-        return $this->render('tutor.quizzes.create');
+        $packages = Schema::hasTable('packages')
+            ? Package::orderBy('level')->orderBy('price')->get()
+            : collect();
+
+        return $this->render('tutor.quizzes.create', [
+            'packages' => $packages,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -51,7 +58,14 @@ class QuizController extends BaseTutorController
                 ->with('alert', __('Tabel quiz belum siap. Jalankan migrasi database terlebih dahulu.'));
         }
 
+        if (! Schema::hasTable('packages')) {
+            return redirect()
+                ->route('tutor.quizzes.index')
+                ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
+        }
+
         $data = $request->validate([
+            'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
             'subject' => ['required', 'string', 'max:120'],
             'class_level' => ['required', 'string', 'max:120'],
@@ -75,6 +89,7 @@ class QuizController extends BaseTutorController
         DB::transaction(function () use ($data, $request, $uniqueSlug) {
             $quiz = Quiz::create([
                 'slug' => $uniqueSlug,
+                'package_id' => $data['package_id'],
                 'subject' => $data['subject'],
                 'class_level' => $data['class_level'],
                 'title' => $data['title'],
@@ -98,8 +113,13 @@ class QuizController extends BaseTutorController
     {
         $quiz->load(['levels', 'takeaways']);
 
+        $packages = Schema::hasTable('packages')
+            ? Package::orderBy('level')->orderBy('price')->get()
+            : collect();
+
         return $this->render('tutor.quizzes.edit', [
             'quiz' => $quiz,
+            'packages' => $packages,
         ]);
     }
 
@@ -111,7 +131,14 @@ class QuizController extends BaseTutorController
                 ->with('alert', __('Tabel quiz belum siap. Jalankan migrasi database terlebih dahulu.'));
         }
 
+        if (! Schema::hasTable('packages')) {
+            return redirect()
+                ->route('tutor.quizzes.index')
+                ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
+        }
+
         $data = $request->validate([
+            'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
             'subject' => ['required', 'string', 'max:120'],
             'class_level' => ['required', 'string', 'max:120'],
@@ -126,6 +153,7 @@ class QuizController extends BaseTutorController
         ]);
 
         $payload = [
+            'package_id' => $data['package_id'],
             'subject' => $data['subject'],
             'class_level' => $data['class_level'],
             'title' => $data['title'],

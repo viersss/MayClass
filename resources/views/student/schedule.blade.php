@@ -235,6 +235,9 @@
                 <span class="student-chip">Pengelolaan jadwal</span>
                 <h1>Kalender belajar MayClass</h1>
                 <p>
+                    @if (! empty($activePackage))
+                        Agenda eksklusif paket {{ $activePackage->detail_title ?? $activePackage->title }}.
+                    @endif
                     Total {{ number_format($stats['total']) }} sesi tercatat dengan {{ number_format($stats['upcoming']) }} agenda
                     mendatang dan {{ number_format($stats['completed']) }} sesi telah selesai.
                 </p>

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
+use App\Support\StudentAccess;
 use App\Support\SubjectPalette;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
@@ -22,11 +24,13 @@ class QuizController extends Controller
 
         $quizzesReady = Schema::hasTable('quizzes');
         $quizLevelsReady = Schema::hasTable('quiz_levels');
+        $package = $this->currentPackage();
 
-        if (! $quizzesReady) {
+        if (! $package || ! $quizzesReady) {
             return view('student.quiz.index', [
                 'page' => 'quiz',
                 'title' => 'Koleksi Quiz',
+                'activePackage' => $package,
                 'collections' => collect(),
                 'stats' => [
                     'total' => 0,
@@ -39,6 +43,7 @@ class QuizController extends Controller
         }
 
         $quizzes = Quiz::query()
+            ->where('package_id', optional($package)->id)
             ->when($quizLevelsReady, fn ($query) => $query->with(['levels' => fn ($levels) => $levels->orderBy('position')]))
             ->orderBy('subject')
             ->orderBy('title')
@@ -78,6 +83,7 @@ class QuizController extends Controller
         return view('student.quiz.index', [
             'page' => 'quiz',
             'title' => 'Koleksi Quiz',
+            'activePackage' => $package,
             'collections' => $collections,
             'stats' => $stats,
             'materialsLink' => $materialsLink,
@@ -94,8 +100,11 @@ class QuizController extends Controller
         $levelsReady = Schema::hasTable('quiz_levels');
         $takeawaysReady = Schema::hasTable('quiz_takeaways');
 
+        $package = $this->currentPackage(true);
+
         $quiz = Quiz::query()
             ->where('slug', $slug)
+            ->where('package_id', optional($package)->id)
             ->when($levelsReady, fn ($query) => $query->with('levels'))
             ->when($takeawaysReady, fn ($query) => $query->with('takeaways'))
             ->firstOrFail();
@@ -124,5 +133,20 @@ class QuizController extends Controller
     private function quizLink(): string
     {
         return (string) config('mayclass.links.quiz_platform');
+    }
+
+    private function currentPackage(bool $required = false)
+    {
+        $enrollment = StudentAccess::activeEnrollment(Auth::user());
+
+        if (! $enrollment || ! $enrollment->package) {
+            if ($required) {
+                abort(403);
+            }
+
+            return null;
+        }
+
+        return $enrollment->package;
     }
 }

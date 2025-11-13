@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Material;
 use App\Models\MaterialChapter;
 use App\Models\MaterialObjective;
+use App\Models\Package;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 
@@ -15,6 +16,10 @@ class MaterialSeeder extends Seeder
         $materialsAvailable = Schema::hasTable('materials');
 
         if (! $materialsAvailable) {
+            return;
+        }
+
+        if (! Schema::hasTable('packages')) {
             return;
         }
 
@@ -31,9 +36,12 @@ class MaterialSeeder extends Seeder
 
         Material::query()->delete();
 
+        $packageLookup = Package::query()->pluck('id', 'slug');
+
         $materials = [
             [
                 'slug' => 'matematika-sd-pecahan-dasar',
+                'package_slug' => 'mayclass-sd-fundamental',
                 'subject' => 'Matematika',
                 'title' => 'Pecahan Dasar untuk SD',
                 'level' => 'SD',
@@ -61,7 +69,37 @@ class MaterialSeeder extends Seeder
                 ],
             ],
             [
+                'slug' => 'ipa-sd-proyek-sains',
+                'package_slug' => 'mayclass-sd-unggul',
+                'subject' => 'IPA',
+                'title' => 'Proyek Sains Terapan',
+                'level' => 'SD',
+                'summary' => 'Eksperimen sederhana untuk memahami konsep gaya, energi, dan perubahan wujud benda tingkat lanjut.',
+                'thumbnail_url' => 'science_sd_project',
+                'resource_path' => 'materials/ipa-sd-proyek-sains.pdf',
+                'objectives' => [
+                    'Menghubungkan konsep gaya dan energi melalui eksperimen rumah.',
+                    'Menganalisis perubahan wujud benda dalam kehidupan sehari-hari.',
+                    'Menyusun laporan ilmiah sederhana dari hasil percobaan.',
+                ],
+                'chapters' => [
+                    [
+                        'title' => 'Eksperimen Gaya dan Gerak',
+                        'description' => 'Proyek balapan mobil sederhana dan analisis gaya dorong/tarik.',
+                    ],
+                    [
+                        'title' => 'Energi dalam Kehidupan',
+                        'description' => 'Mengamati energi panas, cahaya, dan listrik dengan alat sekitar.',
+                    ],
+                    [
+                        'title' => 'Perubahan Wujud Benda',
+                        'description' => 'Simulasi mencair, membeku, dan menguap dengan panduan eksperimen.',
+                    ],
+                ],
+            ],
+            [
                 'slug' => 'ipa-smp-sistem-tata-surya',
+                'package_slug' => 'mayclass-smp-eksplor',
                 'subject' => 'IPA',
                 'title' => 'Sistem Tata Surya',
                 'level' => 'SMP',
@@ -90,6 +128,7 @@ class MaterialSeeder extends Seeder
             ],
             [
                 'slug' => 'bahasa-inggris-sma-analytical-exposition',
+                'package_slug' => 'mayclass-sma-premium',
                 'subject' => 'Bahasa Inggris',
                 'title' => 'Analytical Exposition Text',
                 'level' => 'SMA',
@@ -119,8 +158,15 @@ class MaterialSeeder extends Seeder
         ];
 
         foreach ($materials as $materialData) {
+            $packageId = $packageLookup[$materialData['package_slug']] ?? null;
+
+            if (! $packageId) {
+                continue;
+            }
+
             $material = Material::create([
                 'slug' => $materialData['slug'],
+                'package_id' => $packageId,
                 'subject' => $materialData['subject'],
                 'title' => $materialData['title'],
                 'level' => $materialData['level'],

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tutor;
 
 use App\Models\Material;
+use App\Models\Package;
 use App\Support\UnsplashPlaceholder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
@@ -41,7 +42,13 @@ class MaterialController extends BaseTutorController
 
     public function create()
     {
-        return $this->render('tutor.materials.create');
+        $packages = Schema::hasTable('packages')
+            ? Package::orderBy('level')->orderBy('price')->get()
+            : collect();
+
+        return $this->render('tutor.materials.create', [
+            'packages' => $packages,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -52,7 +59,14 @@ class MaterialController extends BaseTutorController
                 ->with('alert', __('Tabel materi belum siap. Jalankan migrasi database terlebih dahulu.'));
         }
 
+        if (! Schema::hasTable('packages')) {
+            return redirect()
+                ->route('tutor.materials.index')
+                ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
+        }
+
         $data = $request->validate([
+            'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
             'subject' => ['required', 'string', 'max:120'],
             'level' => ['required', 'string', 'max:120'],
@@ -80,6 +94,7 @@ class MaterialController extends BaseTutorController
         DB::transaction(function () use ($data, $path, $uniqueSlug, $request) {
             $material = Material::create([
                 'slug' => $uniqueSlug,
+                'package_id' => $data['package_id'],
                 'subject' => $data['subject'],
                 'title' => $data['title'],
                 'level' => $data['level'],
@@ -101,8 +116,13 @@ class MaterialController extends BaseTutorController
     {
         $material->load(['objectives', 'chapters']);
 
+        $packages = Schema::hasTable('packages')
+            ? Package::orderBy('level')->orderBy('price')->get()
+            : collect();
+
         return $this->render('tutor.materials.edit', [
             'material' => $material,
+            'packages' => $packages,
         ]);
     }
 
@@ -114,7 +134,14 @@ class MaterialController extends BaseTutorController
                 ->with('alert', __('Tabel materi belum siap. Jalankan migrasi database terlebih dahulu.'));
         }
 
+        if (! Schema::hasTable('packages')) {
+            return redirect()
+                ->route('tutor.materials.index')
+                ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
+        }
+
         $data = $request->validate([
+            'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
             'subject' => ['required', 'string', 'max:120'],
             'level' => ['required', 'string', 'max:120'],
@@ -128,6 +155,7 @@ class MaterialController extends BaseTutorController
         ]);
 
         $payload = [
+            'package_id' => $data['package_id'],
             'subject' => $data['subject'],
             'title' => $data['title'],
             'level' => $data['level'],

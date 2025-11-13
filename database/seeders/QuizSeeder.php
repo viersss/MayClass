@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Package;
 use App\Models\Quiz;
 use App\Models\QuizLevel;
 use App\Models\QuizTakeaway;
@@ -18,6 +19,10 @@ class QuizSeeder extends Seeder
             return;
         }
 
+        if (! Schema::hasTable('packages')) {
+            return;
+        }
+
         $levelsAvailable = Schema::hasTable('quiz_levels');
         $takeawaysAvailable = Schema::hasTable('quiz_takeaways');
 
@@ -31,9 +36,12 @@ class QuizSeeder extends Seeder
 
         Quiz::query()->delete();
 
+        $packageLookup = Package::query()->pluck('id', 'slug');
+
         $quizzes = [
             [
                 'slug' => 'kuis-matematika-smp-barisan-dan-deret',
+                'package_slug' => 'mayclass-smp-eksplor',
                 'subject' => 'Matematika',
                 'class_level' => 'SMP',
                 'title' => 'Barisan dan Deret',
@@ -54,6 +62,7 @@ class QuizSeeder extends Seeder
             ],
             [
                 'slug' => 'kuis-ipa-sd-energi-dan-perubahannya',
+                'package_slug' => 'mayclass-sd-fundamental',
                 'subject' => 'IPA',
                 'class_level' => 'SD',
                 'title' => 'Energi dan Perubahannya',
@@ -73,7 +82,29 @@ class QuizSeeder extends Seeder
                 ],
             ],
             [
+                'slug' => 'kuis-matematika-sd-pecahan',
+                'package_slug' => 'mayclass-sd-unggul',
+                'subject' => 'Matematika',
+                'class_level' => 'SD',
+                'title' => 'Penerapan Pecahan',
+                'summary' => 'Latihan soal cerita dan pecahan campuran untuk kelas atas SD.',
+                'link_url' => 'https://mayclass.id/kuis/matematika/pecahan-terapan',
+                'thumbnail_url' => 'quiz_math_fraction',
+                'duration_label' => '25 menit',
+                'question_count' => 16,
+                'levels' => [
+                    'Pemanasan konsep pecahan',
+                    'Soal cerita pecahan campuran',
+                ],
+                'takeaways' => [
+                    'Mengubah pecahan campuran menjadi pecahan biasa.',
+                    'Menyelesaikan soal cerita dengan langkah sistematis.',
+                    'Memperkirakan hasil operasi pecahan.',
+                ],
+            ],
+            [
                 'slug' => 'kuis-bahasa-inggris-sma-recount-text',
+                'package_slug' => 'mayclass-sma-premium',
                 'subject' => 'Bahasa Inggris',
                 'class_level' => 'SMA',
                 'title' => 'Recount Text Mastery',
@@ -95,8 +126,15 @@ class QuizSeeder extends Seeder
         ];
 
         foreach ($quizzes as $quizData) {
+            $packageId = $packageLookup[$quizData['package_slug']] ?? null;
+
+            if (! $packageId) {
+                continue;
+            }
+
             $quiz = Quiz::create([
                 'slug' => $quizData['slug'],
+                'package_id' => $packageId,
                 'subject' => $quizData['subject'],
                 'class_level' => $quizData['class_level'],
                 'title' => $quizData['title'],

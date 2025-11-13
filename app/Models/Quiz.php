@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Support\ImageRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quiz extends Model
@@ -13,6 +14,7 @@ class Quiz extends Model
 
     protected $fillable = [
         'slug',
+        'package_id',
         'subject',
         'class_level',
         'title',
@@ -44,4 +46,10 @@ class Quiz extends Model
     {
         return $this->attributes['link_url'] ?? null;
     }
+
+    public function package(): BelongsTo
+    {
+        return $this->belongsTo(Package::class);
+    }
 }
+
