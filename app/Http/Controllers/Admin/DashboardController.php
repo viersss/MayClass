@@ -32,6 +32,7 @@ class DashboardController extends BaseAdminController
                 ->take(6)
                 ->get()
                 ->map(function (User $user) {
+                    
                     return [
                         'name' => $user->name,
                         'email' => $user->email,

@@ -545,7 +545,7 @@
         </section>
     @endif
 
-    @if ($days->isEmpty())
+    @if (empty($days))
         <div class="empty-state">
             <strong>Belum ada jadwal yang ditugaskan</strong>
             Silakan hubungi admin MayClass untuk menambahkan jadwal mengajar Anda.
