@@ -150,7 +150,7 @@
                                         @endforeach
                                     </div>
                                     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                                        <a class="student-button student-button--primary" style="padding: 10px 20px;" href="{{ $quiz['link'] }}" target="_blank" rel="noopener">Mulai kuis</a>
+                                        <a class="student-button student-button--primary" style="padding: 10px 20px;" href="{{ route('student.quiz.show', $quiz['slug']) }}">Detail kuis</a>
                                         <a class="student-button student-button--outline" style="padding: 10px 20px;" href="{{ $materialsLink }}" target="_blank" rel="noopener">Materi pendamping</a>
                                     </div>
                                 </article>
