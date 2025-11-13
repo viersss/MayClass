@@ -39,7 +39,6 @@ class DashboardController extends Controller
                 'title' => 'Dashboard Siswa',
                 'hasActivePackage' => false,
                 'activePackage' => $this->formatActivePackage($activeEnrollment),
-                'packages' => $this->packagesForUpsell(),
                 'materialsLink' => $materialsLink,
                 'quizLink' => $quizLink,
             ]);
@@ -164,7 +163,6 @@ class DashboardController extends Controller
             'materialsLink' => $materialsLink,
             'quizLink' => $quizLink,
             'hasActivePackage' => true,
-            'packages' => collect(),
         ]);
     }
 

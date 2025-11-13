@@ -310,8 +310,6 @@
                         <a href="{{ route('student.materials') }}" class="student-navbar__link {{ request()->routeIs('student.materials*') ? 'is-active' : '' }}">Materi</a>
                         <a href="{{ route('student.quiz') }}" class="student-navbar__link {{ request()->routeIs('student.quiz*') ? 'is-active' : '' }}">Quiz</a>
                         <a href="{{ route('student.schedule') }}" class="student-navbar__link {{ request()->routeIs('student.schedule') ? 'is-active' : '' }}">Jadwal</a>
-                    @else
-                        <a href="{{ route('packages.index') }}" class="student-navbar__link">Paket Belajar</a>
                     @endif
                 </nav>
                 <div class="student-navbar__actions">

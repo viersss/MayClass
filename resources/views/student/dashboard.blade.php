@@ -145,71 +145,20 @@
             color: var(--student-text-muted);
             display: grid;
             gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         }
 
-        .package-grid {
-            display: grid;
-            gap: clamp(16px, 3vw, 24px);
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        }
-
-        .package-card {
+        .dashboard-step {
             border: 1px solid var(--student-border);
-            border-radius: var(--student-radius-md);
-            padding: clamp(20px, 3vw, 26px);
-            display: grid;
-            gap: 12px;
-            background: var(--student-surface);
-        }
-
-        .package-card__image {
-            width: 100%;
             border-radius: var(--student-radius-sm);
-            aspect-ratio: 4 / 3;
-            object-fit: cover;
-        }
-
-        .package-card__tag {
-            align-self: flex-start;
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--student-accent);
-            background: rgba(95, 106, 248, 0.12);
-            border-radius: 999px;
-            padding: 6px 12px;
-            font-weight: 600;
-        }
-
-        .package-card__meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            font-size: 0.85rem;
-            color: var(--student-text-muted);
-            flex-wrap: wrap;
-        }
-
-        .package-card__level {
-            font-weight: 600;
-        }
-
-        .package-card__price {
-            margin: 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--student-primary);
-        }
-
-        .package-features {
-            list-style: disc;
-            padding-left: 20px;
-            margin: 0;
+            padding: clamp(16px, 3vw, 22px);
+            background: rgba(47, 152, 140, 0.05);
             display: grid;
             gap: 8px;
-            font-size: 0.9rem;
-            color: var(--student-text-muted);
+        }
+
+        .dashboard-step strong {
+            font-size: 0.95rem;
         }
 
         .visitor-grid {
@@ -243,7 +192,6 @@
 @php($materialsLink = $materialsLink ?? config('mayclass.links.materials_drive'))
 @php($quizLink = $quizLink ?? config('mayclass.links.quiz_platform'))
 @php($hasActivePackage = $hasActivePackage ?? ($studentHasActivePackage ?? false))
-@php($packages = collect($packages ?? []))
 
 @section('content')
     @if ($hasActivePackage)
@@ -405,66 +353,8 @@
                         Aktivasi salah satu paket di MayClass untuk membuka materi eksklusif, kuis interaktif, dan jadwal
                         belajar bersama tutor profesional.
                     </p>
-                    <a class="student-button student-button--primary" href="{{ route('packages.index') }}">Pilih paket belajar</a>
                 </article>
             </div>
-        </section>
-
-        <section class="student-section">
-            <div class="dashboard-section__header">
-                <h2 class="dashboard-section__title">Paket belajar rekomendasi</h2>
-                <a class="student-button student-button--outline" href="{{ route('packages.index') }}">Lihat katalog lengkap</a>
-            </div>
-            @if ($packages->isNotEmpty())
-                <div class="package-grid">
-                    @foreach ($packages as $package)
-                        <article class="package-card">
-                            @if (! empty($package['image']))
-                                <img class="package-card__image" src="{{ $package['image'] }}" alt="Ilustrasi paket {{ $package['title'] }}" />
-                            @endif
-                            @if (! empty($package['tag']) || ! empty($package['stage_label'] ?? $package['stage']))
-                                <div class="package-card__meta">
-                                    @if (! empty($package['tag']))
-                                        <span class="package-card__tag">{{ $package['tag'] }}</span>
-                                    @endif
-                                    @if (! empty($package['stage_label'] ?? $package['stage']))
-                                        <span class="package-card__level">
-                                            {{ $package['stage_label'] ?? $package['stage'] }}
-                                            @if (! empty($package['grade_range']))
-                                                • {{ $package['grade_range'] }}
-                                            @endif
-                                        </span>
-                                    @endif
-                                </div>
-                            @endif
-                            <h3 class="dashboard-card__title">{{ $package['title'] }}</h3>
-                            <p class="package-card__price">{{ $package['card_price'] ?? $package['price'] }}</p>
-                            @if (! empty($package['detail_price']))
-                                <p class="dashboard-card__text" style="font-size: 0.85rem; color: var(--student-text-muted);">
-                                    {{ $package['detail_price'] }}
-                                </p>
-                            @endif
-                            <p class="dashboard-card__text">{{ $package['summary'] }}</p>
-                            @if (! empty($package['features']))
-                                <ul class="package-features">
-                                    @foreach ($package['features'] as $feature)
-                                        <li>{{ $feature }}</li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                            <div class="dashboard-actions">
-                                <a class="student-button student-button--primary" href="{{ route('checkout.show', $package['slug']) }}">Checkout paket</a>
-                            </div>
-                            <a class="dashboard-link" href="{{ route('packages.show', $package['slug']) }}">Lihat detail paket</a>
-                        </article>
-                    @endforeach
-                </div>
-            @else
-                <div class="dashboard-empty">
-                    <p>Paket belajar belum tersedia. Silakan hubungi admin MayClass untuk bantuan berlangganan.</p>
-                    <a class="student-button student-button--primary" href="{{ route('packages.index') }}">Kunjungi katalog paket</a>
-                </div>
-            @endif
         </section>
 
         <section class="student-section">
