@@ -10,29 +10,27 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('users')) {
+        if (! Schema::hasTable('users')) {
             return;
         }
 
-        // Tambahkan kolom username kalau belum ada
         Schema::table('users', function (Blueprint $table) {
-            if (!Schema::hasColumn('users', 'username')) {
+            if (! Schema::hasColumn('users', 'username')) {
                 $table->string('username')->nullable()->after('email');
             }
         });
 
-        if (!Schema::hasColumn('users', 'username')) {
+        if (! Schema::hasColumn('users', 'username')) {
             return;
         }
 
-        // Isi username otomatis untuk data lama
         DB::table('users')->orderBy('id')->chunkById(100, function ($users) {
             foreach ($users as $user) {
-                if (!empty($user->username)) {
+                if (! empty($user->username)) {
                     continue;
                 }
 
-                $base = Str::slug($user->name) ?: 'mayclass-user-' . $user->id;
+                $base = Str::slug($user->name) ?: 'mayclass-user-'.$user->id;
                 $candidate = $base;
                 $suffix = 1;
 
@@ -42,7 +40,7 @@ return new class extends Migration
                         ->where('id', '!=', $user->id)
                         ->exists()
                 ) {
-                    $candidate = $base . '-' . $suffix;
+                    $candidate = $base.'-'.$suffix;
                     $suffix++;
                 }
 
@@ -52,31 +50,20 @@ return new class extends Migration
             }
         });
 
-        // Tambahkan unique index (dengan pengecekan manual)
-        try {
-            Schema::table('users', function (Blueprint $table) {
-                $table->unique('username', 'users_username_unique');
-            });
-        } catch (\Throwable $e) {
-            // Jika index sudah ada, abaikan
-        }
+        Schema::table('users', function (Blueprint $table) {
+            $table->unique('username');
+        });
     }
 
     public function down(): void
     {
-        if (!Schema::hasTable('users')) {
+        if (! Schema::hasTable('users')) {
             return;
         }
 
-        // Drop kolom dengan aman
         Schema::table('users', function (Blueprint $table) {
-            try {
-                $table->dropUnique('users_username_unique');
-            } catch (\Throwable $e) {
-                // Abaikan jika index tidak ada
-            }
-
             if (Schema::hasColumn('users', 'username')) {
+                $table->dropUnique(['username']);
                 $table->dropColumn('username');
             }
         });

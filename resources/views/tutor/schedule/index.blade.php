@@ -552,7 +552,7 @@
         </div>
     @else
         <div class="schedule-wrapper">
-            @foreach ($days as $day_label => $day)
+            @foreach ($days as $day)
                 <article class="day-card">
                     <div class="day-card-header">
                         <div>
