@@ -32,6 +32,122 @@ class ScheduleSeeder extends Seeder
             return;
         }
 
+        if (! Schema::hasTable('users')) {
+            return;
+        }
+
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
+        $tutor = User::query()->where('role', 'tutor')->first();
+
+        if (! $tutor) {
+            return;
+        }
+
+        if (! Schema::hasTable('users')) {
+            return;
+        }
+
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
+        $tutor = User::query()->where('role', 'tutor')->first();
+
+        if (! $tutor) {
+            return;
+        }
+
+        if (! Schema::hasTable('users')) {
+            return;
+        }
+
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
+        $tutor = User::query()->where('role', 'tutor')->first();
+
+        if (! $tutor) {
+            return;
+        }
+
+        if (! Schema::hasTable('users')) {
+            return;
+        }
+
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
+        $tutor = User::query()->where('role', 'tutor')->first();
+
+        if (! $tutor) {
+            return;
+        }
+
+        if (! Schema::hasTable('users')) {
+            return;
+        }
+
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
+        $tutor = User::query()->where('role', 'tutor')->first();
+
+        if (! $tutor) {
+            return;
+        }
+
+        if (! Schema::hasTable('users')) {
+            return;
+        }
+
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
+        $tutor = User::query()->where('role', 'tutor')->first();
+
+        if (! $tutor) {
+            return;
+        }
+
+        if (! Schema::hasTable('users')) {
+            return;
+        }
+
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
+        $tutor = User::query()->where('role', 'tutor')->first();
+
+        if (! $tutor) {
+            return;
+        }
+
+        if (! Schema::hasTable('users')) {
+            return;
+        }
+
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
+        $tutor = User::query()->where('role', 'tutor')->first();
+
+        if (! $tutor) {
+            return;
+        }
+
+        $packages = Schema::hasTable('packages')
+            ? Package::query()->get()->keyBy('slug')
+            : collect();
+
         ScheduleSession::query()->delete();
         ScheduleTemplate::query()->where('user_id', $tutor->id)->delete();
 
