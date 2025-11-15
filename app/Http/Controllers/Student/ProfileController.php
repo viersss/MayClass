@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Support\AvatarUploader;
+use App\Support\StudentAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -19,6 +22,12 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
+        $avatarUrl = null;
+
+        if ($user->avatar_path && Storage::disk('public')->exists($user->avatar_path)) {
+            $avatarUrl = Storage::disk('public')->url($user->avatar_path);
+        }
+
         return view('student.profile', [
             'profile' => [
                 'name' => $user->name,
@@ -31,6 +40,8 @@ class ProfileController extends Controller
                 'address' => $user->address,
             ],
             'genderOptions' => $this->genderOptions(),
+            'avatarUrl' => $avatarUrl,
+            'hasActivePackage' => StudentAccess::hasActivePackage($user),
         ]);
     }
 
@@ -45,7 +56,22 @@ class ProfileController extends Controller
             'gender' => ['nullable', Rule::in(array_keys($this->genderOptions()))],
             'parent_name' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        $avatarPath = $user->avatar_path;
+
+        if ($request->hasFile('avatar')) {
+            try {
+                $avatarPath = AvatarUploader::store($request->file('avatar'), [$user->avatar_path]);
+            } catch (\Throwable $exception) {
+                report($exception);
+
+                return back()
+                    ->withInput($request->except('avatar'))
+                    ->withErrors(['avatar' => 'Gagal mengunggah foto profil. Silakan coba lagi.']);
+            }
+        }
 
         $user->forceFill([
             'name' => $data['name'],
@@ -54,6 +80,7 @@ class ProfileController extends Controller
             'gender' => $data['gender'] ?? null,
             'parent_name' => $data['parent_name'] ?? null,
             'address' => $data['address'] ?? null,
+            'avatar_path' => $avatarPath,
         ])->save();
 
         return redirect()

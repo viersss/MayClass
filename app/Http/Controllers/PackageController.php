@@ -3,15 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\Package;
+use App\Support\PackagePresenter;
+use Illuminate\Support\Facades\Schema;
 
 class PackageController extends Controller
 {
     public function index()
     {
-        $packages = Package::with(['cardFeatures', 'inclusions'])->orderBy('price')->get()
-            ->map(fn (Package $package) => $this->formatPackage($package));
+        if (! Schema::hasTable('packages')) {
+            return view('packages.index', [
+                'catalog' => collect(),
+                'stageDefinitions' => config('mayclass.package_stages', []),
+            ]);
+        }
 
-        return view('packages.index', ['packages' => $packages]);
+        $query = Package::query()->orderBy('level')->orderBy('price');
+
+        if (Schema::hasTable('package_features')) {
+            $query->with(['cardFeatures' => fn ($features) => $features->orderBy('position')]);
+        }
+
+        $packages = $query->get();
+        $catalog = PackagePresenter::groupByStage($packages);
+
+        return view('packages.index', [
+            'catalog' => $catalog,
+            'stageDefinitions' => config('mayclass.package_stages', []),
+        ]);
     }
 
     public function show(string $slug)
@@ -23,19 +41,6 @@ class PackageController extends Controller
 
     private function formatPackage(Package $package): array
     {
-        return [
-            'id' => $package->id,
-            'slug' => $package->slug,
-            'level' => $package->level,
-            'tag' => $package->tag,
-            'card_price' => $package->card_price_label,
-            'detail_title' => $package->detail_title,
-            'detail_price' => $package->detail_price_label,
-            'summary' => $package->summary,
-            'image' => $package->image_asset,
-            'card_features' => $package->cardFeatures->sortBy('position')->pluck('label')->all(),
-            'included' => $package->inclusions->sortBy('position')->pluck('label')->all(),
-            'price_numeric' => (int) round($package->price),
-        ];
+        return PackagePresenter::detail($package);
     }
 }

@@ -268,8 +268,10 @@
                         <p class="summary">{{ Str::limit($material->summary, 140) }}</p>
                         <div class="actions">
                             <a href="{{ route('tutor.materials.edit', $material) }}">Edit Materi</a>
-                            @if ($material->resource_url)
-                                <a href="{{ $material->resource_url }}" target="_blank" rel="noopener">Lihat Lampiran</a>
+                            @if ($material->resource_path)
+                                @php($isExternal = str_starts_with($material->resource_path, 'http'))
+                                <a href="{{ $isExternal ? $material->resource_path : route('tutor.materials.preview', $material->slug) }}"
+                                    target="_blank" rel="noopener">Lihat Lampiran</a>
                             @endif
                         </div>
                     </div>
