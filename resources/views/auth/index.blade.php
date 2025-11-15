@@ -519,6 +519,47 @@
                     flex: 1;
                 }
             }
+
+                        .register-popup-backdrop {
+                position: fixed;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(15, 23, 42, 0.45); /* overlay gelap */
+                z-index: 1200;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.25s ease;
+            }
+
+            .register-popup-backdrop.is-visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .register-popup {
+                background: var(--panel);
+                padding: 20px 24px;
+                border-radius: 20px;
+                box-shadow: 0 24px 55px rgba(15, 52, 56, 0.35);
+                max-width: 340px;
+                width: calc(100% - 48px);
+                text-align: center;
+            }
+
+            .register-popup-title {
+                margin: 0 0 6px;
+                font-size: 1rem;
+                font-weight: 600;
+                color: var(--accent-dark);
+            }
+
+            .register-popup-text {
+                margin: 0;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+            }
         </style>
     </head>
     <body>
@@ -778,6 +819,34 @@
         </div>
 
         <script>
+
+                    @if(session('register_success'))
+            <div class="register-popup-backdrop" id="register-popup">
+                <div class="register-popup">
+                    <p class="register-popup-title">Registrasi Berhasil</p>
+                    <p class="register-popup-text">
+                        Registrasi berhasil. Mengalihkan ke halaman login…
+                    </p>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const popup = document.getElementById('register-popup');
+                    if (!popup) return;
+
+                    // munculkan popup
+                    requestAnimationFrame(() => {
+                        popup.classList.add('is-visible');
+                    });
+
+                    // 2 detik kemudian arahkan ke halaman login
+                    setTimeout(function () {
+                        window.location.href = "{{ route('login') }}";
+                    }, 1000); // 2000 ms = 2 detik
+                });
+            </script>
+        @endif
             const doc = document.documentElement;
             const switchButtons = document.querySelectorAll('.tab-switcher button');
 

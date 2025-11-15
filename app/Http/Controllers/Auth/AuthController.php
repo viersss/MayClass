@@ -134,6 +134,7 @@ class AuthController extends Controller
 
         return redirect()
             ->route('login')
+            ->with('register_success', true)
             ->with('status', __('Akun berhasil dibuat. Silakan login untuk mulai belajar.'))
             ->withInput(['username' => $profile['username']]);
     }
