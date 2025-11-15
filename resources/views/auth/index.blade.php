@@ -117,6 +117,15 @@
                 color: #003a36;
             }
 
+            [data-copy-mode] {
+                display: none;
+            }
+
+            html[data-mode="register"] [data-copy-mode="register"],
+            html[data-mode="login"] [data-copy-mode="login"] {
+                display: block;
+            }
+
             .auth-panel {
                 padding: 48px;
                 background: #fdfefe;
@@ -133,6 +142,50 @@
                 margin: 0;
                 font-size: 1.6rem;
                 font-weight: 600;
+            }
+
+            .step-indicators {
+                display: flex;
+                justify-content: center;
+            }
+
+            .step-indicator {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .step-dots {
+                display: flex;
+                gap: 12px;
+            }
+
+            .step-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #ffffff;
+                border: 1px solid rgba(31, 42, 55, 0.2);
+                box-shadow: 0 2px 6px rgba(17, 24, 39, 0.15);
+            }
+
+            .step-dot--filled {
+                background: #1f2a37;
+                border-color: #1f2a37;
+            }
+
+            .step-label {
+                margin: 0;
+                font-size: 0.85rem;
+                font-weight: 500;
+                letter-spacing: 0.02em;
+                color: var(--text-muted);
+            }
+
+            html[data-mode="register"] .step-indicator[data-step="register"],
+            html[data-mode="login"] .step-indicator[data-step="login"] {
+                display: flex;
             }
 
             .tab-switcher {
@@ -479,13 +532,18 @@
                         <img src="{{ \App\Support\ImageRepository::url('auth') }}" alt="Ilustrasi siswa MayClass" />
                     </div>
                     <div>
-                        <h1>
-                            Langkah Pasti Menuju Prestasi
-                            <strong>bersama MayClass</strong>
+                        <h1 data-copy-mode="register">
+                            Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
+                            pendampingan tentor profesional.
                         </h1>
-                        <p>
-                            Kami menjembatani siswa, tentor, dan orang tua melalui pengalaman belajar yang
-                            personal, interaktif, dan terukur.
+                        <h1 data-copy-mode="login">Selamat datang kembali di MayClass</h1>
+                        <p data-copy-mode="register">
+                            Lengkapi data diri Anda terlebih dahulu sebelum membuat kata sandi agar kami dapat
+                            mempersonalisasi rekomendasi paket belajar sesuai kebutuhan.
+                        </p>
+                        <p data-copy-mode="login">
+                            Masuk untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
+                            pendampingan tentor profesional.
                         </p>
                     </div>
                 </div>
@@ -499,6 +557,23 @@
                             <button type="button" data-mode="register" role="tab" aria-selected="false">
                                 Registrasi
                             </button>
+                        </div>
+                    </div>
+
+                    <div class="step-indicators">
+                        <div class="step-indicator" data-step="register" aria-live="polite">
+                            <div class="step-dots" aria-hidden="true">
+                                <span class="step-dot step-dot--filled"></span>
+                                <span class="step-dot"></span>
+                            </div>
+                            <p class="step-label">Step 1 dari 2</p>
+                        </div>
+                        <div class="step-indicator" data-step="login" aria-live="polite">
+                            <div class="step-dots" aria-hidden="true">
+                                <span class="step-dot"></span>
+                                <span class="step-dot step-dot--filled"></span>
+                            </div>
+                            <p class="step-label">Step 2 dari 2</p>
                         </div>
                     </div>
 
