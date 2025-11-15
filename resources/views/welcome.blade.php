@@ -82,8 +82,8 @@
             [data-reveal] {
                 opacity: 0;
                 transform: translateY(48px);
-                transition: opacity 2100ms cubic-bezier(0.16, 1, 0.3, 1),
-                    transform 2100ms cubic-bezier(0.16, 1, 0.3, 1);
+                transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
                 transition-delay: var(--reveal-delay, 0ms);
                 will-change: opacity, transform;
             }

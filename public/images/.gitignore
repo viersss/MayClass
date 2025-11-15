@@ -3,3 +3,4 @@
 # This placeholder ensures the folder exists without bundling binary assets.
 *
 !.gitignore
+!avatar-placeholder.svg

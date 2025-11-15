@@ -398,6 +398,11 @@
             gap: 16px;
         }
 
+        .student-schedule__view-controls {
+            display: grid;
+            gap: 16px;
+        }
+
         .student-schedule__tabs {
             display: flex;
             flex-wrap: wrap;
@@ -442,7 +447,7 @@
             text-decoration: none;
         }
 
-        .student-schedule__view-controls {
+        .student-schedule__calendar {
             display: grid;
             gap: 16px;
         }
@@ -634,6 +639,31 @@
             }
         }
 
+        .student-schedule__range-sessions {
+            display: grid;
+            gap: 10px;
+        }
+
+        .student-schedule__range-session {
+            display: grid;
+            gap: 6px;
+            padding: 12px 14px;
+            border-radius: var(--student-radius-md);
+            background: rgba(95, 106, 248, 0.08);
+            border: 1px solid rgba(95, 106, 248, 0.12);
+        }
+
+        @media (max-width: 640px) {
+            .student-schedule__nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .student-schedule__calendar-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+        }
+
         .student-schedule__calendar-event {
             padding: 8px 10px;
             border-radius: var(--student-radius-sm);
@@ -779,6 +809,18 @@
             <div class="student-schedule__nav">
                 <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['prevDate']]) }}">&larr; Sebelumnya</a>
                 <span class="nav-title">{{ $calendar['label'] }}</span>
+                <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['nextDate']]) }}">Berikutnya &rarr;</a>
+            </div>
+        </div>
+        <div class="student-schedule__view-controls">
+            <div class="student-schedule__tabs">
+                @foreach (['day' => 'Harian', 'week' => 'Mingguan', 'month' => 'Bulanan'] as $mode => $label)
+                    <a class="student-schedule__tab {{ $viewMode === $mode ? 'is-active' : '' }}" href="{{ route('student.schedule', ['view' => $mode, 'date' => $calendar['currentDate']]) }}">{{ $label }}</a>
+                @endforeach
+            </div>
+            <div class="student-schedule__nav">
+                <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['prevDate']]) }}">&larr; Sebelumnya</a>
+                <span style="font-weight: 600; color: var(--student-text-muted);">{{ $calendar['label'] }}</span>
                 <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['nextDate']]) }}">Berikutnya &rarr;</a>
             </div>
         </div>
