@@ -61,6 +61,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         }
 
         .dashboard-link {
@@ -145,6 +146,20 @@
             color: var(--student-text-muted);
             display: grid;
             gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .dashboard-step {
+            border: 1px solid var(--student-border);
+            border-radius: var(--student-radius-sm);
+            padding: clamp(16px, 3vw, 22px);
+            background: rgba(47, 152, 140, 0.05);
+            display: grid;
+            gap: 8px;
+        }
+
+        .dashboard-step strong {
+            font-size: 0.95rem;
         }
 
         .visitor-grid {
