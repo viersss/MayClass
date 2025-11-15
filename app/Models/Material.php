@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Support\ImageRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Material extends Model
@@ -13,6 +14,7 @@ class Material extends Model
 
     protected $fillable = [
         'slug',
+        'package_id',
         'subject',
         'title',
         'level',
@@ -52,4 +54,10 @@ class Material extends Model
 
         return asset('storage/' . ltrim($path, '/'));
     }
+
+    public function package(): BelongsTo
+    {
+        return $this->belongsTo(Package::class);
+    }
 }
+

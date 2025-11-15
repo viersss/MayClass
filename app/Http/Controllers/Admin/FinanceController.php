@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Enrollment;
 use App\Models\Order;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -39,6 +40,25 @@ class FinanceController extends BaseAdminController
             'paid_at' => CarbonImmutable::now(),
         ])->save();
 
+        if (Schema::hasTable('enrollments')) {
+            $order->loadMissing('package');
+
+            $startDate = CarbonImmutable::now();
+
+            Enrollment::updateOrCreate(
+                [
+                    'user_id' => $order->user_id,
+                    'package_id' => $order->package_id,
+                ],
+                [
+                    'order_id' => $order->id,
+                    'starts_at' => $startDate->startOfDay(),
+                    'ends_at' => $startDate->addMonth()->startOfDay(),
+                    'is_active' => true,
+                ]
+            );
+        }
+
         return redirect()->back()->with('status', __('Pembayaran berhasil diverifikasi.'));
     }
 
@@ -52,6 +72,10 @@ class FinanceController extends BaseAdminController
             'status' => 'rejected',
             'paid_at' => null,
         ])->save();
+
+        if (Schema::hasTable('enrollments')) {
+            Enrollment::where('order_id', $order->id)->update(['is_active' => false]);
+        }
 
         return redirect()->back()->with('status', __('Pembayaran ditolak dan menunggu klarifikasi siswa.'));
     }

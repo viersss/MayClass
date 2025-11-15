@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,22 +20,28 @@ use Throwable;
 
 class AuthController extends Controller
 {
-    public function showLogin()
+    public function showLogin(Request $request)
     {
         if (Auth::check()) {
             return redirect()->to($this->homeRouteFor(Auth::user()));
         }
 
-        return view('auth.index', ['mode' => 'login']);
+        return view('auth.index', [
+            'mode' => 'login',
+            'profile' => $request->session()->get('register.profile', []),
+        ]);
     }
 
-    public function showRegister()
+    public function showRegister(Request $request)
     {
         if (Auth::check()) {
             return redirect()->to($this->homeRouteFor(Auth::user()));
         }
 
-        return view('auth.index', ['mode' => 'register']);
+        return view('auth.index', [
+            'mode' => 'register',
+            'profile' => $request->session()->get('register.profile', []),
+        ]);
     }
 
     public function join(Request $request): RedirectResponse
@@ -49,7 +56,7 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-    public function register(Request $request): RedirectResponse
+    public function storeRegisterDetails(Request $request): RedirectResponse
     {
         $this->ensureUsernameSupport();
 
@@ -59,24 +66,77 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)],
             'phone' => ['nullable', 'string', 'max:30'],
             'gender' => ['nullable', Rule::in(['male', 'female', 'other'])],
-            'password' => ['required', 'string', 'min:8'],
+        ]);
+
+        $request->session()->put('register.profile', $data);
+
+        return redirect()->route('register.password');
+    }
+
+    public function showPasswordStep(Request $request)
+    {
+        if (Auth::check()) {
+            return redirect()->to($this->homeRouteFor(Auth::user()));
+        }
+
+        $profile = $request->session()->get('register.profile');
+
+        if (! $profile) {
+            return redirect()->route('register')->with('status', __('Silakan lengkapi data diri terlebih dahulu.'));
+        }
+
+        return view('auth.register-password', [
+            'profile' => $profile,
+        ]);
+    }
+
+    public function register(Request $request): RedirectResponse
+    {
+        $this->ensureUsernameSupport();
+
+        $profile = $request->session()->get('register.profile');
+
+        if (! $profile) {
+            return redirect()->route('register')->with('status', __('Silakan lengkapi data diri terlebih dahulu.'));
+        }
+
+        $profileValidator = Validator::make($profile, [
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'alpha_dash', 'min:4', 'max:50', Rule::unique(User::class, 'username')],
+            'email' => ['required', 'email', 'max:255', Rule::unique(User::class)],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'gender' => ['nullable', Rule::in(['male', 'female', 'other'])],
+        ]);
+
+        if ($profileValidator->fails()) {
+            return redirect()
+                ->route('register')
+                ->withErrors($profileValidator)
+                ->withInput($profile);
+        }
+
+        $passwordData = $request->validate([
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         User::create([
-            'name' => $data['name'],
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'name' => $profile['name'],
+            'username' => $profile['username'],
+            'email' => $profile['email'],
+            'password' => Hash::make($passwordData['password']),
             'role' => 'student',
-            'phone' => $data['phone'] ?? null,
-            'gender' => $data['gender'] ?? null,
+            'phone' => $profile['phone'] ?? null,
+            'gender' => $profile['gender'] ?? null,
             'student_id' => $this->generateStudentId(),
         ]);
+
+        $request->session()->forget('register.profile');
 
         return redirect()
             ->route('login')
             ->with('status', __('Akun berhasil dibuat. Silakan login untuk mulai belajar.'))
-            ->withInput(['username' => $data['username']]);
+            ->with('register_success', true)
+            ->withInput(['username' => $profile['username']]);
     }
 
     public function login(Request $request): RedirectResponse

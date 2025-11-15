@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Tutor;
 
+use App\Support\AvatarUploader;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
@@ -12,7 +14,29 @@ class AccountController extends BaseTutorController
 {
     public function edit()
     {
-        return $this->render('tutor.account.index');
+        $tutor = Auth::user();
+        $tutor?->loadMissing('tutorProfile');
+
+        $avatarUrl = null;
+
+        if ($tutor) {
+            $disk = Storage::disk('public');
+            $candidates = array_filter([
+                optional($tutor->tutorProfile)->avatar_path,
+                $tutor->avatar_path,
+            ]);
+
+            foreach ($candidates as $candidate) {
+                if ($disk->exists($candidate)) {
+                    $avatarUrl = $disk->url($candidate);
+                    break;
+                }
+            }
+        }
+
+        return $this->render('tutor.account.index', [
+            'avatarUrl' => $avatarUrl,
+        ]);
     }
 
     public function update(Request $request): RedirectResponse
@@ -26,13 +50,35 @@ class AccountController extends BaseTutorController
             'specializations' => ['required', 'string', 'max:255'],
             'experience_years' => ['required', 'integer', 'min:0', 'max:60'],
             'education' => ['nullable', 'string', 'max:255'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
         ]);
 
         if ($tutor) {
+            $avatarPath = $tutor->avatar_path;
+
+            if ($request->hasFile('avatar')) {
+                try {
+                    $avatarPath = AvatarUploader::store(
+                        $request->file('avatar'),
+                        [
+                            $tutor->avatar_path,
+                            optional($tutor->tutorProfile)->avatar_path,
+                        ]
+                    );
+                } catch (\Throwable $exception) {
+                    report($exception);
+
+                    return back()
+                        ->withInput($request->except('avatar'))
+                        ->withErrors(['avatar' => __('Gagal mengunggah foto profil. Silakan coba lagi.')]);
+                }
+            }
+
             $tutor->update([
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'phone' => $data['phone'] ?? null,
+                'avatar_path' => $avatarPath,
             ]);
 
             $profile = $tutor->tutorProfile;
@@ -45,6 +91,7 @@ class AccountController extends BaseTutorController
                     'specializations' => $data['specializations'],
                     'experience_years' => $data['experience_years'],
                     'education' => $data['education'] ?? null,
+                    'avatar_path' => $avatarPath,
                 ]
             );
         }

@@ -75,7 +75,7 @@
                 padding: 48px;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
+                justify-content: flex-start;
                 gap: 32px;
             }
 
@@ -117,6 +117,15 @@
                 color: #003a36;
             }
 
+            [data-copy-mode] {
+                display: none;
+            }
+
+            html[data-mode="register"] [data-copy-mode="register"],
+            html[data-mode="login"] [data-copy-mode="login"] {
+                display: block;
+            }
+
             .auth-panel {
                 padding: 48px;
                 background: #fdfefe;
@@ -133,6 +142,102 @@
                 margin: 0;
                 font-size: 1.6rem;
                 font-weight: 600;
+            }
+
+            .step-indicators {
+                display: flex;
+                justify-content: center;
+            }
+
+            .step-indicator {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .step-dots {
+                display: flex;
+                gap: 12px;
+            }
+
+            .step-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #ffffff;
+                border: 1px solid rgba(31, 42, 55, 0.2);
+                box-shadow: 0 2px 6px rgba(17, 24, 39, 0.15);
+            }
+
+            .step-dot--filled {
+                background: #1f2a37;
+                border-color: #1f2a37;
+            }
+
+            .step-label {
+                margin: 0;
+                font-size: 0.85rem;
+                font-weight: 500;
+                letter-spacing: 0.02em;
+                color: var(--text-muted);
+            }
+
+            .register-success-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 23, 42, 0.45);
+                display: grid;
+                place-items: center;
+                z-index: 90;
+                opacity: 0;
+                animation: overlay-in 0.25s ease forwards;
+            }
+
+            .register-success-overlay.is-leaving {
+                opacity: 0;
+                transition: opacity 0.25s ease;
+                pointer-events: none;
+            }
+
+            .register-success-card {
+                background: linear-gradient(160deg, rgba(253, 254, 254, 0.98), rgba(255, 255, 255, 0.9));
+                border-radius: 24px;
+                padding: 32px 42px;
+                text-align: center;
+                box-shadow: 0 30px 60px rgba(17, 24, 39, 0.18);
+                border: 1px solid rgba(66, 183, 173, 0.25);
+                max-width: 420px;
+                width: min(420px, 90vw);
+            }
+
+            .register-success-card strong {
+                display: block;
+                font-size: 1.2rem;
+                margin-bottom: 8px;
+                color: var(--primary-dark);
+            }
+
+            .register-success-card p {
+                margin: 0;
+                color: var(--text-muted);
+            }
+
+            @keyframes overlay-in {
+                from {
+                    opacity: 0;
+                    transform: translateY(12px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            html[data-mode="register"] .step-indicator[data-step="register"],
+            html[data-mode="login"] .step-indicator[data-step="login"] {
+                display: flex;
             }
 
             .tab-switcher {
@@ -276,6 +381,155 @@
                 font-weight: 500;
             }
 
+            .form-support {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-top: 8px;
+            }
+
+            .form-helper {
+                margin: 0;
+                font-size: 0.78rem;
+                color: var(--text-muted);
+            }
+
+            .terms-link {
+                border: none;
+                background: rgba(66, 183, 173, 0.12);
+                color: var(--accent-dark);
+                font-weight: 500;
+                font-size: 0.78rem;
+                padding: 8px 14px;
+                border-radius: 999px;
+                cursor: pointer;
+                transition: background 0.2s ease, transform 0.2s ease;
+            }
+
+            .terms-link:hover {
+                background: rgba(66, 183, 173, 0.22);
+                transform: translateY(-1px);
+            }
+
+            .terms-modal {
+                position: fixed;
+                inset: 0;
+                display: grid;
+                place-items: center;
+                background: rgba(17, 24, 39, 0.45);
+                padding: 24px;
+                z-index: 1000;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.2s ease;
+            }
+
+            .terms-modal[data-visible="true"] {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .terms-dialog {
+                background: #fdfefe;
+                border-radius: 24px;
+                max-width: min(720px, 100%);
+                max-height: min(90vh, 860px);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 35px 65px rgba(15, 52, 56, 0.3);
+            }
+
+            .terms-dialog header {
+                padding: 24px 32px 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                background: linear-gradient(135deg, rgba(66, 183, 173, 0.12) 0%, rgba(66, 183, 173, 0.04) 100%);
+            }
+
+            .terms-dialog header h3 {
+                margin: 0;
+                font-size: 1.25rem;
+                color: var(--accent-dark);
+            }
+
+            .terms-close {
+                border: none;
+                background: rgba(255, 255, 255, 0.85);
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: grid;
+                place-items: center;
+                font-size: 1.1rem;
+                cursor: pointer;
+                color: var(--accent-dark);
+                box-shadow: 0 10px 24px rgba(66, 183, 173, 0.25);
+                transition: transform 0.2s ease;
+            }
+
+            .terms-close:hover {
+                transform: translateY(-1px);
+            }
+
+            .terms-body {
+                padding: 24px 32px 32px;
+                overflow-y: auto;
+                color: var(--text);
+            }
+
+            .terms-body h4 {
+                margin-top: 0;
+                margin-bottom: 8px;
+                font-size: 1.05rem;
+                color: var(--accent-dark);
+            }
+
+            .terms-body p {
+                margin: 0 0 16px;
+                line-height: 1.6;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+            }
+
+            .terms-body ul {
+                margin: 0 0 16px 20px;
+                color: var(--text-muted);
+                font-size: 0.9rem;
+                line-height: 1.6;
+            }
+
+            .terms-body strong {
+                color: var(--accent-dark);
+            }
+
+            .terms-actions {
+                padding: 16px 32px 28px;
+                display: flex;
+                justify-content: flex-end;
+                background: linear-gradient(180deg, rgba(66, 183, 173, 0.08) 0%, rgba(66, 183, 173, 0) 100%);
+            }
+
+            .terms-actions button {
+                border: none;
+                background: linear-gradient(120deg, var(--accent) 0%, #5ed3c5 100%);
+                color: #fff;
+                font-weight: 600;
+                font-size: 0.9rem;
+                padding: 10px 20px;
+                border-radius: 12px;
+                cursor: pointer;
+                box-shadow: 0 12px 24px rgba(66, 183, 173, 0.28);
+                transition: transform 0.2s ease;
+            }
+
+            .terms-actions button:hover {
+                transform: translateY(-1px);
+            }
+
             .input-group {
                 display: flex;
                 flex-direction: column;
@@ -318,6 +572,16 @@
         </style>
     </head>
     <body>
+        @php($profileData = $profile ?? [])
+        @if (session('register_success'))
+            <div class="register-success-overlay" data-register-success>
+                <div class="register-success-card" role="status" aria-live="assertive">
+                    <strong>Registrasi berhasil!</strong>
+                    <p>{{ session('status') ?? 'Mengalihkan ke halaman login…' }}</p>
+                </div>
+            </div>
+        @endif
+
         <a class="back-link" href="{{ url('/') }}">
             <span aria-hidden="true">&lt;</span>
             Kembali
@@ -329,13 +593,18 @@
                         <img src="{{ \App\Support\ImageRepository::url('auth') }}" alt="Ilustrasi siswa MayClass" />
                     </div>
                     <div>
-                        <h1>
-                            Langkah Pasti Menuju Prestasi
-                            <strong>bersama MayClass</strong>
+                        <h1 data-copy-mode="register">
+                            Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
+                            pendampingan tentor profesional.
                         </h1>
-                        <p>
-                            Kami menjembatani siswa, tentor, dan orang tua melalui pengalaman belajar yang
-                            personal, interaktif, dan terukur.
+                        <h1 data-copy-mode="login">Selamat datang kembali di MayClass</h1>
+                        <p data-copy-mode="register">
+                            Lengkapi data diri Anda terlebih dahulu sebelum membuat kata sandi agar kami dapat
+                            mempersonalisasi rekomendasi paket belajar sesuai kebutuhan.
+                        </p>
+                        <p data-copy-mode="login">
+                            Masuk untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
+                            pendampingan tentor profesional.
                         </p>
                     </div>
                 </div>
@@ -349,6 +618,23 @@
                             <button type="button" data-mode="register" role="tab" aria-selected="false">
                                 Registrasi
                             </button>
+                        </div>
+                    </div>
+
+                    <div class="step-indicators">
+                        <div class="step-indicator" data-step="register" aria-live="polite">
+                            <div class="step-dots" aria-hidden="true">
+                                <span class="step-dot step-dot--filled"></span>
+                                <span class="step-dot"></span>
+                            </div>
+                            <p class="step-label">Step 1 dari 2</p>
+                        </div>
+                        <div class="step-indicator" data-step="login" aria-live="polite">
+                            <div class="step-dots" aria-hidden="true">
+                                <span class="step-dot"></span>
+                                <span class="step-dot step-dot--filled"></span>
+                            </div>
+                            <p class="step-label">Step 2 dari 2</p>
                         </div>
                     </div>
 
@@ -366,7 +652,7 @@
                         </div>
                     @endif
 
-                    <form data-mode="register" method="post" action="{{ route('register.perform') }}" novalidate>
+                    <form data-mode="register" method="post" action="{{ route('register.details') }}" novalidate>
                         @csrf
                         <div class="two-column">
                             <div class="input-group">
@@ -375,7 +661,7 @@
                                     id="register-name"
                                     type="text"
                                     name="name"
-                                    value="{{ old('name') }}"
+                                    value="{{ old('name', $profileData['name'] ?? '') }}"
                                     placeholder="Masukkan nama lengkap"
                                     required
                                 />
@@ -389,7 +675,7 @@
                                     id="register-username"
                                     type="text"
                                     name="username"
-                                    value="{{ old('username') }}"
+                                    value="{{ old('username', $profileData['username'] ?? '') }}"
                                     placeholder="Pilih username unik"
                                     required
                                 />
@@ -405,7 +691,7 @@
                                     id="register-email"
                                     type="email"
                                     name="email"
-                                    value="{{ old('email') }}"
+                                    value="{{ old('email', $profileData['email'] ?? '') }}"
                                     placeholder="Masukkan email aktif"
                                     required
                                 />
@@ -419,7 +705,7 @@
                                     id="register-phone"
                                     type="tel"
                                     name="phone"
-                                    value="{{ old('phone') }}"
+                                    value="{{ old('phone', $profileData['phone'] ?? '') }}"
                                     placeholder="Masukkan nomor telepon"
                                 />
                                 @error('phone')
@@ -429,31 +715,24 @@
                         </div>
                         <div class="input-group">
                             <label for="register-gender">Jenis Kelamin</label>
+                            @php($selectedGender = old('gender', $profileData['gender'] ?? ''))
                             <select id="register-gender" name="gender">
-                                <option value="" disabled {{ old('gender') ? '' : 'selected' }}>Pilih Jenis Kelamin</option>
-                                <option value="female" @selected(old('gender') === 'female')>Perempuan</option>
-                                <option value="male" @selected(old('gender') === 'male')>Laki-laki</option>
-                                <option value="other" @selected(old('gender') === 'other')>Lainnya</option>
+                                <option value="" disabled {{ $selectedGender ? '' : 'selected' }}>Pilih Jenis Kelamin</option>
+                                <option value="female" @selected($selectedGender === 'female')>Perempuan</option>
+                                <option value="male" @selected($selectedGender === 'male')>Laki-laki</option>
+                                <option value="other" @selected($selectedGender === 'other')>Lainnya</option>
                             </select>
                             @error('gender')
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div class="input-group">
-                            <label for="register-password">Password</label>
-                            <input
-                                id="register-password"
-                                type="password"
-                                name="password"
-                                autocomplete="new-password"
-                                placeholder="Masukkan kata sandi"
-                                required
-                            />
-                            @error('password')
-                                <p class="input-error">{{ $message }}</p>
-                            @enderror
+                        <div class="form-support">
+                            <p class="form-helper">Dengan melanjutkan, Anda menyetujui kebijakan layanan MayClass.</p>
+                            <button class="terms-link" type="button" data-terms-open>
+                                Ketentuan &amp; Privasi
+                            </button>
                         </div>
-                        <button class="primary-action" type="submit">Daftar</button>
+                        <button class="primary-action" type="submit">Selanjutnya</button>
                         <p class="switch-message">
                             Sudah punya akun?
                             <a href="{{ route('login') }}">Masuk Sekarang</a>
@@ -500,6 +779,68 @@
             </div>
         </div>
 
+        <div class="terms-modal" data-terms-dialog aria-hidden="true">
+            <div class="terms-dialog" role="dialog" aria-modal="true" aria-labelledby="terms-title">
+                <header>
+                    <h3 id="terms-title">Syarat Layanan &amp; Kebijakan Privasi MayClass</h3>
+                    <button class="terms-close" type="button" aria-label="Tutup" data-terms-close>&times;</button>
+                </header>
+                <div class="terms-body">
+                    <h4>1. Pendaftaran Akun</h4>
+                    <p>
+                        MayClass menyediakan platform belajar terpadu yang menghubungkan siswa, tentor, dan admin.
+                        Saat mendaftar, Anda perlu memberikan <strong>nama lengkap</strong>, <strong>username</strong>,
+                        <strong>email</strong>, <strong>nomor telepon</strong>, dan <strong>jenis kelamin</strong> untuk
+                        membangun profil pembelajaran. Informasi ini membantu kami merekomendasikan paket dan
+                        menghubungkan Anda dengan tentor yang relevan.
+                    </p>
+
+                    <h4>2. Langganan &amp; Pembayaran</h4>
+                    <p>
+                        Setelah akun dibuat, Anda dapat memilih paket belajar berdasarkan jenjang SD, SMP, atau SMA.
+                        Setiap transaksi checkout akan berstatus <strong>menunggu verifikasi admin</strong>. Paket baru
+                        aktif ketika tim keuangan MayClass memvalidasi bukti pembayaran. Hingga proses tersebut selesai,
+                        akses ke materi, kuis, dan jadwal premium tetap terbatas.
+                    </p>
+
+                    <h4>3. Materi, Kuis, dan Jadwal</h4>
+                    <p>
+                        Konten belajar tersedia secara dinamis sesuai paket yang Anda pilih. Materi dapat dilihat atau
+                        diunduh melalui portal siswa, kuis terhubung ke latihan interaktif pihak ketiga, dan jadwal kelas
+                        mengikuti sesi yang dirancang tentor. Kami mencatat progres dan aktivitas guna memberikan
+                        pengalaman belajar yang konsisten.
+                    </p>
+
+                    <h4>4. Kewajiban Pengguna</h4>
+                    <ul>
+                        <li>Menjaga kerahasiaan kredensial akun dan tidak membagikannya ke pihak lain.</li>
+                        <li>Mengunggah dokumen atau foto profil yang sesuai dengan etika komunitas MayClass.</li>
+                        <li>Menggunakan fitur materi, kuis, dan jadwal hanya untuk kebutuhan belajar pribadi.</li>
+                        <li>Memberikan data pembayaran yang valid saat melakukan checkout paket.</li>
+                    </ul>
+
+                    <h4>5. Pengelolaan Data Pribadi</h4>
+                    <p>
+                        Data pribadi Anda disimpan dengan aman pada sistem MayClass. Kami menggunakan informasi kontak
+                        untuk pengingat jadwal, pembaruan paket, serta komunikasi dukungan. Dokumen pembelajaran yang
+                        diunggah tentor hanya dibagikan kepada siswa dalam paket terkait. Kami tidak menjual atau
+                        mendistribusikan data pribadi ke pihak ketiga di luar kebutuhan layanan inti MayClass.
+                    </p>
+
+                    <h4>6. Keamanan &amp; Dukungan</h4>
+                    <p>
+                        MayClass menerapkan kontrol akses berbasis peran (admin, tentor, siswa) dan pencatatan aktivitas
+                        untuk menjaga keamanan. Jika Anda menemukan aktivitas mencurigakan atau memerlukan bantuan,
+                        hubungi dukungan kami melalui email <strong>support@mayclass.id</strong> atau WhatsApp resmi yang
+                        tercantum di dashboard.
+                    </p>
+                </div>
+                <div class="terms-actions">
+                    <button type="button" data-terms-close>Tutup</button>
+                </div>
+            </div>
+        </div>
+
         <script>
             const doc = document.documentElement;
             const switchButtons = document.querySelectorAll('.tab-switcher button');
@@ -521,6 +862,63 @@
             });
 
             setMode(doc.getAttribute('data-mode'));
+
+            const termsModal = document.querySelector('[data-terms-dialog]');
+            const termsOpeners = document.querySelectorAll('[data-terms-open]');
+            const termsClosers = document.querySelectorAll('[data-terms-close]');
+
+            function toggleTerms(visible) {
+                if (! termsModal) {
+                    return;
+                }
+
+                termsModal.setAttribute('data-visible', visible ? 'true' : 'false');
+                termsModal.setAttribute('aria-hidden', visible ? 'false' : 'true');
+
+                if (visible) {
+                    const focusTarget = termsModal.querySelector('button[data-terms-close]');
+                    focusTarget?.focus({ preventScroll: true });
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
+
+            termsOpeners.forEach((button) => {
+                button.addEventListener('click', () => {
+                    toggleTerms(true);
+                });
+            });
+
+            termsClosers.forEach((button) => {
+                button.addEventListener('click', () => {
+                    toggleTerms(false);
+                });
+            });
+
+            termsModal?.addEventListener('click', (event) => {
+                if (event.target === termsModal) {
+                    toggleTerms(false);
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    toggleTerms(false);
+                }
+            });
+
+            const registerSuccessOverlay = document.querySelector('[data-register-success]');
+
+            if (registerSuccessOverlay) {
+                setTimeout(() => {
+                    registerSuccessOverlay.classList.add('is-leaving');
+                }, 1700);
+
+                setTimeout(() => {
+                    window.location.assign('{{ route('login') }}');
+                }, 2000);
+            }
         </script>
     </body>
 </html>

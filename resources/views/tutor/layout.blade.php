@@ -150,6 +150,9 @@
                 border-radius: 18px;
                 background: rgba(255, 255, 255, 0.12);
                 backdrop-filter: blur(6px);
+                text-decoration: none;
+                color: inherit;
+                transition: background 0.2s ease, transform 0.2s ease;
             }
 
             .profile-summary img {
@@ -158,6 +161,21 @@
                 border-radius: 50%;
                 object-fit: cover;
                 border: 2px solid rgba(255, 255, 255, 0.5);
+            }
+
+            .profile-summary:hover {
+                background: rgba(255, 255, 255, 0.18);
+                transform: translateY(-2px);
+            }
+
+            .profile-summary__action {
+                margin-top: 6px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.78rem;
+                font-weight: 500;
+                color: rgba(255, 255, 255, 0.85);
             }
 
             .profile-summary strong {
@@ -221,6 +239,12 @@
                 grid-template-columns: 48px 1fr;
                 gap: 12px;
                 align-items: center;
+                padding: 6px 10px;
+                border-radius: 16px;
+                background: rgba(61, 183, 173, 0.12);
+                text-decoration: none;
+                color: inherit;
+                transition: background 0.2s ease, transform 0.2s ease;
             }
 
             .header-profile img {
@@ -229,6 +253,22 @@
                 border-radius: 16px;
                 object-fit: cover;
             }
+
+            .header-profile:hover {
+                background: rgba(61, 183, 173, 0.2);
+                transform: translateY(-2px);
+            }
+
+            .header-profile__action {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.78rem;
+                color: var(--primary-dark);
+                font-weight: 600;
+                margin-top: 4px;
+            }
+
 
             .header-profile strong {
                 font-size: 1rem;
@@ -371,13 +411,21 @@
                                 'route' => 'tutor.schedule.index',
                                 'patterns' => ['tutor.schedule.*'],
                             ],
-                            [
-                                'label' => 'Pengaturan',
-                                'abbr' => 'AK',
-                                'route' => 'tutor.account.edit',
-                                'patterns' => ['tutor.account.*'],
-                            ],
                         ];
+                        $tutorStoredAvatar = null;
+                        $avatarCandidates = array_filter([
+                            $tutorProfile?->avatar_path,
+                            $tutor?->avatar_path,
+                        ]);
+                        foreach ($avatarCandidates as $candidatePath) {
+                            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($candidatePath)) {
+                                $tutorStoredAvatar = \Illuminate\Support\Facades\Storage::disk('public')->url($candidatePath);
+                                break;
+                            }
+                        }
+                        $avatarPlaceholder = asset('images/avatar-placeholder.svg');
+                        $tutorSummaryAvatar = $tutorStoredAvatar ?? $avatarPlaceholder;
+                        $tutorHeaderAvatar = $tutorStoredAvatar ?? $avatarPlaceholder;
                     @endphp
                     @foreach ($menuItems as $item)
                         @php
@@ -396,16 +444,17 @@
                     @endforeach
                 </nav>
                 <div class="nav-footer">
-                    <div class="profile-summary">
+                    <a class="profile-summary" href="{{ route('tutor.account.edit') }}" title="Kelola profil">
                         <img
-                            src="{{ $tutorProfile?->avatar_path ? asset('storage/' . $tutorProfile->avatar_path) : config('mayclass.images.tutor.banner.fallback') }}"
+                            src="{{ $tutorSummaryAvatar }}"
                             alt="Foto tutor"
                         />
                         <div>
                             <strong>{{ $tutor?->name ?? 'Tutor MayClass' }}</strong>
                             <small>{{ $tutorProfile?->specializations ?? 'Mentor MayClass' }}</small>
+                            <span class="profile-summary__action">Kelola profil →</span>
                         </div>
-                    </div>
+                    </a>
                     <form method="POST" action="{{ route('logout') }}" class="logout-btn">
                         @csrf
                         <span>Keluar</span>
@@ -424,16 +473,14 @@
                     </div>
                     <div class="header-meta">
                         <span class="date-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
-                        <div class="header-profile">
-                            <img
-                                src="{{ $tutorProfile?->avatar_path ? asset('storage/' . $tutorProfile->avatar_path) : config('mayclass.images.tutor.resources.fallback') }}"
-                                alt="Profil"
-                            />
+                        <a class="header-profile" href="{{ route('tutor.account.edit') }}" title="Kelola profil tutor">
+                            <img src="{{ $tutorHeaderAvatar }}" alt="Profil tutor" />
                             <div>
                                 <strong>{{ $tutor?->name ?? 'Tutor MayClass' }}</strong>
                                 <small style="color: var(--text-muted);">{{ $tutorProfile?->headline ?? 'Selamat mengajar hari ini' }}</small>
+                                <span class="header-profile__action">Kelola profil</span>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </header>
                 <main>

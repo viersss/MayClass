@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Enrollment;
 use App\Models\Order;
 use App\Models\Package;
-use Carbon\CarbonImmutable;
+use App\Support\PackagePresenter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,28 +46,13 @@ class CheckoutController extends Controller
             'subtotal' => $subtotal,
             'tax' => $tax,
             'total' => $total,
-            'status' => 'paid',
+            'status' => 'pending',
             'payment_method' => $data['payment_method'],
             'cardholder_name' => $data['cardholder_name'],
             'card_number_last_four' => substr(preg_replace('/\D/', '', $data['card_number']), -4),
             'payment_proof_path' => $proofPath,
-            'paid_at' => CarbonImmutable::now(),
+            'paid_at' => null,
         ]);
-
-        $startDate = CarbonImmutable::now();
-
-        Enrollment::updateOrCreate(
-            [
-                'user_id' => $user->id,
-                'package_id' => $package->id,
-            ],
-            [
-                'order_id' => $order->id,
-                'starts_at' => $startDate->startOfDay(),
-                'ends_at' => $startDate->addMonth()->startOfDay(),
-                'is_active' => true,
-            ]
-        );
 
         return redirect()->route('checkout.success', ['slug' => $package->slug, 'order' => $order->id]);
     }
@@ -92,19 +76,6 @@ class CheckoutController extends Controller
 
     private function formatPackage(Package $package): array
     {
-        return [
-            'id' => $package->id,
-            'slug' => $package->slug,
-            'level' => $package->level,
-            'tag' => $package->tag,
-            'card_price' => $package->card_price_label,
-            'detail_title' => $package->detail_title,
-            'detail_price' => $package->detail_price_label,
-            'summary' => $package->summary,
-            'image' => $package->image_asset,
-            'card_features' => $package->cardFeatures->sortBy('position')->pluck('label')->all(),
-            'included' => $package->inclusions->sortBy('position')->pluck('label')->all(),
-            'price_numeric' => (int) round($package->price),
-        ];
+        return PackagePresenter::detail($package);
     }
 }
