@@ -352,7 +352,19 @@
                                 'route' => 'admin.finance.index',
                                 'patterns' => ['admin.finance.*'],
                             ],
+                            [
+                                'label' => 'Pengaturan Akun',
+                                'abbr' => 'PA',
+                                'route' => 'admin.account.edit',
+                                'patterns' => ['admin.account.*'],
+                            ],
                         ];
+                        $adminStoredAvatar = null;
+                        if ($admin?->avatar_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($admin->avatar_path)) {
+                            $adminStoredAvatar = \Illuminate\Support\Facades\Storage::disk('public')->url($admin->avatar_path);
+                        }
+                        $adminSummaryAvatar = $adminStoredAvatar ?? config('mayclass.images.tutor.banner.fallback');
+                        $adminHeaderAvatar = $adminStoredAvatar ?? config('mayclass.images.tutor.resources.fallback');
                     @endphp
                     @foreach ($menuItems as $item)
                         @php
@@ -373,7 +385,7 @@
                 <div class="nav-footer">
                     <div class="profile-summary">
                         <img
-                            src="{{ $admin?->avatar_path ? asset('storage/' . $admin->avatar_path) : config('mayclass.images.tutor.banner.fallback') }}"
+                            src="{{ $adminSummaryAvatar }}"
                             alt="Foto admin"
                         />
                         <div>
@@ -400,10 +412,7 @@
                     <div class="header-meta">
                         <span class="date-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
                         <div class="header-profile">
-                            <img
-                                src="{{ $admin?->avatar_path ? asset('storage/' . $admin->avatar_path) : config('mayclass.images.tutor.resources.fallback') }}"
-                                alt="Profil"
-                            />
+                            <img src="{{ $adminHeaderAvatar }}" alt="Profil" />
                             <div>
                                 <strong>{{ $admin?->name ?? 'Admin MayClass' }}</strong>
                                 <small style="color: var(--text-muted);">Kelola operasi MayClass</small>
