@@ -295,6 +295,55 @@
             text-decoration: none;
         }
 
+        .student-schedule__view-controls {
+            display: grid;
+            gap: 16px;
+        }
+
+        .student-schedule__tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .student-schedule__tab {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 18px;
+            border-radius: var(--student-radius-md);
+            border: 1px solid rgba(47, 152, 140, 0.16);
+            background: #ffffff;
+            color: var(--student-text-muted);
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: all 0.2s ease;
+        }
+
+        .student-schedule__tab.is-active {
+            background: linear-gradient(120deg, var(--student-primary), var(--student-primary-soft));
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 18px 32px rgba(27, 119, 110, 0.22);
+        }
+
+        .student-schedule__nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .student-schedule__nav a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--student-primary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
         .student-schedule__calendar {
             max-width: 1100px; /* [BARU] Batasi lebar maksimum kalender */
             margin: 0 auto; /* [BARU] Buat kalender rata tengah */
@@ -387,55 +436,6 @@
             .student-schedule__calendar-grid {
                 grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             }
-        }
-
-        .student-schedule__range-sessions {
-            display: grid;
-            gap: 10px;
-        }
-
-        .student-schedule__range-session {
-            display: grid;
-            gap: 6px;
-            padding: 12px 14px;
-            border-radius: var(--student-radius-md);
-            background: rgba(95, 106, 248, 0.08);
-            border: 1px solid rgba(95, 106, 248, 0.12);
-        }
-
-        @media (max-width: 640px) {
-            .student-schedule__nav {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .student-schedule__calendar-grid {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            }
-        }
-
-        .student-schedule__range-sessions {
-            display: grid;
-            gap: 10px;
-        }
-
-        .student-schedule__range-session {
-            display: grid;
-            gap: 6px;
-            padding: 12px 14px;
-            border-radius: var(--student-radius-md);
-            background: rgba(95, 106, 248, 0.08);
-            border: 1px solid rgba(95, 106, 248, 0.12);
-        }
-
-        /* 7. Empty State */
-        .student-schedule__empty {
-            padding: clamp(24px, 4vw, 32px);
-            border-radius: 20px;
-            background: var(--student-surface);
-            text-align: center;
-            color: var(--student-text-muted);
-            grid-column: 1 / -1; /* Agar span full width di grid */
         }
 
         /* 8. Responsive */
@@ -547,6 +547,18 @@
             <div class="student-schedule__nav">
                 <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['prevDate']]) }}">&larr; Sebelumnya</a>
                 <span class="nav-title">{{ $calendar['label'] }}</span>
+                <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['nextDate']]) }}">Berikutnya &rarr;</a>
+            </div>
+        </div>
+        <div class="student-schedule__view-controls">
+            <div class="student-schedule__tabs">
+                @foreach (['day' => 'Harian', 'week' => 'Mingguan', 'month' => 'Bulanan'] as $mode => $label)
+                    <a class="student-schedule__tab {{ $viewMode === $mode ? 'is-active' : '' }}" href="{{ route('student.schedule', ['view' => $mode, 'date' => $calendar['currentDate']]) }}">{{ $label }}</a>
+                @endforeach
+            </div>
+            <div class="student-schedule__nav">
+                <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['prevDate']]) }}">&larr; Sebelumnya</a>
+                <span style="font-weight: 600; color: var(--student-text-muted);">{{ $calendar['label'] }}</span>
                 <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['nextDate']]) }}">Berikutnya &rarr;</a>
             </div>
         </div>

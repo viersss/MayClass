@@ -79,6 +79,20 @@
                 width: 100%;
             }
 
+            [data-reveal] {
+                opacity: 0;
+                transform: translateY(48px);
+                transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+                transition-delay: var(--reveal-delay, 0ms);
+                will-change: opacity, transform;
+            }
+
+            [data-reveal].is-visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
             /* ==== NAVBAR TRANSLUCENT + BLUR ==== */
 header {
   overflow: visible;           /* biar elemen nav tidak ter-clipping */
@@ -962,14 +976,14 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 </div>
             </nav>
             <div class="hero" id="beranda">
-                <div class="hero-content">
+                <div class="hero-content" data-reveal data-reveal-delay="40">
                     <span class="badge">Bimbel Digital MayClass</span>
                     <h1>Langkah Pasti Menuju Prestasi</h1>
                     <p>
                         Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel, dan
                         penuh dukungan menuju kampus impianmu.
                     </p>
-                    <div class="hero-stats">
+                    <div class="hero-stats" data-reveal data-reveal-delay="140">
                         <div>Dipercaya ribuan pelajar dan orang tua di seluruh Indonesia.</div>
                         <div class="hero-stats-row">
                             <div class="hero-stat">
@@ -992,7 +1006,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <section class="section" id="artikel">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header" data-reveal>
                     <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Artikel Terupdate
                     </span>
@@ -1003,7 +1017,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                     </p>
                 </div>
                 <div class="articles-grid">
-                    <article class="article-card">
+                    <article class="article-card" data-reveal>
                         <img
                             src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=800&q=80"
                             alt="Artikel UTBK"
@@ -1016,7 +1030,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             <a class="link-muted" href="{{ route('packages.index') }}">Baca Program Unggulan →</a>
                         </div>
                     </article>
-                    <article class="article-card">
+                    <article class="article-card" data-reveal data-reveal-delay="120">
                         <img
                             src="https://images.unsplash.com/photo-1460518451285-97b6aa326961?auto=format&fit=crop&w=800&q=80"
                             alt="Artikel SKD"
@@ -1029,7 +1043,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             <a class="link-muted" href="{{ route('packages.index') }}">Ikuti Tryout Interaktif →</a>
                         </div>
                     </article>
-                    <article class="article-card">
+                    <article class="article-card" data-reveal data-reveal-delay="200">
                         <img
                             src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80"
                             alt="Artikel motivasi"
@@ -1048,7 +1062,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <section class="pricing-section" id="paket">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header" data-reveal>
                     <span class="badge" style="background: rgba(132, 217, 134, 0.18); color: var(--primary-main);">
                         Paket Belajar
                     </span>
@@ -1073,7 +1087,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             <div class="pricing-grid">
                                 @foreach ($group['packages'] as $package)
                                     @php($features = collect($package['card_features'] ?? $package['features'] ?? [])->take(3))
-                                    <article class="pricing-card">
+                                    <article class="pricing-card" data-reveal data-reveal-delay="{{ $loop->index * 120 }}">
                                         <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">
                                             {{ $package['tag'] ?? ($group['stage_label'] ?? $group['stage']) }}
                                         </span>
@@ -1127,7 +1141,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <div class="highlight-section" id="keunggulan">
             <div class="highlight-content">
-                <div>
+                <div data-reveal>
                     <span class="badge" style="background: rgba(255, 255, 255, 0.16); color: #ffffff;">Mengapa MayClass?</span>
                     <h2 style="margin: 18px 0 12px; font-size: clamp(2.1rem, 3vw, 3rem); color: #ffffff;">Bersama MayClass Belajarmu Lebih Seru</h2>
                     <p style="margin: 0; max-width: 620px; color: rgba(255, 255, 255, 0.84);">
@@ -1136,25 +1150,25 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                     </p>
                 </div>
                 <div class="highlight-grid">
-                    <div class="highlight-card">
+                    <div class="highlight-card" data-reveal>
                         <strong>Super Teacher</strong>
                         <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
                             Mentor pilihan dengan pengalaman mengajar panjang dan capaian prestisius.
                         </p>
                     </div>
-                    <div class="highlight-card">
+                    <div class="highlight-card" data-reveal data-reveal-delay="120">
                         <strong>Materi Lengkap</strong>
                         <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
                             Silabus terbaru, bank soal adaptif, dan rekaman kelas siap diputar kapan pun.
                         </p>
                     </div>
-                    <div class="highlight-card">
+                    <div class="highlight-card" data-reveal data-reveal-delay="200">
                         <strong>Analisis Mendalam</strong>
                         <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
                             Pantau progres lewat laporan mingguan dan rekomendasi belajar personal.
                         </p>
                     </div>
-                    <div class="highlight-card">
+                    <div class="highlight-card" data-reveal data-reveal-delay="280">
                         <strong>Komunitas Aktif</strong>
                         <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
                             Saling dukung bersama teman sefrekuensi dan dapatkan motivasi harian.
@@ -1166,7 +1180,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <section class="section" id="testimoni">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header" data-reveal>
                     <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Testimoni Siswa
                     </span>
@@ -1176,7 +1190,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         di ujian bergengsi.
                     </p>
                 </div>
-                <div class="slider" data-slider="testimonial">
+                <div class="slider" data-slider="testimonial" data-reveal>
                     <div class="slider-track">
                         <div class="slide">
                             <article class="testimonial-card">
@@ -1233,7 +1247,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <section class="section" id="tentor">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header" data-reveal>
                     <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Super Teacher MayClass
                     </span>
@@ -1243,7 +1257,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         menyenangkan.
                     </p>
                 </div>
-                <div class="slider" data-slider="mentor">
+                <div class="slider" data-slider="mentor" data-reveal>
                     <div class="slider-track">
                         <div class="slide">
                             <article class="mentor-card">
@@ -1295,7 +1309,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <section class="section" id="faq">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header" data-reveal>
                     <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Pertanyaan yang Sering Diajukan
                     </span>
@@ -1305,7 +1319,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         MayClass.
                     </p>
                 </div>
-                <div class="faq-grid">
+                <div class="faq-grid" data-reveal>
                     <details>
                         <summary>Apakah MayClass menyediakan kelas online dan tatap muka?</summary>
                         <p>
@@ -1350,7 +1364,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <footer>
             <div class="container">
-                <div class="footer-grid">
+                <div class="footer-grid" data-reveal>
                     <div class="footer-brand">
                         <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                         <p>
@@ -1395,7 +1409,95 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                     return;
                 }
 
-                if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                const revealElements = Array.from(document.querySelectorAll('[data-reveal]'));
+                const motionQuery = window.matchMedia
+                    ? window.matchMedia('(prefers-reduced-motion: reduce)')
+                    : null;
+                let revealObserver = null;
+
+                const disconnectObserver = () => {
+                    if (revealObserver) {
+                        revealObserver.disconnect();
+                        revealObserver = null;
+                    }
+                };
+
+                const revealImmediately = () => {
+                    if (!revealElements.length) {
+                        return;
+                    }
+
+                    revealElements.forEach((element) => {
+                        element.classList.add('is-visible');
+                        element.style.removeProperty('--reveal-delay');
+                    });
+
+                    disconnectObserver();
+                };
+
+                const setupRevealObserver = () => {
+                    if (!revealElements.length) {
+                        return;
+                    }
+
+                    disconnectObserver();
+
+                    if (motionQuery && motionQuery.matches) {
+                        revealImmediately();
+                        return;
+                    }
+
+                    revealObserver = new IntersectionObserver(
+                        (entries) => {
+                            entries.forEach((entry) => {
+                                if (!entry.isIntersecting) {
+                                    return;
+                                }
+
+                                const element = entry.target;
+                                const delay = Number(element.dataset.revealDelay || 0);
+
+                                if (Number.isFinite(delay) && !element.style.getPropertyValue('--reveal-delay')) {
+                                    element.style.setProperty('--reveal-delay', `${delay}ms`);
+                                }
+
+                                requestAnimationFrame(() => {
+                                    element.classList.add('is-visible');
+                                });
+
+                                if (revealObserver) {
+                                    revealObserver.unobserve(element);
+                                }
+                            });
+                        },
+                        {
+                            threshold: 0.25,
+                            rootMargin: '0px 0px -10% 0px',
+                        }
+                    );
+
+                    revealElements.forEach((element) => {
+                        if (element.classList.contains('is-visible')) {
+                            return;
+                        }
+
+                        revealObserver.observe(element);
+                    });
+                };
+
+                setupRevealObserver();
+
+                if (motionQuery) {
+                    motionQuery.addEventListener('change', (event) => {
+                        if (event.matches) {
+                            revealImmediately();
+                        } else {
+                            setupRevealObserver();
+                        }
+                    });
+                }
+
+                if (motionQuery && motionQuery.matches) {
                     return;
                 }
 
