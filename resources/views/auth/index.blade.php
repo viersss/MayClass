@@ -185,58 +185,6 @@
                 color: var(--text-muted);
             }
 
-            .register-success-overlay {
-                position: fixed;
-                inset: 0;
-                background: rgba(15, 23, 42, 0.45);
-                display: grid;
-                place-items: center;
-                z-index: 90;
-                opacity: 0;
-                animation: overlay-in 0.25s ease forwards;
-            }
-
-            .register-success-overlay.is-leaving {
-                opacity: 0;
-                transition: opacity 0.25s ease;
-                pointer-events: none;
-            }
-
-            .register-success-card {
-                background: linear-gradient(160deg, rgba(253, 254, 254, 0.98), rgba(255, 255, 255, 0.9));
-                border-radius: 24px;
-                padding: 32px 42px;
-                text-align: center;
-                box-shadow: 0 30px 60px rgba(17, 24, 39, 0.18);
-                border: 1px solid rgba(66, 183, 173, 0.25);
-                max-width: 420px;
-                width: min(420px, 90vw);
-            }
-
-            .register-success-card strong {
-                display: block;
-                font-size: 1.2rem;
-                margin-bottom: 8px;
-                color: var(--primary-dark);
-            }
-
-            .register-success-card p {
-                margin: 0;
-                color: var(--text-muted);
-            }
-
-            @keyframes overlay-in {
-                from {
-                    opacity: 0;
-                    transform: translateY(12px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
             html[data-mode="register"] .step-indicator[data-step="register"],
             html[data-mode="login"] .step-indicator[data-step="login"] {
                 display: flex;
@@ -575,15 +523,6 @@
     </head>
     <body>
         @php($profileData = $profile ?? [])
-        @if (session('register_success'))
-            <div class="register-success-overlay" data-register-success>
-                <div class="register-success-card" role="status" aria-live="assertive">
-                    <strong>Registrasi berhasil!</strong>
-                    <p>{{ session('status') ?? 'Mengalihkan ke halaman login…' }}</p>
-                </div>
-            </div>
-        @endif
-
         <a class="back-link" href="{{ url('/') }}">
             <span aria-hidden="true">&lt;</span>
             Kembali
@@ -599,15 +538,10 @@
                             Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
                             pendampingan tentor profesional.
                         </h1>
-                        <h1 data-copy-mode="login">Selamat datang kembali di MayClass</h1>
-                        <p data-copy-mode="register">
-                            Lengkapi data diri Anda terlebih dahulu sebelum membuat kata sandi agar kami dapat
-                            mempersonalisasi rekomendasi paket belajar sesuai kebutuhan.
-                        </p>
-                        <p data-copy-mode="login">
+                        <h1 data-copy-mode="login">                            
                             Masuk untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
                             pendampingan tentor profesional.
-                        </p>
+                        </h1>
                     </div>
                 </div>
                 <div class="auth-panel">
@@ -620,23 +554,6 @@
                             <button type="button" data-mode="login" role="tab" aria-selected="false">
                                 Masuk
                             </button>
-                        </div>
-                    </div>
-
-                    <div class="step-indicators">
-                        <div class="step-indicator" data-step="register" aria-live="polite">
-                            <div class="step-dots" aria-hidden="true">
-                                <span class="step-dot step-dot--filled"></span>
-                                <span class="step-dot"></span>
-                            </div>
-                            <p class="step-label">Step 1 dari 2</p>
-                        </div>
-                        <div class="step-indicator" data-step="login" aria-live="polite">
-                            <div class="step-dots" aria-hidden="true">
-                                <span class="step-dot"></span>
-                                <span class="step-dot step-dot--filled"></span>
-                            </div>
-                            <p class="step-label">Step 2 dari 2</p>
                         </div>
                     </div>
 
@@ -926,18 +843,6 @@
                     toggleTerms(false);
                 }
             });
-
-            const registerSuccessOverlay = document.querySelector('[data-register-success]');
-
-            if (registerSuccessOverlay) {
-                setTimeout(() => {
-                    registerSuccessOverlay.classList.add('is-leaving');
-                }, 1700);
-
-                setTimeout(() => {
-                    window.location.assign('{{ route('login') }}');
-                }, 2000);
-            }
         </script>
     </body>
 </html>

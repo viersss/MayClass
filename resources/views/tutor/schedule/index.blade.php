@@ -443,9 +443,9 @@
                 </label>
                 <label>
                     <span>Hari</span>
-                    @php($weekdayOptions = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 0 => 'Minggu'])
+                    @php($days = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 0 => 'Minggu'])
                     <select name="day_of_week" required>
-                        @foreach ($weekdayOptions as $value => $label)
+                        @foreach ($days as $value => $label)
                             <option value="{{ $value }}" @selected((string) old('day_of_week') === (string) $value)>{{ $label }}</option>
                         @endforeach
                     </select>
@@ -510,7 +510,7 @@
                                 <label>
                                     <span>Hari</span>
                                     <select name="day_of_week" required>
-                                        @foreach ($weekdayOptions as $value => $label)
+                                        @foreach ($days as $value => $label)
                                             <option value="{{ $value }}" @selected($template->day_of_week === $value)>{{ $label }}</option>
                                         @endforeach
                                     </select>

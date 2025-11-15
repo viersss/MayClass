@@ -173,8 +173,7 @@
 
 @section('content')
     @php($currentAdmin = $account ?? $admin)
-    @php($avatarPlaceholder = asset('images/avatar-placeholder.svg'))
-    @php($avatarSource = $avatarUrl ?? $avatarPlaceholder)
+    @php($avatarSource = $avatarUrl ?? config('mayclass.images.tutor.banner.fallback'))
     <div class="account-wrapper">
         <div class="account-header">
             <img src="{{ $avatarSource }}" alt="Foto Admin" id="admin-account-avatar" />

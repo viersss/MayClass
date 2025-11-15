@@ -263,8 +263,7 @@
     <div class="account-shell">
         <aside class="profile-pane">
             <div class="profile-pane-content">
-                @php($placeholderAvatar = asset('images/avatar-placeholder.svg'))
-                @php($profileAvatar = $avatarUrl ?? $placeholderAvatar)
+                @php($profileAvatar = $avatarUrl ?? config('mayclass.images.tutor.banner.fallback'))
                 <img src="{{ $profileAvatar }}" alt="Foto Tutor" class="profile-avatar" />
                 <div>
                     <h2 class="profile-name">{{ $tutor?->name ?? 'Tutor MayClass' }}</h2>
@@ -310,7 +309,7 @@
                 <div class="avatar-upload">
                     <div class="avatar-preview">
                         <img
-                            src="{{ $avatarUrl ?? $placeholderAvatar }}"
+                            src="{{ $avatarUrl ?? config('mayclass.images.tutor.banner.fallback') }}"
                             alt="Preview foto tutor"
                             id="tutor-avatar-preview"
                         />
