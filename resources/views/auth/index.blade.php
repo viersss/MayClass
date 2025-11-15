@@ -102,10 +102,12 @@
             }
 
             .auth-illustration h1 {
-                font-size: clamp(1.9rem, 2.5vw, 2.6rem);
+                font-size: clamp(0.9rem, 1.7vw, 1.9rem);
+                font-weight: 400; /* atau 300 kalau mau lebih ringan */
                 margin: 0;
                 line-height: 1.3;
             }
+
 
             .auth-illustration p {
                 color: #f6fffe;
@@ -551,12 +553,29 @@
                     <div class="auth-header">
                         <h2>Selamat datang di MayClass</h2>
                         <div class="tab-switcher" role="tablist">
-                            <button type="button" data-mode="login" role="tab" aria-selected="false">
-                                Masuk
-                            </button>
                             <button type="button" data-mode="register" role="tab" aria-selected="false">
                                 Registrasi
                             </button>
+                            <button type="button" data-mode="login" role="tab" aria-selected="false">
+                                Masuk
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="step-indicators">
+                        <div class="step-indicator" data-step="register" aria-live="polite">
+                            <div class="step-dots" aria-hidden="true">
+                                <span class="step-dot step-dot--filled"></span>
+                                <span class="step-dot"></span>
+                            </div>
+                            <p class="step-label">Step 1 dari 2</p>
+                        </div>
+                        <div class="step-indicator" data-step="login" aria-live="polite">
+                            <div class="step-dots" aria-hidden="true">
+                                <span class="step-dot"></span>
+                                <span class="step-dot step-dot--filled"></span>
+                            </div>
+                            <p class="step-label">Step 2 dari 2</p>
                         </div>
                     </div>
 
