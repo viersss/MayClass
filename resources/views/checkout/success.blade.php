@@ -227,31 +227,52 @@
                 </nav>
             </div>
         </header>
+        @php($status = $order->status ?? 'pending')
+        @php($isPending = $status !== 'paid')
         <main>
             <div class="success-card">
-                <div class="status-icon" aria-hidden="true">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
-                        <path
-                            d="M9.00016 16.2001L4.80016 12.0001L3.40016 13.4001L9.00016 19.0001L21.0002 7.00006L19.6002 5.60006L9.00016 16.2001Z"
-                            fill="currentColor"
-                        />
-                    </svg>
+                <div class="status-icon" aria-hidden="true" style="color: {{ $isPending ? '#f59e0b' : 'var(--primary)' }}; background: {{ $isPending ? 'rgba(245, 158, 11, 0.12)' : 'rgba(61, 183, 173, 0.12)' }};">
+                    @if ($isPending)
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm.75 5v5.09l3.62 2.17-.75 1.23-4.12-2.49V7H12.75Z" fill="currentColor"/>
+                        </svg>
+                    @else
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M9.00016 16.2001L4.80016 12.0001L3.40016 13.4001L9.00016 19.0001L21.0002 7.00006L19.6002 5.60006L9.00016 16.2001Z"
+                                fill="currentColor"
+                            />
+                        </svg>
+                    @endif
                 </div>
-                <h1>Pembayaran Berhasil!</h1>
+                <h1>{{ $isPending ? 'Bukti Pembayaran Diterima' : 'Pembayaran Berhasil!' }}</h1>
                 <p>
-                    Terima kasih telah mempercayakan perjalanan belajar bersama MayClass. Akses paket
-                    <strong>{{ $package['detail_title'] }}</strong> kini tercatat sebagai <strong>{{ ucfirst($order->status) }}</strong>.
-                    Silakan masuk kembali untuk menikmati materi, quiz, dan jadwal terbaru sesuai akunmu.
+                    Terima kasih telah mempercayakan perjalanan belajar bersama MayClass. Status paket
+                    <strong>{{ $package['detail_title'] }}</strong> kini <strong>{{ $isPending ? 'menunggu verifikasi admin' : 'aktif dan siap dipakai' }}</strong>.
+                    <br />
+                    <span style="display: inline-block; margin-top: 8px; font-size: 0.95rem; color: rgba(100, 116, 139, 0.9);">
+                        {{ $package['stage_label'] ?? $package['stage'] ?? 'Program' }}@if (! empty($package['grade_range'])) • {{ $package['grade_range'] }} @endif
+                    </span>
+                    @if ($isPending)
+                        Tim keuangan kami akan mengecek pembayaran Anda maksimal 1x24 jam kerja. Anda akan menerima notifikasi begitu akses aktif.
+                    @else
+                        Silakan masuk kembali untuk menikmati materi, quiz, dan jadwal terbaru sesuai akunmu.
+                    @endif
                 </p>
                 <div class="order-summary">
                     <div><strong>Paket:</strong> {{ $package['detail_title'] }}</div>
+                    <div><strong>Jenjang:</strong> {{ $package['stage_label'] ?? $package['stage'] ?? '—' }}</div>
+                    @if (! empty($package['grade_range']))
+                        <div><strong>Rentang kelas:</strong> {{ $package['grade_range'] }}</div>
+                    @endif
                     <div><strong>ID Pesanan:</strong> MC-{{ str_pad((string) $order->id, 6, '0', STR_PAD_LEFT) }}</div>
                     <div><strong>Total Dibayar:</strong> Rp {{ number_format((int) $order->total, 0, ',', '.') }}</div>
                     <div><strong>Email Konfirmasi:</strong> {{ optional($order->user)->email ?? 'Akun MayClass Anda' }}</div>
+                    <div><strong>Status:</strong> {{ $isPending ? 'Menunggu verifikasi' : 'Terverifikasi' }}</div>
                 </div>
                 <div class="cta-group">
-                    <a class="btn btn-primary" href="{{ route('login') }}">Login Ulang Sekarang</a>
-                    <a class="btn btn-outline" href="{{ route('student.dashboard') }}">Masuk ke Dashboard</a>
+                    <a class="btn btn-primary" href="{{ route('student.dashboard') }}">Kembali ke Dashboard</a>
+                    <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Lain</a>
                 </div>
             </div>
         </main>

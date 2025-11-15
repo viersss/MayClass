@@ -130,6 +130,15 @@
                 line-height: 1.7;
             }
 
+            .package-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px 12px;
+                font-size: 0.95rem;
+                color: var(--text-muted);
+                margin: 12px 0 0;
+            }
+
             .tag {
                 display: inline-flex;
                 align-items: center;
@@ -340,8 +349,14 @@
         <div class="container">
             <main>
                 <section class="summary">
-                    <span class="tag">{{ $package['tag'] }} Program</span>
+                    <span class="tag">{{ $package['tag'] ?? ($package['stage_label'] ?? 'Program MayClass') }}</span>
                     <h1>{{ $package['detail_title'] }}</h1>
+                    <div class="package-meta">
+                        <span>{{ $package['stage_label'] ?? $package['stage'] ?? 'Program' }}</span>
+                        @if (! empty($package['grade_range']))
+                            <span>• {{ $package['grade_range'] }}</span>
+                        @endif
+                    </div>
                     <p>{{ $package['summary'] }}</p>
 
                     <div class="learn-points">
@@ -360,7 +375,17 @@
                         <h2>Investasi Belajar</h2>
                         <div class="price-box">
                             <p class="price">{{ $package['detail_price'] }}</p>
-                            <a class="buy-btn" href="{{ route('checkout.show', $package['slug']) }}">Buy Now</a>
+                            @auth
+                                <a class="buy-btn" href="{{ route('checkout.show', $package['slug']) }}">Checkout Sekarang</a>
+                            @else
+                                <a class="buy-btn" href="{{ route('register') }}">Daftar &amp; Checkout</a>
+                            @endauth
+                        </div>
+                        <div class="package-meta" style="margin-top: -6px;">
+                            <span>{{ $package['stage_label'] ?? $package['stage'] ?? 'Program' }}</span>
+                            @if (! empty($package['grade_range']))
+                                <span>• {{ $package['grade_range'] }}</span>
+                            @endif
                         </div>
                         <div>
                             <h3 style="margin: 0 0 12px">This course included</h3>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-page="landing">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,24 +12,26 @@
         />
         <style>
             :root {
-                 --nav-height: 64px;
-color-scheme: light;
---primary-dark: #1b6d4f;
---primary-main: #3fa67e;
---primary-light: #84d986;
---primary-accent: #a8e6a1;
---neutral-900: #1f2328;
---neutral-700: #4d5660;
---neutral-100: #f6f7f8;
---surface: #ffffff;
-/* NAV lebih terang agar logo kontras */
---nav-surface: linear-gradient(135deg, rgba(80, 190, 150, 0.98), rgba(63, 166, 126, 0.98));
---footer-surface: #e8f3ef;
---shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
---shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
---radius-lg: 20px;
---radius-xl: 28px;
-}
+                color-scheme: light;
+                --nav-height: 64px;
+                --primary-dark: #1b6d4f;
+                --primary-main: #3fa67e;
+                --primary-light: #84d986;
+                --primary-accent: #a8e6a1;
+                --neutral-900: #1f2328;
+                --neutral-700: #4d5660;
+                --neutral-100: #f6f7f8;
+                --surface: #ffffff;
+                --ink-strong: #14352c;
+                --ink-muted: rgba(20, 59, 46, 0.78);
+                --ink-soft: rgba(20, 59, 46, 0.62);
+                --nav-surface: linear-gradient(135deg, rgba(80, 190, 150, 0.98), rgba(63, 166, 126, 0.98));
+                --footer-surface: #e8f3ef;
+                --shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
+                --shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
+                --radius-lg: 20px;
+                --radius-xl: 28px;
+            }
             *,
             *::before,
             *::after {
@@ -39,7 +41,7 @@ color-scheme: light;
             body {
                 margin: 0;
                 font-family: "Poppins", sans-serif;
-                color: var(--neutral-900);
+                color: var(--ink-strong);
                 background: #ffffff;
                 line-height: 1.7;
             }
@@ -71,6 +73,20 @@ color-scheme: light;
 
             .section .container {
                 width: 100%;
+            }
+
+            [data-reveal] {
+                opacity: 0;
+                transform: translateY(48px);
+                transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+                transition-delay: var(--reveal-delay, 0ms);
+                will-change: opacity, transform;
+            }
+
+            [data-reveal].is-visible {
+                opacity: 1;
+                transform: translateY(0);
             }
 
             /* ==== NAVBAR TRANSLUCENT + BLUR ==== */
@@ -230,6 +246,17 @@ nav {
                 transform: translateY(-1px);
             }
 
+            .btn-ghost {
+                border-color: rgba(63, 166, 126, 0.35);
+                background: rgba(63, 166, 126, 0.08);
+                color: var(--primary-dark);
+            }
+
+            .btn-ghost:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 14px 32px rgba(63, 166, 126, 0.2);
+            }
+
 .hero {
   position: relative;
   z-index: 1;
@@ -307,6 +334,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 backdrop-filter: blur(12px);
                 border: 1px solid rgba(255, 255, 255, 0.16);
                 max-width: 440px;
+                color: rgba(255, 255, 255, 0.9);
             }
 
             .hero-stats-row {
@@ -324,6 +352,10 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             .hero-stat strong {
                 font-size: 1.6rem;
                 color: #ffffff;
+            }
+
+            .hero-stat span {
+                color: rgba(255, 255, 255, 0.8);
             }
 
             .hero-art {
@@ -357,12 +389,12 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             .section-header h2 {
                 margin: 0;
                 font-size: clamp(2rem, 3vw, 2.7rem);
-                color: var(--neutral-900);
+                color: var(--ink-strong);
             }
 
             .section-header p {
                 margin: 0;
-                color: var(--neutral-700);
+                color: var(--ink-muted);
             }
 
             /* Articles grid in full-width container */
@@ -397,12 +429,12 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             .article-content h3 {
                 margin: 0;
                 font-size: 1.15rem;
-                color: var(--neutral-900);
+                color: var(--ink-strong);
             }
 
             .article-content p {
                 margin: 0;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
                 font-size: 0.95rem;
             }
 
@@ -418,10 +450,26 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 padding: 96px 0;
             }
 
+            .pricing-group {
+                display: grid;
+                gap: 24px;
+                margin-top: 48px;
+            }
+
+            .pricing-group h3 {
+                margin: 0;
+                font-size: 1.6rem;
+            }
+
+            .pricing-group p {
+                margin: 6px 0 0;
+                color: var(--ink-soft);
+            }
+
             .pricing-grid {
                 display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 32px;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 28px;
                 width: 100%;
             }
 
@@ -454,19 +502,40 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 font-weight: 700;
             }
 
+            .pricing-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                font-size: 0.9rem;
+                color: var(--ink-soft);
+            }
+
             .pricing-features {
                 list-style: none;
                 margin: 0;
                 padding: 0;
                 display: grid;
                 gap: 12px;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
             }
 
             .pricing-features li::before {
                 content: "•";
                 margin-right: 8px;
                 color: var(--primary-light);
+            }
+
+            .pricing-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-top: 8px;
+            }
+
+            .pricing-actions a {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
             }
 
             /* Highlight section as full-width block */
@@ -593,29 +662,44 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
             .testimonial-card,
             .mentor-card {
-                background: #ffffff;
-                border-radius: var(--radius-xl);
+                --card-border: rgba(31, 107, 79, 0.12);
+                --card-shadow: 0 18px 42px rgba(17, 57, 41, 0.14);
+                background: linear-gradient(145deg, rgba(242, 252, 247, 0.9) 0%, #ffffff 55%, rgba(236, 250, 244, 0.95) 100%);
+                border-radius: calc(var(--radius-xl) + 4px);
                 padding: 32px;
                 display: flex;
                 flex-direction: column;
                 gap: 18px;
-                box-shadow: var(--shadow-md);
+                box-shadow: var(--card-shadow);
                 height: 100%;
-                transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+                transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
                 position: relative;
                 overflow: hidden;
-                border: 1px solid rgba(31, 107, 79, 0.08);
+                border: 1px solid var(--card-border);
+                isolation: isolate;
             }
 
             .testimonial-card::before,
             .mentor-card::before {
                 content: "";
                 position: absolute;
-                inset: -40%;
-                background: radial-gradient(circle at top left, rgba(63, 166, 126, 0.2), transparent 65%);
+                inset: -45% -30% 40% -30%;
+                background: radial-gradient(circle at top left, rgba(63, 166, 126, 0.32), transparent 60%);
                 opacity: 0;
-                transform: scale(0.9);
-                transition: opacity 0.4s ease, transform 0.4s ease;
+                transform: translate3d(-10%, -10%, 0) scale(0.85);
+                transition: opacity 0.45s ease, transform 0.45s ease;
+                z-index: 0;
+            }
+
+            .testimonial-card::after,
+            .mentor-card::after {
+                content: "";
+                position: absolute;
+                inset: 65% -30% -45% 45%;
+                background: radial-gradient(circle at bottom right, rgba(16, 76, 55, 0.25), transparent 70%);
+                opacity: 0;
+                transform: translate3d(10%, 10%, 0) scale(0.8);
+                transition: opacity 0.45s ease, transform 0.45s ease;
                 z-index: 0;
             }
 
@@ -627,15 +711,17 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
             .testimonial-card:hover,
             .mentor-card:hover {
-                transform: translateY(-6px);
-                box-shadow: 0 28px 56px rgba(31, 107, 79, 0.18);
-                border-color: rgba(63, 166, 126, 0.32);
+                transform: translateY(-10px);
+                box-shadow: 0 32px 68px rgba(17, 57, 41, 0.22);
+                border-color: rgba(63, 166, 126, 0.45);
             }
 
             .testimonial-card:hover::before,
-            .mentor-card:hover::before {
+            .mentor-card:hover::before,
+            .testimonial-card:hover::after,
+            .mentor-card:hover::after {
                 opacity: 1;
-                transform: scale(1.05);
+                transform: translate3d(0, 0, 0) scale(1.05);
             }
 
             .testimonial-card img,
@@ -643,20 +729,23 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 width: 100%;
                 height: 200px;
                 object-fit: cover;
-                border-radius: var(--radius-lg);
-                transition: transform 0.35s ease, box-shadow 0.35s ease;
-                box-shadow: 0 12px 24px rgba(15, 52, 38, 0.08);
+                border-radius: calc(var(--radius-lg) + 4px);
+                transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
+                box-shadow: 0 14px 28px rgba(15, 52, 38, 0.12);
+                border: 1px solid rgba(63, 166, 126, 0.2);
+                filter: saturate(0.96);
             }
 
             .testimonial-card:hover img,
             .mentor-card:hover img {
-                transform: scale(1.03);
-                box-shadow: 0 18px 36px rgba(15, 52, 38, 0.14);
+                transform: translateY(-4px) scale(1.04);
+                box-shadow: 0 22px 42px rgba(15, 52, 38, 0.18);
+                filter: saturate(1.05);
             }
 
             .testimonial-card p {
                 margin: 0;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
                 font-size: 0.95rem;
                 line-height: 1.6;
             }
@@ -666,7 +755,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             }
 
             .mentor-role {
-                color: var(--neutral-700);
+                color: var(--ink-soft);
                 font-size: 0.9rem;
                 margin: 0;
             }
@@ -717,7 +806,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             .footer-links {
                 display: grid;
                 gap: 10px;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
                 font-size: 0.95rem;
             }
 
@@ -732,7 +821,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             .copyright {
                 margin: 0;
                 text-align: center;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
                 font-size: 0.9rem;
                 padding: 0 32px;
             }
@@ -883,14 +972,14 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 </div>
             </nav>
             <div class="hero" id="beranda">
-                <div class="hero-content">
+                <div class="hero-content" data-reveal data-reveal-delay="40">
                     <span class="badge">Bimbel Digital MayClass</span>
                     <h1>Langkah Pasti Menuju Prestasi</h1>
                     <p>
                         Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel, dan
                         penuh dukungan menuju kampus impianmu.
                     </p>
-                    <div class="hero-stats">
+                    <div class="hero-stats" data-reveal data-reveal-delay="140">
                         <div>Dipercaya ribuan pelajar dan orang tua di seluruh Indonesia.</div>
                         <div class="hero-stats-row">
                             <div class="hero-stat">
@@ -913,7 +1002,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <section class="section" id="artikel">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header" data-reveal>
                     <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Artikel Terupdate
                     </span>
@@ -924,7 +1013,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                     </p>
                 </div>
                 <div class="articles-grid">
-                    <article class="article-card">
+                    <article class="article-card" data-reveal>
                         <img
                             src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=800&q=80"
                             alt="Artikel UTBK"
@@ -937,7 +1026,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             <a class="link-muted" href="{{ route('packages.index') }}">Baca Program Unggulan →</a>
                         </div>
                     </article>
-                    <article class="article-card">
+                    <article class="article-card" data-reveal data-reveal-delay="120">
                         <img
                             src="https://images.unsplash.com/photo-1460518451285-97b6aa326961?auto=format&fit=crop&w=800&q=80"
                             alt="Artikel SKD"
@@ -950,7 +1039,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             <a class="link-muted" href="{{ route('packages.index') }}">Ikuti Tryout Interaktif →</a>
                         </div>
                     </article>
-                    <article class="article-card">
+                    <article class="article-card" data-reveal data-reveal-delay="200">
                         <img
                             src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80"
                             alt="Artikel motivasi"
@@ -969,7 +1058,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <section class="pricing-section" id="paket">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header" data-reveal>
                     <span class="badge" style="background: rgba(132, 217, 134, 0.18); color: var(--primary-main);">
                         Paket Belajar
                     </span>
@@ -979,50 +1068,76 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         interaktif dan laporan perkembangan rutin.
                     </p>
                 </div>
-                <div class="pricing-grid">
-                    <article class="pricing-card">
-                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">Tryout SKD</span>
-                        <strong>Simulasi Premium</strong>
-                        <div class="pricing-price">Rp30K</div>
-                        <div style="color: var(--neutral-700);">Diskon spesial dari Rp60K/paket</div>
-                        <ul class="pricing-features">
-                            <li>Bank soal HOTS + pembahasan video</li>
-                            <li>Analisis skor otomatis &amp; ranking nasional</li>
-                            <li>Group coaching bersama mentor ASN</li>
-                        </ul>
-                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Beli Paket</a>
-                    </article>
-                    <article class="pricing-card">
-                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">Tryout TPA</span>
-                        <strong>Bundling Stan/Polstat</strong>
-                        <div class="pricing-price">Rp30K</div>
-                        <div style="color: var(--neutral-700);">Diskon spesial dari Rp60K/paket</div>
-                        <ul class="pricing-features">
-                            <li>8 set TO intensif + pembahasan LIVE</li>
-                            <li>Pembinaan mindset &amp; habit belajar</li>
-                            <li>Prediksi soal dari mentor berpengalaman</li>
-                        </ul>
-                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Beli Paket</a>
-                    </article>
-                    <article class="pricing-card">
-                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">Tryout Matematika</span>
-                        <strong>Spesialis STIS</strong>
-                        <div class="pricing-price">Rp20K</div>
-                        <div style="color: var(--neutral-700);">Diskon spesial dari Rp40K/paket</div>
-                        <ul class="pricing-features">
-                            <li>Pembahasan konsep mendalam setiap sesi</li>
-                            <li>Latihan adaptif sesuai level kemampuan</li>
-                            <li>Group diskusi eksklusif bersama mentor</li>
-                        </ul>
-                        <a class="btn btn-primary" href="{{ route('packages.index') }}">Beli Paket</a>
-                    </article>
-                </div>
+                @php($packageCatalog = collect($landingPackages ?? []))
+
+                @if ($packageCatalog->isNotEmpty())
+                    @foreach ($packageCatalog as $group)
+                        <div class="pricing-group">
+                            <div>
+                                <h3>{{ $group['stage_label'] ?? $group['stage'] }}</h3>
+                                @php($stageDescription = $group['stage_description'] ?? '')
+                                @if (! empty($stageDescription))
+                                    <p>{{ $stageDescription }}</p>
+                                @endif
+                            </div>
+                            <div class="pricing-grid">
+                                @foreach ($group['packages'] as $package)
+                                    @php($features = collect($package['card_features'] ?? $package['features'] ?? [])->take(3))
+                                    <article class="pricing-card" data-reveal data-reveal-delay="{{ $loop->index * 120 }}">
+                                        <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">
+                                            {{ $package['tag'] ?? ($group['stage_label'] ?? $group['stage']) }}
+                                        </span>
+                                        <strong>{{ $package['detail_title'] }}</strong>
+                                        <div class="pricing-price">{{ $package['card_price'] }}</div>
+                                        <div class="pricing-meta">
+                                            <span>{{ $group['stage_label'] ?? $group['stage'] }}</span>
+                                            @if (! empty($package['grade_range']))
+                                                <span>• {{ $package['grade_range'] }}</span>
+                                            @endif
+                                        </div>
+                                        @if ($package['summary'] ?? false)
+                                            <p style="margin: 0; color: var(--ink-soft); font-size: 0.95rem;">
+                                                {{ $package['summary'] }}
+                                            </p>
+                                        @endif
+                                        @if ($features->isNotEmpty())
+                                            <ul class="pricing-features">
+                                                @foreach ($features as $feature)
+                                                    <li>{{ $feature }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                        <div class="pricing-actions">
+                                            <a class="btn btn-ghost" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
+                                            @auth
+                                                <a class="btn btn-primary" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
+                                            @else
+                                                <a class="btn btn-primary" href="{{ route('register') }}">Daftar &amp; Checkout</a>
+                                            @endauth
+                                        </div>
+                                    </article>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="pricing-grid">
+                        <article class="pricing-card">
+                            <strong>Paket sedang disiapkan</strong>
+                            <div class="pricing-price">Segera hadir</div>
+                            <p style="color: var(--ink-soft);">Tim MayClass dapat menambahkan paket melalui dashboard admin untuk menampilkan katalog otomatis di halaman ini.</p>
+                            <div class="pricing-actions">
+                                <a class="btn btn-primary" href="{{ route('login') }}">Masuk Dashboard</a>
+                            </div>
+                        </article>
+                    </div>
+                @endif
             </div>
         </section>
 
         <div class="highlight-section" id="keunggulan">
             <div class="highlight-content">
-                <div>
+                <div data-reveal>
                     <span class="badge" style="background: rgba(255, 255, 255, 0.16); color: #ffffff;">Mengapa MayClass?</span>
                     <h2 style="margin: 18px 0 12px; font-size: clamp(2.1rem, 3vw, 3rem); color: #ffffff;">Bersama MayClass Belajarmu Lebih Seru</h2>
                     <p style="margin: 0; max-width: 620px; color: rgba(255, 255, 255, 0.84);">
@@ -1031,25 +1146,25 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                     </p>
                 </div>
                 <div class="highlight-grid">
-                    <div class="highlight-card">
+                    <div class="highlight-card" data-reveal>
                         <strong>Super Teacher</strong>
                         <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
                             Mentor pilihan dengan pengalaman mengajar panjang dan capaian prestisius.
                         </p>
                     </div>
-                    <div class="highlight-card">
+                    <div class="highlight-card" data-reveal data-reveal-delay="120">
                         <strong>Materi Lengkap</strong>
                         <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
                             Silabus terbaru, bank soal adaptif, dan rekaman kelas siap diputar kapan pun.
                         </p>
                     </div>
-                    <div class="highlight-card">
+                    <div class="highlight-card" data-reveal data-reveal-delay="200">
                         <strong>Analisis Mendalam</strong>
                         <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
                             Pantau progres lewat laporan mingguan dan rekomendasi belajar personal.
                         </p>
                     </div>
-                    <div class="highlight-card">
+                    <div class="highlight-card" data-reveal data-reveal-delay="280">
                         <strong>Komunitas Aktif</strong>
                         <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
                             Saling dukung bersama teman sefrekuensi dan dapatkan motivasi harian.
@@ -1061,7 +1176,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <section class="section" id="testimoni">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header" data-reveal>
                     <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Testimoni Siswa
                     </span>
@@ -1071,7 +1186,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         di ujian bergengsi.
                     </p>
                 </div>
-                <div class="slider" data-slider="testimonial">
+                <div class="slider" data-slider="testimonial" data-reveal>
                     <div class="slider-track">
                         <div class="slide">
                             <article class="testimonial-card">
@@ -1128,7 +1243,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <section class="section" id="tentor">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header" data-reveal>
                     <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Super Teacher MayClass
                     </span>
@@ -1138,7 +1253,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         menyenangkan.
                     </p>
                 </div>
-                <div class="slider" data-slider="mentor">
+                <div class="slider" data-slider="mentor" data-reveal>
                     <div class="slider-track">
                         <div class="slide">
                             <article class="mentor-card">
@@ -1190,7 +1305,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <section class="section" id="faq">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header" data-reveal>
                     <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
                         Pertanyaan yang Sering Diajukan
                     </span>
@@ -1200,7 +1315,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         MayClass.
                     </p>
                 </div>
-                <div class="faq-grid">
+                <div class="faq-grid" data-reveal>
                     <details>
                         <summary>Apakah MayClass menyediakan kelas online dan tatap muka?</summary>
                         <p>
@@ -1245,7 +1360,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
         <footer>
             <div class="container">
-                <div class="footer-grid">
+                <div class="footer-grid" data-reveal>
                     <div class="footer-brand">
                         <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                         <p>
@@ -1281,6 +1396,140 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
             </div>
         </footer>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const root = document.documentElement;
+
+                if (!root || root.dataset.page !== 'landing') {
+                    return;
+                }
+
+                const revealElements = Array.from(document.querySelectorAll('[data-reveal]'));
+                const motionQuery = window.matchMedia
+                    ? window.matchMedia('(prefers-reduced-motion: reduce)')
+                    : null;
+                let revealObserver = null;
+
+                const disconnectObserver = () => {
+                    if (revealObserver) {
+                        revealObserver.disconnect();
+                        revealObserver = null;
+                    }
+                };
+
+                const revealImmediately = () => {
+                    if (!revealElements.length) {
+                        return;
+                    }
+
+                    revealElements.forEach((element) => {
+                        element.classList.add('is-visible');
+                        element.style.removeProperty('--reveal-delay');
+                    });
+
+                    disconnectObserver();
+                };
+
+                const setupRevealObserver = () => {
+                    if (!revealElements.length) {
+                        return;
+                    }
+
+                    disconnectObserver();
+
+                    if (motionQuery && motionQuery.matches) {
+                        revealImmediately();
+                        return;
+                    }
+
+                    revealObserver = new IntersectionObserver(
+                        (entries) => {
+                            entries.forEach((entry) => {
+                                if (!entry.isIntersecting) {
+                                    return;
+                                }
+
+                                const element = entry.target;
+                                const delay = Number(element.dataset.revealDelay || 0);
+
+                                if (Number.isFinite(delay) && !element.style.getPropertyValue('--reveal-delay')) {
+                                    element.style.setProperty('--reveal-delay', `${delay}ms`);
+                                }
+
+                                requestAnimationFrame(() => {
+                                    element.classList.add('is-visible');
+                                });
+
+                                if (revealObserver) {
+                                    revealObserver.unobserve(element);
+                                }
+                            });
+                        },
+                        {
+                            threshold: 0.25,
+                            rootMargin: '0px 0px -10% 0px',
+                        }
+                    );
+
+                    revealElements.forEach((element) => {
+                        if (element.classList.contains('is-visible')) {
+                            return;
+                        }
+
+                        revealObserver.observe(element);
+                    });
+                };
+
+                setupRevealObserver();
+
+                if (motionQuery) {
+                    motionQuery.addEventListener('change', (event) => {
+                        if (event.matches) {
+                            revealImmediately();
+                        } else {
+                            setupRevealObserver();
+                        }
+                    });
+                }
+
+                if (motionQuery && motionQuery.matches) {
+                    return;
+                }
+
+                const scrollElement = document.scrollingElement || root;
+
+                if (!scrollElement) {
+                    return;
+                }
+
+                document.querySelectorAll('a[href^="#"]').forEach((link) => {
+                    link.addEventListener('click', (event) => {
+                        const href = link.getAttribute('href');
+
+                        if (!href || href.length <= 1) {
+                            return;
+                        }
+
+                        const anchorTarget = document.querySelector(href);
+
+                        if (!anchorTarget) {
+                            return;
+                        }
+
+                        event.preventDefault();
+
+                        const offset = 80;
+                        const desired =
+                            anchorTarget.getBoundingClientRect().top + window.pageYOffset - offset;
+                        const maxScroll = scrollElement.scrollHeight - window.innerHeight;
+                        const target = Math.min(Math.max(desired, 0), maxScroll);
+
+                        window.scrollTo({ top: target, behavior: 'smooth' });
+                    });
+                });
+            });
+        </script>
 
         <script>
             /* Improved slider functionality with better scroll logic and state management */

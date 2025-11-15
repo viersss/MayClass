@@ -46,6 +46,68 @@
             box-shadow: 0 18px 35px rgba(15, 23, 42, 0.35);
         }
 
+        .avatar-upload {
+            display: grid;
+            gap: 10px;
+            justify-items: center;
+            padding: 20px;
+            border-radius: 24px;
+            background: rgba(93, 230, 201, 0.08);
+            border: 1px solid rgba(45, 212, 191, 0.18);
+        }
+
+        .avatar-preview {
+            width: 112px;
+            height: 112px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+            background: rgba(15, 23, 42, 0.08);
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-input {
+            display: none;
+        }
+
+        .avatar-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: 1px solid rgba(45, 212, 191, 0.35);
+            background: #fff;
+            color: var(--primary-dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .avatar-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(45, 212, 191, 0.25);
+        }
+
+        .avatar-hint {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .avatar-error {
+            margin: 0;
+            font-size: 0.82rem;
+            color: #b91c1c;
+            text-align: center;
+        }
+
         .profile-name {
             margin: 0;
             font-size: 1.6rem;
@@ -201,11 +263,9 @@
     <div class="account-shell">
         <aside class="profile-pane">
             <div class="profile-pane-content">
-                <img
-                    src="{{ $tutorProfile?->avatar_path ? asset('storage/' . $tutorProfile->avatar_path) : config('mayclass.images.tutor.banner.fallback') }}"
-                    alt="Foto Tutor"
-                    class="profile-avatar"
-                />
+                @php($placeholderAvatar = asset('images/avatar-placeholder.svg'))
+                @php($profileAvatar = $avatarUrl ?? $placeholderAvatar)
+                <img src="{{ $profileAvatar }}" alt="Foto Tutor" class="profile-avatar" />
                 <div>
                     <h2 class="profile-name">{{ $tutor?->name ?? 'Tutor MayClass' }}</h2>
                     <p class="profile-role">{{ $tutorProfile?->specializations ?? 'Pengajar MayClass' }}</p>
@@ -244,9 +304,24 @@
                 <div class="last-updated">Terakhir diperbarui {{ $tutor->updated_at->locale('id')->diffForHumans() }}</div>
             @endif
 
-            <form method="POST" action="{{ route('tutor.account.update') }}" class="form-grid">
+            <form method="POST" action="{{ route('tutor.account.update') }}" class="form-grid" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+                <div class="avatar-upload">
+                    <div class="avatar-preview">
+                        <img
+                            src="{{ $avatarUrl ?? $placeholderAvatar }}"
+                            alt="Preview foto tutor"
+                            id="tutor-avatar-preview"
+                        />
+                    </div>
+                    <label for="avatar" class="avatar-button">Ganti Foto Profil</label>
+                    <input type="file" id="avatar" name="avatar" class="avatar-input" accept="image/*" />
+                    <p class="avatar-hint">Format JPG/PNG, maksimal 2 MB</p>
+                    @error('avatar')
+                        <p class="avatar-error">{{ $message }}</p>
+                    @enderror
+                </div>
                 <label>
                     <span>Nama Lengkap</span>
                     <input type="text" name="name" value="{{ old('name', $tutor?->name) }}" required />
@@ -304,3 +379,33 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('avatar');
+            const preview = document.getElementById('tutor-avatar-preview');
+
+            if (!input || !preview) {
+                return;
+            }
+
+            input.addEventListener('change', function () {
+                const file = input.files && input.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.addEventListener('load', function (event) {
+                    const result = event.target?.result;
+                    if (typeof result === 'string') {
+                        preview.src = result;
+                    }
+                });
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
+@endpush
