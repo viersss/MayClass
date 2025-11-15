@@ -247,6 +247,30 @@
                 color: var(--student-primary);
             }
 
+            .student-alert {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                padding: 16px clamp(18px, 3vw, 28px);
+                border-radius: var(--student-radius-md);
+                background: rgba(47, 152, 140, 0.12);
+                color: var(--student-primary);
+                font-size: 0.95rem;
+                box-shadow: 0 18px 36px rgba(27, 119, 110, 0.12);
+            }
+
+            .student-alert--warning {
+                background: rgba(249, 178, 51, 0.16);
+                color: #8a5500;
+            }
+
+            .student-alert__actions {
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+            }
+
             footer.student-footer {
                 text-align: center;
                 font-size: 0.85rem;
@@ -273,6 +297,7 @@
     </head>
     <body>
         @php($user = auth()->user())
+        @php($hasActivePackage = $hasActivePackage ?? ($studentHasActivePackage ?? false))
         <div class="student-shell">
             <header class="student-navbar">
                 <a href="{{ route('student.dashboard') }}" class="student-navbar__brand">
@@ -281,9 +306,11 @@
                 </a>
                 <nav class="student-navbar__links">
                     <a href="{{ route('student.dashboard') }}" class="student-navbar__link {{ request()->routeIs('student.dashboard') ? 'is-active' : '' }}">Beranda</a>
-                    <a href="{{ route('student.materials') }}" class="student-navbar__link {{ request()->routeIs('student.materials*') ? 'is-active' : '' }}">Materi</a>
-                    <a href="{{ route('student.quiz') }}" class="student-navbar__link {{ request()->routeIs('student.quiz*') ? 'is-active' : '' }}">Quiz</a>
-                    <a href="{{ route('student.schedule') }}" class="student-navbar__link {{ request()->routeIs('student.schedule') ? 'is-active' : '' }}">Jadwal</a>
+                    @if ($hasActivePackage)
+                        <a href="{{ route('student.materials') }}" class="student-navbar__link {{ request()->routeIs('student.materials*') ? 'is-active' : '' }}">Materi</a>
+                        <a href="{{ route('student.quiz') }}" class="student-navbar__link {{ request()->routeIs('student.quiz*') ? 'is-active' : '' }}">Quiz</a>
+                        <a href="{{ route('student.schedule') }}" class="student-navbar__link {{ request()->routeIs('student.schedule') ? 'is-active' : '' }}">Jadwal</a>
+                    @endif
                 </nav>
                 <div class="student-navbar__actions">
                     <a class="student-navbar__profile" href="{{ route('student.profile') }}">
@@ -296,6 +323,15 @@
                     </form>
                 </div>
             </header>
+
+            @if (session('subscription_notice'))
+                <div class="student-alert student-alert--warning">
+                    <span>{{ session('subscription_notice') }}</span>
+                    <div class="student-alert__actions">
+                        <a class="student-button student-button--primary" href="{{ route('packages.index') }}">Lihat paket</a>
+                    </div>
+                </div>
+            @endif
 
             <main class="student-main">
                 @yield('content')
