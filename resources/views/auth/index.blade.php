@@ -538,7 +538,10 @@
                             Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
                             pendampingan tentor profesional.
                         </h1>
-                        <h1 data-copy-mode="login">Selamat datang kembali di MayClass</h1>
+                        <h1 data-copy-mode="login">                            
+                            Masuk untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
+                            pendampingan tentor profesional.
+                        </h1>
                     </div>
                 </div>
                 <div class="auth-panel">
