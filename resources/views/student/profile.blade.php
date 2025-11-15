@@ -209,6 +209,13 @@
                 display: none;
             }
 
+            .avatar-upload__error {
+                margin: 4px 0 0;
+                font-size: 0.82rem;
+                color: #b91c1c;
+                text-align: center;
+            }
+
             form {
                 display: grid;
                 gap: 24px;
@@ -341,6 +348,9 @@
                     </div>
                     <label class="avatar-upload__button" for="avatar">Pilih foto</label>
                     <p class="avatar-upload__hint">Format JPG/PNG, maksimal 2 MB</p>
+                    @error('avatar')
+                        <p class="avatar-upload__error">{{ $message }}</p>
+                    @enderror
                 </div>
                 @if ($errors->any())
                     <div

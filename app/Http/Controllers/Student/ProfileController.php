@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Support\AvatarUploader;
 use App\Support\StudentAccess;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,6 +22,12 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
+        $avatarUrl = null;
+
+        if ($user->avatar_path && Storage::disk('public')->exists($user->avatar_path)) {
+            $avatarUrl = Storage::disk('public')->url($user->avatar_path);
+        }
+
         return view('student.profile', [
             'profile' => [
                 'name' => $user->name,
@@ -33,7 +40,7 @@ class ProfileController extends Controller
                 'address' => $user->address,
             ],
             'genderOptions' => $this->genderOptions(),
-            'avatarUrl' => $user->avatar_path ? asset('storage/' . $user->avatar_path) : null,
+            'avatarUrl' => $avatarUrl,
             'hasActivePackage' => StudentAccess::hasActivePackage($user),
         ]);
     }
@@ -55,13 +62,15 @@ class ProfileController extends Controller
         $avatarPath = $user->avatar_path;
 
         if ($request->hasFile('avatar')) {
-            $newAvatar = $request->file('avatar')->store('avatars', 'public');
+            try {
+                $avatarPath = AvatarUploader::store($request->file('avatar'), [$user->avatar_path]);
+            } catch (\Throwable $exception) {
+                report($exception);
 
-            if ($user->avatar_path) {
-                Storage::disk('public')->delete($user->avatar_path);
+                return back()
+                    ->withInput($request->except('avatar'))
+                    ->withErrors(['avatar' => 'Gagal mengunggah foto profil. Silakan coba lagi.']);
             }
-
-            $avatarPath = $newAvatar;
         }
 
         $user->forceFill([

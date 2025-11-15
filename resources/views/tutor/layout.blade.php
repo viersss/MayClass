@@ -378,6 +378,19 @@
                                 'patterns' => ['tutor.account.*'],
                             ],
                         ];
+                        $tutorStoredAvatar = null;
+                        $avatarCandidates = array_filter([
+                            $tutorProfile?->avatar_path,
+                            $tutor?->avatar_path,
+                        ]);
+                        foreach ($avatarCandidates as $candidatePath) {
+                            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($candidatePath)) {
+                                $tutorStoredAvatar = \Illuminate\Support\Facades\Storage::disk('public')->url($candidatePath);
+                                break;
+                            }
+                        }
+                        $tutorSummaryAvatar = $tutorStoredAvatar ?? config('mayclass.images.tutor.banner.fallback');
+                        $tutorHeaderAvatar = $tutorStoredAvatar ?? config('mayclass.images.tutor.resources.fallback');
                     @endphp
                     @foreach ($menuItems as $item)
                         @php
@@ -398,7 +411,7 @@
                 <div class="nav-footer">
                     <div class="profile-summary">
                         <img
-                            src="{{ $tutorProfile?->avatar_path ? asset('storage/' . $tutorProfile->avatar_path) : config('mayclass.images.tutor.banner.fallback') }}"
+                            src="{{ $tutorSummaryAvatar }}"
                             alt="Foto tutor"
                         />
                         <div>
@@ -425,10 +438,7 @@
                     <div class="header-meta">
                         <span class="date-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
                         <div class="header-profile">
-                            <img
-                                src="{{ $tutorProfile?->avatar_path ? asset('storage/' . $tutorProfile->avatar_path) : config('mayclass.images.tutor.resources.fallback') }}"
-                                alt="Profil"
-                            />
+                            <img src="{{ $tutorHeaderAvatar }}" alt="Profil" />
                             <div>
                                 <strong>{{ $tutor?->name ?? 'Tutor MayClass' }}</strong>
                                 <small style="color: var(--text-muted);">{{ $tutorProfile?->headline ?? 'Selamat mengajar hari ini' }}</small>

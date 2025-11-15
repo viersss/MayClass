@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-page="landing">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,24 +12,26 @@
         />
         <style>
             :root {
-                 --nav-height: 64px;
-color-scheme: light;
---primary-dark: #1b6d4f;
---primary-main: #3fa67e;
---primary-light: #84d986;
---primary-accent: #a8e6a1;
---neutral-900: #1f2328;
---neutral-700: #4d5660;
---neutral-100: #f6f7f8;
---surface: #ffffff;
-/* NAV lebih terang agar logo kontras */
---nav-surface: linear-gradient(135deg, rgba(80, 190, 150, 0.98), rgba(63, 166, 126, 0.98));
---footer-surface: #e8f3ef;
---shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
---shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
---radius-lg: 20px;
---radius-xl: 28px;
-}
+                color-scheme: light;
+                --nav-height: 64px;
+                --primary-dark: #1b6d4f;
+                --primary-main: #3fa67e;
+                --primary-light: #84d986;
+                --primary-accent: #a8e6a1;
+                --neutral-900: #1f2328;
+                --neutral-700: #4d5660;
+                --neutral-100: #f6f7f8;
+                --surface: #ffffff;
+                --ink-strong: #14352c;
+                --ink-muted: rgba(20, 59, 46, 0.78);
+                --ink-soft: rgba(20, 59, 46, 0.62);
+                --nav-surface: linear-gradient(135deg, rgba(80, 190, 150, 0.98), rgba(63, 166, 126, 0.98));
+                --footer-surface: #e8f3ef;
+                --shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
+                --shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
+                --radius-lg: 20px;
+                --radius-xl: 28px;
+            }
             *,
             *::before,
             *::after {
@@ -43,7 +45,7 @@ color-scheme: light;
             body {
                 margin: 0;
                 font-family: "Poppins", sans-serif;
-                color: var(--neutral-900);
+                color: var(--ink-strong);
                 background: #ffffff;
                 line-height: 1.7;
             }
@@ -377,12 +379,12 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             .section-header h2 {
                 margin: 0;
                 font-size: clamp(2rem, 3vw, 2.7rem);
-                color: var(--neutral-900);
+                color: var(--ink-strong);
             }
 
             .section-header p {
                 margin: 0;
-                color: var(--neutral-700);
+                color: var(--ink-muted);
             }
 
             /* Articles grid in full-width container */
@@ -417,12 +419,12 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             .article-content h3 {
                 margin: 0;
                 font-size: 1.15rem;
-                color: var(--neutral-900);
+                color: var(--ink-strong);
             }
 
             .article-content p {
                 margin: 0;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
                 font-size: 0.95rem;
             }
 
@@ -451,7 +453,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
             .pricing-group p {
                 margin: 6px 0 0;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
             }
 
             .pricing-grid {
@@ -495,7 +497,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 flex-wrap: wrap;
                 gap: 8px;
                 font-size: 0.9rem;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
             }
 
             .pricing-features {
@@ -504,7 +506,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 padding: 0;
                 display: grid;
                 gap: 12px;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
             }
 
             .pricing-features li::before {
@@ -733,7 +735,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
             .testimonial-card p {
                 margin: 0;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
                 font-size: 0.95rem;
                 line-height: 1.6;
             }
@@ -743,7 +745,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             }
 
             .mentor-role {
-                color: var(--neutral-700);
+                color: var(--ink-soft);
                 font-size: 0.9rem;
                 margin: 0;
             }
@@ -794,7 +796,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             .footer-links {
                 display: grid;
                 gap: 10px;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
                 font-size: 0.95rem;
             }
 
@@ -809,7 +811,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             .copyright {
                 margin: 0;
                 text-align: center;
-                color: var(--neutral-700);
+                color: var(--ink-soft);
                 font-size: 0.9rem;
                 padding: 0 32px;
             }
@@ -1084,7 +1086,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                                             @endif
                                         </div>
                                         @if ($package['summary'] ?? false)
-                                            <p style="margin: 0; color: var(--neutral-700); font-size: 0.95rem;">
+                                            <p style="margin: 0; color: var(--ink-soft); font-size: 0.95rem;">
                                                 {{ $package['summary'] }}
                                             </p>
                                         @endif
@@ -1113,7 +1115,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         <article class="pricing-card">
                             <strong>Paket sedang disiapkan</strong>
                             <div class="pricing-price">Segera hadir</div>
-                            <p style="color: var(--neutral-700);">Tim MayClass dapat menambahkan paket melalui dashboard admin untuk menampilkan katalog otomatis di halaman ini.</p>
+                            <p style="color: var(--ink-soft);">Tim MayClass dapat menambahkan paket melalui dashboard admin untuk menampilkan katalog otomatis di halaman ini.</p>
                             <div class="pricing-actions">
                                 <a class="btn btn-primary" href="{{ route('login') }}">Masuk Dashboard</a>
                             </div>
@@ -1384,6 +1386,122 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
             </div>
         </footer>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const root = document.documentElement;
+
+                if (!root || root.dataset.page !== 'landing') {
+                    return;
+                }
+
+                if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    return;
+                }
+
+                const scrollElement = document.scrollingElement || root;
+
+                if (!scrollElement) {
+                    return;
+                }
+
+                let target = scrollElement.scrollTop;
+                let current = target;
+                let rafId = null;
+                const damping = 0.18;
+
+                const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+                const animate = () => {
+                    const delta = target - current;
+
+                    if (Math.abs(delta) < 0.5) {
+                        current = target;
+                        scrollElement.scrollTo({ top: current, behavior: 'auto' });
+                        rafId = null;
+
+                        return;
+                    }
+
+                    current += delta * damping;
+                    scrollElement.scrollTo(0, current);
+                    rafId = requestAnimationFrame(animate);
+                };
+
+                const queueAnimation = () => {
+                    if (rafId !== null) {
+                        return;
+                    }
+
+                    current = scrollElement.scrollTop;
+                    rafId = requestAnimationFrame(animate);
+                };
+
+                window.addEventListener(
+                    'wheel',
+                    (event) => {
+                        if (event.defaultPrevented || event.ctrlKey) {
+                            return;
+                        }
+
+                        if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
+                            return;
+                        }
+
+                        const interactive = event.target.closest(
+                            'input, textarea, select, [data-scroll-lock], [data-slider]'
+                        );
+
+                        if (interactive) {
+                            return;
+                        }
+
+                        event.preventDefault();
+
+                        const maxScroll = scrollElement.scrollHeight - window.innerHeight;
+                        target = clamp(target + event.deltaY, 0, maxScroll);
+                        queueAnimation();
+                    },
+                    { passive: false }
+                );
+
+                window.addEventListener(
+                    'scroll',
+                    () => {
+                        if (rafId === null) {
+                            target = scrollElement.scrollTop;
+                            current = scrollElement.scrollTop;
+                        }
+                    },
+                    { passive: true }
+                );
+
+                document.querySelectorAll('a[href^="#"]').forEach((link) => {
+                    link.addEventListener('click', (event) => {
+                        const href = link.getAttribute('href');
+
+                        if (!href || href.length <= 1) {
+                            return;
+                        }
+
+                        const anchorTarget = document.querySelector(href);
+
+                        if (!anchorTarget) {
+                            return;
+                        }
+
+                        event.preventDefault();
+
+                        const offset = 80;
+                        const desired =
+                            anchorTarget.getBoundingClientRect().top + scrollElement.scrollTop - offset;
+                        const maxScroll = scrollElement.scrollHeight - window.innerHeight;
+                        target = clamp(desired, 0, maxScroll);
+                        queueAnimation();
+                    });
+                });
+            });
+        </script>
 
         <script>
             /* Improved slider functionality with better scroll logic and state management */
