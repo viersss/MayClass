@@ -154,17 +154,66 @@
                 text-align: center;
             }
 
-            .avatar {
-                width: 96px;
-                height: 96px;
+            .avatar-upload {
+                display: grid;
+                gap: 12px;
+                justify-items: center;
+            }
+
+            .avatar-preview {
+                width: 112px;
+                height: 112px;
                 border-radius: 50%;
                 background: rgba(61, 183, 173, 0.12);
                 display: grid;
                 place-items: center;
-                margin: 0 auto;
-                font-size: 2.4rem;
-                color: var(--primary-dark);
+                overflow: hidden;
                 box-shadow: 0 18px 36px rgba(61, 183, 173, 0.18);
+                color: var(--primary-dark);
+                font-size: 2.4rem;
+            }
+
+            .avatar-preview img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .avatar-upload__button {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 18px;
+                border-radius: 999px;
+                border: 1px solid rgba(61, 183, 173, 0.3);
+                background: rgba(61, 183, 173, 0.1);
+                color: var(--primary-dark);
+                font-weight: 500;
+                cursor: pointer;
+                transition: background 0.2s ease, transform 0.2s ease;
+            }
+
+            .avatar-upload__button:hover {
+                background: rgba(61, 183, 173, 0.18);
+                transform: translateY(-1px);
+            }
+
+            .avatar-upload__hint {
+                margin: 0;
+                font-size: 0.85rem;
+                color: var(--text-muted);
+                text-align: center;
+            }
+
+            .avatar-input {
+                display: none;
+            }
+
+            .avatar-upload__error {
+                margin: 4px 0 0;
+                font-size: 0.82rem;
+                color: #b91c1c;
+                text-align: center;
             }
 
             form {
@@ -256,17 +305,21 @@
         </style>
     </head>
     <body>
+        @php($hasActivePackage = $hasActivePackage ?? false)
         <header>
             <div class="container">
                 <nav>
                     <a href="{{ route('student.dashboard') }}" class="brand">
                         <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
                     </a>
+                    @php($routeName = request()->route()?->getName())
                     <div class="nav-links">
-                        <a href="{{ route('student.dashboard') }}">Beranda</a>
-                        <a href="{{ route('student.materials') }}">Materi</a>
-                        <a href="{{ route('student.quiz') }}">Quiz</a>
-                        <a href="{{ route('student.schedule') }}">Jadwal</a>
+                        <a href="{{ route('student.dashboard') }}" data-active="{{ $routeName === 'student.dashboard' ? 'true' : 'false' }}">Beranda</a>
+                        @if ($hasActivePackage)
+                            <a href="{{ route('student.materials') }}" data-active="{{ str_starts_with($routeName, 'student.materials') ? 'true' : 'false' }}">Materi</a>
+                            <a href="{{ route('student.quiz') }}" data-active="{{ str_starts_with($routeName, 'student.quiz') ? 'true' : 'false' }}">Quiz</a>
+                            <a href="{{ route('student.schedule') }}" data-active="{{ $routeName === 'student.schedule' ? 'true' : 'false' }}">Jadwal</a>
+                        @endif
                     </div>
                     <div class="nav-actions">
                         <a class="profile-chip" href="{{ route('student.profile') }}" data-active="true">
@@ -284,7 +337,21 @@
         <main class="container">
             <section class="profile-card">
                 <h1>Edit Profil</h1>
-                <div class="avatar">🧑</div>
+                @php($avatarUrl = $avatarUrl ?? null)
+                <div class="avatar-upload">
+                    <div class="avatar-preview">
+                        @if ($avatarUrl)
+                            <img src="{{ $avatarUrl }}" alt="Foto profil {{ $profile['name'] }}" />
+                        @else
+                            <span>🧑</span>
+                        @endif
+                    </div>
+                    <label class="avatar-upload__button" for="avatar">Pilih foto</label>
+                    <p class="avatar-upload__hint">Format JPG/PNG, maksimal 2 MB</p>
+                    @error('avatar')
+                        <p class="avatar-upload__error">{{ $message }}</p>
+                    @enderror
+                </div>
                 @if ($errors->any())
                     <div
                         style="padding: 14px 18px; border-radius: 16px; background: rgba(220, 38, 38, 0.12); color: #b91c1c; text-align: center;"
@@ -299,8 +366,9 @@
                         {{ session('status') }}
                     </div>
                 @endif
-                <form action="{{ route('student.profile.update') }}" method="post">
+                <form action="{{ route('student.profile.update') }}" method="post" enctype="multipart/form-data">
                     @csrf
+                    <input id="avatar" name="avatar" type="file" accept="image/*" class="avatar-input" />
                     <div class="grid">
                         <div>
                             <label for="name">Nama Lengkap</label>
@@ -378,5 +446,37 @@
             </section>
         </main>
         <footer>© {{ now()->year }} MayClass. Data pribadi dijaga sesuai kebijakan privasi.</footer>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const input = document.getElementById('avatar');
+                const preview = document.querySelector('.avatar-preview');
+
+                if (!input || !preview) {
+                    return;
+                }
+
+                input.addEventListener('change', function () {
+                    const file = input.files && input.files[0];
+
+                    if (!file) {
+                        preview.innerHTML = '<span>🧑</span>';
+
+                        return;
+                    }
+
+                    const reader = new FileReader();
+
+                    reader.addEventListener('load', function (event) {
+                        const result = event.target?.result;
+
+                        if (typeof result === 'string') {
+                            preview.innerHTML = '<img src="' + result.replace(/"/g, '&quot;') + '" alt="Preview foto profil" />';
+                        }
+                    });
+
+                    reader.readAsDataURL(file);
+                });
+            });
+        </script>
     </body>
 </html>

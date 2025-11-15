@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\ScheduleSession;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class ScheduleViewData
@@ -43,15 +44,25 @@ class ScheduleViewData
         12 => 'Desember',
     ];
 
-    public static function fromCollection(Collection $sessions): array
+    public static function compose(Collection $sessions, string $view, ?CarbonImmutable $referenceDate = null): array
     {
+        $normalizedView = in_array($view, ['day', 'week'], true) ? $view : 'month';
+
         $validSessions = $sessions->filter(fn ($session) => self::parseDate($session->start_at ?? null));
 
-        $referenceDate = $validSessions
+        $defaultReference = $validSessions
             ->map(fn ($session) => self::parseDate($session->start_at ?? null))
             ->filter()
             ->sortBy(fn (CarbonImmutable $date) => $date->timestamp)
-            ->first() ?? CarbonImmutable::now();
+            ->first();
+
+        $reference = $referenceDate ?? $defaultReference ?? CarbonImmutable::now();
+
+        $sessionGroups = $validSessions->mapToGroups(function ($session) {
+            $date = self::parseDate($session->start_at ?? null);
+
+            return $date ? [$date->toDateString() => $session] : [];
+        });
 
         $highlightSession = $validSessions->firstWhere('is_highlight', true)
             ?? $validSessions->firstWhere(function ($session) {
@@ -66,7 +77,7 @@ class ScheduleViewData
             : [
                 'title' => 'Belum ada jadwal',
                 'category' => '-',
-                'date' => self::formatFullDate($referenceDate),
+                'date' => self::formatFullDate($reference),
                 'time' => '-',
                 'mentor' => '-',
             ];
@@ -86,16 +97,26 @@ class ScheduleViewData
             $upcoming = collect([$highlight]);
         }
 
-        $calendar = self::buildCalendar($referenceDate, $validSessions);
+        $calendar = self::buildCalendarGrid($normalizedView, $reference, $sessionGroups, $validSessions);
+
+        $rangeSessions = self::buildRangeSessions(
+            $calendar['range_start'],
+            $calendar['range_end'],
+            $sessionGroups
+        );
 
         return [
+            'view' => $normalizedView,
             'highlight' => $highlight,
             'upcoming' => $upcoming,
-            'calendar' => $calendar['columns'],
-            'activeDays' => $calendar['activeDays'],
-            'mutedCells' => $calendar['mutedCells'],
-            'monthLabel' => $calendar['monthLabel'],
+            'calendar' => Arr::except($calendar, ['range_start', 'range_end']),
+            'rangeSessions' => $rangeSessions,
         ];
+    }
+
+    public static function fromCollection(Collection $sessions): array
+    {
+        return self::compose($sessions, 'month');
     }
 
     public static function formatFullDate(CarbonImmutable $date): string
@@ -117,10 +138,14 @@ class ScheduleViewData
                 'date' => '-',
                 'time' => '-',
                 'mentor' => $session->mentor_name,
+                'start_time' => null,
+                'start_at_iso' => null,
             ];
         }
 
-        $endAt = $startAt->addMinutes(90);
+        $duration = (int) ($session->duration_minutes ?? 90);
+        $duration = $duration > 0 ? $duration : 90;
+        $endAt = $startAt->addMinutes($duration);
 
         return [
             'title' => $session->title,
@@ -128,46 +153,143 @@ class ScheduleViewData
             'date' => self::formatFullDate($startAt),
             'time' => $startAt->format('H.i') . ' - ' . $endAt->format('H.i') . ' WIB',
             'mentor' => $session->mentor_name,
+            'start_time' => $startAt->format('H.i'),
+            'start_at_iso' => $startAt->toIso8601String(),
         ];
     }
 
-    private static function buildCalendar(CarbonImmutable $referenceDate, Collection $sessions): array
+    private static function buildCalendarGrid(string $view, CarbonImmutable $referenceDate, Collection $sessionGroups, Collection $sessions): array
     {
-        $start = $referenceDate->startOfMonth()->startOfWeek(CarbonImmutable::MONDAY);
-        $end = $referenceDate->endOfMonth()->endOfWeek(CarbonImmutable::SUNDAY);
+        $now = CarbonImmutable::now();
 
-        $columns = [];
-        $mutedCells = [];
-        foreach (self::DAY_LABELS as $label) {
-            $columns[$label] = [
-                'label' => $label,
-                'days' => [],
+        [$rangeStart, $rangeEnd, $gridStart, $gridEnd, $columns, $label, $prevDate, $nextDate] = match ($view) {
+            'day' => [
+                $referenceDate->startOfDay(),
+                $referenceDate->endOfDay(),
+                $referenceDate->startOfDay(),
+                $referenceDate->startOfDay(),
+                1,
+                self::formatFullDate($referenceDate),
+                $referenceDate->subDay()->toDateString(),
+                $referenceDate->addDay()->toDateString(),
+            ],
+            'week' => $thisWeek = [
+                $referenceDate->startOfWeek(CarbonImmutable::MONDAY),
+                $referenceDate->startOfWeek(CarbonImmutable::MONDAY)->addDays(6),
+                $referenceDate->startOfWeek(CarbonImmutable::MONDAY),
+                $referenceDate->startOfWeek(CarbonImmutable::MONDAY)->addDays(6),
+                7,
+                self::formatWeekRange(
+                    $referenceDate->startOfWeek(CarbonImmutable::MONDAY),
+                    $referenceDate->startOfWeek(CarbonImmutable::MONDAY)->addDays(6)
+                ),
+                $referenceDate->startOfWeek(CarbonImmutable::MONDAY)->subWeek()->toDateString(),
+                $referenceDate->startOfWeek(CarbonImmutable::MONDAY)->addWeek()->toDateString(),
+            ],
+            default => [
+                $referenceDate->startOfMonth(),
+                $referenceDate->endOfMonth(),
+                $referenceDate->startOfMonth()->startOfWeek(CarbonImmutable::MONDAY),
+                $referenceDate->endOfMonth()->endOfWeek(CarbonImmutable::SUNDAY),
+                7,
+                self::MONTH_NAMES[$referenceDate->month] . ' ' . $referenceDate->year,
+                $referenceDate->startOfMonth()->subMonth()->toDateString(),
+                $referenceDate->startOfMonth()->addMonth()->toDateString(),
+            ],
+        };
+
+        $days = [];
+        for ($date = $gridStart; $date->lessThanOrEqualTo($gridEnd); $date = $date->addDay()) {
+            $dayKey = $date->toDateString();
+            $sessionsForDay = $sessionGroups->get($dayKey, collect());
+
+            $days[] = [
+                'date' => $dayKey,
+                'display' => $view === 'day' ? $date->format('d M') : (string) $date->day,
+                'weekday' => self::DAY_LABELS[$date->dayOfWeekIso],
+                'fullLabel' => self::formatFullDate($date),
+                'isMuted' => $view === 'month' ? $date->month !== $referenceDate->month : false,
+                'isToday' => $date->isSameDay($now),
+                'isActive' => $sessionsForDay->isNotEmpty(),
+                'sessions' => $sessionsForDay->map(fn ($session) => self::formatSession($session))->values()->all(),
             ];
-            $mutedCells[$label] = [];
         }
 
-        for ($date = $start; $date->lessThanOrEqualTo($end); $date = $date->addDay()) {
-            $label = self::DAY_LABELS[$date->dayOfWeekIso];
-            $columns[$label]['days'][] = $date->day;
-            if ($date->month !== $referenceDate->month) {
-                $mutedCells[$label][] = $date->day;
+        $weeks = [];
+        $chunk = [];
+        foreach ($days as $day) {
+            $chunk[] = $day;
+
+            if (count($chunk) === $columns) {
+                $weeks[] = $chunk;
+                $chunk = [];
             }
         }
 
-        $activeDays = $sessions
-            ->map(fn ($session) => self::parseDate($session->start_at ?? null))
-            ->filter(fn ($date) => $date && $date->month === $referenceDate->month)
-            ->map(fn ($date) => $date->day)
-            ->unique()
-            ->values()
-            ->all();
+        if (! empty($chunk)) {
+            $weeks[] = $chunk;
+        }
 
         return [
-            'columns' => array_values($columns),
-            'mutedCells' => array_map(fn ($days) => array_values(array_unique($days)), $mutedCells),
-            'activeDays' => $activeDays,
-            'monthLabel' => self::MONTH_NAMES[$referenceDate->month] . ' ' . $referenceDate->year,
+            'view' => $view,
+            'label' => $label,
+            'currentDate' => $referenceDate->toDateString(),
+            'prevDate' => $prevDate,
+            'nextDate' => $nextDate,
+            'columns' => $columns,
+            'weekdays' => array_values(self::DAY_LABELS),
+            'weeks' => $weeks,
+            'range_start' => $rangeStart->toDateString(),
+            'range_end' => $rangeEnd->toDateString(),
         ];
+    }
+
+    private static function buildRangeSessions(string $startDate, string $endDate, Collection $sessionGroups): array
+    {
+        $start = CarbonImmutable::parse($startDate);
+        $end = CarbonImmutable::parse($endDate);
+
+        $days = [];
+
+        for ($date = $start; $date->lessThanOrEqualTo($end); $date = $date->addDay()) {
+            $key = $date->toDateString();
+            $sessions = $sessionGroups->get($key, collect());
+
+            $formatted = $sessions->map(fn ($session) => self::formatSession($session))->values()->all();
+
+            if (! empty($formatted)) {
+                $days[] = [
+                    'date' => $key,
+                    'label' => self::formatFullDate($date),
+                    'sessions' => $formatted,
+                ];
+            }
+        }
+
+        return $days;
+    }
+
+    private static function formatWeekRange(CarbonImmutable $start, CarbonImmutable $end): string
+    {
+        if ($start->month === $end->month && $start->year === $end->year) {
+            return sprintf(
+                'Minggu %d - %d %s %d',
+                $start->day,
+                $end->day,
+                self::MONTH_NAMES[$end->month],
+                $end->year
+            );
+        }
+
+        return sprintf(
+            'Minggu %d %s %d - %d %s %d',
+            $start->day,
+            self::MONTH_NAMES[$start->month],
+            $start->year,
+            $end->day,
+            self::MONTH_NAMES[$end->month],
+            $end->year
+        );
     }
 
     private static function parseDate($value): ?CarbonImmutable

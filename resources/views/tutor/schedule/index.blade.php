@@ -93,6 +93,163 @@
             color: #111827;
         }
 
+        .template-manager {
+            background: #fff;
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(15, 23, 42, 0.04);
+            margin-bottom: 30px;
+            display: grid;
+            gap: 20px;
+        }
+
+        .template-manager h2 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .template-manager p {
+            margin: 4px 0 0;
+            color: var(--text-muted);
+        }
+
+        .template-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+
+        .template-form label {
+            display: grid;
+            gap: 8px;
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 0.95rem;
+        }
+
+        .template-form select,
+        .template-form input {
+            border: 1px solid #d9e0ea;
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .template-form button {
+            align-self: stretch;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 18px;
+            cursor: pointer;
+            box-shadow: 0 14px 30px rgba(61, 183, 173, 0.25);
+        }
+
+        .template-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .template-card {
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 18px;
+            padding: 18px;
+            display: grid;
+            gap: 14px;
+            background: rgba(15, 23, 42, 0.015);
+        }
+
+        .template-card form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            align-items: end;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .template-actions button,
+        .session-actions button,
+        .cancelled-table button {
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .template-actions button[type='submit'],
+        .session-actions button.cancel-button {
+            background: #ef4444;
+            color: #fff;
+            box-shadow: 0 10px 24px rgba(239, 68, 68, 0.25);
+        }
+
+        .template-actions form:last-child button,
+        .cancelled-table button.restore-button {
+            background: rgba(15, 23, 42, 0.08);
+            color: #1f2937;
+        }
+
+        .session-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .session-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59, 130, 246, 0.12);
+            color: #2563eb;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.82rem;
+        }
+
+        .cancelled-section {
+            background: #fff;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(15, 23, 42, 0.04);
+        }
+
+        .cancelled-section h3 {
+            margin: 0 0 12px;
+        }
+
+        .cancelled-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cancelled-table th,
+        .cancelled-table td {
+            padding: 12px 14px;
+            text-align: left;
+        }
+
+        .cancelled-table tbody tr {
+            border-top: 1px solid rgba(15, 23, 42, 0.08);
+        }
+
+        .cancelled-table td:last-child {
+            text-align: right;
+        }
+
         .schedule-wrapper {
             display: grid;
             gap: 22px;
@@ -203,7 +360,7 @@
 @endpush
 
 @section('content')
-    @php($metrics = $metrics ?? ['session_count' => 0, 'day_count' => 0, 'subject_count' => 0])
+    @php($metrics = $metrics ?? ['session_count' => 0, 'day_count' => 0, 'subject_count' => 0, 'template_count' => 0, 'cancelled_count' => 0])
 
     <section class="schedule-hero">
         <div class="hero-content">
@@ -241,10 +398,152 @@
             <strong>{{ $metrics['day_count'] }}</strong>
         </div>
         <div class="metric-card">
-            <span>Variasi Mata Pelajaran</span>
-            <strong>{{ $metrics['subject_count'] }}</strong>
+            <span>Pola Jadwal Aktif</span>
+            <strong>{{ $metrics['template_count'] }}</strong>
+        </div>
+        <div class="metric-card">
+            <span>Sesi Dibatalkan</span>
+            <strong>{{ $metrics['cancelled_count'] }}</strong>
         </div>
     </div>
+
+    @if ($packages->isNotEmpty())
+        <section class="template-manager">
+            <div>
+                <h2>Atur pola jadwal</h2>
+                <p>Tambahkan pola pertemuan mingguan untuk menghasilkan jadwal otomatis hingga beberapa minggu ke depan.</p>
+            </div>
+            <form class="template-form" method="POST" action="{{ route('tutor.schedule.templates.store') }}">
+                @csrf
+                <label>
+                    <span>Paket</span>
+                    <select name="package_id" required>
+                        @foreach ($packages as $package)
+                            <option value="{{ $package->id }}" @selected(old('package_id') == $package->id)>
+                                {{ $package->detail_title ?? $package->title }}
+                            </option>
+                        @endforeach
+                    </select>
+                </label>
+                <label>
+                    <span>Judul Sesi</span>
+                    <input type="text" name="title" value="{{ old('title') }}" placeholder="Contoh: Klinik Matematika" required />
+                </label>
+                <label>
+                    <span>Mata Pelajaran</span>
+                    <input type="text" name="category" value="{{ old('category') }}" placeholder="Matematika" />
+                </label>
+                <label>
+                    <span>Tingkat</span>
+                    <input type="text" name="class_level" value="{{ old('class_level') }}" placeholder="SMA" />
+                </label>
+                <label>
+                    <span>Lokasi</span>
+                    <input type="text" name="location" value="{{ old('location') }}" placeholder="Zoom / Kelas" />
+                </label>
+                <label>
+                    <span>Hari</span>
+                    @php($days = [1 => 'Senin', 2 => 'Selasa', 3 => 'Rabu', 4 => 'Kamis', 5 => 'Jumat', 6 => 'Sabtu', 0 => 'Minggu'])
+                    <select name="day_of_week" required>
+                        @foreach ($days as $value => $label)
+                            <option value="{{ $value }}" @selected((string) old('day_of_week') === (string) $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </label>
+                <label>
+                    <span>Jam Mulai</span>
+                    <input type="time" name="start_time" value="{{ old('start_time', '16:00') }}" required />
+                </label>
+                <label>
+                    <span>Durasi (menit)</span>
+                    <input type="number" name="duration_minutes" min="30" max="240" step="15" value="{{ old('duration_minutes', 90) }}" required />
+                </label>
+                <label>
+                    <span>Kuota siswa</span>
+                    <input type="number" name="student_count" min="1" max="200" value="{{ old('student_count') }}" />
+                </label>
+                <button type="submit">Tambah Pola</button>
+            </form>
+            @if ($errors->any())
+                <div class="system-alert" style="margin: 0;">
+                    <strong>Gagal menyimpan pola jadwal.</strong>
+                    <ul>
+                        @foreach ($errors->all() as $message)
+                            <li>{{ $message }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            @if ($templates->isNotEmpty())
+                <div class="template-list">
+                    @foreach ($templates as $template)
+                        <div class="template-card">
+                            <form method="POST" action="{{ route('tutor.schedule.templates.update', $template) }}">
+                                @csrf
+                                @method('PUT')
+                                <label>
+                                    <span>Paket</span>
+                                    <select name="package_id" required>
+                                        @foreach ($packages as $package)
+                                            <option value="{{ $package->id }}" @selected($package->id === $template->package_id)>
+                                                {{ $package->detail_title ?? $package->title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                                <label>
+                                    <span>Judul</span>
+                                    <input type="text" name="title" value="{{ $template->title }}" required />
+                                </label>
+                                <label>
+                                    <span>Mata Pelajaran</span>
+                                    <input type="text" name="category" value="{{ $template->category }}" />
+                                </label>
+                                <label>
+                                    <span>Tingkat</span>
+                                    <input type="text" name="class_level" value="{{ $template->class_level }}" />
+                                </label>
+                                <label>
+                                    <span>Lokasi</span>
+                                    <input type="text" name="location" value="{{ $template->location }}" />
+                                </label>
+                                <label>
+                                    <span>Hari</span>
+                                    <select name="day_of_week" required>
+                                        @foreach ($days as $value => $label)
+                                            <option value="{{ $value }}" @selected($template->day_of_week === $value)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                                <label>
+                                    <span>Jam Mulai</span>
+                                    <input type="time" name="start_time" value="{{ $template->start_time }}" required />
+                                </label>
+                                <label>
+                                    <span>Durasi (menit)</span>
+                                    <input type="number" name="duration_minutes" min="30" max="240" step="15" value="{{ $template->duration_minutes }}" required />
+                                </label>
+                                <label>
+                                    <span>Kuota</span>
+                                    <input type="number" name="student_count" min="1" max="200" value="{{ $template->student_count }}" />
+                                </label>
+                                <div class="template-actions">
+                                    <button type="submit">Simpan</button>
+                                </div>
+                            </form>
+                            <div class="template-actions">
+                                <form method="POST" action="{{ route('tutor.schedule.templates.destroy', $template) }}" onsubmit="return confirm('Hapus pola jadwal ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit">Hapus Pola</button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </section>
+    @endif
 
     @if ($days->isEmpty())
         <div class="empty-state">
@@ -272,15 +571,58 @@
                                 @if ($item['student_count'])
                                     <div class="meta">Peserta: {{ $item['student_count'] }} siswa</div>
                                 @endif
+                                <div class="meta">Durasi: {{ $item['duration'] }} menit</div>
                             </div>
                             <div class="time">
                                 {{ $item['time_range'] }}
                                 <span>Waktu belajar</span>
+                                <div class="session-actions">
+                                    <span class="session-status">Terjadwal</span>
+                                    @if ($item['is_future'] ?? false)
+                                        <form method="POST" action="{{ route('tutor.schedule.sessions.cancel', $item['session_id']) }}" onsubmit="return confirm('Batalkan sesi ini?');">
+                                            @csrf
+                                            <button type="submit" class="cancel-button">Batalkan</button>
+                                        </form>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @endforeach
                 </article>
             @endforeach
         </div>
+    @endif
+
+    @if (($cancelledSessions ?? collect())->isNotEmpty())
+        <section class="cancelled-section" style="margin-top: 28px;">
+            <h3>Sesi yang dibatalkan</h3>
+            <p style="color: var(--text-muted); margin: 0 0 16px;">Aktifkan kembali jadwal apabila pertemuan dijadwalkan ulang.</p>
+            <table class="cancelled-table">
+                <thead>
+                    <tr>
+                        <th>Waktu</th>
+                        <th>Paket</th>
+                        <th>Mata Pelajaran</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($cancelledSessions as $session)
+                        @php($start = optional($session->start_at)->locale('id'))
+                        <tr>
+                            <td>{{ $start ? $start->translatedFormat('d M Y, H.i') : '-' }}</td>
+                            <td>{{ $session->package?->detail_title ?? $session->package?->title ?? 'Paket MayClass' }}</td>
+                            <td>{{ $session->title }}</td>
+                            <td>
+                                <form method="POST" action="{{ route('tutor.schedule.sessions.restore', $session) }}">
+                                    @csrf
+                                    <button type="submit" class="restore-button">Pulihkan</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </section>
     @endif
 @endsection
