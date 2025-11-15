@@ -102,10 +102,12 @@
             }
 
             .auth-illustration h1 {
-                font-size: clamp(1.9rem, 2.5vw, 2.6rem);
+                font-size: clamp(0.9rem, 1.7vw, 1.9rem);
+                font-weight: 400; /* atau 300 kalau mau lebih ringan */
                 margin: 0;
                 line-height: 1.3;
             }
+
 
             .auth-illustration p {
                 color: #f6fffe;
@@ -536,26 +538,21 @@
                             Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
                             pendampingan tentor profesional.
                         </h1>
-                        <h1 data-copy-mode="login">Selamat datang kembali di MayClass</h1>
-                        <p data-copy-mode="register">
-                            Lengkapi data diri Anda terlebih dahulu sebelum membuat kata sandi agar kami dapat
-                            mempersonalisasi rekomendasi paket belajar sesuai kebutuhan.
-                        </p>
-                        <p data-copy-mode="login">
+                       <h1 data-copy-mode="login">
                             Masuk untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
                             pendampingan tentor profesional.
-                        </p>
+                        </h1>
                     </div>
                 </div>
                 <div class="auth-panel">
                     <div class="auth-header">
                         <h2>Selamat datang di MayClass</h2>
                         <div class="tab-switcher" role="tablist">
-                            <button type="button" data-mode="login" role="tab" aria-selected="false">
-                                Masuk
-                            </button>
                             <button type="button" data-mode="register" role="tab" aria-selected="false">
                                 Registrasi
+                            </button>
+                            <button type="button" data-mode="login" role="tab" aria-selected="false">
+                                Masuk
                             </button>
                         </div>
                     </div>
