@@ -87,6 +87,8 @@
 @section('content')
     <a href="{{ route('admin.packages.index') }}" class="cancel-link" style="margin-bottom: 22px;">← Kembali ke daftar paket</a>
 
+    @php($stageOptions = $stages ?? [])
+
     <form action="{{ route('admin.packages.store') }}" method="POST" class="form-card">
         @csrf
         <h2 style="margin-top: 0; font-size: 1.6rem;">Tambah Paket Belajar</h2>
@@ -101,9 +103,21 @@
                 @enderror
             </div>
             <div>
-                <label for="level">Level</label>
-                <input type="text" id="level" name="level" value="{{ old('level') }}" required />
+                <label for="level">Jenjang Pendidikan</label>
+                <select id="level" name="level" required style="width: 100%; border-radius: 14px; border: 1px solid rgba(15, 23, 42, 0.12); padding: 12px 14px; font-size: 0.95rem; background: rgba(248, 250, 252, 0.9);">
+                    <option value="" disabled {{ old('level') ? '' : 'selected' }}>Pilih jenjang</option>
+                    @foreach ($stageOptions as $value => $label)
+                        <option value="{{ $value }}" {{ old('level') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
                 @error('level')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+            <div>
+                <label for="grade_range">Rentang Kelas</label>
+                <input type="text" id="grade_range" name="grade_range" value="{{ old('grade_range') }}" placeholder="Contoh: Kelas 10 - 12 &amp; UTBK" required />
+                @error('grade_range')
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>
