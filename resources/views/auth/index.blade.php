@@ -640,15 +640,10 @@
                             Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
                             pendampingan tentor profesional.
                         </h1>
-                        <h1 data-copy-mode="login">Selamat datang kembali di MayClass</h1>
-                        <p data-copy-mode="register">
-                            Lengkapi data diri Anda terlebih dahulu sebelum membuat kata sandi agar kami dapat
-                            mempersonalisasi rekomendasi paket belajar sesuai kebutuhan.
-                        </p>
-                        <p data-copy-mode="login">
+                        <h1 data-copy-mode="login">
                             Masuk untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
                             pendampingan tentor profesional.
-                        </p>
+                        </h1>
                     </div>
                 </div>
                 <div class="auth-panel">
@@ -661,23 +656,6 @@
                             <button type="button" data-mode="login" role="tab" aria-selected="false">
                                 Masuk
                             </button>
-                        </div>
-                    </div>
-
-                    <div class="step-indicators">
-                        <div class="step-indicator" data-step="register" aria-live="polite">
-                            <div class="step-dots" aria-hidden="true">
-                                <span class="step-dot step-dot--filled"></span>
-                                <span class="step-dot"></span>
-                            </div>
-                            <p class="step-label">Step 1 dari 2</p>
-                        </div>
-                        <div class="step-indicator" data-step="login" aria-live="polite">
-                            <div class="step-dots" aria-hidden="true">
-                                <span class="step-dot"></span>
-                                <span class="step-dot step-dot--filled"></span>
-                            </div>
-                            <p class="step-label">Step 2 dari 2</p>
                         </div>
                     </div>
 

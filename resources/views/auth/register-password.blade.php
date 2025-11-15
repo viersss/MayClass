@@ -298,13 +298,19 @@
                 }
             }
 
+            .auth-illustration h1 {
+                font-size: clamp(0.9rem, 1.7vw, 1.9rem);
+                font-weight: 400; 
+                margin: 0;
+                line-height: 1.3;
+            }
+
         </style>
     </head>
     <body>
         @php($genderLabel = match ($profile['gender'] ?? null) {
             'female' => 'Perempuan',
             'male' => 'Laki-laki',
-            'other' => 'Lainnya',
             default => 'Tidak disebutkan',
         })
         <a class="back-link" href="{{ route('register') }}">
@@ -318,17 +324,18 @@
                         <img src="{{ \App\Support\ImageRepository::url('auth') }}" alt="Ilustrasi keamanan akun MayClass" />
                     </div>
                     <div>
-                        <h1>Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga pendampingan tentor profesional.</h1>
+                     <h1 data-copy-mode="register">
+                        Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga pendampingan tentor profesional.
+                    </h1>
                     </div>
                 </div>
                 <div class="auth-panel">
                     <div class="auth-header">
-                        <h2>Langkah 2 dari 2</h2>
-                        <p>Periksa data diri Anda lalu buat password MayClass.</p>
+                        <h2>Konfirmasi Password</h2>
                     </div>
 
                     <div class="summary-card">
-                        <h3>Ringkasan Data</h3>
+                        <h3>Ringkasan Data Diri</h3>
                         <dl class="summary-grid">
                             <div>
                                 <dt>Nama Lengkap</dt>
