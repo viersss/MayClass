@@ -1507,77 +1507,6 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                     return;
                 }
 
-                let target = scrollElement.scrollTop;
-                let current = target;
-                let rafId = null;
-                const damping = 0.18;
-
-                const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-
-                const animate = () => {
-                    const delta = target - current;
-
-                    if (Math.abs(delta) < 0.5) {
-                        current = target;
-                        scrollElement.scrollTo({ top: current, behavior: 'auto' });
-                        rafId = null;
-
-                        return;
-                    }
-
-                    current += delta * damping;
-                    scrollElement.scrollTo(0, current);
-                    rafId = requestAnimationFrame(animate);
-                };
-
-                const queueAnimation = () => {
-                    if (rafId !== null) {
-                        return;
-                    }
-
-                    current = scrollElement.scrollTop;
-                    rafId = requestAnimationFrame(animate);
-                };
-
-                window.addEventListener(
-                    'wheel',
-                    (event) => {
-                        if (event.defaultPrevented || event.ctrlKey) {
-                            return;
-                        }
-
-                        if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
-                            return;
-                        }
-
-                        const interactive = event.target.closest(
-                            'input, textarea, select, [data-scroll-lock], [data-slider]'
-                        );
-
-                        if (interactive) {
-                            return;
-                        }
-
-                        event.preventDefault();
-
-                        const maxScroll = scrollElement.scrollHeight - window.innerHeight;
-                        target = clamp(target + event.deltaY, 0, maxScroll);
-                        queueAnimation();
-                    },
-                    { passive: false }
-                );
-
-                window.addEventListener(
-                    'scroll',
-                    () => {
-                        if (rafId === null) {
-                            target = scrollElement.scrollTop;
-                            current = scrollElement.scrollTop;
-                        }
-                    },
-                    { passive: true }
-                );
-
                 document.querySelectorAll('a[href^="#"]').forEach((link) => {
                     link.addEventListener('click', (event) => {
                         const href = link.getAttribute('href');
@@ -1596,10 +1525,11 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
 
                         const offset = 80;
                         const desired =
-                            anchorTarget.getBoundingClientRect().top + scrollElement.scrollTop - offset;
+                            anchorTarget.getBoundingClientRect().top + window.pageYOffset - offset;
                         const maxScroll = scrollElement.scrollHeight - window.innerHeight;
-                        target = clamp(desired, 0, maxScroll);
-                        queueAnimation();
+                        const target = Math.min(Math.max(desired, 0), maxScroll);
+
+                        window.scrollTo({ top: target, behavior: 'smooth' });
                     });
                 });
             });
