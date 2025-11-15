@@ -219,11 +219,11 @@
             <div>
                 <h1>Mulai Belajar</h1>
                 <p>
-                    Pelajari materi 
                     @if (! empty($activePackage))
-                        paket {{ $activePackage->detail_title ?? $activePackage->title }}.
+                        Materi eksklusif untuk paket {{ $activePackage->detail_title ?? $activePackage->title }}.
                     @endif
-                    Akses {{ number_format($stats['total']) }} materi terstruktur dan mudah dipahami untuk persiapan ujianmu.
+                    {{ number_format($stats['total']) }} materi aktif mencakup {{ number_format($stats['subjects']) }} mata pelajaran
+                    dan {{ number_format(count($stats['levels'])) }} jenjang belajar.
                 </p>
             </div>
             
@@ -262,10 +262,17 @@
 
                         <div class="collection-body">
                             @foreach ($collection['items'] as $material)
-                                <a href="{{ route('student.materials.show', $material['slug']) }}" class="material-list-item">
-                                    <div style="display: flex; flex-direction: column;">
-                                        <span>{{ $material['title'] }}</span>
-                                        <small style="color: var(--student-text-muted); font-size: 0.8rem;">Level {{ $material['level'] }}</small>
+                                <article class="student-materials__card" style="border-color: {{ $collection['accent'] }}33; background: {{ $collection['accent'] }}14;">
+                                    <span class="student-chip" style="background: #ffffff; color: {{ $collection['accent'] }};">Level {{ $material['level'] }}</span>
+                                    <h3>{{ $material['title'] }}</h3>
+                                    <p>{{ $material['summary'] }}</p>
+                                    <div class="student-materials__meta">
+                                        <span>{{ $material['chapter_count'] }} bab</span>
+                                        <span>{{ $material['objective_count'] }} tujuan</span>
+                                    </div>
+                                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                        <a class="student-button student-button--primary" style="padding: 10px 20px;" href="{{ route('student.materials.show', $material['slug']) }}">Detail materi</a>
+                                        <a class="student-button student-button--outline" style="padding: 10px 20px;" href="{{ $material['view_url'] }}" target="_blank" rel="noopener">Lihat materi</a>
                                     </div>
                                     
                                     <svg class="material-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

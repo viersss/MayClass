@@ -36,6 +36,10 @@ color-scheme: light;
                 box-sizing: border-box;
             }
 
+            html {
+                scroll-behavior: smooth;
+            }
+
             body {
                 margin: 0;
                 font-family: "Poppins", sans-serif;
@@ -318,6 +322,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 backdrop-filter: blur(12px);
                 border: 1px solid rgba(255, 255, 255, 0.16);
                 max-width: 440px;
+                color: rgba(255, 255, 255, 0.9);
             }
 
             .hero-stats-row {
@@ -335,6 +340,10 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             .hero-stat strong {
                 font-size: 1.6rem;
                 color: #ffffff;
+            }
+
+            .hero-stat span {
+                color: rgba(255, 255, 255, 0.8);
             }
 
             .hero-art {

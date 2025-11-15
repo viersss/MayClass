@@ -197,25 +197,44 @@
             border-color: transparent;
         }
 
+        .student-schedule__view-controls {
+            display: grid;
+            gap: 16px;
+        }
+
+        .student-schedule__tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .student-schedule__tab {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 18px;
+            border-radius: var(--student-radius-md);
+            border: 1px solid rgba(47, 152, 140, 0.16);
+            background: #ffffff;
+            color: var(--student-text-muted);
+            font-weight: 600;
+            font-size: 0.92rem;
+            transition: all 0.2s ease;
+        }
+
+        .student-schedule__tab.is-active {
+            background: linear-gradient(120deg, var(--student-primary), var(--student-primary-soft));
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 18px 32px rgba(27, 119, 110, 0.22);
+        }
+
         .student-schedule__nav {
             display: flex;
             align-items: center;
             gap: 16px;
             flex-wrap: wrap;
             justify-content: space-between;
-            padding: 10px;
-            background: var(--student-surface, #f8f9fa);
-            border-radius: 12px;
-            max-width: 1100px; /* [BARU] Sejajarkan dengan kalender */
-            margin-left: auto; /* [BARU] Rata tengah */
-            margin-right: auto; /* [BARU] Rata tengah */
-            width: 100%; /* [BARU] Pastikan mengisi max-width */
-        }
-        
-        .student-schedule__nav .nav-title {
-            font-weight: 600; 
-            color: var(--student-text-main);
-            margin: 0 10px;
         }
 
         .student-schedule__nav a {
@@ -225,14 +244,8 @@
             color: var(--student-primary);
             font-weight: 600;
             text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-        }
-        .student-schedule__nav a:hover {
-            background: rgba(47, 152, 140, 0.1);
         }
 
-        /* 5. Kalender Grid (Styling dari kode lama, sedikit dirapikan) */
         .student-schedule__calendar {
             max-width: 1100px; /* [BARU] Batasi lebar maksimum kalender */
             margin: 0 auto; /* [BARU] Buat kalender rata tengah */
@@ -250,7 +263,6 @@
             border: 1px solid rgba(47, 152, 140, 0.12);
             display: grid;
             gap: 10px;
-            min-height: 120px;
         }
 
         .student-schedule__calendar-cell.is-active {
@@ -261,14 +273,6 @@
 
         .student-schedule__calendar-cell.is-muted {
             opacity: 0.5;
-        }
-        
-        .student-schedule__calendar-cell.is-active .student-schedule__calendar-event {
-             background: rgba(255, 255, 255, 0.18);
-        }
-        
-        .student-schedule__calendar-cell.is-active p {
-             opacity: 1;
         }
 
         .student-schedule__calendar-headline {
@@ -287,19 +291,11 @@
 
         .student-schedule__calendar-event {
             padding: 8px 10px;
-            border-radius: 8px;
-            background: rgba(47, 152, 140, 0.1);
-            color: var(--student-text-main);
-        }
-        
-        .student-schedule__calendar-event strong {
-            color: var(--student-primary);
-        }
-        .is-active .student-schedule__calendar-event strong {
-            color: white;
+            border-radius: var(--student-radius-sm);
+            background: rgba(255, 255, 255, 0.18);
+            color: inherit;
         }
 
-        /* 6. Rincian Jadwal (Ditambahkan kembali) */
         .student-schedule__range {
             display: grid;
             gap: 16px;
@@ -317,6 +313,31 @@
         .student-schedule__range-day h3 {
             margin: 0;
             font-size: 1.05rem;
+        }
+
+        .student-schedule__range-sessions {
+            display: grid;
+            gap: 10px;
+        }
+
+        .student-schedule__range-session {
+            display: grid;
+            gap: 6px;
+            padding: 12px 14px;
+            border-radius: var(--student-radius-md);
+            background: rgba(95, 106, 248, 0.08);
+            border: 1px solid rgba(95, 106, 248, 0.12);
+        }
+
+        @media (max-width: 640px) {
+            .student-schedule__nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .student-schedule__calendar-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
         }
 
         .student-schedule__range-sessions {
@@ -375,9 +396,13 @@
                     @if (! empty($activePackage))
                         Agenda eksklusif paket {{ $activePackage->detail_title ?? $activePackage->title }}.
                     @endif
-                    Total {{ number_format($stats['total']) }} sesi tercatat, 
-                    {{ number_format($stats['upcoming']) }} agenda mendatang dan {{ number_format($stats['completed']) }} sesi telah selesai.
+                    Total {{ number_format($stats['total']) }} sesi tercatat dengan {{ number_format($stats['upcoming']) }} agenda
+                    mendatang dan {{ number_format($stats['completed']) }} sesi telah selesai.
                 </p>
+                <div class="student-schedule__stats">
+                    <span class="student-chip">{{ $calendar['label'] }}</span>
+                    <span class="student-chip">Hari aktif: {{ number_format(count($rangeSessions)) }}</span>
+                </div>
             </div>
             <div class="hero-actions">
                 <a class="hero-btn hero-btn--primary" href="#calendar-section">Lihat Jadwal</a>
@@ -451,8 +476,18 @@
                 <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['nextDate']]) }}">Berikutnya &rarr;</a>
             </div>
         </div>
-
-        <!-- Grid Kalender -->
+        <div class="student-schedule__view-controls">
+            <div class="student-schedule__tabs">
+                @foreach (['day' => 'Harian', 'week' => 'Mingguan', 'month' => 'Bulanan'] as $mode => $label)
+                    <a class="student-schedule__tab {{ $viewMode === $mode ? 'is-active' : '' }}" href="{{ route('student.schedule', ['view' => $mode, 'date' => $calendar['currentDate']]) }}">{{ $label }}</a>
+                @endforeach
+            </div>
+            <div class="student-schedule__nav">
+                <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['prevDate']]) }}">&larr; Sebelumnya</a>
+                <span style="font-weight: 600; color: var(--student-text-muted);">{{ $calendar['label'] }}</span>
+                <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['nextDate']]) }}">Berikutnya &rarr;</a>
+            </div>
+        </div>
         <div class="student-schedule__calendar">
             <div class="student-schedule__calendar-grid" style="grid-template-columns: repeat({{ $calendar['columns'] }}, minmax(0, 1fr));">
                 @foreach ($calendar['weeks'] as $week)
@@ -460,7 +495,7 @@
                         <div class="student-schedule__calendar-cell {{ $day['isActive'] ? 'is-active' : '' }} {{ $day['isMuted'] ? 'is-muted' : '' }}">
                             <div class="student-schedule__calendar-headline">
                                 <span>{{ $day['display'] }}</span>
-                                <span style="font-size: 0.85rem; color: inherit; opacity: 0.7;">{{ $viewMode === 'day' ? $day['fullLabel'] : $day['weekday'] }}</span>
+                                <span style="font-size: 0.85rem; color: inherit;">{{ $viewMode === 'day' ? $day['fullLabel'] : $day['weekday'] }}</span>
                             </div>
                             @if (! empty($day['sessions']))
                                 <div class="student-schedule__calendar-events">
@@ -481,33 +516,31 @@
         </div>
     </section>
 
-    <!-- SECTION 5: Rincian Jadwal (Ditambahkan kembali) -->
-    @if (! empty($rangeSessions))
     <section class="student-section">
         <div class="student-section__header">
             <h2 class="student-section__title">Rincian jadwal periode ini</h2>
         </div>
-        <div class="student-schedule__range">
-            @foreach ($rangeSessions as $day)
-                <article class="student-schedule__range-day">
-                    <h3>{{ $day['label'] }}</h3>
-                    <div class="student-schedule__range-sessions">
-                        @foreach ($day['sessions'] as $session)
-                            <div class="student-schedule__range-session">
-                                <strong>{{ $session['title'] }}</strong>
-                                <span style="color: var(--student-text-muted);">{{ $session['time'] }} • Mentor {{ $session['mentor'] }}</span>
-                                <span style="color: var(--student-text-muted);">Kategori {{ $session['category'] }}</span>
-                            </div>
-                        @endforeach
-                    </div>
-                </article>
-            @endforeach
-        </div>
+        @if (! empty($rangeSessions))
+            <div class="student-schedule__range">
+                @foreach ($rangeSessions as $day)
+                    <article class="student-schedule__range-day">
+                        <h3>{{ $day['label'] }}</h3>
+                        <div class="student-schedule__range-sessions">
+                            @foreach ($day['sessions'] as $session)
+                                <div class="student-schedule__range-session">
+                                    <strong>{{ $session['title'] }}</strong>
+                                    <span style="color: var(--student-text-muted);">{{ $session['time'] }} • Mentor {{ $session['mentor'] }}</span>
+                                    <span style="color: var(--student-text-muted);">Kategori {{ $session['category'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        @else
+            <div class="student-schedule__empty">
+                <p>Belum ada sesi pada rentang tanggal ini. Coba pindah ke bulan atau minggu lainnya.</p>
+            </div>
+        @endif
     </section>
-    @else
-        <div class="student-schedule__empty">
-            <p>Belum ada sesi pada rentang tanggal ini. Coba pindah ke bulan atau minggu lainnya.</p>
-        </div>
-    @endif
-    
 @endsection

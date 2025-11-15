@@ -219,11 +219,11 @@
             <div>
                 <h1>Mulai Latihan</h1>
                 <p>
-                    Tantang dirimu dengan kuis
                     @if (! empty($activePackage))
-                        paket {{ $activePackage->detail_title ?? $activePackage->title }}.
+                        Tantangan khusus untuk paket {{ $activePackage->detail_title ?? $activePackage->title }}.
                     @endif
-                    Akses {{ number_format($stats['total']) }} kuis interaktif untuk persiapan ujianmu.
+                    {{ number_format($stats['total']) }} kuis aktif dengan {{ number_format($stats['total_questions']) }} soal dan
+                    dukungan {{ number_format(count($stats['levels'])) }} jenjang belajar.
                 </p>
             </div>
 
@@ -267,11 +267,11 @@
                                         <span>{{ $quiz['title'] }}</span>
                                         <small style="color: var(--student-text-muted); font-size: 0.8rem;">{{ $quiz['duration'] }} • {{ $quiz['questions'] }} soal</small>
                                     </div>
-
-                                    <svg class="quiz-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </a>
+                                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                        <a class="student-button student-button--primary" style="padding: 10px 20px;" href="{{ route('student.quiz.show', $quiz['slug']) }}">Detail kuis</a>
+                                        <a class="student-button student-button--outline" style="padding: 10px 20px;" href="{{ $quiz['link'] }}" target="_blank" rel="noopener">Mulai latihan</a>
+                                    </div>
+                                </article>
                             @endforeach
 
                             @if(count($collection['items']) === 0)
