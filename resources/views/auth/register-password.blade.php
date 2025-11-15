@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id" data-mode="{{ $mode === 'register' ? 'register' : 'login' }}">
+<html lang="id">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>MayClass - Masuk &amp; Registrasi</title>
+        <title>MayClass - Buat Password</title>
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -125,94 +125,57 @@
                 gap: 32px;
             }
 
-            .auth-header {
-                text-align: center;
-            }
-
             .auth-header h2 {
-                margin: 0;
+                margin: 0 0 8px;
                 font-size: 1.6rem;
                 font-weight: 600;
             }
 
-            .tab-switcher {
-                display: inline-flex;
-                background: rgba(66, 183, 173, 0.1);
-                border-radius: 999px;
-                padding: 6px;
-                gap: 8px;
-                margin-top: 16px;
-            }
-
-            .tab-switcher button {
-                border: none;
-                background: transparent;
-                padding: 10px 24px;
-                border-radius: 999px;
-                font-family: inherit;
-                font-weight: 500;
-                font-size: 0.95rem;
-                cursor: pointer;
+            .auth-header p {
+                margin: 0;
                 color: var(--text-muted);
-                transition: all 0.2s ease;
+                font-size: 0.95rem;
             }
 
-            html[data-mode="login"] .tab-switcher button[data-mode="login"],
-            html[data-mode="register"] .tab-switcher button[data-mode="register"] {
-                background: #fff;
+            .summary-card {
+                background: rgba(66, 183, 173, 0.08);
+                border-radius: 20px;
+                padding: 20px 24px;
+                display: grid;
+                gap: 12px;
+            }
+
+            .summary-card h3 {
+                margin: 0;
+                font-size: 1rem;
                 color: var(--accent-dark);
-                box-shadow: 0 12px 25px rgba(66, 183, 173, 0.25);
+            }
+
+            .summary-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px 16px;
+            }
+
+            .summary-grid dt {
+                font-size: 0.78rem;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: var(--text-muted);
+                margin: 0 0 4px;
+            }
+
+            .summary-grid dd {
+                margin: 0;
+                font-weight: 600;
+                color: var(--text);
+                word-break: break-word;
             }
 
             form {
-                display: none;
+                display: flex;
                 flex-direction: column;
                 gap: 16px;
-                text-align: left;
-            }
-
-            .error-alert {
-                padding: 12px 16px;
-                border-radius: 12px;
-                background: rgba(220, 38, 38, 0.1);
-                color: #991b1b;
-                font-size: 0.85rem;
-                line-height: 1.5;
-            }
-
-            .status-alert {
-                padding: 12px 16px;
-                border-radius: 12px;
-                background: rgba(66, 183, 173, 0.12);
-                color: var(--accent-dark);
-                font-size: 0.9rem;
-                line-height: 1.5;
-                text-align: center;
-            }
-
-            .google-error {
-                margin: 0;
-                margin-top: 12px;
-                text-align: center;
-                color: #dc2626;
-                font-size: 0.8rem;
-                line-height: 1.4;
-            }
-
-            .error-alert ul {
-                margin: 0;
-                padding-left: 20px;
-            }
-
-            .input-error {
-                color: #dc2626;
-                font-size: 0.75rem;
-                margin: -6px 0 0;
-            }
-
-            html[data-mode="login"] form[data-mode="login"],
-            html[data-mode="register"] form[data-mode="register"] {
-                display: flex;
             }
 
             label {
@@ -221,8 +184,7 @@
                 color: var(--text);
             }
 
-            input,
-            select {
+            input {
                 width: 100%;
                 padding: 14px 16px;
                 border-radius: 14px;
@@ -233,17 +195,10 @@
                 background: #fff;
             }
 
-            input:focus,
-            select:focus {
+            input:focus {
                 outline: none;
                 border-color: var(--accent);
                 box-shadow: 0 0 0 3px rgba(66, 183, 173, 0.22);
-            }
-
-            .two-column {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 16px;
             }
 
             .primary-action {
@@ -265,23 +220,11 @@
                 box-shadow: 0 18px 35px rgba(66, 183, 173, 0.42);
             }
 
-            .switch-message {
-                text-align: center;
-                color: var(--text-muted);
-                font-size: 0.9rem;
-            }
-
-            .switch-message a {
-                color: var(--accent-dark);
-                font-weight: 500;
-            }
-
             .form-support {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 gap: 12px;
-                margin-top: 8px;
             }
 
             .form-helper {
@@ -305,6 +248,83 @@
             .terms-link:hover {
                 background: rgba(66, 183, 173, 0.22);
                 transform: translateY(-1px);
+            }
+
+            .error-alert {
+                padding: 12px 16px;
+                border-radius: 12px;
+                background: rgba(220, 38, 38, 0.1);
+                color: #991b1b;
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }
+
+            .error-alert ul {
+                margin: 0;
+                padding-left: 20px;
+            }
+
+            .input-error {
+                color: #dc2626;
+                font-size: 0.75rem;
+                margin: -6px 0 0;
+            }
+
+            .actions-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 16px;
+                margin-top: 12px;
+            }
+
+            .link-button {
+                border: none;
+                background: transparent;
+                padding: 0;
+                font-size: 0.9rem;
+                color: var(--accent-dark);
+                font-weight: 500;
+                cursor: pointer;
+            }
+
+            @media (max-width: 960px) {
+                .auth-card {
+                    grid-template-columns: 1fr;
+                    max-width: 640px;
+                }
+
+                .auth-illustration {
+                    display: none;
+                }
+
+                .auth-panel {
+                    padding: 32px 24px 40px;
+                }
+
+                .back-link {
+                    margin: 16px 20px;
+                }
+
+                .summary-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            @media (max-width: 520px) {
+                .form-support {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .actions-row {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .link-button {
+                    align-self: center;
+                }
             }
 
             .terms-modal {
@@ -424,87 +444,63 @@
             .terms-actions button:hover {
                 transform: translateY(-1px);
             }
-
-            .input-group {
-                display: flex;
-                flex-direction: column;
-                gap: 6px;
-            }
-
-            @media (max-width: 960px) {
-                .auth-card {
-                    grid-template-columns: 1fr;
-                    max-width: 640px;
-                }
-
-                .auth-illustration {
-                    display: none;
-                }
-
-                .auth-panel {
-                    padding: 32px 24px 40px;
-                }
-
-                .back-link {
-                    margin: 16px 20px;
-                }
-            }
-
-            @media (max-width: 520px) {
-                .two-column {
-                    grid-template-columns: 1fr;
-                }
-
-                .tab-switcher {
-                    width: 100%;
-                    justify-content: space-between;
-                }
-
-                .tab-switcher button {
-                    flex: 1;
-                }
-            }
         </style>
     </head>
     <body>
-        @php($profileData = $profile ?? [])
-        <a class="back-link" href="{{ url('/') }}">
+        @php($genderLabel = match ($profile['gender'] ?? null) {
+            'female' => 'Perempuan',
+            'male' => 'Laki-laki',
+            'other' => 'Lainnya',
+            default => 'Tidak disebutkan',
+        })
+        <a class="back-link" href="{{ route('register') }}">
             <span aria-hidden="true">&lt;</span>
-            Kembali
+            Kembali ke data diri
         </a>
         <div class="auth-wrapper">
             <div class="auth-card">
                 <div class="auth-illustration">
                     <div class="image-frame" aria-hidden="true">
-                        <img src="{{ \App\Support\ImageRepository::url('auth') }}" alt="Ilustrasi siswa MayClass" />
+                        <img src="{{ \App\Support\ImageRepository::url('auth') }}" alt="Ilustrasi keamanan akun MayClass" />
                     </div>
                     <div>
-                        <h1>
-                            Langkah Pasti Menuju Prestasi
-                            <strong>bersama MayClass</strong>
-                        </h1>
+                        <h1>Amankan akun belajar Anda</h1>
                         <p>
-                            Kami menjembatani siswa, tentor, dan orang tua melalui pengalaman belajar yang
-                            personal, interaktif, dan terukur.
+                            Gunakan password yang kuat untuk menjaga akses ke materi, kuis, dan jadwal belajar MayClass.
                         </p>
                     </div>
                 </div>
                 <div class="auth-panel">
                     <div class="auth-header">
-                        <h2>Selamat datang di MayClass</h2>
-                        <div class="tab-switcher" role="tablist">
-                            <button type="button" data-mode="login" role="tab" aria-selected="false">
-                                Masuk
-                            </button>
-                            <button type="button" data-mode="register" role="tab" aria-selected="false">
-                                Registrasi
-                            </button>
-                        </div>
+                        <h2>Langkah 2 dari 2</h2>
+                        <p>Periksa data diri Anda lalu buat password MayClass.</p>
                     </div>
 
-                    @if (session('status'))
-                        <div class="status-alert" role="status">{{ session('status') }}</div>
-                    @endif
+                    <div class="summary-card">
+                        <h3>Ringkasan Data</h3>
+                        <dl class="summary-grid">
+                            <div>
+                                <dt>Nama Lengkap</dt>
+                                <dd>{{ $profile['name'] }}</dd>
+                            </div>
+                            <div>
+                                <dt>Username</dt>
+                                <dd>{{ $profile['username'] }}</dd>
+                            </div>
+                            <div>
+                                <dt>Email</dt>
+                                <dd>{{ $profile['email'] }}</dd>
+                            </div>
+                            <div>
+                                <dt>No. Tlp / WA</dt>
+                                <dd>{{ $profile['phone'] ?? 'Belum diisi' }}</dd>
+                            </div>
+                            <div>
+                                <dt>Jenis Kelamin</dt>
+                                <dd>{{ $genderLabel }}</dd>
+                            </div>
+                        </dl>
+                    </div>
 
                     @if ($errors->any())
                         <div class="error-alert" role="alert">
@@ -516,128 +512,46 @@
                         </div>
                     @endif
 
-                    <form data-mode="register" method="post" action="{{ route('register.details') }}" novalidate>
-                        @csrf
-                        <div class="two-column">
-                            <div class="input-group">
-                                <label for="register-name">Nama Lengkap</label>
-                                <input
-                                    id="register-name"
-                                    type="text"
-                                    name="name"
-                                    value="{{ old('name', $profileData['name'] ?? '') }}"
-                                    placeholder="Masukkan nama lengkap"
-                                    required
-                                />
-                                @error('name')
-                                    <p class="input-error">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div class="input-group">
-                                <label for="register-username">Username</label>
-                                <input
-                                    id="register-username"
-                                    type="text"
-                                    name="username"
-                                    value="{{ old('username', $profileData['username'] ?? '') }}"
-                                    placeholder="Pilih username unik"
-                                    required
-                                />
-                                @error('username')
-                                    <p class="input-error">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="two-column">
-                            <div class="input-group">
-                                <label for="register-email">Email</label>
-                                <input
-                                    id="register-email"
-                                    type="email"
-                                    name="email"
-                                    value="{{ old('email', $profileData['email'] ?? '') }}"
-                                    placeholder="Masukkan email aktif"
-                                    required
-                                />
-                                @error('email')
-                                    <p class="input-error">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <div class="input-group">
-                                <label for="register-phone">No. Tlp / WA</label>
-                                <input
-                                    id="register-phone"
-                                    type="tel"
-                                    name="phone"
-                                    value="{{ old('phone', $profileData['phone'] ?? '') }}"
-                                    placeholder="Masukkan nomor telepon"
-                                />
-                                @error('phone')
-                                    <p class="input-error">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="register-gender">Jenis Kelamin</label>
-                            @php($selectedGender = old('gender', $profileData['gender'] ?? ''))
-                            <select id="register-gender" name="gender">
-                                <option value="" disabled {{ $selectedGender ? '' : 'selected' }}>Pilih Jenis Kelamin</option>
-                                <option value="female" @selected($selectedGender === 'female')>Perempuan</option>
-                                <option value="male" @selected($selectedGender === 'male')>Laki-laki</option>
-                                <option value="other" @selected($selectedGender === 'other')>Lainnya</option>
-                            </select>
-                            @error('gender')
-                                <p class="input-error">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="form-support">
-                            <p class="form-helper">Dengan melanjutkan, Anda menyetujui kebijakan layanan MayClass.</p>
-                            <button class="terms-link" type="button" data-terms-open>
-                                Ketentuan &amp; Privasi
-                            </button>
-                        </div>
-                        <button class="primary-action" type="submit">Selanjutnya</button>
-                        <p class="switch-message">
-                            Sudah punya akun?
-                            <a href="{{ route('login') }}">Masuk Sekarang</a>
-                        </p>
-                    </form>
-
-                    <form data-mode="login" method="post" action="{{ route('login.perform') }}" novalidate>
+                    <form method="post" action="{{ route('register.perform') }}" novalidate>
                         @csrf
                         <div class="input-group">
-                            <label for="login-username">Username</label>
+                            <label for="register-password">Password</label>
                             <input
-                                id="login-username"
-                                type="text"
-                                name="username"
-                                value="{{ old('username') }}"
-                                placeholder="Masukkan username"
-                                required
-                            />
-                            @error('username')
-                                <p class="input-error">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="input-group">
-                            <label for="login-password">Password</label>
-                            <input
-                                id="login-password"
+                                id="register-password"
                                 type="password"
                                 name="password"
-                                placeholder="Masukkan kata sandi"
-                                autocomplete="current-password"
+                                autocomplete="new-password"
+                                placeholder="Buat password minimal 8 karakter"
                                 required
                             />
                             @error('password')
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
                         </div>
-                        <button class="primary-action" type="submit">Masuk</button>
-                        <p class="switch-message">
-                            Belum punya akun?
-                            <a href="{{ route('register') }}">Daftar Sekarang</a>
-                        </p>
+                        <div class="input-group">
+                            <label for="register-password-confirmation">Konfirmasi Password</label>
+                            <input
+                                id="register-password-confirmation"
+                                type="password"
+                                name="password_confirmation"
+                                autocomplete="new-password"
+                                placeholder="Ulangi password Anda"
+                                required
+                            />
+                            @error('password_confirmation')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="form-support">
+                            <p class="form-helper">Dengan menyelesaikan langkah ini, akun MayClass Anda akan dibuat.</p>
+                            <button class="terms-link" type="button" data-terms-open>
+                                Ketentuan &amp; Privasi
+                            </button>
+                        </div>
+                        <div class="actions-row">
+                            <a class="link-button" href="{{ route('register') }}">Perbarui data diri</a>
+                            <button class="primary-action" type="submit">Simpan Password &amp; Daftar</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -652,8 +566,8 @@
                 <div class="terms-body">
                     <h4>1. Pendaftaran Akun</h4>
                     <p>
-                        MayClass menyediakan platform belajar terpadu yang menghubungkan siswa, tentor, dan admin.
-                        Saat mendaftar, Anda perlu memberikan <strong>nama lengkap</strong>, <strong>username</strong>,
+                        MayClass menyediakan platform belajar terpadu yang menghubungkan siswa, tentor, dan admin. Saat
+                        mendaftar, Anda perlu memberikan <strong>nama lengkap</strong>, <strong>username</strong>,
                         <strong>email</strong>, <strong>nomor telepon</strong>, dan <strong>jenis kelamin</strong> untuk
                         membangun profil pembelajaran. Informasi ini membantu kami merekomendasikan paket dan
                         menghubungkan Anda dengan tentor yang relevan.
@@ -706,27 +620,6 @@
         </div>
 
         <script>
-            const doc = document.documentElement;
-            const switchButtons = document.querySelectorAll('.tab-switcher button');
-
-            function setMode(mode) {
-                doc.setAttribute('data-mode', mode);
-                switchButtons.forEach((button) => {
-                    const isActive = button.dataset.mode === mode;
-                    button.setAttribute('aria-selected', isActive ? 'true' : 'false');
-                });
-            }
-
-            switchButtons.forEach((button) => {
-                button.addEventListener('click', () => {
-                    const mode = button.dataset.mode;
-                    setMode(mode);
-                    history.replaceState(null, '', mode === 'register' ? '{{ route('register') }}' : '{{ route('login') }}');
-                });
-            });
-
-            setMode(doc.getAttribute('data-mode'));
-
             const termsModal = document.querySelector('[data-terms-dialog]');
             const termsOpeners = document.querySelectorAll('[data-terms-open]');
             const termsClosers = document.querySelectorAll('[data-terms-close]');
