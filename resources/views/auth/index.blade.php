@@ -102,10 +102,12 @@
             }
 
             .auth-illustration h1 {
-                font-size: clamp(1.9rem, 2.5vw, 2.6rem);
+                font-size: clamp(0.9rem, 1.7vw, 1.9rem);
+                font-weight: 400; /* atau 300 kalau mau lebih ringan */
                 margin: 0;
                 line-height: 1.3;
             }
+
 
             .auth-illustration p {
                 color: #f6fffe;
@@ -569,6 +571,47 @@
                     flex: 1;
                 }
             }
+
+                        .register-popup-backdrop {
+                position: fixed;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(15, 23, 42, 0.45); /* overlay gelap */
+                z-index: 1200;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.25s ease;
+            }
+
+            .register-popup-backdrop.is-visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .register-popup {
+                background: var(--panel);
+                padding: 20px 24px;
+                border-radius: 20px;
+                box-shadow: 0 24px 55px rgba(15, 52, 56, 0.35);
+                max-width: 340px;
+                width: calc(100% - 48px);
+                text-align: center;
+            }
+
+            .register-popup-title {
+                margin: 0 0 6px;
+                font-size: 1rem;
+                font-weight: 600;
+                color: var(--accent-dark);
+            }
+
+            .register-popup-text {
+                margin: 0;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+            }
         </style>
     </head>
     <body>
@@ -612,12 +655,29 @@
                     <div class="auth-header">
                         <h2>Selamat datang di MayClass</h2>
                         <div class="tab-switcher" role="tablist">
-                            <button type="button" data-mode="login" role="tab" aria-selected="false">
-                                Masuk
-                            </button>
                             <button type="button" data-mode="register" role="tab" aria-selected="false">
                                 Registrasi
                             </button>
+                            <button type="button" data-mode="login" role="tab" aria-selected="false">
+                                Masuk
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="step-indicators">
+                        <div class="step-indicator" data-step="register" aria-live="polite">
+                            <div class="step-dots" aria-hidden="true">
+                                <span class="step-dot step-dot--filled"></span>
+                                <span class="step-dot"></span>
+                            </div>
+                            <p class="step-label">Step 1 dari 2</p>
+                        </div>
+                        <div class="step-indicator" data-step="login" aria-live="polite">
+                            <div class="step-dots" aria-hidden="true">
+                                <span class="step-dot"></span>
+                                <span class="step-dot step-dot--filled"></span>
+                            </div>
+                            <p class="step-label">Step 2 dari 2</p>
                         </div>
                     </div>
 
@@ -842,6 +902,34 @@
         </div>
 
         <script>
+
+                    @if(session('register_success'))
+            <div class="register-popup-backdrop" id="register-popup">
+                <div class="register-popup">
+                    <p class="register-popup-title">Registrasi Berhasil</p>
+                    <p class="register-popup-text">
+                        Registrasi berhasil. Mengalihkan ke halaman login…
+                    </p>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const popup = document.getElementById('register-popup');
+                    if (!popup) return;
+
+                    // munculkan popup
+                    requestAnimationFrame(() => {
+                        popup.classList.add('is-visible');
+                    });
+
+                    // 2 detik kemudian arahkan ke halaman login
+                    setTimeout(function () {
+                        window.location.href = "{{ route('login') }}";
+                    }, 1000); // 2000 ms = 2 detik
+                });
+            </script>
+        @endif
             const doc = document.documentElement;
             const switchButtons = document.querySelectorAll('.tab-switcher button');
 
