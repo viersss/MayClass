@@ -220,34 +220,10 @@
                 box-shadow: 0 18px 35px rgba(66, 183, 173, 0.42);
             }
 
-            .form-support {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 12px;
-            }
-
             .form-helper {
                 margin: 0;
                 font-size: 0.78rem;
                 color: var(--text-muted);
-            }
-
-            .terms-link {
-                border: none;
-                background: rgba(66, 183, 173, 0.12);
-                color: var(--accent-dark);
-                font-weight: 500;
-                font-size: 0.78rem;
-                padding: 8px 14px;
-                border-radius: 999px;
-                cursor: pointer;
-                transition: background 0.2s ease, transform 0.2s ease;
-            }
-
-            .terms-link:hover {
-                background: rgba(66, 183, 173, 0.22);
-                transform: translateY(-1px);
             }
 
             .error-alert {
@@ -312,11 +288,6 @@
             }
 
             @media (max-width: 520px) {
-                .form-support {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-
                 .actions-row {
                     flex-direction: column;
                     align-items: stretch;
@@ -327,123 +298,6 @@
                 }
             }
 
-            .terms-modal {
-                position: fixed;
-                inset: 0;
-                display: grid;
-                place-items: center;
-                background: rgba(17, 24, 39, 0.45);
-                padding: 24px;
-                z-index: 1000;
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.2s ease;
-            }
-
-            .terms-modal[data-visible="true"] {
-                opacity: 1;
-                pointer-events: auto;
-            }
-
-            .terms-dialog {
-                background: #fdfefe;
-                border-radius: 24px;
-                max-width: min(720px, 100%);
-                max-height: min(90vh, 860px);
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                box-shadow: 0 35px 65px rgba(15, 52, 56, 0.3);
-            }
-
-            .terms-dialog header {
-                padding: 24px 32px 16px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 12px;
-                background: linear-gradient(135deg, rgba(66, 183, 173, 0.12) 0%, rgba(66, 183, 173, 0.04) 100%);
-            }
-
-            .terms-dialog header h3 {
-                margin: 0;
-                font-size: 1.25rem;
-                color: var(--accent-dark);
-            }
-
-            .terms-close {
-                border: none;
-                background: rgba(255, 255, 255, 0.85);
-                border-radius: 50%;
-                width: 36px;
-                height: 36px;
-                display: grid;
-                place-items: center;
-                font-size: 1.1rem;
-                cursor: pointer;
-                color: var(--accent-dark);
-                box-shadow: 0 10px 24px rgba(66, 183, 173, 0.25);
-                transition: transform 0.2s ease;
-            }
-
-            .terms-close:hover {
-                transform: translateY(-1px);
-            }
-
-            .terms-body {
-                padding: 24px 32px 32px;
-                overflow-y: auto;
-                color: var(--text);
-            }
-
-            .terms-body h4 {
-                margin-top: 0;
-                margin-bottom: 8px;
-                font-size: 1.05rem;
-                color: var(--accent-dark);
-            }
-
-            .terms-body p {
-                margin: 0 0 16px;
-                line-height: 1.6;
-                font-size: 0.9rem;
-                color: var(--text-muted);
-            }
-
-            .terms-body ul {
-                margin: 0 0 16px 20px;
-                color: var(--text-muted);
-                font-size: 0.9rem;
-                line-height: 1.6;
-            }
-
-            .terms-body strong {
-                color: var(--accent-dark);
-            }
-
-            .terms-actions {
-                padding: 16px 32px 28px;
-                display: flex;
-                justify-content: flex-end;
-                background: linear-gradient(180deg, rgba(66, 183, 173, 0.08) 0%, rgba(66, 183, 173, 0) 100%);
-            }
-
-            .terms-actions button {
-                border: none;
-                background: linear-gradient(120deg, var(--accent) 0%, #5ed3c5 100%);
-                color: #fff;
-                font-weight: 600;
-                font-size: 0.9rem;
-                padding: 10px 20px;
-                border-radius: 12px;
-                cursor: pointer;
-                box-shadow: 0 12px 24px rgba(66, 183, 173, 0.28);
-                transition: transform 0.2s ease;
-            }
-
-            .terms-actions button:hover {
-                transform: translateY(-1px);
-            }
         </style>
     </head>
     <body>
@@ -464,10 +318,7 @@
                         <img src="{{ \App\Support\ImageRepository::url('auth') }}" alt="Ilustrasi keamanan akun MayClass" />
                     </div>
                     <div>
-                        <h1>Amankan akun belajar Anda</h1>
-                        <p>
-                            Gunakan password yang kuat untuk menjaga akses ke materi, kuis, dan jadwal belajar MayClass.
-                        </p>
+                        <h1>Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga pendampingan tentor profesional.</h1>
                     </div>
                 </div>
                 <div class="auth-panel">
@@ -542,12 +393,7 @@
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
                         </div>
-                        <div class="form-support">
-                            <p class="form-helper">Dengan menyelesaikan langkah ini, akun MayClass Anda akan dibuat.</p>
-                            <button class="terms-link" type="button" data-terms-open>
-                                Ketentuan &amp; Privasi
-                            </button>
-                        </div>
+                        <p class="form-helper">Dengan menyelesaikan langkah ini, akun MayClass Anda akan dibuat.</p>
                         <div class="actions-row">
                             <a class="link-button" href="{{ route('register') }}">Perbarui data diri</a>
                             <button class="primary-action" type="submit">Simpan Password &amp; Daftar</button>
@@ -557,113 +403,6 @@
             </div>
         </div>
 
-        <div class="terms-modal" data-terms-dialog aria-hidden="true">
-            <div class="terms-dialog" role="dialog" aria-modal="true" aria-labelledby="terms-title">
-                <header>
-                    <h3 id="terms-title">Syarat Layanan &amp; Kebijakan Privasi MayClass</h3>
-                    <button class="terms-close" type="button" aria-label="Tutup" data-terms-close>&times;</button>
-                </header>
-                <div class="terms-body">
-                    <h4>1. Pendaftaran Akun</h4>
-                    <p>
-                        MayClass menyediakan platform belajar terpadu yang menghubungkan siswa, tentor, dan admin. Saat
-                        mendaftar, Anda perlu memberikan <strong>nama lengkap</strong>, <strong>username</strong>,
-                        <strong>email</strong>, <strong>nomor telepon</strong>, dan <strong>jenis kelamin</strong> untuk
-                        membangun profil pembelajaran. Informasi ini membantu kami merekomendasikan paket dan
-                        menghubungkan Anda dengan tentor yang relevan.
-                    </p>
-
-                    <h4>2. Langganan &amp; Pembayaran</h4>
-                    <p>
-                        Setelah akun dibuat, Anda dapat memilih paket belajar berdasarkan jenjang SD, SMP, atau SMA.
-                        Setiap transaksi checkout akan berstatus <strong>menunggu verifikasi admin</strong>. Paket baru
-                        aktif ketika tim keuangan MayClass memvalidasi bukti pembayaran. Hingga proses tersebut selesai,
-                        akses ke materi, kuis, dan jadwal premium tetap terbatas.
-                    </p>
-
-                    <h4>3. Materi, Kuis, dan Jadwal</h4>
-                    <p>
-                        Konten belajar tersedia secara dinamis sesuai paket yang Anda pilih. Materi dapat dilihat atau
-                        diunduh melalui portal siswa, kuis terhubung ke latihan interaktif pihak ketiga, dan jadwal kelas
-                        mengikuti sesi yang dirancang tentor. Kami mencatat progres dan aktivitas guna memberikan
-                        pengalaman belajar yang konsisten.
-                    </p>
-
-                    <h4>4. Kewajiban Pengguna</h4>
-                    <ul>
-                        <li>Menjaga kerahasiaan kredensial akun dan tidak membagikannya ke pihak lain.</li>
-                        <li>Mengunggah dokumen atau foto profil yang sesuai dengan etika komunitas MayClass.</li>
-                        <li>Menggunakan fitur materi, kuis, dan jadwal hanya untuk kebutuhan belajar pribadi.</li>
-                        <li>Memberikan data pembayaran yang valid saat melakukan checkout paket.</li>
-                    </ul>
-
-                    <h4>5. Pengelolaan Data Pribadi</h4>
-                    <p>
-                        Data pribadi Anda disimpan dengan aman pada sistem MayClass. Kami menggunakan informasi kontak
-                        untuk pengingat jadwal, pembaruan paket, serta komunikasi dukungan. Dokumen pembelajaran yang
-                        diunggah tentor hanya dibagikan kepada siswa dalam paket terkait. Kami tidak menjual atau
-                        mendistribusikan data pribadi ke pihak ketiga di luar kebutuhan layanan inti MayClass.
-                    </p>
-
-                    <h4>6. Keamanan &amp; Dukungan</h4>
-                    <p>
-                        MayClass menerapkan kontrol akses berbasis peran (admin, tentor, siswa) dan pencatatan aktivitas
-                        untuk menjaga keamanan. Jika Anda menemukan aktivitas mencurigakan atau memerlukan bantuan,
-                        hubungi dukungan kami melalui email <strong>support@mayclass.id</strong> atau WhatsApp resmi yang
-                        tercantum di dashboard.
-                    </p>
-                </div>
-                <div class="terms-actions">
-                    <button type="button" data-terms-close>Tutup</button>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            const termsModal = document.querySelector('[data-terms-dialog]');
-            const termsOpeners = document.querySelectorAll('[data-terms-open]');
-            const termsClosers = document.querySelectorAll('[data-terms-close]');
-
-            function toggleTerms(visible) {
-                if (! termsModal) {
-                    return;
-                }
-
-                termsModal.setAttribute('data-visible', visible ? 'true' : 'false');
-                termsModal.setAttribute('aria-hidden', visible ? 'false' : 'true');
-
-                if (visible) {
-                    const focusTarget = termsModal.querySelector('button[data-terms-close]');
-                    focusTarget?.focus({ preventScroll: true });
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = '';
-                }
-            }
-
-            termsOpeners.forEach((button) => {
-                button.addEventListener('click', () => {
-                    toggleTerms(true);
-                });
-            });
-
-            termsClosers.forEach((button) => {
-                button.addEventListener('click', () => {
-                    toggleTerms(false);
-                });
-            });
-
-            termsModal?.addEventListener('click', (event) => {
-                if (event.target === termsModal) {
-                    toggleTerms(false);
-                }
-            });
-
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape') {
-                    toggleTerms(false);
-                }
-            });
-        </script>
+        
     </body>
 </html>
