@@ -12,18 +12,15 @@
         />
         <style>
             :root {
-                --bg-primary: #f5f7fb;
-                --card-bg: rgba(255, 255, 255, 0.9);
-                --card-border: rgba(15, 23, 42, 0.04);
-                --sidebar-start: #0f172a;
-                --sidebar-end: #1e2643;
-                --accent-mint: #1fd1a1;
-                --accent-indigo: #5465ff;
-                --accent-orange: #f48c06;
-                --accent-purple: #9b5de5;
-                --primary: #3db7ad;
-                --primary-dark: #2c938b;
+                --surface: #ffffff;
+                --surface-muted: #f1f5f9;
+                --border: #e2e8f0;
+                --text: #0f172a;
                 --text-muted: #6b7280;
+                --primary: #2563eb;
+                --primary-dark: #1d4ed8;
+                --sidebar: #0f172a;
+                --sidebar-muted: #1f2937;
             }
 
             *,
@@ -35,9 +32,8 @@
             body {
                 margin: 0;
                 font-family: 'Poppins', sans-serif;
-                background: radial-gradient(circle at top left, rgba(84, 101, 255, 0.18), transparent 45%),
-                    radial-gradient(circle at top right, rgba(31, 209, 161, 0.12), transparent 40%), var(--bg-primary);
-                color: #0f172a;
+                background: var(--surface-muted);
+                color: var(--text);
                 min-height: 100vh;
             }
 
@@ -47,7 +43,6 @@
             }
 
             .dashboard-shell {
-                position: relative;
                 min-height: 100vh;
                 display: grid;
                 grid-template-columns: 280px 1fr;
@@ -56,38 +51,33 @@
             }
 
             .nav-panel {
-                background: linear-gradient(195deg, var(--sidebar-start), var(--sidebar-end));
-                border-radius: 28px;
-                padding: 32px 26px;
+                background: var(--sidebar);
+                border-radius: 24px;
+                padding: 28px 24px;
                 color: #fff;
                 display: flex;
                 flex-direction: column;
-                gap: 32px;
-                box-shadow: 0 35px 70px rgba(15, 23, 42, 0.35);
+                gap: 24px;
+                position: sticky;
+                top: 32px;
+                height: fit-content;
+                max-height: calc(100vh - 64px);
             }
 
             .brand {
                 display: flex;
-                align-items: center;
-                gap: 16px;
+                flex-direction: column;
+                gap: 4px;
             }
 
-            .brand-logo {
-                width: 54px;
-                height: 54px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.08);
-                display: grid;
-                place-items: center;
-                font-weight: 600;
+            .brand strong {
                 font-size: 1.1rem;
-                letter-spacing: 0.4px;
+                letter-spacing: 0.5px;
             }
 
             .brand span {
-                display: grid;
-                font-weight: 600;
-                line-height: 1.2;
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.7);
             }
 
             .navigation {
@@ -97,34 +87,31 @@
             }
 
             .nav-link {
-                display: grid;
-                grid-template-columns: 48px 1fr;
+                display: flex;
                 align-items: center;
-                gap: 18px;
-                padding: 14px 18px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.04);
-                color: rgba(255, 255, 255, 0.78);
+                gap: 12px;
+                padding: 12px 16px;
+                border-radius: 14px;
                 font-weight: 500;
-                transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
-                font-size: 0.96rem;
+                color: rgba(255, 255, 255, 0.85);
+                transition: background 0.2s ease, color 0.2s ease;
+                font-size: 0.95rem;
             }
 
             .nav-link[data-active='true'] {
-                background: rgba(255, 255, 255, 0.16);
-                color: #fff;
-                transform: translateX(6px);
-            }
-
-            .nav-link:hover {
                 background: rgba(255, 255, 255, 0.12);
                 color: #fff;
             }
 
+            .nav-link:hover {
+                background: rgba(255, 255, 255, 0.18);
+                color: #fff;
+            }
+
             .nav-icon {
-                width: 48px;
-                height: 48px;
-                border-radius: 16px;
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
                 background: rgba(255, 255, 255, 0.1);
                 display: grid;
                 place-items: center;
@@ -135,143 +122,91 @@
             .nav-footer {
                 margin-top: auto;
                 padding-top: 20px;
-                border-top: 1px solid rgba(255, 255, 255, 0.14);
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
                 display: flex;
                 flex-direction: column;
-                gap: 18px;
+                gap: 16px;
             }
 
             .profile-summary {
-                display: grid;
-                grid-template-columns: 56px 1fr;
-                gap: 14px;
+                display: flex;
                 align-items: center;
-                padding: 16px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.12);
-                backdrop-filter: blur(6px);
-                text-decoration: none;
+                gap: 12px;
+                padding: 12px;
+                border-radius: 16px;
+                background: rgba(255, 255, 255, 0.1);
                 color: inherit;
-                transition: background 0.2s ease, transform 0.2s ease;
             }
 
             .profile-summary img {
-                width: 56px;
-                height: 56px;
-                border-radius: 50%;
+                width: 48px;
+                height: 48px;
+                border-radius: 999px;
                 object-fit: cover;
-                border: 2px solid rgba(255, 255, 255, 0.5);
-            }
-
-            .profile-summary:hover {
-                background: rgba(255, 255, 255, 0.18);
-                transform: translateY(-2px);
-            }
-
-            .profile-summary__action {
-                margin-top: 6px;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 0.78rem;
-                font-weight: 500;
-                color: rgba(255, 255, 255, 0.85);
+                border: 2px solid rgba(255, 255, 255, 0.3);
             }
 
             .profile-summary strong {
-                font-size: 1rem;
                 display: block;
+                font-size: 1rem;
+            }
+
+            .profile-summary small {
+                color: rgba(255, 255, 255, 0.7);
             }
 
             .logout-btn {
-                display: inline-flex;
+                display: flex;
                 align-items: center;
-                gap: 12px;
-                font-weight: 500;
-                color: rgba(255, 255, 255, 0.82);
+                justify-content: space-between;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                border-radius: 14px;
+                padding: 10px 16px;
+                color: #fff;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.2s ease, border-color 0.2s ease;
             }
 
-            .logout-btn button {
-                background: none;
-                border: none;
-                color: inherit;
-                font: inherit;
-                cursor: pointer;
-                padding: 0;
+            .logout-btn:hover {
+                background: rgba(255, 255, 255, 0.16);
+                border-color: rgba(255, 255, 255, 0.4);
             }
 
             .main-area {
                 display: flex;
                 flex-direction: column;
                 gap: 24px;
-                position: relative;
             }
 
             .main-header {
-                background: var(--card-bg);
-                border-radius: 26px;
-                padding: 26px 32px;
+                background: var(--surface);
+                border-radius: 20px;
+                padding: 24px 28px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
-                border: 1px solid var(--card-border);
-                backdrop-filter: blur(14px);
+                border: 1px solid var(--border);
+                box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
             }
 
             .header-meta {
                 display: flex;
                 align-items: center;
-                gap: 24px;
+                gap: 16px;
+                color: var(--text-muted);
+                font-weight: 500;
             }
 
             .date-pill {
-                padding: 10px 16px;
+                padding: 8px 14px;
                 border-radius: 999px;
-                background: rgba(61, 183, 173, 0.12);
-                color: var(--primary-dark);
-                font-weight: 500;
-                font-size: 0.95rem;
-            }
-
-            .header-profile {
-                display: grid;
-                grid-template-columns: 48px 1fr;
-                gap: 12px;
-                align-items: center;
-                padding: 6px 10px;
-                border-radius: 16px;
-                background: rgba(61, 183, 173, 0.12);
-                text-decoration: none;
-                color: inherit;
-                transition: background 0.2s ease, transform 0.2s ease;
-            }
-
-            .header-profile img {
-                width: 48px;
-                height: 48px;
-                border-radius: 16px;
-                object-fit: cover;
-            }
-
-            .header-profile:hover {
-                background: rgba(61, 183, 173, 0.2);
-                transform: translateY(-2px);
-            }
-
-            .header-profile__action {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 0.78rem;
-                color: var(--primary-dark);
-                font-weight: 600;
-                margin-top: 4px;
-            }
-
-            .header-profile strong {
-                font-size: 1rem;
-                display: block;
+                background: var(--surface-muted);
+                border: 1px solid var(--border);
+                color: var(--text);
+                font-size: 0.9rem;
             }
 
             .page-wrapper {
@@ -290,60 +225,43 @@
 
             .flash-message {
                 margin-bottom: 24px;
-                padding: 16px 20px;
-                border-radius: 16px;
-                background: rgba(61, 183, 173, 0.14);
-                border: 1px solid rgba(61, 183, 173, 0.24);
-                color: var(--primary-dark);
+                padding: 14px 18px;
+                border-radius: 14px;
+                background: #dcfce7;
+                border: 1px solid #bbf7d0;
+                color: #15803d;
                 font-weight: 500;
             }
 
             @media (max-width: 1240px) {
                 .dashboard-shell {
                     grid-template-columns: 240px 1fr;
-                    padding: 28px;
-                }
-
-                .main-header {
-                    padding: 22px 26px;
+                    padding: 24px;
                 }
             }
 
             @media (max-width: 1024px) {
                 .dashboard-shell {
                     grid-template-columns: 1fr;
-                    padding: 24px;
+                    padding: 20px;
                 }
 
                 .nav-panel {
-                    position: sticky;
-                    top: 24px;
-                    z-index: 20;
+                    position: static;
                     flex-direction: row;
-                    align-items: center;
-                    gap: 20px;
-                    overflow-x: auto;
+                    flex-wrap: wrap;
+                    gap: 16px;
+                    max-height: none;
                 }
 
                 .navigation {
-                    display: inline-flex;
+                    display: flex;
+                    flex-wrap: wrap;
                     gap: 12px;
-                    width: max-content;
-                }
-
-                .nav-link {
-                    grid-template-columns: auto;
-                    grid-auto-flow: column;
-                    padding: 12px 16px;
-                }
-
-                .nav-icon {
-                    width: 40px;
-                    height: 40px;
                 }
 
                 .nav-footer {
-                    display: none;
+                    width: 100%;
                 }
             }
 
@@ -351,12 +269,13 @@
                 .main-header {
                     flex-direction: column;
                     align-items: flex-start;
-                    gap: 18px;
+                    gap: 16px;
                 }
 
                 .header-meta {
                     width: 100%;
-                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    gap: 10px;
                 }
             }
         </style>
@@ -366,8 +285,8 @@
         <div class="dashboard-shell">
             <aside class="nav-panel">
                 <div class="brand">
-                    <div class="brand-logo">MC</div>
-                    <span>MayClass Admin</span>
+                    <strong>MayClass Admin</strong>
+                    <span>Panel kendali harian</span>
                 </div>
                 <nav class="navigation">
                     @php
@@ -398,13 +317,8 @@
                                 'patterns' => ['admin.account.*'],
                             ],
                         ];
-                        $adminStoredAvatar = null;
-                        if ($admin?->avatar_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($admin->avatar_path)) {
-                            $adminStoredAvatar = \Illuminate\Support\Facades\Storage::disk('public')->url($admin->avatar_path);
-                        }
                         $avatarPlaceholder = asset('images/avatar-placeholder.svg');
-                        $adminSummaryAvatar = $adminStoredAvatar ?? $avatarPlaceholder;
-                        $adminHeaderAvatar = $adminStoredAvatar ?? $avatarPlaceholder;
+                        $adminSummaryAvatar = \App\Support\AvatarResolver::resolve([$admin?->avatar_path]) ?? $avatarPlaceholder;
                     @endphp
                     @foreach ($menuItems as $item)
                         @php
@@ -431,35 +345,25 @@
                         <div>
                             <strong>{{ $admin?->name ?? 'Admin MayClass' }}</strong>
                             <small>Administrator</small>
-                            <span class="profile-summary__action">Kelola profil →</span>
                         </div>
                     </a>
-                    <form method="POST" action="{{ route('logout') }}" class="logout-btn">
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <span>Keluar</span>
-                        <button type="submit">→</button>
+                        <button type="submit" class="logout-btn">
+                            <span>Keluar</span>
+                            <span aria-hidden="true">↗</span>
+                        </button>
                     </form>
                 </div>
             </aside>
             <div class="main-area">
                 <header class="main-header">
                     <div>
-                        <span style="display: inline-flex; align-items: center; gap: 8px; font-weight: 500; color: var(--primary-dark); font-size: 0.95rem;">
-                            <span style="display: inline-flex; width: 8px; height: 8px; border-radius: 50%; background: var(--primary);"></span>
-                            Panel Admin MayClass
-                        </span>
-                        <h1 style="margin: 8px 0 0; font-size: 1.9rem;">Halo, {{ $admin?->name ?? 'Admin' }}!</h1>
+                        <p style="margin: 0; color: var(--text-muted); font-weight: 500;">Panel Admin MayClass</p>
+                        <h1 style="margin: 4px 0 0; font-size: 1.8rem;">Halo, {{ $admin?->name ?? 'Admin' }}!</h1>
                     </div>
                     <div class="header-meta">
                         <span class="date-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
-                        <a class="header-profile" href="{{ route('admin.account.edit') }}" title="Kelola profil admin">
-                            <img src="{{ $adminHeaderAvatar }}" alt="Profil admin" />
-                            <div>
-                                <strong>{{ $admin?->name ?? 'Admin MayClass' }}</strong>
-                                <small style="color: var(--text-muted);">Kelola operasi MayClass</small>
-                                <span class="header-profile__action">Pengaturan akun</span>
-                            </div>
-                        </a>
                     </div>
                 </header>
                 <main>
