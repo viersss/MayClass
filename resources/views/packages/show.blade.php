@@ -71,12 +71,12 @@
                 right: 0;
                 z-index: 1000;
                 width: 100%;
-                padding: 14px clamp(12px, 3vw, 28px);
-                background: rgba(255, 255, 255, 0.72);
-                backdrop-filter: blur(18px) saturate(160%);
-                -webkit-backdrop-filter: blur(18px) saturate(160%);
-                border-bottom: 1px solid rgba(255, 255, 255, 0.45);
-                box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+                padding: 12px clamp(12px, 3vw, 24px);
+                background: rgba(255, 255, 255, 0.4);
+                backdrop-filter: blur(16px) saturate(180%);
+                -webkit-backdrop-filter: blur(16px) saturate(180%);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
                 transition: background 0.3s ease, box-shadow 0.3s ease;
             }
 
@@ -153,13 +153,13 @@
             }
 
             .nav-links a {
-                color: #000;
+                color: rgba(255, 255, 255, 0.78);
                 transition: color 0.2s ease;
             }
 
             .nav-links a:hover,
             .nav-links a.is-active {
-                color: rgba(0, 0, 0, 0.65);
+                color: #ffffff;
             }
 
             .nav-actions {
@@ -168,92 +168,73 @@
                 gap: 16px;
                 justify-content: flex-end;
                 justify-self: end;
-                flex-wrap: wrap;
+            }
+
+            .nav-actions form {
+                margin: 0;
             }
 
             @media (max-width: 768px) {
                 .nav-actions {
                     width: 100%;
                     justify-content: center;
+                    flex-wrap: wrap;
                 }
             }
 
-            .nav-chip {
-                display: inline-flex;
-                align-items: center;
-                gap: 10px;
-                padding: 8px 18px;
-                border-radius: 999px;
-                border: 1px solid rgba(0, 0, 0, 0.12);
-                background: rgba(255, 255, 255, 0.65);
-                color: #000;
-                font-weight: 500;
-                text-decoration: none;
-                box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
-            }
-
-            .nav-chip__avatar {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                overflow: hidden;
-                background: rgba(0, 0, 0, 0.08);
-                display: grid;
-                place-items: center;
-            }
-
-            .nav-chip__avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .nav-btn {
+            .btn {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                padding: 10px 24px;
+                padding: 12px 28px;
                 border-radius: 999px;
-                border: 1px solid rgba(0, 0, 0, 0.12);
-                background: rgba(255, 255, 255, 0.55);
-                color: #000;
-                font-weight: 500;
                 font-size: 0.95rem;
+                font-weight: 500;
+                border: 1px solid transparent;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                cursor: pointer;
                 text-decoration: none;
-                transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
             }
 
-            .nav-btn--filled {
-                background: rgba(255, 255, 255, 0.9);
-                border-color: rgba(0, 0, 0, 0.1);
-                box-shadow: 0 16px 35px rgba(15, 23, 42, 0.15);
-            }
-
-            .nav-btn--ghost {
+            .btn-outline {
+                border-color: rgba(255, 255, 255, 0.38);
+                color: #ffffff;
                 background: transparent;
             }
 
-            .nav-btn:hover,
-            .nav-chip:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
+            .btn-outline:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
             }
 
-            .page-header {
-                margin-top: 16px;
+            .btn-primary {
+                background: linear-gradient(120deg, var(--primary-light) 0%, var(--primary-accent) 100%);
+                color: var(--primary-dark);
+                box-shadow: 0 16px 40px rgba(132, 217, 134, 0.36);
             }
 
-            .breadcrumb {
-                margin: 32px 0;
-                display: inline-flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 0.9rem;
-                color: var(--text-muted);
+            .btn-primary:hover {
+                transform: translateY(-1px);
             }
 
-            main {
+            .btn-ghost {
+                border-color: rgba(63, 166, 126, 0.35);
+                background: rgba(63, 166, 126, 0.08);
+                color: var(--primary-dark);
+            }
+
+            .btn-ghost:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 14px 32px rgba(63, 166, 126, 0.2);
+            }
+
+            .btn-muted {
+                border-color: rgba(31, 42, 55, 0.1);
+                background: rgba(31, 42, 55, 0.05);
+                color: var(--ink-strong);
+            }
+
             .page-header {
                 margin-top: 16px;
             }
@@ -569,8 +550,17 @@
                         <a href="#kontak">Kontak</a>
                     </div>
                     <div class="nav-actions">
-                        <a class="nav-btn nav-btn--ghost" href="{{ route('packages.index') }}">Paket Lainnya</a>
-                        @include('components.nav.public-actions')
+                        <a class="btn btn-outline" href="{{ route('packages.index') }}">Paket Lainnya</a>
+                        @auth
+                            <a class="btn btn-primary" href="{{ route('student.profile') }}">Profile</a>
+                            <form method="post" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-muted">Keluar</button>
+                            </form>
+                        @else
+                            <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
+                            <a class="btn btn-primary" href="{{ route('register') }}">Daftar</a>
+                        @endauth
                     </div>
                 </div>
             </nav>

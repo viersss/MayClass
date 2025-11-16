@@ -57,11 +57,17 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 24px;
-                padding: 18px 24px;
-                border-radius: 28px;
-                background: rgba(255, 255, 255, 0.72);
-                box-shadow: 0 18px 40px rgba(25, 76, 75, 0.08);
-                backdrop-filter: blur(14px);
+            }
+
+            .nav-actions {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+
+            .nav-actions form {
+                margin: 0;
             }
 
             .brand {
@@ -70,83 +76,13 @@
                 gap: 12px;
                 font-weight: 600;
                 font-size: 1.2rem;
-                color: #000;
+                color: var(--primary-dark);
             }
 
             .brand img {
-                width: 120px;
-                height: auto;
+                width: 44px;
+                height: 44px;
                 object-fit: contain;
-            }
-
-            .nav-actions {
-                display: flex;
-                align-items: center;
-                gap: 14px;
-                flex-wrap: wrap;
-                justify-content: flex-end;
-            }
-
-            .nav-chip {
-                display: inline-flex;
-                align-items: center;
-                gap: 10px;
-                padding: 8px 18px;
-                border-radius: 999px;
-                border: 1px solid rgba(0, 0, 0, 0.12);
-                background: rgba(255, 255, 255, 0.65);
-                color: #000;
-                font-weight: 500;
-                text-decoration: none;
-                box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
-            }
-
-            .nav-chip__avatar {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                overflow: hidden;
-                background: rgba(0, 0, 0, 0.08);
-                display: grid;
-                place-items: center;
-            }
-
-            .nav-chip__avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .nav-btn {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                padding: 10px 24px;
-                border-radius: 999px;
-                border: 1px solid rgba(0, 0, 0, 0.12);
-                background: rgba(255, 255, 255, 0.55);
-                color: #000;
-                font-weight: 500;
-                font-size: 0.95rem;
-                text-decoration: none;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-            }
-
-            .nav-btn--filled {
-                background: rgba(255, 255, 255, 0.9);
-                border-color: rgba(0, 0, 0, 0.1);
-                box-shadow: 0 16px 35px rgba(15, 23, 42, 0.15);
-            }
-
-            .nav-btn--ghost {
-                background: transparent;
-            }
-
-            .nav-btn:hover,
-            .nav-chip:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
             }
 
             main {
@@ -279,8 +215,14 @@
                         <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                     </a>
                     <div class="nav-actions">
-                        <a class="nav-btn nav-btn--ghost" href="{{ route('packages.index') }}">Lihat Paket Lain</a>
-                        @include('components.nav.public-actions')
+                        <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Lain</a>
+                        @auth
+                            <a class="btn btn-outline" style="border-color: rgba(31, 42, 55, 0.15);" href="{{ route('student.profile') }}">Profile</a>
+                            <form method="post" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-outline" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
+                            </form>
+                        @endauth
                     </div>
                 </nav>
             </div>
