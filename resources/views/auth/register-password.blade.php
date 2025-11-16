@@ -75,8 +75,8 @@
                 padding: 48px;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
-                gap: 32px;
+                justify-content: flex-start;
+                gap: 24px;
             }
 
             .auth-illustration .image-frame {
