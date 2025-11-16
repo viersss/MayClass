@@ -262,28 +262,28 @@ nav {
                 box-shadow: 0 14px 32px rgba(63, 166, 126, 0.2);
             }
 
-.hero {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; /* konten selalu di tengah vertikal */
-  text-align: center;
-  width: 100%;
-  min-height: calc(100vh + 120px); /* 🟢 lebih tinggi dari viewport */
-  padding-top: calc(var(--nav-height) + 40px); /* aman dari navbar */
-  padding-bottom: 100px;
-background: 
-    linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.35),   /* 🔸 lapisan gelap lembut di atas */
-      rgba(0, 0, 0, 0.65)    /* 🔸 sedikit lebih pekat di bawah */
-    ),
-url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1600')
-  center/cover no-repeat;
+            .hero {
+                position: relative;
+                z-index: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center; 
+                text-align: center;
+                width: 100%;
+                min-height: calc(100vh + 120px);
+                padding-top: calc(var(--nav-height) + 40px);
+                padding-bottom: 100px;
 
-}
+                background: 
+                    linear-gradient(
+                        to bottom,
+                        rgba(0, 0, 0, 0.35),
+                        rgba(0, 0, 0, 0.65)
+                    ),
+                    url('/images/stis_contoh.jpeg') center/cover no-repeat;
+            }
+
 
 
             .hero-content {
@@ -780,23 +780,29 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                 box-shadow: var(--shadow-md);
             }
 
-            /* Full-width footer */
-            footer {
-                background: var(--footer-surface);
-                padding: 80px 0 52px;
-                width: 100%;
-                border-top: 1px solid rgba(31, 107, 79, 0.12);
-            }
+footer {
+    background: var(--footer-surface);
+    padding: 80px 0 52px;
+    width: 100%;
+    border-top: 1px solid rgba(31, 107, 79, 0.12);
+}
 
-            .footer-grid {
-                display: grid;
-                grid-template-columns: repeat(4, minmax(0, 1fr));
-                gap: 32px;
-                width: 100%;
-                max-width: 1200px;
-                margin: 0 auto 48px;
-                padding: 0 32px;
-            }
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 32px;
+
+    /* 🔥 full width tanpa batas */
+    width: 100%;
+    padding: 0 32px;  /* cukup padding, tidak ada max-width */
+    margin: 0;
+}
+@media (max-width: 768px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        padding: 0 20px; /* sedikit lebih kecil */
+    }
+}
 
             .footer-brand {
                 display: grid;
@@ -1172,12 +1178,9 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                     <div class="slider-track">
                         <div class="slide">
                             <article class="testimonial-card">
-                                <img
-                                    src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80"
-                                    alt="Testimoni Yohanna"
-                                />
+                                <img src="{{ asset('images/jumbo.jpg') }}" alt="Testimoni Yohanna" />
                                 <div style="display: grid; gap: 8px; flex: 1;">
-                                    <strong>Yohanna • Skor UTBK 640</strong>
+                                    <strong>Triangga • Skor UTBK 740</strong>
                                     <p>
                                         "Mentor MayClass ramah banget dan jelas saat jelasin materi. Tryoutnya bikin aku makin percaya diri
                                         masuk kampus impian."
@@ -1187,10 +1190,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         </div>
                         <div class="slide">
                             <article class="testimonial-card">
-                                <img
-                                    src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=600&q=80"
-                                    alt="Testimoni Xavier"
-                                />
+                                <img src="{{ asset('images/pinguin.jpg') }}" alt="Testimoni Yohanna" />
                                 <div style="display: grid; gap: 8px; flex: 1;">
                                     <strong>Xavier • Skor SKD 480</strong>
                                     <p>
@@ -1202,15 +1202,11 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         </div>
                         <div class="slide">
                             <article class="testimonial-card">
-                                <img
-                                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=600&q=80"
-                                    alt="Testimoni Lisa"
-                                />
+                                <img src="{{ asset('images/lisa.jpg') }}" alt="Testimoni Yohanna" />
                                 <div style="display: grid; gap: 8px; flex: 1;">
-                                    <strong>Lisa • Orang Tua Siswa</strong>
+                                    <strong>Lisa • Fasilkom UI</strong>
                                     <p>
-                                        "Progres anakku dipantau terus dan laporan mingguannya bikin kami tenang. MayClass responsif banget."
-                                    </p>
+                                        "MayClass membantu aku belajar lebih terarah dan konsisten sampai akhirnya bisa lolos ke Universitas Indonesia.""
                                 </div>
                             </article>
                         </div>
@@ -1328,7 +1324,6 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
         </section>
 
         <footer>
-            <div class="container">
                 <div class="footer-grid" data-reveal>
                     <div class="footer-brand">
                         <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
@@ -1363,7 +1358,6 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                     </div>
                 </div>
                 <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
-            </div>
         </footer>
 
         <script>
