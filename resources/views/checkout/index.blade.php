@@ -281,7 +281,7 @@
             <div class="container">
                 <nav>
                     <a href="/" class="brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                     </a>
                     <div class="nav-actions">
                         <a class="nav-btn" style="padding: 10px 24px; border-radius: 999px; border: 1px solid rgba(61, 183, 173, 0.35);" href="{{ route('packages.index') }}">
@@ -289,7 +289,7 @@
                         </a>
                         @auth
                             <a class="nav-btn" style="border-color: transparent; background: rgba(61, 183, 173, 0.15);" href="{{ route('student.profile') }}">
-                                Profil
+                                Profile
                             </a>
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf

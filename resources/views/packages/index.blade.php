@@ -278,61 +278,12 @@
                 box-shadow: 0 24px 45px rgba(34, 108, 104, 0.25);
             }
 
-            footer {
-                background: #102a43;
-                color: rgba(255, 255, 255, 0.7);
-                padding: 48px 0;
-            }
-
-            .footer-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 24px;
-            }
-
-            .footer-grid h4 {
-                margin: 0 0 16px;
-                font-size: 1rem;
-                color: #fff;
-            }
-
-            .footer-grid ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-                display: grid;
-                gap: 10px;
-                font-size: 0.9rem;
-            }
-
-            .subscribe {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .subscribe input {
-                border-radius: 999px;
-                border: none;
-                padding: 12px 18px;
-                font-family: inherit;
-            }
-
-            .subscribe button {
-                border-radius: 999px;
-                border: none;
-                padding: 12px 18px;
-                background: var(--accent);
-                color: #102a43;
-                font-weight: 600;
-                cursor: pointer;
-            }
-
-            .copyright {
-                margin-top: 36px;
+            footer.student-footer {
+                margin-top: 80px;
+                padding: 32px 24px 60px;
                 text-align: center;
-                font-size: 0.85rem;
-                opacity: 0.7;
+                font-size: 0.9rem;
+                color: var(--text-muted);
             }
 
             @media (max-width: 768px) {
@@ -355,11 +306,11 @@
             <div class="container">
                 <nav>
                     <a href="/" class="brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                     </a>
                     @auth
                         <div class="nav-actions">
-                            <a class="nav-btn" href="{{ route('student.profile') }}">Profil</a>
+                            <a class="nav-btn" href="{{ route('student.profile') }}">Profile</a>
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="nav-btn" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
@@ -448,35 +399,6 @@
             @endif
         </main>
 
-        <footer>
-            <div class="container">
-                <div class="footer-grid">
-                    <div>
-                        <h4>Company</h4>
-                        <ul>
-                            <li><a href="#">About</a></li>
-                            <li><a href="#">Pricing</a></li>
-                            <li><a href="#">Testimonials</a></li>
-                            <li><a href="#">Blog</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>Support</h4>
-                        <ul>
-                            <li><a href="#">Help center</a></li>
-                            <li><a href="#">FAQs</a></li>
-                            <li><a href="#">Terms</a></li>
-                            <li><a href="#">Privacy</a></li>
-                        </ul>
-                    </div>
-                    <div class="subscribe">
-                        <h4>Stay up to date</h4>
-                        <input type="email" placeholder="Email kamu" />
-                        <button type="button">Subscribe</button>
-                    </div>
-                </div>
-                <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
-            </div>
-        </footer>
+        <footer class="student-footer">© {{ now()->year }} MayClass. Portal siswa diperbarui otomatis.</footer>
     </body>
 </html>

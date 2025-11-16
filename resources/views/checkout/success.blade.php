@@ -212,12 +212,12 @@
             <div class="container">
                 <nav>
                     <a href="/" class="brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                     </a>
                     <div class="nav-actions">
                         <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Lain</a>
                         @auth
-                            <a class="btn btn-outline" style="border-color: rgba(31, 42, 55, 0.15);" href="{{ route('student.profile') }}">Profil</a>
+                            <a class="btn btn-outline" style="border-color: rgba(31, 42, 55, 0.15);" href="{{ route('student.profile') }}">Profile</a>
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="btn btn-outline" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
