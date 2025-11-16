@@ -6,64 +6,96 @@
     <style>
         .account-shell {
             display: grid;
-            grid-template-columns: 360px 1fr;
-            gap: 32px;
+            grid-template-columns: 320px 1fr;
+            gap: 28px;
             align-items: flex-start;
         }
 
         .profile-pane {
-            position: relative;
-            background: linear-gradient(160deg, rgba(15, 23, 42, 0.92), rgba(45, 212, 191, 0.85));
-            border-radius: 28px;
-            padding: 36px 28px;
+            background: #111c32;
+            border-radius: 20px;
+            padding: 28px;
             color: #fff;
-            box-shadow: 0 28px 65px rgba(15, 23, 42, 0.28);
-            overflow: hidden;
-        }
-
-        .profile-pane::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.16), transparent 60%);
-            pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .profile-pane-content {
-            position: relative;
             display: grid;
-            gap: 18px;
+            gap: 16px;
             justify-items: center;
             text-align: center;
         }
 
         .profile-avatar {
-            width: 128px;
-            height: 128px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 18px 35px rgba(15, 23, 42, 0.35);
+            border: 3px solid rgba(255, 255, 255, 0.35);
+        }
+
+        .profile-name {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .profile-role {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        .profile-stats {
+            display: grid;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .profile-stats div {
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            text-align: left;
+        }
+
+        .profile-stats span {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .profile-contact {
+            display: grid;
+            gap: 8px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .profile-contact span {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .profile-contact a {
+            color: #fff;
+            font-weight: 600;
         }
 
         .avatar-upload {
+            background: var(--surface-muted);
+            border-radius: 16px;
+            padding: 18px;
+            border: 1px solid var(--border-subtle);
             display: grid;
-            gap: 10px;
+            gap: 12px;
             justify-items: center;
-            padding: 20px;
-            border-radius: 24px;
-            background: rgba(93, 230, 201, 0.08);
-            border: 1px solid rgba(45, 212, 191, 0.18);
         }
 
         .avatar-preview {
-            width: 112px;
-            height: 112px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             overflow: hidden;
-            display: grid;
-            place-items: center;
-            background: rgba(15, 23, 42, 0.08);
         }
 
         .avatar-preview img {
@@ -80,19 +112,13 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 18px;
-            border-radius: 999px;
-            border: 1px solid rgba(45, 212, 191, 0.35);
-            background: #fff;
-            color: var(--primary-dark);
-            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            background: var(--surface);
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .avatar-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 24px rgba(45, 212, 191, 0.25);
+            font-weight: 600;
+            color: var(--text-main);
         }
 
         .avatar-hint {
@@ -103,93 +129,36 @@
 
         .avatar-error {
             margin: 0;
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             color: #b91c1c;
-            text-align: center;
-        }
-
-        .profile-name {
-            margin: 0;
-            font-size: 1.6rem;
-        }
-
-        .profile-role {
-            margin: 0;
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.85);
-        }
-
-        .profile-stats {
-            display: grid;
-            gap: 12px;
-            width: 100%;
-        }
-
-        .profile-stats div {
-            background: rgba(255, 255, 255, 0.12);
-            border-radius: 18px;
-            padding: 14px 18px;
-            display: grid;
-            gap: 4px;
-        }
-
-        .profile-stats span {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.75);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-        .profile-stats strong {
-            font-size: 1.2rem;
-        }
-
-        .profile-contact {
-            display: grid;
-            gap: 10px;
-            text-align: left;
-            width: 100%;
-        }
-
-        .profile-contact span {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .profile-contact a {
-            color: #fdfdfd;
-            font-weight: 600;
         }
 
         .form-card {
-            background: #fff;
-            border-radius: 28px;
-            padding: 36px;
-            box-shadow: 0 28px 65px rgba(15, 23, 42, 0.12);
-            border: 1px solid rgba(15, 23, 42, 0.05);
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid var(--border-subtle);
         }
 
         .form-card h1 {
-            margin-top: 0;
-            margin-bottom: 8px;
-            font-size: 1.85rem;
+            margin: 0 0 6px;
+            font-size: 1.7rem;
         }
 
         .form-card p.description {
-            margin: 0 0 24px;
+            margin: 0 0 18px;
             color: var(--text-muted);
-            font-size: 0.98rem;
         }
 
         .last-updated {
-            margin-bottom: 18px;
             font-size: 0.85rem;
             color: var(--text-muted);
+            margin-bottom: 16px;
         }
 
         .form-grid {
             display: grid;
-            gap: 22px;
+            gap: 18px;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         }
 
@@ -204,17 +173,15 @@
         input[type='number'],
         textarea {
             width: 100%;
-            padding: 14px 18px;
-            border: 1px solid #d9e0ea;
-            border-radius: 16px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
             font-family: inherit;
             font-size: 1rem;
             background: #fff;
-            box-shadow: 0 12px 25px rgba(15, 23, 42, 0.04);
         }
 
         .help-text {
-            display: block;
             font-size: 0.85rem;
             color: var(--text-muted);
             margin-top: 6px;
@@ -230,25 +197,16 @@
             grid-column: 1 / -1;
             display: flex;
             justify-content: flex-end;
-            gap: 16px;
         }
 
         .form-actions button {
-            padding: 14px 26px;
-            border-radius: 18px;
-            font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
+            padding: 12px 24px;
+            border-radius: 12px;
             border: none;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: var(--accent);
             color: #fff;
-            box-shadow: 0 18px 45px rgba(61, 183, 173, 0.28);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .form-actions button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 24px 55px rgba(61, 183, 173, 0.35);
+            font-weight: 600;
+            cursor: pointer;
         }
 
         @media (max-width: 1024px) {

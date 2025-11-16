@@ -6,37 +6,38 @@
     <style>
         .account-wrapper {
             display: grid;
-            gap: 32px;
+            gap: 28px;
         }
 
         .account-header {
-            background: linear-gradient(135deg, rgba(31, 109, 79, 0.12), rgba(63, 166, 126, 0.18));
-            border-radius: 24px;
-            padding: 28px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
             display: flex;
             align-items: center;
             gap: 20px;
         }
 
         .account-header img {
-            width: 96px;
-            height: 96px;
+            width: 88px;
+            height: 88px;
             border-radius: 50%;
             object-fit: cover;
-            box-shadow: 0 18px 40px rgba(31, 107, 79, 0.18);
+            border: 3px solid var(--border);
         }
 
         .account-header h1 {
             margin: 0;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
         }
 
         .account-card {
-            background: #fff;
-            border-radius: 24px;
-            padding: 32px;
-            box-shadow: 0 24px 60px rgba(31, 107, 79, 0.1);
-            border: 1px solid rgba(31, 107, 79, 0.08);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
         }
 
         .avatar-field {
@@ -44,19 +45,19 @@
             gap: 12px;
             justify-items: center;
             padding: 20px;
-            border-radius: 20px;
-            border: 1px dashed rgba(63, 166, 126, 0.35);
-            background: rgba(63, 166, 126, 0.06);
+            border-radius: 16px;
+            border: 1px dashed var(--border);
+            background: var(--surface-muted);
         }
 
         .avatar-field__preview {
-            width: 112px;
-            height: 112px;
+            width: 108px;
+            height: 108px;
             border-radius: 50%;
             overflow: hidden;
             display: grid;
             place-items: center;
-            background: rgba(31, 109, 79, 0.08);
+            background: #e2e8f0;
         }
 
         .avatar-field__preview img {
@@ -75,23 +76,17 @@
             gap: 8px;
             padding: 10px 20px;
             border-radius: 999px;
-            border: 1px solid rgba(31, 109, 79, 0.4);
+            border: 1px solid var(--border);
             background: #fff;
-            color: #1f2a37;
+            color: var(--text);
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .avatar-field__button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 12px 26px rgba(31, 109, 79, 0.2);
         }
 
         .avatar-field__hint {
             margin: 0;
             font-size: 0.85rem;
-            color: rgba(17, 37, 54, 0.7);
+            color: var(--text-muted);
             text-align: center;
         }
 
@@ -122,10 +117,10 @@
         input[type='text'],
         input[type='email'] {
             width: 100%;
-            padding: 14px 18px;
-            border-radius: 16px;
-            border: 1px solid rgba(31, 109, 79, 0.2);
-            background: rgba(31, 109, 79, 0.04);
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--surface-muted);
             font-family: inherit;
             font-size: 1rem;
         }
@@ -142,20 +137,14 @@
         }
 
         .form-actions button {
-            padding: 14px 28px;
+            padding: 12px 24px;
             border-radius: 999px;
             border: none;
-            background: linear-gradient(135deg, #3fa67e, #1b6d4f);
+            background: var(--primary);
             color: #fff;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 20px 40px rgba(31, 107, 79, 0.24);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .form-actions button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 28px 55px rgba(31, 107, 79, 0.3);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
         }
 
         @media (max-width: 768px) {
@@ -174,7 +163,7 @@
 @section('content')
     @php($currentAdmin = $account ?? $admin)
     @php($avatarPlaceholder = asset('images/avatar-placeholder.svg'))
-    @php($avatarSource = $avatarUrl ?? $avatarPlaceholder)
+    @php($avatarSource = $avatarUrl ?? \App\Support\AvatarResolver::resolve([$currentAdmin?->avatar_path]) ?? $avatarPlaceholder)
     <div class="account-wrapper">
         <div class="account-header">
             <img src="{{ $avatarSource }}" alt="Foto Admin" id="admin-account-avatar" />
