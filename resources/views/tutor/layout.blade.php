@@ -7,23 +7,21 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
             rel="stylesheet"
         />
         <style>
             :root {
-                --bg-primary: #f5f7fb;
-                --card-bg: rgba(255, 255, 255, 0.9);
-                --card-border: rgba(15, 23, 42, 0.04);
-                --sidebar-start: #0f172a;
-                --sidebar-end: #1e2643;
-                --accent-mint: #1fd1a1;
-                --accent-indigo: #5465ff;
-                --accent-orange: #f48c06;
-                --accent-purple: #9b5de5;
-                --primary: #3db7ad;
-                --primary-dark: #2c938b;
-                --text-muted: #6b7280;
+                --page-bg: #f5f7fb;
+                --surface: #ffffff;
+                --surface-muted: #f8fafc;
+                --border-subtle: #e4e7ec;
+                --sidebar-bg: #111c32;
+                --text-main: #0f172a;
+                --text-muted: #667085;
+                --accent: #2563eb;
+                --accent-muted: #e0e7ff;
+                --success: #15803d;
             }
 
             *,
@@ -35,9 +33,8 @@
             body {
                 margin: 0;
                 font-family: 'Poppins', sans-serif;
-                background: radial-gradient(circle at top left, rgba(84, 101, 255, 0.18), transparent 45%),
-                    radial-gradient(circle at top right, rgba(31, 209, 161, 0.12), transparent 40%), var(--bg-primary);
-                color: #0f172a;
+                background: var(--page-bg);
+                color: var(--text-main);
                 min-height: 100vh;
             }
 
@@ -47,112 +44,81 @@
             }
 
             .dashboard-shell {
-                position: relative;
                 min-height: 100vh;
                 display: grid;
-                grid-template-columns: 280px 1fr;
+                grid-template-columns: 264px 1fr;
                 gap: 32px;
                 padding: 32px 40px;
             }
 
             .nav-panel {
-                background: linear-gradient(195deg, var(--sidebar-start), var(--sidebar-end));
-                border-radius: 28px;
-                padding: 32px 26px;
+                background: var(--sidebar-bg);
+                border-radius: 24px;
+                padding: 32px 24px;
                 color: #fff;
                 display: flex;
                 flex-direction: column;
                 gap: 32px;
-                box-shadow: 0 35px 70px rgba(15, 23, 42, 0.35);
-            }
-
-            .brand {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-            }
-
-            .brand-logo {
-                width: 54px;
-                height: 54px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.08);
-                display: grid;
-                place-items: center;
-                font-weight: 600;
-                font-size: 1.1rem;
-                letter-spacing: 0.4px;
-            }
-
-            .brand span {
-                display: grid;
-                font-weight: 600;
-                line-height: 1.2;
+                box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+                position: sticky;
+                top: 32px;
+                align-self: start;
             }
 
             .navigation {
                 display: flex;
                 flex-direction: column;
-                gap: 12px;
+                gap: 8px;
             }
 
             .nav-link {
-                display: grid;
-                grid-template-columns: 48px 1fr;
+                display: flex;
                 align-items: center;
-                gap: 18px;
-                padding: 14px 18px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.04);
-                color: rgba(255, 255, 255, 0.78);
+                gap: 12px;
+                padding: 12px 16px;
+                border-radius: 14px;
+                color: rgba(255, 255, 255, 0.8);
                 font-weight: 500;
-                transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
-                font-size: 0.96rem;
+                transition: background 0.2s ease, color 0.2s ease;
+            }
+
+            .nav-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.08);
+                display: grid;
+                place-items: center;
+                font-size: 0.9rem;
             }
 
             .nav-link[data-active='true'] {
-                background: rgba(255, 255, 255, 0.16);
-                color: #fff;
-                transform: translateX(6px);
-            }
-
-            .nav-link:hover {
                 background: rgba(255, 255, 255, 0.12);
                 color: #fff;
             }
 
-            .nav-icon {
-                width: 48px;
-                height: 48px;
-                border-radius: 16px;
-                background: rgba(255, 255, 255, 0.1);
-                display: grid;
-                place-items: center;
-                font-weight: 600;
-                letter-spacing: 0.5px;
+            .nav-link:hover {
+                background: rgba(255, 255, 255, 0.18);
+                color: #fff;
             }
 
             .nav-footer {
                 margin-top: auto;
-                padding-top: 20px;
-                border-top: 1px solid rgba(255, 255, 255, 0.14);
                 display: flex;
                 flex-direction: column;
                 gap: 18px;
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+                padding-top: 20px;
             }
 
             .profile-summary {
-                display: grid;
-                grid-template-columns: 56px 1fr;
-                gap: 14px;
+                display: flex;
                 align-items: center;
-                padding: 16px;
-                border-radius: 18px;
-                background: rgba(255, 255, 255, 0.12);
-                backdrop-filter: blur(6px);
-                text-decoration: none;
-                color: inherit;
-                transition: background 0.2s ease, transform 0.2s ease;
+                gap: 14px;
+                border-radius: 16px;
+                padding: 12px 14px;
+                background: rgba(255, 255, 255, 0.08);
+                transition: background 0.2s ease;
             }
 
             .profile-summary img {
@@ -160,123 +126,111 @@
                 height: 56px;
                 border-radius: 50%;
                 object-fit: cover;
-                border: 2px solid rgba(255, 255, 255, 0.5);
+                border: 2px solid rgba(255, 255, 255, 0.25);
             }
 
             .profile-summary:hover {
-                background: rgba(255, 255, 255, 0.18);
-                transform: translateY(-2px);
+                background: rgba(255, 255, 255, 0.14);
             }
 
-            .profile-summary__action {
-                margin-top: 6px;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                font-size: 0.78rem;
-                font-weight: 500;
-                color: rgba(255, 255, 255, 0.85);
-            }
-
-            .profile-summary strong {
-                font-size: 1rem;
+            .profile-summary small {
                 display: block;
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 0.85rem;
             }
 
             .logout-btn {
-                display: inline-flex;
-                align-items: center;
-                gap: 12px;
-                font-weight: 500;
-                color: rgba(255, 255, 255, 0.82);
+                width: 100%;
             }
 
             .logout-btn button {
-                background: none;
-                border: none;
-                color: inherit;
+                width: 100%;
+                padding: 12px 18px;
+                border-radius: 14px;
+                border: 1px solid rgba(255, 255, 255, 0.35);
+                background: transparent;
+                color: #fff;
                 font: inherit;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
                 cursor: pointer;
-                padding: 0;
+                transition: background 0.2s ease, border-color 0.2s ease;
+            }
+
+            .logout-btn button:hover {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.55);
             }
 
             .main-area {
                 display: flex;
                 flex-direction: column;
                 gap: 24px;
-                position: relative;
             }
 
             .main-header {
-                background: var(--card-bg);
-                border-radius: 26px;
-                padding: 26px 32px;
+                background: var(--surface);
+                border-radius: 24px;
+                padding: 28px 32px;
+                border: 1px solid var(--border-subtle);
+                box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: space-between;
-                box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
-                border: 1px solid var(--card-border);
-                backdrop-filter: blur(14px);
+                gap: 24px;
+            }
+
+            .header-intro h1 {
+                margin: 6px 0 8px;
+                font-size: 2rem;
+            }
+
+            .header-intro p {
+                margin: 0;
+                color: var(--text-muted);
             }
 
             .header-meta {
                 display: flex;
-                align-items: center;
-                gap: 24px;
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-end;
             }
 
             .date-pill {
-                padding: 10px 16px;
+                padding: 10px 18px;
                 border-radius: 999px;
-                background: rgba(61, 183, 173, 0.12);
-                color: var(--primary-dark);
-                font-weight: 500;
+                background: var(--surface-muted);
+                border: 1px solid var(--border-subtle);
+                font-weight: 600;
                 font-size: 0.95rem;
+                color: var(--text-main);
             }
 
-            .header-profile {
-                display: grid;
-                grid-template-columns: 48px 1fr;
-                gap: 12px;
-                align-items: center;
-                padding: 6px 10px;
-                border-radius: 16px;
-                background: rgba(61, 183, 173, 0.12);
-                text-decoration: none;
-                color: inherit;
-                transition: background 0.2s ease, transform 0.2s ease;
-            }
-
-            .header-profile img {
-                width: 48px;
-                height: 48px;
-                border-radius: 16px;
-                object-fit: cover;
-            }
-
-            .header-profile:hover {
-                background: rgba(61, 183, 173, 0.2);
-                transform: translateY(-2px);
-            }
-
-            .header-profile__action {
+            .status-pill {
+                padding: 8px 16px;
+                border-radius: 999px;
+                background: var(--accent-muted);
+                color: var(--accent);
+                font-weight: 600;
+                font-size: 0.9rem;
                 display: inline-flex;
                 align-items: center;
-                gap: 6px;
-                font-size: 0.78rem;
-                color: var(--primary-dark);
-                font-weight: 600;
-                margin-top: 4px;
+                gap: 8px;
             }
 
-
-            .header-profile strong {
-                font-size: 1rem;
-                display: block;
+            .status-pill::before {
+                content: '';
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--accent);
             }
 
             .page-wrapper {
-                position: relative;
                 padding-bottom: 48px;
             }
 
@@ -285,41 +239,36 @@
             }
 
             .page-content {
-                display: block;
                 max-width: 1240px;
+                width: 100%;
             }
 
             .flash-message {
                 margin-bottom: 24px;
                 padding: 16px 20px;
-                border-radius: 16px;
+                border-radius: 14px;
                 font-weight: 500;
-                border: 1px solid transparent;
+                border: 1px solid var(--border-subtle);
+                background: var(--surface);
                 display: flex;
-                align-items: flex-start;
+                align-items: center;
                 gap: 12px;
             }
 
             .flash-message[data-variant='success'] {
-                background: rgba(61, 183, 173, 0.14);
-                border-color: rgba(61, 183, 173, 0.24);
-                color: var(--primary-dark);
+                border-color: rgba(21, 128, 61, 0.2);
+                color: var(--success);
             }
 
             .flash-message[data-variant='error'] {
-                background: rgba(220, 38, 38, 0.12);
-                border-color: rgba(220, 38, 38, 0.18);
-                color: #991b1b;
+                border-color: rgba(220, 38, 38, 0.25);
+                color: #b91c1c;
             }
 
             @media (max-width: 1240px) {
                 .dashboard-shell {
                     grid-template-columns: 240px 1fr;
                     padding: 28px;
-                }
-
-                .main-header {
-                    padding: 22px 26px;
                 }
             }
 
@@ -330,7 +279,6 @@
                 }
 
                 .nav-panel {
-                    position: sticky;
                     top: 24px;
                     z-index: 20;
                     flex-direction: row;
@@ -340,37 +288,34 @@
                 }
 
                 .navigation {
-                    display: inline-flex;
+                    flex-direction: row;
                     gap: 12px;
-                    width: max-content;
-                }
-
-                .nav-link {
-                    grid-template-columns: auto;
-                    grid-auto-flow: column;
-                    padding: 12px 16px;
-                }
-
-                .nav-icon {
-                    width: 40px;
-                    height: 40px;
                 }
 
                 .nav-footer {
                     display: none;
                 }
-            }
 
-            @media (max-width: 768px) {
                 .main-header {
                     flex-direction: column;
-                    align-items: flex-start;
-                    gap: 18px;
                 }
 
                 .header-meta {
-                    width: 100%;
-                    justify-content: space-between;
+                    align-items: flex-start;
+                }
+            }
+
+            @media (max-width: 640px) {
+                .dashboard-shell {
+                    padding: 20px;
+                }
+
+                .main-header {
+                    padding: 20px;
+                }
+
+                .header-intro h1 {
+                    font-size: 1.6rem;
                 }
             }
         </style>
@@ -379,10 +324,6 @@
     <body>
         <div class="dashboard-shell">
             <aside class="nav-panel">
-                <div class="brand">
-                    <div class="brand-logo">MC</div>
-                    <span>MayClass Mentor</span>
-                </div>
                 <nav class="navigation">
                     @php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
@@ -412,20 +353,13 @@
                                 'patterns' => ['tutor.schedule.*'],
                             ],
                         ];
-                        $tutorStoredAvatar = null;
                         $avatarCandidates = array_filter([
                             $tutorProfile?->avatar_path,
                             $tutor?->avatar_path,
                         ]);
-                        foreach ($avatarCandidates as $candidatePath) {
-                            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($candidatePath)) {
-                                $tutorStoredAvatar = \Illuminate\Support\Facades\Storage::disk('public')->url($candidatePath);
-                                break;
-                            }
-                        }
+                        $resolvedAvatar = \App\Support\AvatarResolver::resolve($avatarCandidates);
                         $avatarPlaceholder = asset('images/avatar-placeholder.svg');
-                        $tutorSummaryAvatar = $tutorStoredAvatar ?? $avatarPlaceholder;
-                        $tutorHeaderAvatar = $tutorStoredAvatar ?? $avatarPlaceholder;
+                        $tutorSummaryAvatar = $resolvedAvatar ?? $avatarPlaceholder;
                     @endphp
                     @foreach ($menuItems as $item)
                         @php
@@ -452,35 +386,26 @@
                         <div>
                             <strong>{{ $tutor?->name ?? 'Tutor MayClass' }}</strong>
                             <small>{{ $tutorProfile?->specializations ?? 'Mentor MayClass' }}</small>
-                            <span class="profile-summary__action">Kelola profil →</span>
                         </div>
                     </a>
                     <form method="POST" action="{{ route('logout') }}" class="logout-btn">
                         @csrf
-                        <span>Keluar</span>
-                        <button type="submit">→</button>
+                        <button type="submit" title="Keluar dari dashboard">
+                            <span>Keluar</span>
+                        </button>
                     </form>
                 </div>
             </aside>
             <div class="main-area">
                 <header class="main-header">
-                    <div>
-                        <span style="display: inline-flex; align-items: center; gap: 8px; font-weight: 500; color: var(--primary-dark); font-size: 0.95rem;">
-                            <span style="display: inline-flex; width: 8px; height: 8px; border-radius: 50%; background: var(--primary);"></span>
-                            Panel Tentor MayClass
-                        </span>
-                        <h1 style="margin: 8px 0 0; font-size: 1.9rem;">Halo, {{ $tutor?->name ?? 'Tutor' }}!</h1>
+                    <div class="header-intro">
+                        <span style="font-weight: 600; color: var(--text-muted); font-size: 0.95rem;">Panel Tentor MayClass</span>
+                        <h1>Halo, {{ $tutor?->name ?? 'Tutor' }}!</h1>
+                        <p>{{ $tutorProfile?->headline ?? 'Tetap fokus mengajar dan selesaikan agenda penting hari ini.' }}</p>
                     </div>
                     <div class="header-meta">
                         <span class="date-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
-                        <a class="header-profile" href="{{ route('tutor.account.edit') }}" title="Kelola profil tutor">
-                            <img src="{{ $tutorHeaderAvatar }}" alt="Profil tutor" />
-                            <div>
-                                <strong>{{ $tutor?->name ?? 'Tutor MayClass' }}</strong>
-                                <small style="color: var(--text-muted);">{{ $tutorProfile?->headline ?? 'Selamat mengajar hari ini' }}</small>
-                                <span class="header-profile__action">Kelola profil</span>
-                            </div>
-                        </a>
+                        <span class="status-pill">Mode mengajar aktif</span>
                     </div>
                 </header>
                 <main>
