@@ -983,22 +983,6 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel, dan
                         penuh dukungan menuju kampus impianmu.
                     </p>
-                    <div class="hero-stats" data-reveal data-reveal-delay="140">
-                        <div>Dipercaya ribuan pelajar dan orang tua di seluruh Indonesia.</div>
-                        <div class="hero-stats-row">
-                            <div class="hero-stat">
-                                <strong>2.000+</strong>
-                                <span>Siswa aktif MayClass</span>
-                            </div>
-                            <div class="hero-stat">
-                                <strong>120+</strong>
-                                <span>Tentor profesional</span>
-                            </div>
-                            <div class="hero-stat">
-                                <strong>98%</strong>
-                                <span>Tingkat kepuasan</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1007,9 +991,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
         <section class="section" id="artikel">
             <div class="container">
                 <div class="section-header" data-reveal>
-                    <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
-                        Artikel Terupdate
-                    </span>
+
                     <h2 class="section-title">Wawasan Terbaru untuk Dukung Persiapanmu</h2>
                     <p class="section-subtitle">
                         Nikmati rangkuman materi, strategi ujian, dan cerita motivasi dari tim akademik MayClass agar kamu
@@ -1063,9 +1045,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
         <section class="pricing-section" id="paket">
             <div class="container">
                 <div class="section-header" data-reveal>
-                    <span class="badge" style="background: rgba(132, 217, 134, 0.18); color: var(--primary-main);">
-                        Paket Belajar
-                    </span>
+
                     <h2 class="section-title">Pilih Paket Favoritmu &amp; Belajar Bareng Mentor Andal</h2>
                     <p class="section-subtitle">
                         Mulai dari kelas reguler, persiapan UTBK, hingga bimbingan CPNS—MayClass siap menemanimu dengan sesi
@@ -1181,9 +1161,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
         <section class="section" id="testimoni">
             <div class="container">
                 <div class="section-header" data-reveal>
-                    <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
-                        Testimoni Siswa
-                    </span>
+
                     <h2 class="section-title">Cerita Mereka yang Sudah Mewujudkan Mimpi</h2>
                     <p class="section-subtitle">
                         Dengar langsung pengalaman siswa MayClass yang berhasil menembus kampus favorit dan meraih skor tinggi
@@ -1248,9 +1226,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
         <section class="section" id="tentor">
             <div class="container">
                 <div class="section-header" data-reveal>
-                    <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
-                        Super Teacher MayClass
-                    </span>
+
                     <h2 class="section-title">Mentor Berkualitas Siap Mendampingi Belajarmu</h2>
                     <p class="section-subtitle">
                         Tenaga pendidik terbaik dari berbagai kampus unggulan siap memastikan setiap sesi belajar terasa dekat dan
@@ -1310,9 +1286,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
         <section class="section" id="faq">
             <div class="container">
                 <div class="section-header" data-reveal>
-                    <span class="badge" style="background: rgba(63, 166, 126, 0.08); color: var(--primary-main);">
-                        Pertanyaan yang Sering Diajukan
-                    </span>
+
                     <h2 class="section-title">FAQ MayClass</h2>
                     <p class="section-subtitle">
                         Temukan jawaban singkat terkait layanan, metode belajar, hingga cara mengakses materi di platform
