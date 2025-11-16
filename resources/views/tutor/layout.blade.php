@@ -63,6 +63,7 @@
                 position: sticky;
                 top: 32px;
                 align-self: start;
+                min-height: calc(100vh - 64px);
             }
 
             .navigation {
@@ -285,6 +286,7 @@
                     align-items: center;
                     gap: 20px;
                     overflow-x: auto;
+                    min-height: auto;
                 }
 
                 .navigation {
