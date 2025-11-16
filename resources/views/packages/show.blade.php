@@ -13,15 +13,26 @@
         <style>
             :root {
                 color-scheme: light;
-                --primary: #32c0b8;
-                --primary-dark: #1f7c76;
-                --accent: #f9b233;
+                --nav-height: 64px;
+                --primary: #3fa67e;
+                --primary-dark: #1b6d4f;
+                --primary-light: #84d986;
+                --primary-accent: #a8e6a1;
+                --accent: #a8e6a1;
                 --text-dark: #102029;
                 --text-muted: #5f6c7b;
                 --bg: #f3fbfb;
                 --bg-secondary: #e0f4f3;
                 --card: #ffffff;
-                --nav-border: rgba(31, 124, 118, 0.1);
+                --nav-surface: linear-gradient(135deg, rgba(80, 190, 150, 0.98), rgba(63, 166, 126, 0.98));
+                --footer-surface: #e8f3ef;
+                --ink-strong: #14352c;
+                --ink-muted: rgba(20, 59, 46, 0.78);
+                --ink-soft: rgba(20, 59, 46, 0.62);
+                --shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
+                --shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
+                --radius-lg: 20px;
+                --radius-xl: 28px;
             }
 
             * {
@@ -33,15 +44,12 @@
                 font-family: "Poppins", sans-serif;
                 background: linear-gradient(180deg, #f6ffff 0%, #e7f3f3 40%, #f9ffff 100%);
                 color: var(--text-dark);
+                padding-top: calc(var(--nav-height) + 32px);
             }
 
             a {
                 color: inherit;
                 text-decoration: none;
-            }
-
-            header {
-                padding: 28px 0 12px;
             }
 
             .container {
@@ -51,84 +59,184 @@
                 padding: 0 24px;
             }
 
-            .nav-shell {
-                background: rgba(255, 255, 255, 0.8);
-                border: 1px solid var(--nav-border);
-                border-radius: 20px;
-                padding: 12px 20px;
-                box-shadow: 0 16px 45px rgba(19, 75, 73, 0.12);
-                backdrop-filter: blur(10px);
+            header {
+                overflow: visible;
+                padding-top: 0;
             }
 
             nav {
-                display: flex;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                width: 100%;
+                padding: 12px clamp(12px, 3vw, 24px);
+                background: rgba(255, 255, 255, 0.4);
+                backdrop-filter: blur(16px) saturate(180%);
+                -webkit-backdrop-filter: blur(16px) saturate(180%);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+                transition: background 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .nav-inner {
+                display: grid;
+                grid-template-columns: auto 1fr auto;
                 align-items: center;
-                justify-content: space-between;
-                gap: 18px;
-                flex-wrap: wrap;
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 32px;
+                gap: 20px;
+            }
+
+            @media (max-width: 1024px) {
+                nav {
+                    padding: 24px clamp(8px, 4vw, 20px);
+                }
+
+                .nav-inner {
+                    gap: clamp(18px, 4vw, 32px);
+                }
+            }
+
+            @media (max-width: 768px) {
+                nav {
+                    padding: 20px clamp(8px, 6vw, 16px);
+                }
+
+                .nav-inner {
+                    grid-template-columns: 1fr;
+                    justify-items: center;
+                    gap: 18px;
+                }
+
+                .nav-inner > * {
+                    width: 100%;
+                    justify-self: center;
+                }
             }
 
             .brand {
-                display: inline-flex;
+                display: flex;
                 align-items: center;
-                gap: 12px;
+                gap: 14px;
                 font-weight: 600;
-                font-size: 1.1rem;
-                color: var(--primary-dark);
+                font-size: 1.25rem;
+                flex-shrink: 0;
+                justify-self: start;
             }
 
             .brand img {
-                width: 44px;
-                height: 44px;
+                width: 130px;
+                height: auto;
                 object-fit: contain;
             }
 
             .nav-links {
                 display: flex;
                 align-items: center;
-                gap: 16px;
+                justify-content: center;
+                gap: 28px;
                 font-size: 0.95rem;
-                color: var(--text-muted);
+                margin-left: 57px;
+            }
+
+            @media (max-width: 768px) {
+                .nav-links {
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    gap: 16px;
+                    margin-left: 0;
+                }
             }
 
             .nav-links a {
-                padding: 8px 14px;
-                border-radius: 999px;
-                transition: background 0.2s ease, color 0.2s ease;
+                color: rgba(255, 255, 255, 0.78);
+                transition: color 0.2s ease;
             }
 
             .nav-links a:hover,
             .nav-links a.is-active {
-                background: rgba(50, 192, 184, 0.1);
-                color: var(--primary-dark);
+                color: #ffffff;
             }
 
             .nav-actions {
                 display: flex;
+                align-items: center;
                 gap: 16px;
-                flex-wrap: wrap;
+                justify-content: flex-end;
+                justify-self: end;
             }
 
             .nav-actions form {
                 margin: 0;
             }
 
-            .nav-btn {
-                padding: 10px 22px;
-                border-radius: 999px;
-                border: 1px solid rgba(50, 192, 184, 0.25);
-                font-weight: 500;
-                font-size: 0.95rem;
-                background: rgba(255, 255, 255, 0.7);
-                color: var(--primary-dark);
-                box-shadow: inset 0 1px rgba(255, 255, 255, 0.6);
+            @media (max-width: 768px) {
+                .nav-actions {
+                    width: 100%;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                }
             }
 
-            .nav-btn.primary {
-                background: linear-gradient(120deg, var(--primary) 0%, var(--accent) 100%);
-                color: #fff;
-                border-color: transparent;
-                box-shadow: 0 18px 36px rgba(50, 192, 184, 0.35);
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 12px 28px;
+                border-radius: 999px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                border: 1px solid transparent;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                cursor: pointer;
+                text-decoration: none;
+            }
+
+            .btn-outline {
+                border-color: rgba(255, 255, 255, 0.38);
+                color: #ffffff;
+                background: transparent;
+            }
+
+            .btn-outline:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+            }
+
+            .btn-primary {
+                background: linear-gradient(120deg, var(--primary-light) 0%, var(--primary-accent) 100%);
+                color: var(--primary-dark);
+                box-shadow: 0 16px 40px rgba(132, 217, 134, 0.36);
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-1px);
+            }
+
+            .btn-ghost {
+                border-color: rgba(63, 166, 126, 0.35);
+                background: rgba(63, 166, 126, 0.08);
+                color: var(--primary-dark);
+            }
+
+            .btn-ghost:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 14px 32px rgba(63, 166, 126, 0.2);
+            }
+
+            .btn-muted {
+                border-color: rgba(31, 42, 55, 0.1);
+                background: rgba(31, 42, 55, 0.05);
+                color: var(--ink-strong);
+            }
+
+            .page-header {
+                margin-top: 16px;
             }
 
             .breadcrumb {
@@ -286,6 +394,25 @@
                 box-shadow: 0 20px 40px rgba(36, 110, 107, 0.25);
             }
 
+            .chip-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 10px 22px;
+                border-radius: 999px;
+                border: 1px solid rgba(63, 166, 126, 0.2);
+                font-weight: 500;
+                font-size: 0.92rem;
+                color: var(--primary-dark);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .chip-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 14px 32px rgba(63, 166, 126, 0.12);
+            }
+
             .included {
                 list-style: none;
                 padding: 0;
@@ -314,43 +441,77 @@
             }
 
             footer {
-                background: linear-gradient(180deg, rgba(31, 124, 118, 0.08), rgba(31, 124, 118, 0.16));
-                color: var(--text-dark);
-                padding: 56px 0 48px;
+                background: var(--footer-surface);
+                padding: 80px 0 52px;
+                width: 100%;
+                border-top: 1px solid rgba(31, 107, 79, 0.12);
                 margin-top: 64px;
             }
 
             .footer-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 28px;
-                background: rgba(255, 255, 255, 0.85);
-                border-radius: 28px;
-                padding: 28px 32px;
-                box-shadow: 0 24px 45px rgba(12, 56, 53, 0.1);
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 32px;
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto 48px;
+                padding: 0 32px;
+            }
+
+            .footer-brand {
+                display: grid;
+                gap: 16px;
+                color: var(--ink-soft);
+            }
+
+            .footer-brand img {
+                width: 64px;
+                height: auto;
             }
 
             .footer-grid h4 {
-                margin: 0 0 16px;
+                margin: 0 0 12px;
                 font-size: 1rem;
-                color: var(--primary-dark);
+                color: var(--ink-strong);
             }
 
-            .footer-grid ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
+            .footer-links {
                 display: grid;
                 gap: 10px;
-                font-size: 0.92rem;
-                color: var(--text-muted);
+                color: var(--ink-soft);
+                font-size: 0.95rem;
+            }
+
+            .footer-links a {
+                color: inherit;
+            }
+
+            .footer-links a:hover {
+                color: var(--primary);
             }
 
             .copyright {
-                margin-top: 36px;
+                margin: 0;
                 text-align: center;
-                font-size: 0.85rem;
-                color: var(--text-muted);
+                color: var(--ink-soft);
+                font-size: 0.9rem;
+                padding: 0 32px;
+            }
+
+            @media (max-width: 768px) {
+                footer {
+                    padding: 60px 0 40px;
+                }
+
+                .footer-grid {
+                    grid-template-columns: 1fr;
+                    padding: 0 16px;
+                    margin: 0 auto 40px;
+                }
+
+                .copyright {
+                    padding: 0 16px;
+                }
             }
 
             @media (max-width: 960px) {
@@ -377,34 +538,33 @@
     </head>
     <body>
         <header>
-            <div class="container">
-                <div class="nav-shell">
-                    <nav>
-                        <a href="/" class="brand">
-                            <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                            <span>MayClass</span>
-                        </a>
-                        <div class="nav-links">
-                            <a href="/">Beranda</a>
-                            <a href="{{ route('packages.index') }}" class="is-active">Program</a>
-                            <a href="#testimoni">Testimoni</a>
-                            <a href="#kontak">Kontak</a>
-                        </div>
-                        <div class="nav-actions">
-                            <a class="nav-btn" href="{{ route('packages.index') }}">Paket Lainnya</a>
-                            @auth
-                                <a class="nav-btn primary" href="{{ route('student.profile') }}">Profil</a>
-                                <form method="post" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="nav-btn" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
-                                </form>
-                            @else
-                                <a class="nav-btn" href="{{ route('login') }}">Masuk</a>
-                                <a class="nav-btn primary" href="{{ route('register') }}">Daftar</a>
-                            @endauth
-                        </div>
-                    </nav>
+            <nav>
+                <div class="nav-inner">
+                    <a class="brand" href="/">
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
+                    </a>
+                    <div class="nav-links">
+                        <a href="/">Beranda</a>
+                        <a href="{{ route('packages.index') }}" class="is-active">Program</a>
+                        <a href="#testimoni">Testimoni</a>
+                        <a href="#kontak">Kontak</a>
+                    </div>
+                    <div class="nav-actions">
+                        <a class="btn btn-outline" href="{{ route('packages.index') }}">Paket Lainnya</a>
+                        @auth
+                            <a class="btn btn-primary" href="{{ route('student.profile') }}">Profil</a>
+                            <form method="post" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="btn btn-muted">Keluar</button>
+                            </form>
+                        @else
+                            <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
+                            <a class="btn btn-primary" href="{{ route('register') }}">Daftar</a>
+                        @endauth
+                    </div>
                 </div>
+            </nav>
+            <div class="container page-header">
                 <a class="breadcrumb" href="{{ route('packages.index') }}">← Kembali ke semua paket</a>
             </div>
         </header>
@@ -461,9 +621,9 @@
                         <div>
                             <h3 style="margin: 24px 0 12px">Share this course</h3>
                             <div style="display: flex; gap: 12px; flex-wrap: wrap">
-                                <a class="nav-btn" style="border-color: transparent; background: rgba(61, 183, 173, 0.15);" href="#">WhatsApp</a>
-                                <a class="nav-btn" style="border-color: transparent; background: rgba(249, 178, 51, 0.15);" href="#">Instagram</a>
-                                <a class="nav-btn" style="border-color: transparent; background: rgba(31, 42, 55, 0.08);" href="#">Copy Link</a>
+                                <a class="chip-btn" style="background: rgba(61, 183, 173, 0.15);" href="#">WhatsApp</a>
+                                <a class="chip-btn" style="background: rgba(249, 178, 51, 0.15);" href="#">Instagram</a>
+                                <a class="chip-btn" style="background: rgba(31, 42, 55, 0.08);" href="#">Copy Link</a>
                             </div>
                         </div>
                     </div>
@@ -474,31 +634,36 @@
         <footer>
             <div class="container">
                 <div class="footer-grid">
-                    <div>
-                        <h4>Company</h4>
-                        <ul>
-                            <li><a href="#">About</a></li>
-                            <li><a href="#">Pricing</a></li>
-                            <li><a href="#">Testimonials</a></li>
-                            <li><a href="#">Blog</a></li>
-                        </ul>
+                    <div class="footer-brand">
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
+                        <p>
+                            MayClass menghadirkan bimbingan belajar terpadu dengan tentor profesional, materi interaktif, dan
+                            layanan pelanggan responsif.
+                        </p>
                     </div>
                     <div>
-                        <h4>Support</h4>
-                        <ul>
-                            <li><a href="#">Help center</a></li>
-                            <li><a href="#">FAQs</a></li>
-                            <li><a href="#">Terms</a></li>
-                            <li><a href="#">Privacy</a></li>
-                        </ul>
+                        <h4>Produk</h4>
+                        <div class="footer-links">
+                            <a href="{{ route('packages.index') }}">Tryout &amp; Paket Belajar</a>
+                            <a href="#testimoni">Testimoni</a>
+                            <a href="#">Super Teacher</a>
+                        </div>
                     </div>
                     <div>
-                        <h4>Stay up to date</h4>
-                        <ul>
-                            <li>Tips belajar mingguan</li>
-                            <li>Info promo terbaru</li>
-                            <li>Event dan webinar eksklusif</li>
-                        </ul>
+                        <h4>Bantuan</h4>
+                        <div class="footer-links">
+                            <a href="#faq">FAQ</a>
+                            <a href="mailto:hello@mayclass.id">Email Support</a>
+                            <a href="tel:+6281234567890">Hubungi Admin</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Ikuti Kami</h4>
+                        <div class="footer-links">
+                            <a href="https://www.instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+                            <a href="https://www.tiktok.com" target="_blank" rel="noreferrer">TikTok</a>
+                            <a href="https://www.youtube.com" target="_blank" rel="noreferrer">YouTube</a>
+                        </div>
                     </div>
                 </div>
                 <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
