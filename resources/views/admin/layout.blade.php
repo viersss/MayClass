@@ -60,24 +60,8 @@
                 gap: 24px;
                 position: sticky;
                 top: 32px;
-                height: fit-content;
-                max-height: calc(100vh - 64px);
-            }
-
-            .brand {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .brand strong {
-                font-size: 1.1rem;
-                letter-spacing: 0.5px;
-            }
-
-            .brand span {
-                font-size: 0.9rem;
-                color: rgba(255, 255, 255, 0.7);
+                align-self: start;
+                min-height: calc(100vh - 64px);
             }
 
             .navigation {
@@ -115,8 +99,11 @@
                 background: rgba(255, 255, 255, 0.1);
                 display: grid;
                 place-items: center;
-                font-weight: 600;
-                letter-spacing: 0.5px;
+            }
+
+            .nav-icon svg {
+                width: 22px;
+                height: 22px;
             }
 
             .nav-footer {
@@ -156,23 +143,29 @@
             }
 
             .logout-btn {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
                 width: 100%;
-                background: rgba(255, 255, 255, 0.08);
-                border: 1px solid rgba(255, 255, 255, 0.18);
+            }
+
+            .logout-btn button {
+                width: 100%;
+                padding: 12px 18px;
                 border-radius: 14px;
-                padding: 10px 16px;
+                border: 1px solid rgba(255, 255, 255, 0.35);
+                background: transparent;
                 color: #fff;
+                font: inherit;
                 font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
                 cursor: pointer;
                 transition: background 0.2s ease, border-color 0.2s ease;
             }
 
-            .logout-btn:hover {
-                background: rgba(255, 255, 255, 0.16);
-                border-color: rgba(255, 255, 255, 0.4);
+            .logout-btn button:hover {
+                background: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.55);
             }
 
             .main-area {
@@ -284,35 +277,31 @@
     <body>
         <div class="dashboard-shell">
             <aside class="nav-panel">
-                <div class="brand">
-                    <strong>MayClass Admin</strong>
-                    <span>Panel kendali harian</span>
-                </div>
                 <nav class="navigation">
                     @php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
                         $menuItems = [
                             [
                                 'label' => 'Manajemen Siswa',
-                                'abbr' => 'MS',
+                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M7 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm10 0a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2 20a4.5 4.5 0 0 1 4.5-4.5H9a4.5 4.5 0 0 1 4.5 4.5v1H2zm9.5 1v-1A4.5 4.5 0 0 1 16 15.5h2.5A4.5 4.5 0 0 1 23 20v1z" /></svg>',
                                 'route' => 'admin.students.index',
                                 'patterns' => ['admin.students.*'],
                             ],
                             [
                                 'label' => 'Manajemen Paket',
-                                'abbr' => 'PK',
+                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7 12 3l9 4v10l-9 4-9-4z" /><path stroke-linecap="round" stroke-linejoin="round" d="m3 7 9 4 9-4" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 11v10" /></svg>',
                                 'route' => 'admin.packages.index',
                                 'patterns' => ['admin.packages.*'],
                             ],
                             [
                                 'label' => 'Manajemen Keuangan',
-                                'abbr' => 'MK',
+                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h14a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9a2 2 0 0 1 2-2z" /><path stroke-linecap="round" stroke-linejoin="round" d="M18 11h3v4h-3a2 2 0 0 1 0-4z" /></svg>',
                                 'route' => 'admin.finance.index',
                                 'patterns' => ['admin.finance.*'],
                             ],
                             [
                                 'label' => 'Pengaturan Akun',
-                                'abbr' => 'PA',
+                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" /><path stroke-linecap="round" stroke-linejoin="round" d="m19.4 15.4.7 2.2-1.9 1.4-2.3-.8a6.9 6.9 0 0 1-3.6 0l-2.3.8-1.9-1.4.7-2.2a6.9 6.9 0 0 1 0-3.6l-.7-2.2 1.9-1.4 2.3.8a6.9 6.9 0 0 1 3.6 0l2.3-.8 1.9 1.4-.7 2.2a6.9 6.9 0 0 1 0 3.6z" /></svg>',
                                 'route' => 'admin.account.edit',
                                 'patterns' => ['admin.account.*'],
                             ],
@@ -331,7 +320,7 @@
                             }
                         @endphp
                         <a href="{{ route($item['route']) }}" class="nav-link" data-active="{{ $isActive ? 'true' : 'false' }}">
-                            <span class="nav-icon">{{ $item['abbr'] }}</span>
+                            <span class="nav-icon" aria-hidden="true">{!! $item['icon'] !!}</span>
                             <span>{{ $item['label'] }}</span>
                         </a>
                     @endforeach
@@ -349,9 +338,8 @@
                     </a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="logout-btn">
+                        <button type="submit" title="Keluar dari dashboard">
                             <span>Keluar</span>
-                            <span aria-hidden="true">↗</span>
                         </button>
                     </form>
                 </div>

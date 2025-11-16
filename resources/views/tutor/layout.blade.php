@@ -90,7 +90,11 @@
                 background: rgba(255, 255, 255, 0.08);
                 display: grid;
                 place-items: center;
-                font-size: 0.9rem;
+            }
+
+            .nav-icon svg {
+                width: 22px;
+                height: 22px;
             }
 
             .nav-link[data-active='true'] {
@@ -332,25 +336,25 @@
                         $menuItems = [
                             [
                                 'label' => 'Dashboard',
-                                'abbr' => 'DB',
+                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></svg>',
                                 'route' => 'tutor.dashboard',
                                 'patterns' => ['tutor.dashboard'],
                             ],
                             [
                                 'label' => 'Materi',
-                                'abbr' => 'MT',
+                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5h9l5 5v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" /><path stroke-linecap="round" stroke-linejoin="round" d="M14 5v5h5" /></svg>',
                                 'route' => 'tutor.materials.index',
                                 'patterns' => ['tutor.materials.*'],
                             ],
                             [
                                 'label' => 'Quiz',
-                                'abbr' => 'QZ',
+                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6a4 4 0 0 1 4 4c0 1.5-.8 2.3-2 3.2-.7.5-1 1-.9 1.8m-.1 3h.01" /><path stroke-linecap="round" stroke-linejoin="round" d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" /></svg>',
                                 'route' => 'tutor.quizzes.index',
                                 'patterns' => ['tutor.quizzes.*'],
                             ],
                             [
                                 'label' => 'Jadwal',
-                                'abbr' => 'JD',
+                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M7 3v3m10-3v3" /><rect x="3" y="5" width="18" height="16" rx="2" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 11h18" /><path stroke-linecap="round" stroke-linejoin="round" d="m15 15-3 3-2-2" /></svg>',
                                 'route' => 'tutor.schedule.index',
                                 'patterns' => ['tutor.schedule.*'],
                             ],
@@ -374,7 +378,7 @@
                             }
                         @endphp
                         <a href="{{ route($item['route']) }}" class="nav-link" data-active="{{ $isActive ? 'true' : 'false' }}">
-                            <span class="nav-icon">{{ $item['abbr'] }}</span>
+                            <span class="nav-icon" aria-hidden="true">{!! $item['icon'] !!}</span>
                             <span>{{ $item['label'] }}</span>
                         </a>
                     @endforeach
