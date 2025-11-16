@@ -185,56 +185,92 @@
                 color: var(--text-muted);
             }
 
-            .register-success-overlay {
+            .register-popup-backdrop {
                 position: fixed;
                 inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 background: rgba(15, 23, 42, 0.45);
-                display: grid;
-                place-items: center;
-                z-index: 90;
+                z-index: 1200;
                 opacity: 0;
-                animation: overlay-in 0.25s ease forwards;
-            }
-
-            .register-success-overlay.is-leaving {
-                opacity: 0;
-                transition: opacity 0.25s ease;
                 pointer-events: none;
+                transition: opacity 0.25s ease;
             }
 
-            .register-success-card {
-                background: linear-gradient(160deg, rgba(253, 254, 254, 0.98), rgba(255, 255, 255, 0.9));
-                border-radius: 24px;
-                padding: 32px 42px;
+            .register-popup-backdrop.is-visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .register-popup {
+                background: var(--panel);
+                padding: 20px 24px;
+                border-radius: 20px;
+                box-shadow: 0 24px 55px rgba(15, 52, 56, 0.35);
+                max-width: 340px;
+                width: calc(100% - 48px);
                 text-align: center;
-                box-shadow: 0 30px 60px rgba(17, 24, 39, 0.18);
-                border: 1px solid rgba(66, 183, 173, 0.25);
-                max-width: 420px;
-                width: min(420px, 90vw);
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
             }
 
-            .register-success-card strong {
-                display: block;
-                font-size: 1.2rem;
-                margin-bottom: 8px;
-                color: var(--primary-dark);
+            .register-popup-title {
+                margin: 0 0 6px;
+                font-size: 1rem;
+                font-weight: 600;
+                color: var(--accent-dark);
             }
 
-            .register-success-card p {
+            .register-popup-text {
                 margin: 0;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+                line-height: 1.4;
+            }
+
+            .register-popup-actions {
+                margin-top: 8px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .register-popup-actions a,
+            .register-popup-actions button {
+                border-radius: 999px;
+                border: none;
+                font-weight: 600;
+                font-size: 0.95rem;
+                padding: 11px 18px;
+                font-family: inherit;
+                cursor: pointer;
+                transition: transform 0.15s ease, box-shadow 0.15s ease;
+            }
+
+            .register-popup-actions a {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(120deg, var(--accent) 0%, #5ed3c5 100%);
+                color: #fff;
+                box-shadow: 0 10px 22px rgba(66, 183, 173, 0.35);
+                text-decoration: none;
+            }
+
+            .register-popup-actions a:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 12px 28px rgba(66, 183, 173, 0.4);
+            }
+
+            .register-popup-actions button {
+                background: transparent;
                 color: var(--text-muted);
             }
 
-            @keyframes overlay-in {
-                from {
-                    opacity: 0;
-                    transform: translateY(12px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+            .register-popup-actions button:hover {
+                color: var(--accent-dark);
             }
 
             html[data-mode="register"] .step-indicator[data-step="register"],
@@ -572,55 +608,21 @@
                 }
             }
 
-                        .register-popup-backdrop {
-                position: fixed;
-                inset: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: rgba(15, 23, 42, 0.45); /* overlay gelap */
-                z-index: 1200;
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.25s ease;
-            }
-
-            .register-popup-backdrop.is-visible {
-                opacity: 1;
-                pointer-events: auto;
-            }
-
-            .register-popup {
-                background: var(--panel);
-                padding: 20px 24px;
-                border-radius: 20px;
-                box-shadow: 0 24px 55px rgba(15, 52, 56, 0.35);
-                max-width: 340px;
-                width: calc(100% - 48px);
-                text-align: center;
-            }
-
-            .register-popup-title {
-                margin: 0 0 6px;
-                font-size: 1rem;
-                font-weight: 600;
-                color: var(--accent-dark);
-            }
-
-            .register-popup-text {
-                margin: 0;
-                font-size: 0.9rem;
-                color: var(--text-muted);
-            }
         </style>
     </head>
     <body>
         @php($profileData = $profile ?? [])
         @if (session('register_success'))
-            <div class="register-success-overlay" data-register-success>
-                <div class="register-success-card" role="status" aria-live="assertive">
-                    <strong>Registrasi berhasil!</strong>
-                    <p>{{ session('status') ?? 'Mengalihkan ke halaman login…' }}</p>
+            <div class="register-popup-backdrop is-visible" id="register-popup" role="dialog" aria-modal="true">
+                <div class="register-popup">
+                    <p class="register-popup-title">Registrasi berhasil!</p>
+                    <p class="register-popup-text">
+                        {{ session('status') ?? 'Akun berhasil dibuat. Silakan login untuk mulai belajar.' }}
+                    </p>
+                    <div class="register-popup-actions">
+                        <a href="{{ route('login') }}">Masuk Sekarang</a>
+                        <button type="button" data-close-register-popup>Tutup</button>
+                    </div>
                 </div>
             </div>
         @endif
@@ -880,34 +882,6 @@
         </div>
 
         <script>
-
-                    @if(session('register_success'))
-            <div class="register-popup-backdrop" id="register-popup">
-                <div class="register-popup">
-                    <p class="register-popup-title">Registrasi Berhasil</p>
-                    <p class="register-popup-text">
-                        Registrasi berhasil. Mengalihkan ke halaman login…
-                    </p>
-                </div>
-            </div>
-
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const popup = document.getElementById('register-popup');
-                    if (!popup) return;
-
-                    // munculkan popup
-                    requestAnimationFrame(() => {
-                        popup.classList.add('is-visible');
-                    });
-
-                    // 2 detik kemudian arahkan ke halaman login
-                    setTimeout(function () {
-                        window.location.href = "{{ route('login') }}";
-                    }, 1000); // 2000 ms = 2 detik
-                });
-            </script>
-        @endif
             const doc = document.documentElement;
             const switchButtons = document.querySelectorAll('.tab-switcher button');
 
@@ -974,16 +948,51 @@
                 }
             });
 
-            const registerSuccessOverlay = document.querySelector('[data-register-success]');
+            const registerPopup = document.getElementById('register-popup');
 
-            if (registerSuccessOverlay) {
-                setTimeout(() => {
-                    registerSuccessOverlay.classList.add('is-leaving');
-                }, 1700);
+            if (registerPopup) {
+                const closeButtons = registerPopup.querySelectorAll('[data-close-register-popup]');
+                let isClosing = false;
 
-                setTimeout(() => {
-                    window.location.assign('{{ route('login') }}');
-                }, 2000);
+                const closePopup = () => {
+                    if (isClosing) {
+                        return;
+                    }
+
+                    isClosing = true;
+                    registerPopup.classList.remove('is-visible');
+                    registerPopup.addEventListener(
+                        'transitionend',
+                        () => registerPopup.remove(),
+                        { once: true }
+                    );
+
+                    setTimeout(() => {
+                        if (registerPopup.parentElement) {
+                            registerPopup.remove();
+                        }
+                    }, 400);
+
+                    document.removeEventListener('keydown', handleKeydown);
+                };
+
+                const handleKeydown = (event) => {
+                    if (event.key === 'Escape') {
+                        closePopup();
+                    }
+                };
+
+                closeButtons.forEach((button) => {
+                    button.addEventListener('click', closePopup);
+                });
+
+                registerPopup.addEventListener('click', (event) => {
+                    if (event.target === registerPopup) {
+                        closePopup();
+                    }
+                });
+
+                document.addEventListener('keydown', handleKeydown);
             }
         </script>
     </body>
