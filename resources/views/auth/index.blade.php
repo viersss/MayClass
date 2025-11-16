@@ -661,7 +661,7 @@
                         </p>
                         <div class="tab-switcher" role="tablist">
                             <button type="button" data-mode="register" role="tab" aria-selected="false">
-                                Registrasi
+                                Daftar
                             </button>
                             <button type="button" data-mode="login" role="tab" aria-selected="false">
                                 Masuk
