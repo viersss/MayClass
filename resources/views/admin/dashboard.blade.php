@@ -5,114 +5,62 @@
 @push('styles')
     <style>
         .hero-card {
-            position: relative;
             display: grid;
             grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-            gap: 36px;
-            padding: 40px;
-            border-radius: 32px;
-            background: linear-gradient(130deg, rgba(84, 101, 255, 0.18), rgba(61, 183, 173, 0.22));
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            box-shadow: 0 32px 70px rgba(15, 23, 42, 0.12);
-            overflow: hidden;
-        }
-
-        .hero-card::after {
-            content: '';
-            position: absolute;
-            inset: -120px -100px auto auto;
-            width: 320px;
-            height: 320px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.35), transparent 65%);
-            pointer-events: none;
+            gap: 32px;
+            padding: 32px;
+            border-radius: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
         }
 
         .hero-main {
-            position: relative;
-            z-index: 1;
             display: flex;
             flex-direction: column;
-            gap: 18px;
-            color: #0f172a;
+            gap: 16px;
         }
 
         .hero-chip {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.55);
-            color: var(--primary-dark);
+            background: var(--surface-muted);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             width: fit-content;
         }
 
         .hero-main h2 {
             margin: 0;
-            font-size: 2.4rem;
-            line-height: 1.25;
+            font-size: 2rem;
+            line-height: 1.3;
         }
 
         .hero-main p {
             margin: 0;
             font-size: 1rem;
-            color: rgba(15, 23, 42, 0.72);
+            color: var(--text-muted);
             max-width: 560px;
         }
 
-        .hero-actions {
-            margin-top: 8px;
-            display: inline-flex;
-            flex-wrap: wrap;
-            gap: 14px;
-        }
-
-        .hero-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 12px 22px;
-            border-radius: 14px;
-            background: var(--primary);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.95rem;
-            box-shadow: 0 16px 32px rgba(61, 183, 173, 0.25);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .hero-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(61, 183, 173, 0.28);
-        }
-
-        .hero-link--ghost {
-            background: rgba(255, 255, 255, 0.65);
-            color: var(--primary-dark);
-            box-shadow: none;
-            border: 1px solid rgba(15, 23, 42, 0.08);
-        }
-
         .hero-side {
-            position: relative;
-            z-index: 1;
             display: grid;
-            gap: 18px;
+            gap: 16px;
             align-content: start;
         }
 
         .hero-metric {
             display: grid;
-            gap: 10px;
-            padding: 26px 28px;
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.78);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(15, 23, 42, 0.08);
+            gap: 6px;
+            padding: 20px;
+            border-radius: 16px;
+            background: var(--surface-muted);
+            border: 1px solid var(--border);
         }
 
         .hero-metric small {
@@ -122,7 +70,7 @@
         }
 
         .hero-metric strong {
-            font-size: 2rem;
+            font-size: 1.8rem;
             line-height: 1.2;
         }
 
@@ -170,16 +118,16 @@
         .hero-mini-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px;
+            gap: 12px;
         }
 
         .mini-metric {
-            padding: 18px 20px;
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.82);
-            border: 1px solid rgba(15, 23, 42, 0.08);
+            padding: 16px;
+            border-radius: 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
             display: grid;
-            gap: 6px;
+            gap: 4px;
         }
 
         .mini-metric small {
@@ -189,12 +137,12 @@
         }
 
         .mini-metric strong {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
         }
 
         .mini-metric span {
             font-size: 0.85rem;
-            color: rgba(15, 23, 42, 0.6);
+            color: var(--text-muted);
         }
 
         .stat-grid {
@@ -205,25 +153,23 @@
         }
 
         .stat-card {
-            position: relative;
-            padding: 24px 26px;
-            border-radius: 24px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            box-shadow: 0 24px 50px rgba(15, 23, 42, 0.08);
+            padding: 20px;
+            border-radius: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
             display: grid;
-            gap: 14px;
+            gap: 8px;
         }
 
         .stat-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 16px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             display: grid;
             place-items: center;
             font-weight: 600;
-            color: #0f172a;
-            background: rgba(61, 183, 173, 0.16);
+            color: var(--primary);
+            background: rgba(37, 99, 235, 0.12);
         }
 
         .stat-card span {
@@ -233,13 +179,13 @@
         }
 
         .stat-card strong {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
         }
 
         .stat-card em {
             font-style: normal;
             font-size: 0.85rem;
-            color: rgba(15, 23, 42, 0.6);
+            color: var(--text-muted);
         }
 
         .insights-grid {
@@ -250,13 +196,13 @@
         }
 
         .card-panel {
-            background: var(--card-bg);
-            border-radius: 26px;
-            padding: 28px 30px;
-            border: 1px solid var(--card-border);
-            box-shadow: 0 26px 55px rgba(15, 23, 42, 0.08);
+            background: var(--surface);
+            border-radius: 18px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
             display: grid;
-            gap: 24px;
+            gap: 20px;
         }
 
         .card-header {
@@ -278,29 +224,24 @@
 
         .chart-wrapper {
             position: relative;
-            height: 260px;
+            height: 240px;
             display: flex;
             align-items: flex-end;
-            gap: 18px;
+            gap: 16px;
         }
 
         .chart-bar {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
         }
 
         .chart-bar div {
             width: 100%;
-            border-radius: 18px 18px 8px 8px;
-            background: linear-gradient(180deg, rgba(84, 101, 255, 0.85), rgba(31, 209, 161, 0.7));
-            transition: transform 0.25s ease;
-        }
-
-        .chart-bar div:hover {
-            transform: translateY(-4px);
+            border-radius: 12px 12px 6px 6px;
+            background: rgba(37, 99, 235, 0.3);
         }
 
         .chart-bar span {
@@ -345,7 +286,7 @@
             position: absolute;
             inset: 0 auto 0 0;
             border-radius: inherit;
-            background: linear-gradient(90deg, rgba(61, 183, 173, 0.85), rgba(84, 101, 255, 0.75));
+            background: rgba(37, 99, 235, 0.4);
         }
 
         .status-badge {
@@ -523,10 +464,6 @@
                 Data finansial, pendaftaran siswa, dan performa paket belajar diperbarui secara langsung sehingga tim administrasi
                 dapat mengambil keputusan cepat setiap hari.
             </p>
-            <div class="hero-actions">
-                <a href="{{ route('admin.finance.index') }}" class="hero-link">Verifikasi pembayaran</a>
-                <a href="{{ route('admin.packages.index') }}" class="hero-link hero-link--ghost">Kelola paket belajar</a>
-            </div>
         </div>
         <div class="hero-side">
             @php
