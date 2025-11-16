@@ -93,7 +93,6 @@ class ProfileController extends Controller
         return match ($gender) {
             'male' => 'Laki-laki',
             'female' => 'Perempuan',
-            'other' => 'Lainnya',
             default => null,
         };
     }
@@ -103,7 +102,6 @@ class ProfileController extends Controller
         return [
             'male' => 'Laki-laki',
             'female' => 'Perempuan',
-            'other' => 'Lainnya',
         ];
     }
 }
