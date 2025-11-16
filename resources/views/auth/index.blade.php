@@ -14,13 +14,16 @@
         <style>
             :root {
                 color-scheme: light;
-                --bg: #b9e3e0;
-                --panel: #f9ffff;
-                --accent: #42b7ad;
-                --accent-dark: #2f8f87;
-                --text: #1f2a37;
-                --text-muted: #6b7280;
-                --outline: rgba(47, 143, 135, 0.25);
+                --bg: #04281c;
+                --bg-secondary: #0c3f2d;
+                --panel: #ffffff;
+                --panel-muted: #eef7f2;
+                --accent: #3fa67e;
+                --accent-dark: #1b6d4f;
+                --accent-soft: #84d986;
+                --text: #0f241b;
+                --text-muted: #4c6257;
+                --outline: rgba(35, 87, 64, 0.25);
             }
 
             * {
@@ -31,7 +34,8 @@
                 margin: 0;
                 font-family: "Poppins", sans-serif;
                 color: var(--text);
-                background: linear-gradient(135deg, #dff5f2 0%, #9ed6d1 100%);
+                background: radial-gradient(circle at top, rgba(132, 217, 134, 0.15), transparent 50%),
+                    linear-gradient(135deg, #021710 0%, var(--bg) 35%, var(--bg-secondary) 100%);
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
@@ -48,8 +52,9 @@
                 gap: 8px;
                 margin: 24px;
                 font-size: 0.95rem;
-                color: var(--accent-dark);
+                color: #d0dcff;
                 font-weight: 500;
+                letter-spacing: 0.01em;
             }
 
             .auth-wrapper {
@@ -57,66 +62,106 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 24px;
+                padding: clamp(16px, 4vw, 40px);
             }
 
             .auth-card {
-                background: var(--panel);
-                border-radius: 32px;
+                background: rgba(7, 26, 18, 0.55);
+                border-radius: 36px;
                 display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                width: min(1080px, 100%);
+                grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+                width: min(1200px, 100%);
+                min-height: clamp(640px, 80vh, 760px);
                 overflow: hidden;
-                box-shadow: 0 35px 65px rgba(27, 71, 74, 0.18);
+                box-shadow: 0 45px 95px rgba(2, 6, 23, 0.4);
+                border: 1px solid rgba(255, 255, 255, 0.08);
             }
 
             .auth-illustration {
-                background: linear-gradient(160deg, rgba(255, 255, 255, 0.3) 0%, rgba(59, 166, 158, 0.65) 100%);
-                padding: 48px;
+                position: relative;
+                background: linear-gradient(130deg, rgba(4, 22, 15, 0.75), rgba(11, 52, 37, 0.78)),
+                    url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80')
+                        center/cover;
+                padding: clamp(32px, 5vw, 56px);
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-start;
+                justify-content: space-between;
                 gap: 32px;
+                color: #ecfff6;
             }
 
-            .auth-illustration .image-frame {
-                background: #f1faf9;
-                border-radius: 24px;
-                overflow: hidden;
-                position: relative;
-                box-shadow: 0 20px 45px rgba(45, 133, 126, 0.2);
+            .auth-hero-top {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
             }
 
-            .auth-illustration .image-frame::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(160deg, rgba(66, 183, 173, 0.2) 0%, rgba(66, 183, 173, 0.05) 100%);
+            .brand-chip {
+                padding: 10px 18px;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.12);
+                font-weight: 600;
+                letter-spacing: 0.08em;
+                font-size: 0.85rem;
             }
 
-            .auth-illustration img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                display: block;
+            .hero-season {
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                opacity: 0.75;
+            }
+
+            .auth-hero-body {
+                margin-top: clamp(24px, 3vw, 40px);
+                max-width: 420px;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .hero-eyebrow {
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                letter-spacing: 0.2em;
+                color: rgba(232, 253, 242, 0.75);
             }
 
             .auth-illustration h1 {
-                font-size: clamp(0.9rem, 1.7vw, 1.9rem);
-                font-weight: 100; /* atau 300 kalau mau lebih ringan */
+                font-size: clamp(2rem, 3vw, 2.8rem);
+                font-weight: 600;
                 margin: 0;
-                line-height: 1.3;
+                line-height: 1.2;
             }
-
 
             .auth-illustration p {
-                color: #f6fffe;
+                color: rgba(237, 252, 243, 0.9);
                 font-weight: 400;
                 margin: 0;
+                line-height: 1.5;
             }
 
-            .auth-illustration strong {
-                color: #003a36;
+            .hero-metric-card {
+                margin-top: auto;
+                padding: 20px 24px;
+                border-radius: 24px;
+                background: rgba(5, 25, 17, 0.75);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                max-width: 360px;
+                backdrop-filter: blur(12px);
+                box-shadow: 0 18px 40px rgba(2, 7, 24, 0.45);
+            }
+
+            .hero-metric-card strong {
+                display: block;
+                font-size: 2rem;
+                margin-bottom: 4px;
+            }
+
+            .hero-metric-card span {
+                font-size: 0.95rem;
+                color: rgba(255, 255, 255, 0.7);
             }
 
             [data-copy-mode] {
@@ -129,21 +174,66 @@
             }
 
             .auth-panel {
-                padding: 48px;
-                background: #fdfefe;
+                padding: clamp(32px, 5vw, 64px);
+                background: var(--panel);
                 display: flex;
                 flex-direction: column;
-                gap: 32px;
+                gap: 24px;
+                position: relative;
             }
 
-            .auth-header {
-                text-align: center;
+            .panel-top {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                flex-wrap: wrap;
             }
 
-            .auth-header h2 {
-                margin: 0;
-                font-size: 1.6rem;
+            .panel-chip {
+                font-size: 0.85rem;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--accent-dark);
                 font-weight: 600;
+            }
+
+            .panel-switch {
+                font-size: 0.9rem;
+                color: var(--text-muted);
+                margin-left: auto;
+            }
+
+            .panel-switch a {
+                color: var(--accent-dark);
+                font-weight: 600;
+            }
+
+            .panel-header {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .panel-eyebrow {
+                font-size: 0.85rem;
+                letter-spacing: 0.2em;
+                color: var(--text-muted);
+                text-transform: uppercase;
+            }
+
+            .panel-header h2 {
+                margin: 0;
+                font-size: clamp(1.8rem, 3vw, 2.3rem);
+                font-weight: 600;
+            }
+
+            .panel-desc {
+                margin: 0;
+                color: var(--text-muted);
+                font-size: 0.95rem;
+                line-height: 1.5;
+                max-width: 520px;
             }
 
             .step-indicators {
@@ -253,9 +343,9 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                background: linear-gradient(120deg, var(--accent) 0%, #5ed3c5 100%);
+                background: var(--accent);
                 color: #fff;
-                box-shadow: 0 10px 22px rgba(66, 183, 173, 0.35);
+                box-shadow: 0 10px 22px rgba(31, 107, 79, 0.3);
                 text-decoration: none;
             }
 
@@ -280,18 +370,19 @@
 
             .tab-switcher {
                 display: inline-flex;
-                background: rgba(66, 183, 173, 0.1);
-                border-radius: 999px;
+                background: var(--panel-muted);
+                border-radius: 16px;
                 padding: 6px;
-                gap: 8px;
-                margin-top: 16px;
+                gap: 6px;
+                margin-top: 4px;
+                align-self: flex-start;
             }
 
             .tab-switcher button {
                 border: none;
                 background: transparent;
-                padding: 10px 24px;
-                border-radius: 999px;
+                padding: 12px 28px;
+                border-radius: 12px;
                 font-family: inherit;
                 font-weight: 500;
                 font-size: 0.95rem;
@@ -304,7 +395,7 @@
             html[data-mode="register"] .tab-switcher button[data-mode="register"] {
                 background: #fff;
                 color: var(--accent-dark);
-                box-shadow: 0 12px 25px rgba(66, 183, 173, 0.25);
+                box-shadow: 0 15px 25px rgba(27, 109, 79, 0.18);
             }
 
             form {
@@ -315,22 +406,23 @@
             }
 
             .error-alert {
-                padding: 12px 16px;
-                border-radius: 12px;
-                background: rgba(220, 38, 38, 0.1);
+                padding: 14px 18px;
+                border-radius: 16px;
+                background: rgba(220, 38, 38, 0.08);
                 color: #991b1b;
                 font-size: 0.85rem;
                 line-height: 1.5;
+                border: 1px solid rgba(220, 38, 38, 0.15);
             }
 
             .status-alert {
-                padding: 12px 16px;
-                border-radius: 12px;
-                background: rgba(66, 183, 173, 0.12);
+                padding: 14px 18px;
+                border-radius: 16px;
+                background: rgba(63, 166, 126, 0.12);
                 color: var(--accent-dark);
                 font-size: 0.9rem;
                 line-height: 1.5;
-                text-align: center;
+                border: 1px solid rgba(63, 166, 126, 0.25);
             }
 
             .google-error {
@@ -368,11 +460,11 @@
             select {
                 width: 100%;
                 padding: 14px 16px;
-                border-radius: 14px;
+                border-radius: 16px;
                 border: 1.5px solid var(--outline);
                 font-family: inherit;
                 font-size: 0.95rem;
-                transition: border 0.2s ease, box-shadow 0.2s ease;
+                transition: border 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
                 background: #fff;
             }
 
@@ -380,7 +472,8 @@
             select:focus {
                 outline: none;
                 border-color: var(--accent);
-                box-shadow: 0 0 0 3px rgba(66, 183, 173, 0.22);
+                box-shadow: 0 0 0 3px rgba(63, 166, 126, 0.2);
+                transform: translateY(-1px);
             }
 
             .two-column {
@@ -391,21 +484,21 @@
 
             .primary-action {
                 margin-top: 8px;
-                padding: 14px 16px;
-                border-radius: 14px;
+                padding: 16px 18px;
+                border-radius: 18px;
                 border: none;
-                background: linear-gradient(120deg, var(--accent) 0%, #5ed3c5 100%);
+                background: var(--accent);
                 color: #fff;
                 font-weight: 600;
                 font-size: 1rem;
                 cursor: pointer;
-                box-shadow: 0 16px 30px rgba(66, 183, 173, 0.35);
-                transition: transform 0.15s ease, box-shadow 0.15s ease;
+                box-shadow: 0 20px 40px rgba(31, 107, 79, 0.22);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
 
             .primary-action:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 18px 35px rgba(66, 183, 173, 0.42);
+                transform: translateY(-2px);
+                box-shadow: 0 25px 50px rgba(27, 109, 79, 0.3);
             }
 
             .switch-message {
@@ -429,24 +522,24 @@
 
             .form-helper {
                 margin: 0;
-                font-size: 0.78rem;
+                font-size: 0.82rem;
                 color: var(--text-muted);
             }
 
             .terms-link {
                 border: none;
-                background: rgba(66, 183, 173, 0.12);
+                background: rgba(42, 127, 255, 0.12);
                 color: var(--accent-dark);
-                font-weight: 500;
-                font-size: 0.78rem;
-                padding: 8px 14px;
+                font-weight: 600;
+                font-size: 0.82rem;
+                padding: 9px 18px;
                 border-radius: 999px;
                 cursor: pointer;
                 transition: background 0.2s ease, transform 0.2s ease;
             }
 
             .terms-link:hover {
-                background: rgba(66, 183, 173, 0.22);
+                background: rgba(42, 127, 255, 0.2);
                 transform: translateY(-1px);
             }
 
@@ -633,24 +726,50 @@
         </a>
         <div class="auth-wrapper">
             <div class="auth-card">
-                <div class="auth-illustration">
-                    <div class="image-frame" aria-hidden="true">
-                        <img src="{{ \App\Support\ImageRepository::url('auth') }}" alt="Ilustrasi siswa MayClass" />
+                <div class="auth-illustration" aria-hidden="true">
+                    <div class="auth-hero-top">
+                        <span class="brand-chip">MayClass</span>
+                        <span class="hero-season">Program Premium</span>
                     </div>
-                    <div>
-                        <h1 data-copy-mode="register">
-                            Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
-                            pendampingan tentor profesional.
-                        </h1>
-                        <h1 data-copy-mode="login">
-                            Masuk untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga
-                            pendampingan tentor profesional.
-                        </h1>
+                    <div class="auth-hero-body">
+                        <p class="hero-eyebrow" data-copy-mode="register">Raih kelas impianmu</p>
+                        <p class="hero-eyebrow" data-copy-mode="login">Selamat datang kembali</p>
+                        <h1 data-copy-mode="register">Langkah Pasti Menuju Prestasi</h1>
+                        <h1 data-copy-mode="login">Lanjutkan langkah pasti menuju prestasi</h1>
+                        <p>
+                            Ritme belajar intensif, materi terkurasi, dan dukungan mentor MayClass menghadirkan suasana
+                            premium seperti landing page utama.
+                        </p>
+                    </div>
+                    <div class="hero-metric-card">
+                        <strong>8.200+</strong>
+                        <span>Siswa aktif mempercayakan persiapan akademiknya pada MayClass setiap semester.</span>
                     </div>
                 </div>
                 <div class="auth-panel">
-                    <div class="auth-header">
-                        <h2>Selamat datang di MayClass</h2>
+                    <div class="panel-top">
+                        <span class="panel-chip">Portal Resmi</span>
+                        <p class="panel-switch" data-copy-mode="register">
+                            Sudah punya akun?
+                            <a href="{{ route('login') }}">Masuk</a>
+                        </p>
+                        <p class="panel-switch" data-copy-mode="login">
+                            Baru di MayClass?
+                            <a href="{{ route('register') }}">Daftar</a>
+                        </p>
+                    </div>
+                    <div class="panel-header">
+                        <p class="panel-eyebrow" data-copy-mode="register">Registrasi siswa</p>
+                        <p class="panel-eyebrow" data-copy-mode="login">Masuk dashboard</p>
+                        <h2 data-copy-mode="register">Buat akun MayClass</h2>
+                        <h2 data-copy-mode="login">Masuk ke akun MayClass</h2>
+                        <p class="panel-desc" data-copy-mode="register">
+                            Lengkapi identitas kamu untuk mengaktifkan akses modul belajar premium dan jadwal tentor
+                            pilihan.
+                        </p>
+                        <p class="panel-desc" data-copy-mode="login">
+                            Masukkan username dan kata sandi untuk melanjutkan progres belajar tanpa hambatan.
+                        </p>
                         <div class="tab-switcher" role="tablist">
                             <button type="button" data-mode="register" role="tab" aria-selected="false">
                                 Registrasi
