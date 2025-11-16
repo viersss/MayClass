@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\AvatarResolver;
 use App\Support\AvatarUploader;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class AccountController extends BaseAdminController
@@ -15,11 +15,7 @@ class AccountController extends BaseAdminController
     {
         $admin = Auth::user();
 
-        $avatarUrl = null;
-
-        if ($admin && $admin->avatar_path && Storage::disk('public')->exists($admin->avatar_path)) {
-            $avatarUrl = Storage::disk('public')->url($admin->avatar_path);
-        }
+        $avatarUrl = AvatarResolver::resolve([$admin?->avatar_path]);
 
         return $this->render('admin.account.index', [
             'account' => $admin,

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Tutor;
 
+use App\Support\AvatarResolver;
 use App\Support\AvatarUploader;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
@@ -17,22 +17,12 @@ class AccountController extends BaseTutorController
         $tutor = Auth::user();
         $tutor?->loadMissing('tutorProfile');
 
-        $avatarUrl = null;
-
-        if ($tutor) {
-            $disk = Storage::disk('public');
-            $candidates = array_filter([
+        $avatarUrl = $tutor
+            ? AvatarResolver::resolve([
                 optional($tutor->tutorProfile)->avatar_path,
                 $tutor->avatar_path,
-            ]);
-
-            foreach ($candidates as $candidate) {
-                if ($disk->exists($candidate)) {
-                    $avatarUrl = $disk->url($candidate);
-                    break;
-                }
-            }
-        }
+            ])
+            : null;
 
         return $this->render('tutor.account.index', [
             'avatarUrl' => $avatarUrl,
