@@ -13,13 +13,15 @@
         <style>
             :root {
                 color-scheme: light;
-                --primary: #3db7ad;
-                --primary-dark: #2c8c84;
+                --primary: #32c0b8;
+                --primary-dark: #1f7c76;
                 --accent: #f9b233;
-                --text-dark: #1f2a37;
-                --text-muted: #6b7280;
-                --bg: #f4fbfb;
+                --text-dark: #102029;
+                --text-muted: #5f6c7b;
+                --bg: #f3fbfb;
+                --bg-secondary: #e0f4f3;
                 --card: #ffffff;
+                --nav-border: rgba(31, 124, 118, 0.1);
             }
 
             * {
@@ -29,7 +31,7 @@
             body {
                 margin: 0;
                 font-family: "Poppins", sans-serif;
-                background: linear-gradient(160deg, #f9ffff 0%, #e7f3f3 100%);
+                background: linear-gradient(180deg, #f6ffff 0%, #e7f3f3 40%, #f9ffff 100%);
                 color: var(--text-dark);
             }
 
@@ -39,7 +41,7 @@
             }
 
             header {
-                padding: 28px 0 16px;
+                padding: 28px 0 12px;
             }
 
             .container {
@@ -49,19 +51,29 @@
                 padding: 0 24px;
             }
 
+            .nav-shell {
+                background: rgba(255, 255, 255, 0.8);
+                border: 1px solid var(--nav-border);
+                border-radius: 20px;
+                padding: 12px 20px;
+                box-shadow: 0 16px 45px rgba(19, 75, 73, 0.12);
+                backdrop-filter: blur(10px);
+            }
+
             nav {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                gap: 24px;
+                gap: 18px;
+                flex-wrap: wrap;
             }
 
             .brand {
                 display: inline-flex;
                 align-items: center;
-                gap: 14px;
+                gap: 12px;
                 font-weight: 600;
-                font-size: 1.25rem;
+                font-size: 1.1rem;
                 color: var(--primary-dark);
             }
 
@@ -71,9 +83,30 @@
                 object-fit: contain;
             }
 
+            .nav-links {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                font-size: 0.95rem;
+                color: var(--text-muted);
+            }
+
+            .nav-links a {
+                padding: 8px 14px;
+                border-radius: 999px;
+                transition: background 0.2s ease, color 0.2s ease;
+            }
+
+            .nav-links a:hover,
+            .nav-links a.is-active {
+                background: rgba(50, 192, 184, 0.1);
+                color: var(--primary-dark);
+            }
+
             .nav-actions {
                 display: flex;
                 gap: 16px;
+                flex-wrap: wrap;
             }
 
             .nav-actions form {
@@ -83,18 +116,19 @@
             .nav-btn {
                 padding: 10px 22px;
                 border-radius: 999px;
-                border: 1px solid rgba(61, 183, 173, 0.35);
+                border: 1px solid rgba(50, 192, 184, 0.25);
                 font-weight: 500;
                 font-size: 0.95rem;
-                background: rgba(255, 255, 255, 0.8);
+                background: rgba(255, 255, 255, 0.7);
                 color: var(--primary-dark);
+                box-shadow: inset 0 1px rgba(255, 255, 255, 0.6);
             }
 
             .nav-btn.primary {
-                background: var(--primary);
+                background: linear-gradient(120deg, var(--primary) 0%, var(--accent) 100%);
                 color: #fff;
                 border-color: transparent;
-                box-shadow: 0 18px 36px rgba(61, 183, 173, 0.25);
+                box-shadow: 0 18px 36px rgba(50, 192, 184, 0.35);
             }
 
             .breadcrumb {
@@ -112,6 +146,10 @@
                 gap: 48px;
                 align-items: flex-start;
                 padding-bottom: 64px;
+                background: rgba(255, 255, 255, 0.65);
+                border-radius: 36px;
+                padding: 48px;
+                box-shadow: 0 35px 80px rgba(17, 82, 79, 0.12);
             }
 
             .summary {
@@ -276,22 +314,26 @@
             }
 
             footer {
-                background: #102a43;
-                color: rgba(255, 255, 255, 0.7);
-                padding: 48px 0;
+                background: linear-gradient(180deg, rgba(31, 124, 118, 0.08), rgba(31, 124, 118, 0.16));
+                color: var(--text-dark);
+                padding: 56px 0 48px;
                 margin-top: 64px;
             }
 
             .footer-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 24px;
+                gap: 28px;
+                background: rgba(255, 255, 255, 0.85);
+                border-radius: 28px;
+                padding: 28px 32px;
+                box-shadow: 0 24px 45px rgba(12, 56, 53, 0.1);
             }
 
             .footer-grid h4 {
                 margin: 0 0 16px;
                 font-size: 1rem;
-                color: #fff;
+                color: var(--primary-dark);
             }
 
             .footer-grid ul {
@@ -300,23 +342,35 @@
                 margin: 0;
                 display: grid;
                 gap: 10px;
-                font-size: 0.9rem;
+                font-size: 0.92rem;
+                color: var(--text-muted);
             }
 
             .copyright {
                 margin-top: 36px;
                 text-align: center;
                 font-size: 0.85rem;
-                opacity: 0.7;
+                color: var(--text-muted);
             }
 
             @media (max-width: 960px) {
                 main {
                     grid-template-columns: 1fr;
+                    padding: 32px 24px;
                 }
 
                 .detail-card img {
                     height: 220px;
+                }
+
+                .nav-links {
+                    width: 100%;
+                    justify-content: center;
+                }
+
+                .nav-actions {
+                    width: 100%;
+                    justify-content: center;
                 }
             }
         </style>
@@ -324,24 +378,33 @@
     <body>
         <header>
             <div class="container">
-                <nav>
-                    <a href="/" class="brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                    </a>
-                    <div class="nav-actions">
-                        <a class="nav-btn" href="{{ route('packages.index') }}">Paket Lainnya</a>
-                        @auth
-                            <a class="nav-btn primary" href="{{ route('student.profile') }}">Profil</a>
-                            <form method="post" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="nav-btn" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
-                            </form>
-                        @else
-                            <a class="nav-btn" href="{{ route('login') }}">Masuk</a>
-                            <a class="nav-btn primary" href="{{ route('register') }}">Daftar</a>
-                        @endauth
-                    </div>
-                </nav>
+                <div class="nav-shell">
+                    <nav>
+                        <a href="/" class="brand">
+                            <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                            <span>MayClass</span>
+                        </a>
+                        <div class="nav-links">
+                            <a href="/">Beranda</a>
+                            <a href="{{ route('packages.index') }}" class="is-active">Program</a>
+                            <a href="#testimoni">Testimoni</a>
+                            <a href="#kontak">Kontak</a>
+                        </div>
+                        <div class="nav-actions">
+                            <a class="nav-btn" href="{{ route('packages.index') }}">Paket Lainnya</a>
+                            @auth
+                                <a class="nav-btn primary" href="{{ route('student.profile') }}">Profil</a>
+                                <form method="post" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="nav-btn" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
+                                </form>
+                            @else
+                                <a class="nav-btn" href="{{ route('login') }}">Masuk</a>
+                                <a class="nav-btn primary" href="{{ route('register') }}">Daftar</a>
+                            @endauth
+                        </div>
+                    </nav>
+                </div>
                 <a class="breadcrumb" href="{{ route('packages.index') }}">← Kembali ke semua paket</a>
             </div>
         </header>
