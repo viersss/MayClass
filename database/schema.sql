@@ -15,7 +15,7 @@ CREATE TABLE `users` (
   `username` varchar(50) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('student', 'tutor', 'admin') NOT NULL DEFAULT 'student',
+  `role` enum('visitor', 'student', 'tutor', 'admin') NOT NULL DEFAULT 'visitor',
   `student_id` varchar(20) DEFAULT NULL,
   `phone` varchar(30) DEFAULT NULL,
   `gender` enum('male', 'female', 'other') DEFAULT NULL,
