@@ -78,6 +78,25 @@
             text-decoration: none;
         }
 
+        .primary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: #3fa67e; /* warna hijau premium */
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.primary-btn:hover {
+    background: #2f8a67; /* sedikit lebih gelap biar ada efek */
+}
+
+
         .search-field button:hover,
         .content-toolbar .primary-action:hover {
             transform: translateY(-2px);
@@ -232,13 +251,17 @@
             <h1>Manajemen Quiz</h1>
             <p>Siapkan evaluasi pembelajaran yang terstruktur untuk seluruh jenjang.</p>
         </div>
-        <a href="{{ route('tutor.quizzes.create') }}" class="primary-action">+ Tambah Quiz</a>
+        <a href="{{ route('tutor.quizzes.create') }}" class="primary-btn">+ Tambah Quiz</a>
     </div>
 
     <div class="content-toolbar">
         <form method="GET" class="search-field">
             <input type="search" name="q" value="{{ $search }}" placeholder="Cari judul, pelajaran, atau jenjang..." />
-            <button type="submit">Cari</button>
+<button type="submit" style="background:none; border:none; cursor:pointer;">
+    <svg width="20" height="20" fill="#333" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387-1.414 1.414-4.387-4.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z" clip-rule="evenodd" />
+    </svg>
+</button>
         </form>
     </div>
 

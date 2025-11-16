@@ -103,7 +103,7 @@
 
             .auth-illustration h1 {
                 font-size: clamp(0.9rem, 1.7vw, 1.9rem);
-                font-weight: 400; /* atau 300 kalau mau lebih ringan */
+                font-weight: 100; /* atau 300 kalau mau lebih ringan */
                 margin: 0;
                 line-height: 1.3;
             }

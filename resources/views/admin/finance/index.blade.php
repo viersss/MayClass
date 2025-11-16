@@ -257,7 +257,6 @@
 @section('content')
     <div class="finance-header">
         <div>
-            <span style="color: var(--primary-dark); font-weight: 500;">Kelola transaksi dan pemasukan MayClass</span>
             <h2>Manajemen Keuangan</h2>
         </div>
     </div>

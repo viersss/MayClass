@@ -379,9 +379,6 @@
                                     <div class="card-footer">
                                         <a class="more-link" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
                                         @auth
-                                            <a class="checkout-link" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
-                                        @else
-                                            <a class="checkout-link" href="{{ route('register') }}">Daftar &amp; Checkout</a>
                                         @endauth
                                     </div>
                                 </article>

@@ -30,7 +30,7 @@ class DemoTutorSeeder extends Seeder
             ['user_id' => $tutor->id],
             [
                 'slug' => Str::slug($tutor->name) ?: 'tutor-demo-mayclass',
-                'headline' => 'Tutor Sains & Matematika',
+                'headline' => 'Tentor Sains & Matematika',
                 'bio' => 'Berpengalaman mendampingi siswa menyiapkan ujian masuk perguruan tinggi dan Olimpiade Sains dengan pendekatan belajar adaptif.',
                 'specializations' => 'Matematika SMA',
                 'education' => 'S1 Pendidikan Matematika',

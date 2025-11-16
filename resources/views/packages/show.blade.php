@@ -537,37 +537,6 @@
         </style>
     </head>
     <body>
-        <header>
-            <nav>
-                <div class="nav-inner">
-                    <a class="brand" href="/">
-                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
-                    </a>
-                    <div class="nav-links">
-                        <a href="/">Beranda</a>
-                        <a href="{{ route('packages.index') }}" class="is-active">Program</a>
-                        <a href="#testimoni">Testimoni</a>
-                        <a href="#kontak">Kontak</a>
-                    </div>
-                    <div class="nav-actions">
-                        <a class="btn btn-outline" href="{{ route('packages.index') }}">Paket Lainnya</a>
-                        @auth
-                            <a class="btn btn-primary" href="{{ route('student.profile') }}">Profile</a>
-                            <form method="post" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="btn btn-muted">Keluar</button>
-                            </form>
-                        @else
-                            <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
-                            <a class="btn btn-primary" href="{{ route('register') }}">Daftar</a>
-                        @endauth
-                    </div>
-                </div>
-            </nav>
-            <div class="container page-header">
-                <a class="breadcrumb" href="{{ route('packages.index') }}">← Kembali ke semua paket</a>
-            </div>
-        </header>
 
         <div class="container">
             <main>
@@ -599,9 +568,9 @@
                         <div class="price-box">
                             <p class="price">{{ $package['detail_price'] }}</p>
                             @auth
-                                <a class="buy-btn" href="{{ route('checkout.show', $package['slug']) }}">Checkout Sekarang</a>
+                                <a class="buy-btn" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
                             @else
-                                <a class="buy-btn" href="{{ route('register') }}">Daftar &amp; Checkout</a>
+                                <a class="buy-btn" href="{{ route('register') }}">Checkout</a>
                             @endauth
                         </div>
                         <div class="package-meta" style="margin-top: -6px;">
@@ -618,56 +587,9 @@
                                 @endforeach
                             </ul>
                         </div>
-                        <div>
-                            <h3 style="margin: 24px 0 12px">Share this course</h3>
-                            <div style="display: flex; gap: 12px; flex-wrap: wrap">
-                                <a class="chip-btn" style="background: rgba(61, 183, 173, 0.15);" href="#">WhatsApp</a>
-                                <a class="chip-btn" style="background: rgba(249, 178, 51, 0.15);" href="#">Instagram</a>
-                                <a class="chip-btn" style="background: rgba(31, 42, 55, 0.08);" href="#">Copy Link</a>
-                            </div>
-                        </div>
                     </div>
                 </aside>
             </main>
         </div>
-
-        <footer>
-            <div class="container">
-                <div class="footer-grid">
-                    <div class="footer-brand">
-                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
-                        <p>
-                            MayClass menghadirkan bimbingan belajar terpadu dengan tentor profesional, materi interaktif, dan
-                            layanan pelanggan responsif.
-                        </p>
-                    </div>
-                    <div>
-                        <h4>Produk</h4>
-                        <div class="footer-links">
-                            <a href="{{ route('packages.index') }}">Tryout &amp; Paket Belajar</a>
-                            <a href="#testimoni">Testimoni</a>
-                            <a href="#">Super Teacher</a>
-                        </div>
-                    </div>
-                    <div>
-                        <h4>Bantuan</h4>
-                        <div class="footer-links">
-                            <a href="#faq">FAQ</a>
-                            <a href="mailto:hello@mayclass.id">Email Support</a>
-                            <a href="tel:+6281234567890">Hubungi Admin</a>
-                        </div>
-                    </div>
-                    <div>
-                        <h4>Ikuti Kami</h4>
-                        <div class="footer-links">
-                            <a href="https://www.instagram.com" target="_blank" rel="noreferrer">Instagram</a>
-                            <a href="https://www.tiktok.com" target="_blank" rel="noreferrer">TikTok</a>
-                            <a href="https://www.youtube.com" target="_blank" rel="noreferrer">YouTube</a>
-                        </div>
-                    </div>
-                </div>
-                <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
-            </div>
-        </footer>
     </body>
 </html>

@@ -220,8 +220,8 @@
                 border-radius: 999px;
                 background: var(--accent-muted);
                 color: var(--accent);
-                font-weight: 600;
-                font-size: 0.9rem;
+                font-weight: 700;
+                font-size: 1rem;
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
@@ -405,13 +405,11 @@
             <div class="main-area">
                 <header class="main-header">
                     <div class="header-intro">
-                        <span style="font-weight: 600; color: var(--text-muted); font-size: 0.95rem;">Panel Tentor MayClass</span>
                         <h1>Halo, {{ $tutor?->name ?? 'Tutor' }}!</h1>
                         <p>{{ $tutorProfile?->headline ?? 'Tetap fokus mengajar dan selesaikan agenda penting hari ini.' }}</p>
                     </div>
                     <div class="header-meta">
-                        <span class="date-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
-                        <span class="status-pill">Mode mengajar aktif</span>
+                        <span class="status-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
                     </div>
                 </header>
                 <main>

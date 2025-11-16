@@ -16,16 +16,24 @@
             font-size: 1.6rem;
         }
 
-        .primary-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 20px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, rgba(61, 183, 173, 0.85), rgba(84, 101, 255, 0.85));
-            color: #fff;
-            font-weight: 600;
-        }
+.primary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: #3fa67e; /* warna hijau premium */
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.primary-btn:hover {
+    background: #2f8a67; /* sedikit lebih gelap biar ada efek */
+}
+
 
         .package-table {
             width: 100%;
@@ -81,7 +89,6 @@
 @section('content')
     <div class="header-actions">
         <div>
-            <span style="color: var(--primary-dark); font-weight: 500;">Kelola produk paket belajar</span>
             <h2>Manajemen Paket</h2>
         </div>
         <a href="{{ route('admin.packages.create') }}" class="primary-btn">+ Paket Baru</a>

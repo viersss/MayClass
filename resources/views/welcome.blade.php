@@ -185,7 +185,7 @@ nav {
 
 
             .nav-links a {
-                color: rgba(255, 255, 255, 0.78);
+                color: #000;
                 transition: color 0.2s ease;
             }
 
@@ -199,6 +199,7 @@ nav {
                 gap: 16px;
                 justify-content: flex-end;
                 justify-self: end;
+                color: #000
             }
 
             @media (max-width: 768px) {
@@ -977,11 +978,11 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             </nav>
             <div class="hero" id="beranda">
                 <div class="hero-content" data-reveal data-reveal-delay="40">
-                    <span class="badge">Bimbel Digital MayClass</span>
+                    <span class="badge">Bimbel MayClass</span>
                     <h1>Langkah Pasti Menuju Prestasi</h1>
                     <p>
                         Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel, dan
-                        penuh dukungan menuju kampus impianmu.
+                        penuh dukungan menuju Perguruan Tinggi impianmu.
                     </p>
                     </div>
                 </div>
@@ -1009,7 +1010,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             <p>
                                 Panduan lengkap memahami struktur TPS dan Literasi dengan latihan intensif dari mentor MayClass.
                             </p>
-                            <a class="link-muted" href="{{ route('packages.index') }}">Baca Program Unggulan →</a>
+                            <a class="link-muted" href="{{ route('packages.index') }}">Selengkapnya</a>
                         </div>
                     </article>
                     <article class="article-card" data-reveal data-reveal-delay="120">
@@ -1022,7 +1023,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             <p>
                                 Kisi-kisi terbaru, tips manajemen waktu, dan latihan soal real untuk skor maksimal di seleksi CPNS.
                             </p>
-                            <a class="link-muted" href="{{ route('packages.index') }}">Ikuti Tryout Interaktif →</a>
+                            <a class="link-muted" href="{{ route('packages.index') }}">Selengkapnya</a>
                         </div>
                     </article>
                     <article class="article-card" data-reveal data-reveal-delay="200">
@@ -1035,7 +1036,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             <p>
                                 Belajar dari pengalaman siswa MayClass yang berhasil masuk kampus favorit berkat program intensif.
                             </p>
-                            <a class="link-muted" href="{{ route('packages.index') }}">Pelajari Rencana Belajar →</a>
+                            <a class="link-muted" href="{{ route('packages.index') }}">Selengkapnya</a>
                         </div>
                     </article>
                 </div>
@@ -1096,7 +1097,6 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                                             @auth
                                                 <a class="btn btn-primary" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
                                             @else
-                                                <a class="btn btn-primary" href="{{ route('register') }}">Daftar &amp; Checkout</a>
                                             @endauth
                                         </div>
                                     </article>
@@ -1192,7 +1192,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                                     alt="Testimoni Xavier"
                                 />
                                 <div style="display: grid; gap: 8px; flex: 1;">
-                                    <strong>Xavier • Skor SKD 433</strong>
+                                    <strong>Xavier • Skor SKD 480</strong>
                                     <p>
                                         "Latihan soal dan pembahasan detailnya sangat membantu. Nilai SKD-ku naik signifikan setelah ikut
                                         program intensif."
@@ -1215,10 +1215,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             </article>
                         </div>
                     </div>
-                    <div class="slider-controls" aria-hidden="true">
-                        <button type="button" data-slider-prev aria-label="Previous testimonial">←</button>
-                        <button type="button" data-slider-next aria-label="Next testimonial">→</button>
-                    </div>
+
                 </div>
             </div>
         </section>
@@ -1275,10 +1272,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                             </article>
                         </div>
                     </div>
-                    <div class="slider-controls" aria-hidden="true">
-                        <button type="button" data-slider-prev aria-label="Previous mentor">←</button>
-                        <button type="button" data-slider-next aria-label="Next mentor">→</button>
-                    </div>
+
                 </div>
             </div>
         </section>
@@ -1287,11 +1281,8 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
             <div class="container">
                 <div class="section-header" data-reveal>
 
-                    <h2 class="section-title">FAQ MayClass</h2>
-                    <p class="section-subtitle">
-                        Temukan jawaban singkat terkait layanan, metode belajar, hingga cara mengakses materi di platform
-                        MayClass.
-                    </p>
+                    <h2 class="section-title">FAQ</h2>
+
                 </div>
                 <div class="faq-grid" data-reveal>
                     <details>

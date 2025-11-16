@@ -95,20 +95,6 @@ class DashboardController extends BaseTutorController
 
         $highlightStats = [
             [
-                'label' => 'Siswa Aktif',
-                'display' => number_format($stats['students']),
-                'suffix' => 'siswa',
-                'description' => 'Terdaftar mengikuti bimbingan MayClass',
-                'accent' => 'mint',
-            ],
-            [
-                'label' => 'Jam Mengajar',
-                'display' => number_format($teachingHours, 1, ',', '.'),
-                'suffix' => 'jam',
-                'description' => 'Akumulasi durasi dari seluruh sesi',
-                'accent' => 'indigo',
-            ],
-            [
                 'label' => 'Materi Aktif',
                 'display' => number_format($stats['materials']),
                 'suffix' => 'materi',

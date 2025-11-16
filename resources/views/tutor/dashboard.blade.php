@@ -16,7 +16,7 @@
             gap: 32px;
             padding: 32px 36px;
             border-radius: 24px;
-            background: #1d3a8a;
+            background: #67aba6ff;
             color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
@@ -472,25 +472,13 @@
     <div class="dashboard-content">
         <section class="hero-panel">
             <div class="hero-copy">
-                <span class="hero-badge">Dashboard Tentor</span>
                 <h1>{{ $firstName }}, mari optimalkan sesi belajar hari ini.</h1>
                 <p>
                     Pantau jadwal, materi, dan perkembangan siswa secara real-time agar pengalaman belajar tetap konsisten
                     dan terarah.
                 </p>
                 <div class="hero-metrics">
-                    <div class="metric">
-                        <span>Jadwal hari ini</span>
-                        <strong>{{ $todaySessions->count() }}</strong>
-                    </div>
-                    <div class="metric">
-                        <span>Siswa terjadwal</span>
-                        <strong>{{ number_format($totalStudentsToday) }}</strong>
-                    </div>
                 </div>
-            </div>
-            <div class="hero-visual">
-                <img src="{{ $heroImage }}" alt="Ilustrasi tutor" />
             </div>
         </section>
 
@@ -535,120 +523,7 @@
                         </ul>
                     @endif
                 </section>
-
-                <section class="resource-section">
-                    <header>
-                        <div>
-                            <h2>Materi Terbaru</h2>
-                            <p>Sorotan materi yang paling baru agar mudah dibagikan kepada kelas.</p>
-                        </div>
-                        <a href="{{ route('tutor.materials.index') }}">Lihat semua</a>
-                    </header>
-                    @if ($materialsShowcase->isEmpty())
-                        <div class="resource-empty">Belum ada materi tersimpan. Mulai rancang modul belajar pertamamu.</div>
-                    @else
-                        <div class="resource-grid">
-                            @foreach ($materialsShowcase as $material)
-                                <article class="resource-card">
-                                    <img src="{{ $material['thumbnail'] }}" alt="{{ $material['title'] }}" />
-                                    <div class="info">
-                                        <span class="chip">{{ $material['subject'] }} • {{ $material['level'] }}</span>
-                                        <h3>{{ $material['title'] }}</h3>
-                                        <a class="resource-link" href="{{ $material['link'] }}">Atur Materi</a>
-                                    </div>
-                                </article>
-                            @endforeach
-                        </div>
-                    @endif
-                </section>
-
-                <section class="resource-section">
-                    <header>
-                        <div>
-                            <h2>Quiz Siap Digunakan</h2>
-                            <p>Pilih kuis yang telah tersedia untuk mengevaluasi pemahaman siswa.</p>
-                        </div>
-                        <a href="{{ route('tutor.quizzes.index') }}">Kelola kuis</a>
-                    </header>
-                    @if ($quizShowcase->isEmpty())
-                        <div class="resource-empty">Belum ada kuis aktif. Buat kuis baru untuk mengukur capaian belajar.</div>
-                    @else
-                        <div class="resource-grid">
-                            @foreach ($quizShowcase as $quiz)
-                                <article class="resource-card">
-                                    <img src="{{ $quiz['thumbnail'] }}" alt="{{ $quiz['title'] }}" />
-                                    <div class="info">
-                                        <span class="chip">{{ $quiz['subject'] }} • {{ $quiz['level'] }}</span>
-                                        <h3>{{ $quiz['title'] }}</h3>
-                                        <a class="resource-link" href="{{ $quiz['link'] }}">Sesuaikan Kuis</a>
-                                    </div>
-                                </article>
-                            @endforeach
-                        </div>
-                    @endif
-                </section>
             </div>
-
-            <div class="column-secondary">
-                <section class="insight-card">
-                    <h2>Ringkasan Mengajar</h2>
-                    <p>Angka-angka utama untuk memantau progres kegiatan bimbinganmu.</p>
-                    <ul class="insight-list">
-                        <li>
-                            <span>Jam mengajar akumulasi</span>
-                            <strong>{{ number_format($teachingHours, 1, ',', '.') }} jam</strong>
-                        </li>
-                        <li>
-                            <span>Materi aktif</span>
-                            <strong>{{ number_format($stats['materials']) }}</strong>
-                        </li>
-                        <li>
-                            <span>Quiz aktif</span>
-                            <strong>{{ number_format($stats['quizzes']) }}</strong>
-                        </li>
-                    </ul>
-                </section>
-
-                <section class="upcoming-card">
-                    <header>
-                        <div>
-                            <h2>Jadwal Selanjutnya</h2>
-                            <span>Persiapkan materi sebelum sesi dimulai.</span>
-                        </div>
-                        <a href="{{ route('tutor.schedule.index') }}">Lihat kalender</a>
-                    </header>
-                    @if ($nextSessions->isEmpty())
-                        <div class="resource-empty">Belum ada jadwal mendatang. Jadwalkan sesi agar agenda belajar lebih teratur.</div>
-                    @else
-                        <div class="upcoming-list">
-                            @foreach ($nextSessions as $session)
-                                <div class="upcoming-item">
-                                    <strong>{{ $session['title'] }}</strong>
-                                    <span>{{ $session['day'] }}, {{ $session['date_label'] }}</span>
-                                    <span>{{ $session['subject'] }} • {{ $session['class_level'] }}</span>
-                                    <span>{{ $session['time_range'] }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-                </section>
-
-                <section class="quick-actions-card">
-                    <h2>Aksi Cepat</h2>
-                    <ul>
-                        @foreach ($quickActions as $action)
-                            <li>
-                                <a href="{{ $action['href'] }}">
-                                    <div>
-                                        <strong>{{ $action['label'] }}</strong>
-                                        <span>{{ $action['description'] }}</span>
-                                    </div>
-                                    <span class="arrow">→</span>
-                                </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </section>
             </div>
         </div>
     </div>

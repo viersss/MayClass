@@ -77,10 +77,8 @@
 @section('content')
     <div class="section-header">
         <div>
-            <span style="color: var(--primary-dark); font-weight: 500;">Ringkasan siswa MayClass</span>
             <h2>Manajemen Siswa</h2>
         </div>
-        <a href="{{ route('admin.dashboard') }}" style="color: var(--text-muted); font-weight: 500;">← Kembali ke dashboard</a>
     </div>
 
     <table class="students-table">
