@@ -1099,9 +1099,8 @@ footer {
                                             </ul>
                                         @endif
                                         <div class="pricing-actions">
-                                            <a class="btn btn-ghost" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
                                             @auth
-                                                <a class="btn btn-primary" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
+                                            <a class="btn btn-primary" href="{{ route('checkout.show', $package['slug']) }}">Detail Paket</a>
                                             @else
                                             @endauth
                                         </div>
