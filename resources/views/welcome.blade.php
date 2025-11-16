@@ -107,16 +107,17 @@ nav {
   z-index: 1000;
   width: 100%;
   padding: 12px clamp(12px, 3vw, 24px);
-  
+
   /* 🔸 Glassmorphism putih */
-  background: rgba(255, 255, 255, 0.4); /* putih transparan */
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.65); /* putih transparan */
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
+
 
 
 
@@ -156,7 +157,6 @@ nav {
                     justify-self: center;
                 }
             }
-
             .brand {
                 display: flex;
                 align-items: center;
@@ -167,36 +167,35 @@ nav {
                 justify-self: start;
             }
 
-.brand img {
-    width: 130px;    /* 🔸 dari 48px → 72px (lebih besar tapi masih proporsional) */
-    height: auto;   /* biar tinggi menyesuaikan proporsi */
-    object-fit: contain;
-}
+            .brand img {
+                width: 130px;
+                height: auto;
+                object-fit: contain;
+            }
 
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* 🔸 dorong ke kanan */
-  gap: 28px;
-  font-size: 0.95rem;
-  margin-left: 57px;
-}
-
+            .nav-links {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 28px;
+                font-size: 0.95rem;
+                margin-left: 57px;
+            }
 
             .nav-links a {
-                color: rgba(255, 255, 255, 0.78);
+                color: #000;
                 transition: color 0.2s ease;
             }
 
-            .nav-links a:hover {
-                color: #ffffff;
+            .nav-links a:hover,
+            .nav-links a.is-active {
+                color: rgba(0, 0, 0, 0.65);
             }
 
             .nav-actions {
                 display: flex;
                 align-items: center;
-                gap: 16px;
+                gap: 14px;
                 justify-content: flex-end;
                 justify-self: end;
             }
@@ -205,60 +204,71 @@ nav {
                 .nav-actions {
                     width: 100%;
                     justify-content: center;
+                    flex-wrap: wrap;
                 }
             }
 
-            @media (max-width: 768px) {
-                .nav-actions {
-                    width: 100%;
-                    justify-content: center;
-                }
+            .nav-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                padding: 8px 18px;
+                border-radius: 999px;
+                border: 1px solid rgba(0, 0, 0, 0.12);
+                background: rgba(255, 255, 255, 0.65);
+                box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+                color: #000;
+                font-weight: 500;
+                font-size: 0.95rem;
+                text-decoration: none;
             }
 
-            .btn {
+            .nav-chip__avatar {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: rgba(0, 0, 0, 0.08);
+                display: grid;
+                place-items: center;
+            }
+
+            .nav-chip__avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .nav-btn {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                padding: 12px 28px;
+                padding: 10px 24px;
                 border-radius: 999px;
-                font-size: 0.95rem;
+                border: 1px solid rgba(0, 0, 0, 0.12);
+                background: rgba(255, 255, 255, 0.55);
+                color: #000;
                 font-weight: 500;
-                border: 1px solid transparent;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-                cursor: pointer;
+                font-size: 0.95rem;
+                text-decoration: none;
+                transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
             }
 
-            .btn-outline {
-                border-color: rgba(255, 255, 255, 0.38);
-                color: #ffffff;
+            .nav-btn--filled {
+                background: rgba(255, 255, 255, 0.9);
+                border-color: rgba(0, 0, 0, 0.1);
+                box-shadow: 0 16px 35px rgba(15, 23, 42, 0.15);
+            }
+
+            .nav-btn--ghost {
                 background: transparent;
             }
 
-            .btn-outline:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
-            }
-
-            .btn-primary {
-                background: linear-gradient(120deg, var(--primary-light) 0%, var(--primary-accent) 100%);
-                color: var(--primary-dark);
-                box-shadow: 0 16px 40px rgba(132, 217, 134, 0.36);
-            }
-
-            .btn-primary:hover {
-                transform: translateY(-1px);
-            }
-
-            .btn-ghost {
-                border-color: rgba(63, 166, 126, 0.35);
-                background: rgba(63, 166, 126, 0.08);
-                color: var(--primary-dark);
-            }
-
-            .btn-ghost:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 14px 32px rgba(63, 166, 126, 0.2);
+            .nav-btn:hover,
+            .nav-chip:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 18px 30px rgba(15, 23, 42, 0.12);
             }
 
 .hero {
@@ -950,10 +960,6 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
         </style>
     </head>
     <body>
-        @php
-            $joinLink = route('join');
-        @endphp
-
         <header>
             <nav>
                 <div class="nav-inner">
@@ -969,9 +975,7 @@ url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fi
                         <a href="#faq">FAQ</a>
                     </div>
                     <div class="nav-actions">
-                        <a class="btn btn-primary" href="{{ $joinLink }}">
-                            Gabung Sekarang
-                        </a>
+                        @include('components.nav.public-actions', ['variant' => 'landing'])
                     </div>
                 </div>
             </nav>
