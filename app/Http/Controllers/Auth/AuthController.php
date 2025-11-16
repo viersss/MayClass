@@ -124,10 +124,9 @@ class AuthController extends Controller
             'username' => $profile['username'],
             'email' => $profile['email'],
             'password' => Hash::make($passwordData['password']),
-            'role' => 'student',
+            'role' => 'visitor',
             'phone' => $profile['phone'] ?? null,
             'gender' => $profile['gender'] ?? null,
-            'student_id' => $this->generateStudentId(),
         ]);
 
         $request->session()->forget('register.profile');
@@ -181,15 +180,6 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-    private function generateStudentId(): string
-    {
-        do {
-            $id = 'MC-' . str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        } while (User::where('student_id', $id)->exists());
-
-        return $id;
-    }
-
     private function homeRouteFor(?User $user): string
     {
         if (! $user) {
@@ -200,6 +190,7 @@ class AuthController extends Controller
             'tutor' => route('tutor.dashboard'),
             'student' => route('student.dashboard'),
             'admin' => route('admin.dashboard'),
+            'visitor' => route('packages.index'),
             default => route('packages.index'),
         };
     }

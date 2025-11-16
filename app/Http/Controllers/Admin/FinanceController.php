@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Enrollment;
 use App\Models\Order;
 use App\Models\User;
+use App\Support\StudentIdGenerator;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Schema;
@@ -40,9 +41,9 @@ class FinanceController extends BaseAdminController
             'paid_at' => CarbonImmutable::now(),
         ])->save();
 
-        if (Schema::hasTable('enrollments')) {
-            $order->loadMissing('package');
+        $order->loadMissing(['package', 'user']);
 
+        if (Schema::hasTable('enrollments')) {
             $startDate = CarbonImmutable::now();
 
             Enrollment::updateOrCreate(
@@ -58,6 +59,8 @@ class FinanceController extends BaseAdminController
                 ]
             );
         }
+
+        $this->promoteUserToStudentIfNeeded($order);
 
         return redirect()->back()->with('status', __('Pembayaran berhasil diverifikasi.'));
     }
@@ -203,5 +206,22 @@ class FinanceController extends BaseAdminController
             'rejected' => ['label' => __('Rejected'), 'class' => 'status-pill status-pill--rejected'],
             default => ['label' => __('Pending'), 'class' => 'status-pill status-pill--pending'],
         };
+    }
+
+    private function promoteUserToStudentIfNeeded(Order $order): void
+    {
+        $user = $order->user;
+
+        if (! $user || $user->role !== 'visitor') {
+            return;
+        }
+
+        $attributes = ['role' => 'student'];
+
+        if (! $user->student_id) {
+            $attributes['student_id'] = StudentIdGenerator::next();
+        }
+
+        $user->forceFill($attributes)->save();
     }
 }
