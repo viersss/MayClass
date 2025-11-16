@@ -60,23 +60,9 @@
                 flex-direction: column;
                 gap: 32px;
                 box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
-            }
-
-            .brand {
-                display: flex;
-                align-items: center;
-                gap: 14px;
-            }
-
-            .brand-logo {
-                width: 48px;
-                height: 48px;
-                border-radius: 16px;
-                background: rgba(255, 255, 255, 0.1);
-                display: grid;
-                place-items: center;
-                font-weight: 600;
-                font-size: 1.1rem;
+                position: sticky;
+                top: 32px;
+                align-self: start;
             }
 
             .navigation {
@@ -293,7 +279,6 @@
                 }
 
                 .nav-panel {
-                    position: sticky;
                     top: 24px;
                     z-index: 20;
                     flex-direction: row;
@@ -339,10 +324,6 @@
     <body>
         <div class="dashboard-shell">
             <aside class="nav-panel">
-                <div class="brand">
-                    <div class="brand-logo">MC</div>
-                    <span>MayClass Mentor</span>
-                </div>
                 <nav class="navigation">
                     @php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
