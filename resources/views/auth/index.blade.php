@@ -661,23 +661,6 @@
                         </div>
                     </div>
 
-                    <div class="step-indicators">
-                        <div class="step-indicator" data-step="register" aria-live="polite">
-                            <div class="step-dots" aria-hidden="true">
-                                <span class="step-dot step-dot--filled"></span>
-                                <span class="step-dot"></span>
-                            </div>
-                            <p class="step-label">Step 1 dari 2</p>
-                        </div>
-                        <div class="step-indicator" data-step="login" aria-live="polite">
-                            <div class="step-dots" aria-hidden="true">
-                                <span class="step-dot"></span>
-                                <span class="step-dot step-dot--filled"></span>
-                            </div>
-                            <p class="step-label">Step 2 dari 2</p>
-                        </div>
-                    </div>
-
                     @if (session('status'))
                         <div class="status-alert" role="status">{{ session('status') }}</div>
                     @endif
