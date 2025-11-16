@@ -44,7 +44,7 @@ Route::get('/', function () {
         'landingPackages' => $catalog,
         'stageDefinitions' => $stageDefinitions,
     ]);
-})->name('home');
+});
 
 Route::get('/gabung', [AuthController::class, 'join'])->name('join');
 
