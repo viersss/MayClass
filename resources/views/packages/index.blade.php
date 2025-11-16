@@ -56,6 +56,11 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 24px;
+                padding: 18px 24px;
+                border-radius: 28px;
+                background: rgba(255, 255, 255, 0.72);
+                box-shadow: 0 18px 40px rgba(25, 76, 75, 0.08);
+                backdrop-filter: blur(14px);
             }
 
             .brand {
@@ -64,50 +69,83 @@
                 gap: 14px;
                 font-weight: 600;
                 font-size: 1.25rem;
-                color: var(--primary-dark);
+                color: #000;
             }
 
             .brand img {
-                width: 44px;
-                height: 44px;
+                width: 120px;
+                height: auto;
                 object-fit: contain;
             }
 
             .nav-actions {
                 display: flex;
                 align-items: center;
-                gap: 16px;
+                gap: 14px;
+                flex-wrap: wrap;
+                justify-content: flex-end;
             }
 
-            .nav-actions form {
-                margin: 0;
+            .nav-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                padding: 8px 18px;
+                border-radius: 999px;
+                border: 1px solid rgba(0, 0, 0, 0.12);
+                background: rgba(255, 255, 255, 0.65);
+                color: #000;
+                font-weight: 500;
+                text-decoration: none;
+                box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+            }
+
+            .nav-chip__avatar {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                overflow: hidden;
+                background: rgba(0, 0, 0, 0.08);
+                display: grid;
+                place-items: center;
+            }
+
+            .nav-chip__avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
 
             .nav-btn {
                 display: inline-flex;
                 align-items: center;
+                justify-content: center;
                 gap: 8px;
                 padding: 10px 22px;
                 border-radius: 999px;
-                border: 1px solid rgba(61, 183, 173, 0.35);
+                border: 1px solid rgba(0, 0, 0, 0.12);
+                background: rgba(255, 255, 255, 0.55);
+                color: #000;
                 font-weight: 500;
                 font-size: 0.95rem;
-                background: rgba(255, 255, 255, 0.75);
-                color: var(--primary-dark);
-                backdrop-filter: blur(4px);
-                transition: all 0.2s ease;
+                text-decoration: none;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
 
-            .nav-btn.primary {
-                background: var(--primary);
-                color: #fff;
-                border-color: transparent;
-                box-shadow: 0 20px 40px rgba(61, 183, 173, 0.25);
+            .nav-btn--filled {
+                background: rgba(255, 255, 255, 0.9);
+                border-color: rgba(0, 0, 0, 0.1);
+                box-shadow: 0 16px 35px rgba(15, 23, 42, 0.15);
             }
 
-            .nav-btn:hover {
+            .nav-btn--ghost {
+                background: transparent;
+            }
+
+            .nav-btn:hover,
+            .nav-chip:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 16px 30px rgba(47, 137, 131, 0.18);
+                box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
             }
 
             .page-title {
@@ -278,61 +316,12 @@
                 box-shadow: 0 24px 45px rgba(34, 108, 104, 0.25);
             }
 
-            footer {
-                background: #102a43;
-                color: rgba(255, 255, 255, 0.7);
-                padding: 48px 0;
-            }
-
-            .footer-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 24px;
-            }
-
-            .footer-grid h4 {
-                margin: 0 0 16px;
-                font-size: 1rem;
-                color: #fff;
-            }
-
-            .footer-grid ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-                display: grid;
-                gap: 10px;
-                font-size: 0.9rem;
-            }
-
-            .subscribe {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-            }
-
-            .subscribe input {
-                border-radius: 999px;
-                border: none;
-                padding: 12px 18px;
-                font-family: inherit;
-            }
-
-            .subscribe button {
-                border-radius: 999px;
-                border: none;
-                padding: 12px 18px;
-                background: var(--accent);
-                color: #102a43;
-                font-weight: 600;
-                cursor: pointer;
-            }
-
-            .copyright {
-                margin-top: 36px;
+            footer.student-footer {
+                margin-top: 80px;
+                padding: 32px 24px 60px;
                 text-align: center;
-                font-size: 0.85rem;
-                opacity: 0.7;
+                font-size: 0.9rem;
+                color: var(--text-muted);
             }
 
             @media (max-width: 768px) {
@@ -355,22 +344,11 @@
             <div class="container">
                 <nav>
                     <a href="/" class="brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                     </a>
-                    @auth
-                        <div class="nav-actions">
-                            <a class="nav-btn" href="{{ route('student.profile') }}">Profil</a>
-                            <form method="post" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="nav-btn" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
-                            </form>
-                        </div>
-                    @else
-                        <div class="nav-actions">
-                            <a class="nav-btn" href="{{ route('login') }}">Masuk</a>
-                            <a class="nav-btn primary" href="{{ route('register') }}">Daftar</a>
-                        </div>
-                    @endauth
+                    <div class="nav-actions">
+                        @include('components.nav.public-actions')
+                    </div>
                 </nav>
                 <div class="page-title">
                     <h1>Pilih Paket Belajar Terbaik untuk Kamu</h1>
@@ -448,35 +426,6 @@
             @endif
         </main>
 
-        <footer>
-            <div class="container">
-                <div class="footer-grid">
-                    <div>
-                        <h4>Company</h4>
-                        <ul>
-                            <li><a href="#">About</a></li>
-                            <li><a href="#">Pricing</a></li>
-                            <li><a href="#">Testimonials</a></li>
-                            <li><a href="#">Blog</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4>Support</h4>
-                        <ul>
-                            <li><a href="#">Help center</a></li>
-                            <li><a href="#">FAQs</a></li>
-                            <li><a href="#">Terms</a></li>
-                            <li><a href="#">Privacy</a></li>
-                        </ul>
-                    </div>
-                    <div class="subscribe">
-                        <h4>Stay up to date</h4>
-                        <input type="email" placeholder="Email kamu" />
-                        <button type="button">Subscribe</button>
-                    </div>
-                </div>
-                <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
-            </div>
-        </footer>
+        <footer class="student-footer">© {{ now()->year }} MayClass. Portal siswa diperbarui otomatis.</footer>
     </body>
 </html>
