@@ -14,14 +14,16 @@
         <style>
             :root {
                 color-scheme: light;
-                --bg: #0b1f33;
+                --bg: #04281c;
+                --bg-secondary: #0c3f2d;
                 --panel: #ffffff;
-                --panel-muted: #f4f6fb;
-                --accent: #2a7fff;
-                --accent-dark: #1b4cb7;
-                --text: #101828;
-                --text-muted: #667085;
-                --outline: rgba(33, 62, 110, 0.2);
+                --panel-muted: #eef7f2;
+                --accent: #3fa67e;
+                --accent-dark: #1b6d4f;
+                --accent-soft: #84d986;
+                --text: #0f241b;
+                --text-muted: #4c6257;
+                --outline: rgba(35, 87, 64, 0.25);
             }
 
             * {
@@ -32,8 +34,8 @@
                 margin: 0;
                 font-family: "Poppins", sans-serif;
                 color: var(--text);
-                background: radial-gradient(circle at top, rgba(69, 123, 255, 0.28), transparent 55%),
-                    linear-gradient(135deg, #050d1f 0%, #0b1f33 35%, #122a47 100%);
+                background: radial-gradient(circle at top, rgba(132, 217, 134, 0.15), transparent 50%),
+                    linear-gradient(135deg, #021710 0%, var(--bg) 35%, var(--bg-secondary) 100%);
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
@@ -64,7 +66,7 @@
             }
 
             .auth-card {
-                background: rgba(9, 17, 31, 0.4);
+                background: rgba(7, 26, 18, 0.55);
                 border-radius: 36px;
                 display: grid;
                 grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
@@ -77,15 +79,15 @@
 
             .auth-illustration {
                 position: relative;
-                background: linear-gradient(130deg, rgba(9, 25, 48, 0.65), rgba(22, 63, 114, 0.6)),
-                    url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1200&q=80')
+                background: linear-gradient(130deg, rgba(4, 22, 15, 0.75), rgba(11, 52, 37, 0.78)),
+                    url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80')
                         center/cover;
                 padding: clamp(32px, 5vw, 56px);
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
                 gap: 32px;
-                color: #f4f8ff;
+                color: #ecfff6;
             }
 
             .auth-hero-top {
@@ -123,7 +125,7 @@
                 font-size: 0.85rem;
                 text-transform: uppercase;
                 letter-spacing: 0.2em;
-                color: rgba(255, 255, 255, 0.65);
+                color: rgba(232, 253, 242, 0.75);
             }
 
             .auth-illustration h1 {
@@ -134,7 +136,7 @@
             }
 
             .auth-illustration p {
-                color: rgba(255, 255, 255, 0.9);
+                color: rgba(237, 252, 243, 0.9);
                 font-weight: 400;
                 margin: 0;
                 line-height: 1.5;
@@ -144,8 +146,8 @@
                 margin-top: auto;
                 padding: 20px 24px;
                 border-radius: 24px;
-                background: rgba(11, 31, 51, 0.75);
-                border: 1px solid rgba(255, 255, 255, 0.12);
+                background: rgba(5, 25, 17, 0.75);
+                border: 1px solid rgba(255, 255, 255, 0.1);
                 max-width: 360px;
                 backdrop-filter: blur(12px);
                 box-shadow: 0 18px 40px rgba(2, 7, 24, 0.45);
@@ -341,9 +343,9 @@
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                background: linear-gradient(120deg, var(--accent) 0%, #5ed3c5 100%);
+                background: var(--accent);
                 color: #fff;
-                box-shadow: 0 10px 22px rgba(66, 183, 173, 0.35);
+                box-shadow: 0 10px 22px rgba(31, 107, 79, 0.3);
                 text-decoration: none;
             }
 
@@ -393,7 +395,7 @@
             html[data-mode="register"] .tab-switcher button[data-mode="register"] {
                 background: #fff;
                 color: var(--accent-dark);
-                box-shadow: 0 15px 25px rgba(16, 53, 116, 0.15);
+                box-shadow: 0 15px 25px rgba(27, 109, 79, 0.18);
             }
 
             form {
@@ -416,11 +418,11 @@
             .status-alert {
                 padding: 14px 18px;
                 border-radius: 16px;
-                background: rgba(42, 127, 255, 0.08);
+                background: rgba(63, 166, 126, 0.12);
                 color: var(--accent-dark);
                 font-size: 0.9rem;
                 line-height: 1.5;
-                border: 1px solid rgba(42, 127, 255, 0.18);
+                border: 1px solid rgba(63, 166, 126, 0.25);
             }
 
             .google-error {
@@ -470,7 +472,7 @@
             select:focus {
                 outline: none;
                 border-color: var(--accent);
-                box-shadow: 0 0 0 3px rgba(42, 127, 255, 0.18);
+                box-shadow: 0 0 0 3px rgba(63, 166, 126, 0.2);
                 transform: translateY(-1px);
             }
 
@@ -485,18 +487,18 @@
                 padding: 16px 18px;
                 border-radius: 18px;
                 border: none;
-                background: linear-gradient(120deg, var(--accent) 0%, #70a0ff 100%);
+                background: var(--accent);
                 color: #fff;
                 font-weight: 600;
                 font-size: 1rem;
                 cursor: pointer;
-                box-shadow: 0 20px 40px rgba(42, 127, 255, 0.25);
+                box-shadow: 0 20px 40px rgba(31, 107, 79, 0.22);
                 transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
 
             .primary-action:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 25px 50px rgba(42, 127, 255, 0.3);
+                box-shadow: 0 25px 50px rgba(27, 109, 79, 0.3);
             }
 
             .switch-message {
@@ -730,13 +732,13 @@
                         <span class="hero-season">Program Premium</span>
                     </div>
                     <div class="auth-hero-body">
-                        <p class="hero-eyebrow" data-copy-mode="register">Langkah pertama menuju kelas impian</p>
+                        <p class="hero-eyebrow" data-copy-mode="register">Raih kelas impianmu</p>
                         <p class="hero-eyebrow" data-copy-mode="login">Selamat datang kembali</p>
-                        <h1 data-copy-mode="register">Bangun kebiasaan belajar terbaik sejak hari pertama</h1>
-                        <h1 data-copy-mode="login">Lanjutkan progres belajar bersama mentor terbaik</h1>
+                        <h1 data-copy-mode="register">Langkah Pasti Menuju Prestasi</h1>
+                        <h1 data-copy-mode="login">Lanjutkan langkah pasti menuju prestasi</h1>
                         <p>
-                            Jadwal intensif, materi terkurasi, dan dukungan mentor MayClass siap mengantarkanmu ke
-                            jenjang berikutnya.
+                            Ritme belajar intensif, materi terkurasi, dan dukungan mentor MayClass menghadirkan suasana
+                            premium seperti landing page utama.
                         </p>
                     </div>
                     <div class="hero-metric-card">
