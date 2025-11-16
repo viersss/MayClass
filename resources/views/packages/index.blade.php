@@ -306,11 +306,11 @@
             <div class="container">
                 <nav>
                     <a href="/" class="brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                     </a>
                     @auth
                         <div class="nav-actions">
-                            <a class="nav-btn" href="{{ route('student.profile') }}">Profil</a>
+                            <a class="nav-btn" href="{{ route('student.profile') }}">Profile</a>
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="nav-btn" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
