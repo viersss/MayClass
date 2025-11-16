@@ -332,7 +332,7 @@
                             <small>Administrator</small>
                         </div>
                     </a>
-                    <form method="POST" action="{{ route('logout') }}">
+                    <form method="POST" action="{{ route('logout') }}" class="logout-btn">
                         @csrf
                         <button type="submit" title="Keluar dari dashboard">
                             <span>Keluar</span>
