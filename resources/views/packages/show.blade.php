@@ -552,7 +552,7 @@
                     <div class="nav-actions">
                         <a class="btn btn-outline" href="{{ route('packages.index') }}">Paket Lainnya</a>
                         @auth
-                            <a class="btn btn-primary" href="{{ route('student.profile') }}">Profil</a>
+                            <a class="btn btn-primary" href="{{ route('student.profile') }}">Profile</a>
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="btn btn-muted">Keluar</button>
