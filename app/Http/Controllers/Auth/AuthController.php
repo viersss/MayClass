@@ -190,8 +190,8 @@ class AuthController extends Controller
             'tutor' => route('tutor.dashboard'),
             'student' => route('student.dashboard'),
             'admin' => route('admin.dashboard'),
-            'visitor' => route('home'),
-            default => route('home'),
+            'visitor' => route('packages.index'),
+            default => route('packages.index'),
         };
     }
 
