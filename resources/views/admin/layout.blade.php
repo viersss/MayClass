@@ -148,10 +148,10 @@
 
             .logout-btn button {
                 width: 100%;
-                padding: 12px 18px;
-                border-radius: 14px;
-                border: 1px solid rgba(255, 255, 255, 0.35);
-                background: transparent;
+                padding: 14px 20px;
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.28);
+                background: #0d162d;
                 color: #fff;
                 font: inherit;
                 font-weight: 600;
@@ -160,12 +160,14 @@
                 justify-content: center;
                 gap: 10px;
                 cursor: pointer;
-                transition: background 0.2s ease, border-color 0.2s ease;
+                transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+                box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
             }
 
             .logout-btn button:hover {
-                background: rgba(255, 255, 255, 0.1);
-                border-color: rgba(255, 255, 255, 0.55);
+                background: #0f1c3d;
+                border-color: rgba(255, 255, 255, 0.45);
+                transform: translateY(-1px);
             }
 
             .main-area {
@@ -298,12 +300,6 @@
                                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h14a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9a2 2 0 0 1 2-2z" /><path stroke-linecap="round" stroke-linejoin="round" d="M18 11h3v4h-3a2 2 0 0 1 0-4z" /></svg>',
                                 'route' => 'admin.finance.index',
                                 'patterns' => ['admin.finance.*'],
-                            ],
-                            [
-                                'label' => 'Pengaturan Akun',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" /><path stroke-linecap="round" stroke-linejoin="round" d="m19.4 15.4.7 2.2-1.9 1.4-2.3-.8a6.9 6.9 0 0 1-3.6 0l-2.3.8-1.9-1.4.7-2.2a6.9 6.9 0 0 1 0-3.6l-.7-2.2 1.9-1.4 2.3.8a6.9 6.9 0 0 1 3.6 0l2.3-.8 1.9 1.4-.7 2.2a6.9 6.9 0 0 1 0 3.6z" /></svg>',
-                                'route' => 'admin.account.edit',
-                                'patterns' => ['admin.account.*'],
                             ],
                         ];
                         $avatarPlaceholder = asset('images/avatar-placeholder.svg');
