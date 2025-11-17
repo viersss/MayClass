@@ -123,7 +123,7 @@ class ScheduleController extends BaseTutorController
         }
 
         return $this->render('tutor.schedule.index', [
-            'days' => $grouped->keyBy('day_label')->all(),
+            'days' => $grouped->keyBy('day_label'),
             'metrics' => $metrics,
             'nextSessionHighlight' => $nextSessionHighlight,
             'templates' => $templates,
