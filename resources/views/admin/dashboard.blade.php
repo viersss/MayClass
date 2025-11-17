@@ -491,14 +491,14 @@
 @endpush
 
 @section('content')
+<section class="dashboard">
+
+    {{-- ============== HERO ============== --}}
     <section class="hero-card">
         <div class="hero-main">
             <span class="hero-chip">Ringkasan operasional</span>
             <h2>Monitor seluruh aktivitas MayClass dalam satu tempat</h2>
-            <p>
-                Data finansial, pendaftaran siswa, dan performa paket belajar diperbarui secara langsung sehingga tim administrasi
-                dapat mengambil keputusan cepat setiap hari.
-            </p>
+            <p>Data finansial, pendaftaran siswa, dan performa paket belajar diperbarui secara langsung sehingga tim administrasi dapat mengambil keputusan cepat setiap hari.</p>
         </div>
         <div class="hero-side">
             @php
@@ -529,6 +529,7 @@
         </div>
     </section>
 
+    {{-- ============== KPI ============== --}}
     <section class="stat-grid">
         <article class="stat-card">
             <div class="stat-icon">Rp</div>
@@ -556,37 +557,37 @@
         </article>
     </section>
 
+    {{-- ============== INSIGHTS ============== --}}
     <section class="insights-grid">
         <div class="card-panel">
             <div class="card-header">
                 <h3>Grafik Pendapatan {{ now()->year }}</h3>
                 <span class="card-subtitle">Berdasarkan transaksi lunas per bulan</span>
             </div>
+
             @if ($monthlyRevenue->sum('value') === 0)
                 <div class="empty-state">Belum ada transaksi lunas yang tercatat pada tahun ini.</div>
             @else
-                @php
-                    $maxValue = max($monthlyRevenue->pluck('value')->all() ?: [1]);
-                @endphp
+                @php $maxValue = max($monthlyRevenue->pluck('value')->all() ?: [1]); @endphp
                 <div class="chart-wrapper" role="img" aria-label="Grafik pendapatan bulanan">
                     @foreach ($monthlyRevenue as $entry)
-                        @php
-                            $height = $maxValue > 0 ? max(($entry['value'] / $maxValue) * 100, 6) : 6;
-                        @endphp
+                        @php $h = $maxValue > 0 ? max(($entry['value'] / $maxValue) * 100, 6) : 6; @endphp
                         <div class="chart-bar">
                             <strong>{{ $entry['formatted'] }}</strong>
-                            <div style="height: {{ $height }}%;"></div>
+                            <div style="height: {{ $h }}%;"></div>
                             <span>{{ $entry['label'] }}</span>
                         </div>
                     @endforeach
                 </div>
             @endif
         </div>
+
         <div class="card-panel">
             <div class="card-header">
                 <h3>Pipeline Pembayaran</h3>
                 <span class="card-subtitle">Distribusi status order terbaru</span>
             </div>
+
             @if ($paymentPipeline['total'] === 0)
                 <div class="empty-state">Belum ada order yang tercatat pada sistem.</div>
             @else
@@ -608,12 +609,14 @@
         </div>
     </section>
 
+    {{-- ============== DETAIL: TABLE + SIDEBAR LISTS ============== --}}
     <section class="detail-grid">
         <div class="card-panel">
             <div class="card-header">
                 <h3>Transaksi Terbaru</h3>
                 <span class="card-subtitle">6 order terakhir yang masuk ke sistem</span>
             </div>
+
             @if ($recentPayments->isEmpty())
                 <div class="empty-state">Belum ada transaksi yang tercatat.</div>
             @else
@@ -635,9 +638,7 @@
                                     <td>{{ $payment['invoice'] }}</td>
                                     <td>{{ $payment['student'] }}</td>
                                     <td>{{ $payment['package'] }}</td>
-                                    <td>
-                                        <span class="status-badge" data-type="{{ $payment['status'] }}">{{ $payment['status_label'] }}</span>
-                                    </td>
+                                    <td><span class="status-badge" data-type="{{ $payment['status'] }}">{{ $payment['status_label'] }}</span></td>
                                     <td>{{ $payment['total'] }}</td>
                                     <td>{{ $payment['paid_at'] }}</td>
                                 </tr>
@@ -647,12 +648,14 @@
                 </div>
             @endif
         </div>
+
         <div class="stacked">
             <div class="card-panel">
                 <div class="card-header">
                     <h3>Paket Teratas</h3>
                     <span class="card-subtitle">Berdasarkan jumlah transaksi lunas</span>
                 </div>
+
                 @if ($topPackages->isEmpty())
                     <div class="empty-state">Belum ada data paket yang terhubung dengan transaksi.</div>
                 @else
@@ -669,11 +672,13 @@
                     </div>
                 @endif
             </div>
+
             <div class="card-panel">
                 <div class="card-header">
                     <h3>Siswa Terbaru</h3>
                     <a href="{{ route('admin.students.index') }}" class="card-subtitle">Lihat semua siswa</a>
                 </div>
+
                 @if ($recentStudents->isEmpty())
                     <div class="empty-state">Belum ada pendaftaran siswa baru.</div>
                 @else
