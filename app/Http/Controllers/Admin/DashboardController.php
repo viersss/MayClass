@@ -74,12 +74,13 @@ class DashboardController extends BaseAdminController
         }
 
         $year = now()->year;
-        $paidReference = DB::raw('COALESCE(paid_at, updated_at, created_at)');
+        // Using a plain string keeps the raw expression reusable in raw clauses
+        $paidReference = 'COALESCE(paid_at, updated_at, created_at)';
 
         $orders = Order::query()
             ->selectRaw('MONTH(' . $paidReference . ') as month, SUM(total) as total')
             ->where('status', 'paid')
-            ->whereYear($paidReference, $year)
+            ->whereRaw('YEAR(' . $paidReference . ') = ?', [$year])
             ->groupByRaw('MONTH(' . $paidReference . ')')
             ->pluck('total', 'month');
 
