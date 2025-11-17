@@ -335,7 +335,7 @@
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
                         $menuItems = [
                             [
-                                'label' => 'Dashboard',
+                                'label' => 'Beranda',
                                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></svg>',
                                 'route' => 'tutor.dashboard',
                                 'patterns' => ['tutor.dashboard'],
