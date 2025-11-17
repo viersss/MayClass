@@ -110,6 +110,124 @@
             gap: 12px;
         }
 
+        .schedule-section {
+            display: grid;
+            gap: clamp(16px, 3vw, 24px);
+        }
+
+        .schedule-grid {
+            display: grid;
+            gap: clamp(16px, 3vw, 24px);
+            grid-template-columns: minmax(260px, 1fr) minmax(300px, 1.2fr);
+        }
+
+        @media (max-width: 900px) {
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .schedule-highlight {
+            border-radius: var(--student-radius-md);
+            border: 1px solid var(--student-border);
+            padding: clamp(20px, 4vw, 28px);
+            background: linear-gradient(156deg, rgba(47, 152, 140, 0.18), rgba(95, 106, 248, 0.1));
+            display: grid;
+            gap: 14px;
+        }
+
+        .schedule-highlight__label {
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            color: var(--student-primary);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .schedule-highlight__title {
+            margin: 0;
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
+            font-weight: 600;
+        }
+
+        .schedule-highlight__meta {
+            display: grid;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: var(--student-text-muted);
+        }
+
+        .schedule-card {
+            border-radius: var(--student-radius-md);
+            border: 1px solid var(--student-border);
+            padding: clamp(20px, 4vw, 28px);
+            background: var(--student-surface);
+            display: grid;
+            gap: 16px;
+        }
+
+        .schedule-card__title {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .schedule-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .schedule-item {
+            border-radius: var(--student-radius-sm);
+            border: 1px solid var(--student-border);
+            padding: 16px;
+            display: grid;
+            gap: 10px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .schedule-item:hover {
+            border-color: var(--student-primary);
+            box-shadow: 0 8px 24px rgba(25, 36, 47, 0.08);
+        }
+
+        .schedule-item__header {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: baseline;
+        }
+
+        .schedule-item__title {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .schedule-item__time {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--student-text-muted);
+        }
+
+        .schedule-item__meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--student-text-muted);
+        }
+
+        .schedule-empty {
+            border-radius: var(--student-radius-md);
+            border: 1px dashed var(--student-border);
+            padding: clamp(18px, 4vw, 24px);
+            text-align: center;
+            color: var(--student-text-muted);
+            font-size: 0.95rem;
+        }
+
         .dashboard-section__title {
             margin: 0;
             font-size: 1.3rem;
@@ -366,30 +484,53 @@
             </div>
         </section>
 
-        <section class="student-section">
+        <section class="student-section schedule-section">
             <div class="dashboard-section__header">
                 <h2 class="dashboard-section__title">Jadwal terdekat</h2>
                 <a class="student-button student-button--outline" href="{{ route('student.schedule') }}">Lihat semua jadwal</a>
             </div>
-            @if (! empty($schedule['upcoming']) && count($schedule['upcoming']) > 0)
-                <div class="dashboard-list">
-                    @foreach ($schedule['upcoming'] as $session)
-                        <article class="dashboard-list__item">
-                            <h3 style="margin: 0; font-size: 1.05rem;">{{ $session['title'] }}</h3>
-                            <div class="dashboard-list__meta">
-                                <span>{{ $session['date'] }}</span>
-                                <span>{{ $session['time'] }}</span>
-                                <span>Mentor {{ $session['mentor'] }}</span>
-                                <span>{{ $session['category'] }}</span>
-                            </div>
-                        </article>
-                    @endforeach
-                </div>
-            @else
-                <div class="dashboard-empty">
-                    <p>Belum ada sesi dijadwalkan. Jadwal akan muncul otomatis setelah tutor atau admin menambahkannya.</p>
-                </div>
-            @endif
+            @php($highlight = $schedule['highlight'] ?? null)
+            @php($upcomingSessions = collect($schedule['upcoming'] ?? []))
+            <div class="schedule-grid">
+                <article class="schedule-highlight" aria-live="polite">
+                    <p class="schedule-highlight__label">Sesi berikutnya</p>
+                    <h3 class="schedule-highlight__title">{{ $highlight['title'] ?? 'Belum ada jadwal' }}</h3>
+                    <div class="schedule-highlight__meta">
+                        <strong>{{ $highlight['date'] ?? '-' }}</strong>
+                        <span>{{ $highlight['time'] ?? '-' }}</span>
+                        <span>Mentor {{ $highlight['mentor'] ?? '-' }}</span>
+                        <span>{{ $highlight['category'] ?? '-' }}</span>
+                    </div>
+                    <a class="student-button student-button--outline" href="{{ route('student.schedule') }}">
+                        Detail jadwal lengkap
+                    </a>
+                </article>
+                <article class="schedule-card" aria-live="polite">
+                    <h3 class="schedule-card__title">Agenda mendatang</h3>
+                    @if ($upcomingSessions->isNotEmpty())
+                        <div class="schedule-list">
+                            @foreach ($upcomingSessions as $session)
+                                <article class="schedule-item">
+                                    <div class="schedule-item__header">
+                                        <p class="schedule-item__title">{{ $session['title'] }}</p>
+                                        <p class="schedule-item__time">{{ $session['time'] }}</p>
+                                    </div>
+                                    <div class="schedule-item__meta">
+                                        <span>{{ $session['date'] }}</span>
+                                        <span>Mentor {{ $session['mentor'] }}</span>
+                                        <span>{{ $session['category'] }}</span>
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="schedule-empty">
+                            Jadwal akan muncul setelah tutor atau admin menambahkannya. Pantau halaman ini
+                            untuk melihat pembelajaran berikutnya.
+                        </div>
+                    @endif
+                </article>
+            </div>
         </section>
 
         <section class="student-section">
