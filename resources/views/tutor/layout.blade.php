@@ -335,7 +335,7 @@
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
                         $menuItems = [
                             [
-                                'label' => 'Dashboard',
+                                'label' => 'Beranda',
                                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></svg>',
                                 'route' => 'tutor.dashboard',
                                 'patterns' => ['tutor.dashboard'],
@@ -351,12 +351,6 @@
                                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6a4 4 0 0 1 4 4c0 1.5-.8 2.3-2 3.2-.7.5-1 1-.9 1.8m-.1 3h.01" /><path stroke-linecap="round" stroke-linejoin="round" d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" /></svg>',
                                 'route' => 'tutor.quizzes.index',
                                 'patterns' => ['tutor.quizzes.*'],
-                            ],
-                            [
-                                'label' => 'Jadwal',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M7 3v3m10-3v3" /><rect x="3" y="5" width="18" height="16" rx="2" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 11h18" /><path stroke-linecap="round" stroke-linejoin="round" d="m15 15-3 3-2-2" /></svg>',
-                                'route' => 'tutor.schedule.index',
-                                'patterns' => ['tutor.schedule.*'],
                             ],
                         ];
                         $avatarCandidates = array_filter([
