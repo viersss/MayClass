@@ -156,7 +156,7 @@ class DashboardController extends BaseAdminController
 
         $total = (int) $counts->sum();
 
-        $rows = collect(['paid', 'pending', 'failed'])->map(function (string $status) use ($counts, $total) {
+        $rows = collect(['paid', 'pending', 'rejected', 'failed', 'initiated'])->map(function (string $status) use ($counts, $total) {
             $count = (int) ($counts[$status] ?? 0);
 
             return [
@@ -300,7 +300,9 @@ class DashboardController extends BaseAdminController
         return match ($status) {
             'paid' => 'Lunas',
             'pending' => 'Menunggu',
-            'failed' => 'Ditolak',
+            'rejected' => 'Ditolak',
+            'failed' => 'Kedaluwarsa',
+            'initiated' => 'Draft',
             default => ucfirst((string) $status),
         };
     }

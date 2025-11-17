@@ -149,6 +149,7 @@ class FinanceController extends BaseAdminController
             'pending' => ['label' => __('Menunggu Verifikasi'), 'count' => 0, 'description' => __('Transaksi menunggu pengecekan admin.')],
             'paid' => ['label' => __('Terverifikasi'), 'count' => 0, 'description' => __('Pembayaran berhasil disetujui.')],
             'rejected' => ['label' => __('Ditolak'), 'count' => 0, 'description' => __('Perlu klarifikasi atau unggah ulang bukti.')],
+            'failed' => ['label' => __('Kedaluwarsa'), 'count' => 0, 'description' => __('Checkout hangus otomatis karena melewati batas waktu.')],
         ];
 
         if (! Schema::hasTable('orders')) {
@@ -176,6 +177,7 @@ class FinanceController extends BaseAdminController
         }
 
         return Order::with(['user', 'package'])
+            ->where('status', '!=', 'initiated')
             ->latest('created_at')
             ->get()
             ->map(function (Order $order) {
@@ -203,7 +205,7 @@ class FinanceController extends BaseAdminController
     {
         return match ($status) {
             'paid' => ['label' => __('Verified'), 'class' => 'status-pill status-pill--paid'],
-            'rejected' => ['label' => __('Rejected'), 'class' => 'status-pill status-pill--rejected'],
+            'rejected', 'failed' => ['label' => __('Rejected'), 'class' => 'status-pill status-pill--rejected'],
             default => ['label' => __('Pending'), 'class' => 'status-pill status-pill--pending'],
         };
     }

@@ -67,6 +67,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout/{slug}', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::post('/checkout/{slug}', [CheckoutController::class, 'store'])->name('checkout.process');
     Route::get('/checkout/{slug}/success', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::post('/checkout/{slug}/orders/{order}/expire', [CheckoutController::class, 'expire'])->name('checkout.expire');
+    Route::get('/checkout/{slug}/orders/{order}/status', [CheckoutController::class, 'status'])->name('checkout.status');
 });
 
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
