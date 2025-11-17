@@ -66,7 +66,7 @@ class DashboardController extends BaseAdminController
         $selectedTutorId = $this->resolveTutorFilter($requestedTutor, $tutors);
 
         $packages = Schema::hasTable('packages')
-            ? Package::orderBy('level')->orderBy('price')->get(['id', 'detail_title', 'title'])
+            ? Package::orderBy('level')->orderBy('price')->get(['id', 'detail_title'])
             : collect();
 
         $sessionsReady = Schema::hasTable('schedule_sessions');
@@ -83,7 +83,7 @@ class DashboardController extends BaseAdminController
         }
 
         if ($sessionsReady && Schema::hasTable('packages') && $sessions->isNotEmpty()) {
-            $sessions->load('package:id,title,detail_title');
+            $sessions->load('package:id,detail_title');
         }
 
         $now = CarbonImmutable::now();
@@ -109,7 +109,7 @@ class DashboardController extends BaseAdminController
                 'time_range' => $timeRange,
                 'subject' => $session->category ?? '-',
                 'title' => $session->title,
-                'package' => optional($session->package)->detail_title ?? optional($session->package)->title ?? __('Paket MayClass'),
+                'package' => optional($session->package)->detail_title ?? __('Paket MayClass'),
                 'location' => $session->location ?? __('Ruang Virtual'),
                 'class_level' => $session->class_level ?? '-',
                 'student_count' => $session->student_count,
@@ -167,7 +167,7 @@ class DashboardController extends BaseAdminController
                 ->where('user_id', $selectedTutorId)
                 ->orderBy('day_of_week')
                 ->orderBy('start_time')
-                ->with(['package:id,title,detail_title', 'user:id,name'])
+                ->with(['package:id,detail_title', 'user:id,name'])
                 ->get()
                 ->map(function (ScheduleTemplate $template) {
                     $nextDate = $this->nextDateForDay($template->day_of_week);
@@ -183,7 +183,7 @@ class DashboardController extends BaseAdminController
                         'duration_minutes' => $template->duration_minutes,
                         'student_count' => $template->student_count,
                         'user_id' => $template->user_id,
-                        'package_label' => optional($template->package)->detail_title ?? optional($template->package)->title ?? __('Paket MayClass'),
+                        'package_label' => optional($template->package)->detail_title ?? __('Paket MayClass'),
                         'reference_date_value' => $nextDate?->toDateString(),
                         'reference_date_label' => $nextDate ? $nextDate->locale('id')->translatedFormat('dddd, D MMMM YYYY') : null,
                     ];

@@ -1111,7 +1111,7 @@
                                 <select name="package_id" required>
                                     @foreach ($schedule['packages'] as $package)
                                         <option value="{{ $package->id }}" @selected(old('package_id') == $package->id)>
-                                            {{ $package->detail_title ?? $package->title }}
+                                            {{ $package->detail_title ?? __('Paket MayClass') }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -1177,7 +1177,7 @@
                                                 <select name="package_id" required>
                                                     @foreach ($schedule['packages'] as $package)
                                                         <option value="{{ $package->id }}" @selected($package->id === $template['package_id'])>
-                                                            {{ $package->detail_title ?? $package->title }}
+                                                            {{ $package->detail_title ?? __('Paket MayClass') }}
                                                         </option>
                                                     @endforeach
                                                 </select>
