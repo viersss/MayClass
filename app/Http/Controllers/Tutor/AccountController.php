@@ -17,15 +17,27 @@ class AccountController extends BaseTutorController
         $tutor = Auth::user();
         $tutor?->loadMissing('tutorProfile');
 
+        $tutorProfile = $tutor?->tutorProfile;
+
+        // ambil kandidat path avatar dari profile dulu, baru dari user
+        $avatarCandidates = [];
+
+        if ($tutorProfile && $tutorProfile->avatar_path) {
+            $avatarCandidates[] = $tutorProfile->avatar_path;
+        }
+
+        if ($tutor && $tutor->avatar_path) {
+            $avatarCandidates[] = $tutor->avatar_path;
+        }
+
         $avatarUrl = $tutor
-            ? AvatarResolver::resolve([
-                optional($tutor->tutorProfile)->avatar_path,
-                $tutor->avatar_path,
-            ])
+            ? AvatarResolver::resolve($avatarCandidates)
             : null;
 
         return $this->render('tutor.account.index', [
-            'avatarUrl' => $avatarUrl,
+            'tutor'        => $tutor,
+            'tutorProfile' => $tutorProfile,
+            'avatarUrl'    => $avatarUrl,
         ]);
     }
 
@@ -34,18 +46,20 @@ class AccountController extends BaseTutorController
         $tutor = Auth::user();
 
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($tutor?->id)],
-            'phone' => ['nullable', 'string', 'max:40'],
-            'specializations' => ['required', 'string', 'max:255'],
-            'experience_years' => ['required', 'integer', 'min:0', 'max:60'],
-            'education' => ['nullable', 'string', 'max:255'],
-            'avatar' => ['nullable', 'image', 'max:2048'],
+            'name'              => ['required', 'string', 'max:255'],
+            'email'             => ['required', 'email', 'max:255', Rule::unique('users')->ignore($tutor?->id)],
+            'phone'             => ['nullable', 'string', 'max:40'],
+            'specializations'   => ['required', 'string', 'max:255'],
+            'experience_years'  => ['required', 'integer', 'min:0', 'max:60'],
+            'education'         => ['nullable', 'string', 'max:255'],
+            'avatar'            => ['nullable', 'image', 'max:5000'],
         ]);
 
         if ($tutor) {
-            $avatarPath = $tutor->avatar_path;
+            // default: pakai avatar lama
+            $avatarPath = $tutor->avatar_path ?? optional($tutor->tutorProfile)->avatar_path;
 
+            // kalau ada upload baru
             if ($request->hasFile('avatar')) {
                 try {
                     $avatarPath = AvatarUploader::store(
@@ -64,24 +78,27 @@ class AccountController extends BaseTutorController
                 }
             }
 
+            // update data user
             $tutor->update([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'phone' => $data['phone'] ?? null,
+                'name'        => $data['name'],
+                'email'       => $data['email'],
+                'phone'       => $data['phone'] ?? null,
                 'avatar_path' => $avatarPath,
             ]);
 
+            // siapkan profil tutor
             $profile = $tutor->tutorProfile;
             $slug = optional($profile)->slug ?? (Str::slug($tutor->name) ?: 'tutor-' . $tutor->id);
 
+            // update / buat profil tutor
             $tutor->tutorProfile()->updateOrCreate(
                 ['user_id' => $tutor->id],
                 [
-                    'slug' => $slug,
-                    'specializations' => $data['specializations'],
+                    'slug'             => $slug,
+                    'specializations'  => $data['specializations'],
                     'experience_years' => $data['experience_years'],
-                    'education' => $data['education'] ?? null,
-                    'avatar_path' => $avatarPath,
+                    'education'        => $data['education'] ?? null,
+                    'avatar_path'      => $avatarPath,
                 ]
             );
         }

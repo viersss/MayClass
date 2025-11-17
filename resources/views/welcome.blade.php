@@ -1167,11 +1167,9 @@ footer {
                                             </ul>
                                         @endif
                                         <div class="pricing-actions">
-                                            <a class="btn btn-ghost" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
+                                            <a class="btn btn-primary" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
                                             @auth
-                                                <a class="btn btn-primary" href="{{ route('checkout.show', $package['slug']) }}">Langsung Checkout</a>
                                             @else
-                                                <a class="btn btn-primary" href="{{ route('login') }}">Mulai Sekarang</a>
                                             @endauth
                                         </div>
                                     </article>
@@ -1236,7 +1234,6 @@ footer {
         <section class="section testimonials" id="testimoni">
             <div class="container">
                 <div class="section-header" data-reveal>
-                    <span class="badge badge-soft">Cerita Alumni</span>
                     <h2 class="section-title">Cerita Mereka yang Sudah Mewujudkan Mimpi</h2>
                     <p class="section-subtitle">
                         Dengar langsung pengalaman siswa MayClass yang berhasil menembus kampus favorit dan meraih skor tinggi
@@ -1320,7 +1317,6 @@ footer {
         <section class="section mentor-showcase" id="tentor">
             <div class="container">
                 <div class="section-header" data-reveal>
-                    <span class="badge badge-soft">Mentor Profesional</span>
                     <h2 class="section-title">Mentor Berkualitas Siap Mendampingi Belajarmu</h2>
                     <p class="section-subtitle">
                         Tenaga pendidik terbaik dari berbagai kampus unggulan siap memastikan setiap sesi belajar terasa dekat dan
@@ -1329,7 +1325,6 @@ footer {
                 </div>
                 <div class="mentor-grid">
                     <article class="mentor-profile" data-reveal>
-                        <div class="mentor-pill">Bahasa &amp; Komunikasi</div>
                         <div class="mentor-avatar">
                             <img
                                 src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80"
@@ -1347,7 +1342,6 @@ footer {
                         </div>
                     </article>
                     <article class="mentor-profile" data-reveal data-reveal-delay="160">
-                        <div class="mentor-pill">Matematika &amp; TPS</div>
                         <div class="mentor-avatar">
                             <img
                                 src="https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=600&q=80"
@@ -1356,7 +1350,6 @@ footer {
                         </div>
                         <div class="mentor-info">
                             <strong>Kak Husein</strong>
-                            <span class="mentor-role">Mentor Matematika &amp; TPS</span>
                         </div>
                         <p class="mentor-saying">“Tidak ada perjalanan sulit jika kita pecah jadi milestone kecil yang terukur.”</p>
                         <div class="mentor-meta">
@@ -1365,7 +1358,6 @@ footer {
                         </div>
                     </article>
                     <article class="mentor-profile" data-reveal data-reveal-delay="240">
-                        <div class="mentor-pill">SKD &amp; TPA</div>
                         <div class="mentor-avatar">
                             <img
                                 src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80"

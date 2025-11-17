@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Schema\Blueprint;
@@ -68,19 +69,6 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)],
             'phone' => ['nullable', 'string', 'max:30'],
             'gender' => ['nullable', Rule::in(['male', 'female', 'other'])],
-            'captcha_answer' => ['required', 'string', function ($attribute, $value, $fail) use ($request) {
-                $expected = (string) $request->session()->get('register.captcha_answer');
-
-                if ($expected === '' || $expected === null) {
-                    $fail(__('Captcha tidak tersedia. Muat ulang halaman dan coba lagi.'));
-
-                    return;
-                }
-
-                if (trim((string) $value) !== $expected) {
-                    $fail(__('Jawaban captcha tidak sesuai.'));
-                }
-            }],
         ]);
 
         unset($data['captcha_answer']);
@@ -119,6 +107,7 @@ class AuthController extends Controller
             return redirect()->route('register')->with('status', __('Silakan lengkapi data diri terlebih dahulu.'));
         }
 
+        // ✅ Validasi data profile yang ada di session (tanpa recaptcha)
         $profileValidator = Validator::make($profile, [
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'alpha_dash', 'min:4', 'max:50', Rule::unique(User::class, 'username')],
@@ -134,10 +123,48 @@ class AuthController extends Controller
                 ->withInput($profile);
         }
 
+        // ✅ Validasi password + reCAPTCHA dari form password step
         $passwordData = $request->validate([
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'g-recaptcha-response' => [
+                'required',
+                function ($attribute, $value, $fail) use ($request) {
+                    $secret = config('services.recaptcha.secret');
+
+                    if (! $secret) {
+                        Log::warning('Google reCAPTCHA secret key tidak dikonfigurasi.');
+                        $fail(__('Konfigurasi reCAPTCHA belum benar. Hubungi admin.'));
+
+                        return;
+                    }
+
+                    try {
+                        $response = Http::asForm()->post(
+                            'https://www.google.com/recaptcha/api/siteverify',
+                            [
+                                'secret' => $secret,
+                                'response' => $value,
+                                'remoteip' => $request->ip(),
+                            ]
+                        );
+
+                        $body = $response->json();
+
+                        if (!($body['success'] ?? false)) {
+                            $fail(__('Verifikasi reCAPTCHA gagal. Silakan coba lagi.'));
+                        }
+                    } catch (Throwable $e) {
+                        Log::error('Gagal memverifikasi reCAPTCHA.', [
+                            'message' => $e->getMessage(),
+                        ]);
+
+                        $fail(__('Terjadi kesalahan saat memverifikasi reCAPTCHA. Silakan coba lagi.'));
+                    }
+                },
+            ],
         ]);
 
+        // ✅ Buat user baru
         User::create([
             'name' => $profile['name'],
             'username' => $profile['username'],
@@ -154,7 +181,6 @@ class AuthController extends Controller
             ->route('login')
             ->with('register_success', true)
             ->with('status', __('Akun berhasil dibuat. Silakan login untuk mulai belajar.'))
-            ->with('register_success', true)
             ->withInput(['username' => $profile['username']]);
     }
 
@@ -183,7 +209,6 @@ class AuthController extends Controller
             throw $exception;
         }
 
-        // ✅ Tidak perlu Auth::login($user)
         $request->session()->regenerate();
 
         return redirect()->intended($this->homeRouteFor(Auth::user()));
@@ -314,4 +339,3 @@ class AuthController extends Controller
         return $candidate;
     }
 }
-

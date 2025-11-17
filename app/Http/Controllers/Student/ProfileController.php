@@ -56,7 +56,7 @@ class ProfileController extends Controller
             'gender' => ['nullable', Rule::in(array_keys($this->genderOptions()))],
             'parent_name' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string'],
-            'avatar' => ['nullable', 'image', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'max:5000'],
         ]);
 
         $avatarPath = $user->avatar_path;
