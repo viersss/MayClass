@@ -596,65 +596,206 @@ nav {
                 margin: 0;
             }
 
-            /* Journey roadmap */
-            .journey-section {
-                background: #f5fbf8;
-                border-top: 1px solid rgba(20, 59, 46, 0.04);
-                border-bottom: 1px solid rgba(20, 59, 46, 0.04);
-            }
-
-            .journey-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                gap: 20px;
-                margin-top: 36px;
-            }
-
-            .journey-card {
-                background: #ffffff;
-                border-radius: 22px;
-                padding: 28px;
-                display: grid;
-                gap: 12px;
-                box-shadow: 0 22px 45px rgba(20, 59, 46, 0.12);
-                border: 1px solid rgba(20, 59, 46, 0.06);
+            /* Testimonial showcase */
+            .testimonials {
+                background: radial-gradient(circle at top, rgba(63, 166, 126, 0.1), transparent 55%), #f6fbf8;
                 position: relative;
             }
 
-            .journey-step {
-                width: 44px;
-                height: 44px;
-                border-radius: 12px;
-                background: rgba(63, 166, 126, 0.12);
-                color: var(--primary-dark);
-                font-weight: 600;
-                font-size: 1rem;
-                display: grid;
-                place-items: center;
+            .testimonials::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(120deg, rgba(63, 166, 126, 0.08), transparent 55%);
+                pointer-events: none;
             }
 
-            .journey-card strong {
+            .testimonials .container {
+                position: relative;
+                z-index: 1;
+            }
+
+            .testimonials-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 24px;
+                margin-top: 32px;
+            }
+
+            .testimonial-card {
+                background: #ffffff;
+                border-radius: 28px;
+                padding: 32px;
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
+                box-shadow: 0 25px 70px rgba(31, 107, 79, 0.12);
+                border: 1px solid rgba(20, 59, 46, 0.08);
+                min-height: 320px;
+            }
+
+            .testimonial-rating {
+                display: inline-flex;
+                gap: 4px;
+                color: #f5b642;
+                font-size: 1.1rem;
+            }
+
+            .testimonial-quote {
+                font-size: 1.05rem;
+                font-weight: 500;
+                color: var(--ink-strong);
+                margin: 0;
+                line-height: 1.7;
+            }
+
+            .testimonial-quote span {
+                color: var(--primary-main);
+            }
+
+            .testimonial-author {
+                margin-top: auto;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+
+            .testimonial-avatar {
+                width: 64px;
+                height: 64px;
+                border-radius: 20px;
+                overflow: hidden;
+                border: 2px solid rgba(63, 166, 126, 0.4);
+                box-shadow: 0 12px 24px rgba(15, 52, 38, 0.18);
+            }
+
+            .testimonial-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .testimonial-meta {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                font-size: 0.92rem;
+                color: var(--ink-soft);
+            }
+
+            .testimonial-meta strong {
+                color: var(--ink-strong);
+                font-size: 1rem;
+            }
+
+            .testimonial-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 10px;
+                border-radius: 999px;
+                background: rgba(63, 166, 126, 0.12);
+                color: var(--primary-dark);
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            /* Mentor showcase */
+            .mentor-showcase {
+                background: #fbfdfc;
+                border-top: 1px solid rgba(20, 59, 46, 0.06);
+            }
+
+            .mentor-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 24px;
+                margin-top: 40px;
+            }
+
+            .mentor-profile {
+                background: #ffffff;
+                border-radius: 24px;
+                padding: 28px;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                border: 1px solid rgba(20, 59, 46, 0.08);
+                box-shadow: 0 16px 48px rgba(15, 52, 38, 0.12);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .mentor-profile::after {
+                content: "";
+                position: absolute;
+                inset: auto -40% -40% 40%;
+                height: 160px;
+                background: radial-gradient(circle, rgba(63, 166, 126, 0.25), transparent 70%);
+                pointer-events: none;
+            }
+
+            .mentor-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 28px;
+                overflow: hidden;
+                border: 2px solid rgba(63, 166, 126, 0.35);
+                box-shadow: 0 14px 36px rgba(15, 52, 38, 0.15);
+            }
+
+            .mentor-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .mentor-info {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .mentor-info strong {
                 font-size: 1.1rem;
                 color: var(--ink-strong);
             }
 
-            .journey-card p {
-                margin: 0;
+            .mentor-role {
                 color: var(--ink-soft);
+                font-size: 0.9rem;
             }
 
-            .journey-meta {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                font-size: 0.85rem;
+            .mentor-pill {
+                align-self: flex-start;
+                border-radius: 999px;
+                padding: 4px 12px;
+                font-size: 0.78rem;
+                font-weight: 600;
+                background: rgba(63, 166, 126, 0.12);
                 color: var(--primary-dark);
             }
 
-            .journey-meta span {
-                background: rgba(20, 59, 46, 0.05);
+            .mentor-saying {
+                font-style: italic;
+                color: var(--ink-soft);
+                margin: 8px 0 0;
+                line-height: 1.5;
+            }
+
+            .mentor-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                font-size: 0.85rem;
+                color: var(--ink-muted);
+            }
+
+            .mentor-meta span {
+                padding: 6px 12px;
                 border-radius: 999px;
-                padding: 4px 10px;
+                background: var(--neutral-100);
+                border: 1px solid rgba(20, 59, 46, 0.06);
             }
 
             /* FAQ grid in full-width container */
@@ -805,7 +946,8 @@ footer {
                 .pricing-grid,
                 .highlight-grid,
                 .faq-grid,
-                .journey-grid {
+                .testimonials-grid,
+                .mentor-grid {
                     grid-template-columns: repeat(2, minmax(0, 1fr));
                 }
             }
@@ -851,7 +993,8 @@ footer {
                 .pricing-grid,
                 .highlight-grid,
                 .faq-grid,
-                .journey-grid {
+                .testimonials-grid,
+                .mentor-grid {
                     grid-template-columns: 1fr;
                 }
 
@@ -874,7 +1017,8 @@ footer {
                     padding: 0 16px;
                 }
 
-                .journey-card {
+                .testimonial-card,
+                .mentor-profile {
                     padding: 24px;
                 }
             }
@@ -896,7 +1040,7 @@ footer {
                         <a href="#artikel">Artikel</a>
                         <a href="#paket">Paket Belajar</a>
                         <a href="#keunggulan">Keunggulan</a>
-                        <a href="#alur">Cara Bergabung</a>
+                        <a href="#testimoni">Testimoni</a>
                         <a href="#faq">FAQ</a>
                     </div>
                     <div class="nav-actions">
@@ -962,7 +1106,7 @@ footer {
                             alt="Artikel motivasi"
                         />
                         <div class="article-content">
-                            <h3>Raih Kampus Impian dari Nol</h3>
+                            <h3>Cerita Alumni: Raih Kampus Impian dari Nol</h3>
                             <p>
                                 Belajar dari pengalaman siswa MayClass yang berhasil masuk kampus favorit berkat program intensif.
                             </p>
@@ -1026,6 +1170,8 @@ footer {
                                             <a class="btn btn-ghost" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
                                             @auth
                                                 <a class="btn btn-primary" href="{{ route('checkout.show', $package['slug']) }}">Langsung Checkout</a>
+                                            @else
+                                                <a class="btn btn-primary" href="{{ route('login') }}">Mulai Sekarang</a>
                                             @endauth
                                         </div>
                                     </article>
@@ -1087,41 +1233,153 @@ footer {
             </div>
         </div>
 
-        <section class="section journey-section" id="alur">
+        <section class="section testimonials" id="testimoni">
             <div class="container">
                 <div class="section-header" data-reveal>
-                    <span class="badge badge-soft">Cara Bergabung</span>
-                    <h2 class="section-title">3 Langkah Praktis untuk Mulai Belajar di MayClass</h2>
+                    <span class="badge badge-soft">Cerita Alumni</span>
+                    <h2 class="section-title">Cerita Mereka yang Sudah Mewujudkan Mimpi</h2>
                     <p class="section-subtitle">
-                        Mulai dari memilih paket, mengatur jadwal, sampai memantau progres—semuanya bisa kamu lakukan dalam satu dashboard.
+                        Dengar langsung pengalaman siswa MayClass yang berhasil menembus kampus favorit dan meraih skor tinggi
+                        di ujian bergengsi.
                     </p>
                 </div>
-                <div class="journey-grid">
-                    <article class="journey-card" data-reveal>
-                        <div class="journey-step">1</div>
-                        <strong>Eksplor Paket Belajar</strong>
-                        <p>Pilih jenjang, fokus materi, dan jumlah sesi yang cocok dengan targetmu langsung dari katalog online.</p>
-                        <div class="journey-meta">
-                            <span>Simulasi kebutuhan</span>
-                            <span>Lihat silabus</span>
+                <div class="testimonials-grid">
+                    <article class="testimonial-card" data-reveal>
+                        <div class="testimonial-rating" aria-label="Rating bintang lima">
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                        </div>
+                        <p class="testimonial-quote">
+                            “Mentor MayClass ramah banget dan jelas saat jelasin materi. Setiap sesi dibarengin <span>roadmap belajar</span>
+                            jadi aku makin percaya diri menembus kampus impian.”
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">
+                                <img src="{{ asset('images/jumbo.jpg') }}" alt="Triangga" />
+                            </div>
+                            <div class="testimonial-meta">
+                                <strong>Triangga</strong>
+                                <span>Skor UTBK 740</span>
+                                <span class="testimonial-badge">Angkatan 2024</span>
+                            </div>
                         </div>
                     </article>
-                    <article class="journey-card" data-reveal data-reveal-delay="120">
-                        <div class="journey-step">2</div>
-                        <strong>Atur Jadwal Fleksibel</strong>
-                        <p>Admin MayClass bantu sinkronisasi jadwal kamu dan mentor, lengkap dengan pengingat otomatis sebelum sesi dimulai.</p>
-                        <div class="journey-meta">
-                            <span>Pengingat WhatsApp</span>
-                            <span>Reschedule mudah</span>
+                    <article class="testimonial-card" data-reveal data-reveal-delay="140">
+                        <div class="testimonial-rating" aria-label="Rating bintang lima">
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                        </div>
+                        <p class="testimonial-quote">
+                            “Latihan soal dan pembahasan detailnya bantu aku ngejar target CPNS. Dashboard progres bikin aku sadar bagian
+                            mana yang harus diperkuat sebelum tes.”
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">
+                                <img src="{{ asset('images/pinguin.jpg') }}" alt="Xavier" />
+                            </div>
+                            <div class="testimonial-meta">
+                                <strong>Xavier</strong>
+                                <span>Skor SKD 480</span>
+                                <span class="testimonial-badge">Lulus CPNS 2023</span>
+                            </div>
                         </div>
                     </article>
-                    <article class="journey-card" data-reveal data-reveal-delay="220">
-                        <div class="journey-step">3</div>
-                        <strong>Ikuti Kelas &amp; Pantau Progres</strong>
-                        <p>Masuk ruang belajar interaktif, cek rekaman kelas, dan lihat laporan perkembangan yang dikirim tiap pekan.</p>
-                        <div class="journey-meta">
-                            <span>Dashboard progres</span>
-                            <span>Evaluasi mentor</span>
+                    <article class="testimonial-card" data-reveal data-reveal-delay="220">
+                        <div class="testimonial-rating" aria-label="Rating bintang lima">
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                            <span aria-hidden="true">★</span>
+                        </div>
+                        <p class="testimonial-quote">
+                            “MayClass bantu aku belajar lebih terarah dan konsisten. Mentor siap review tugas kapan aja dan ada sesi konsultasi
+                            karier yang bikin aku mantap pilih jurusan.”
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">
+                                <img src="{{ asset('images/lisa.jpg') }}" alt="Lisa" />
+                            </div>
+                            <div class="testimonial-meta">
+                                <strong>Lisa</strong>
+                                <span>Fasilkom UI</span>
+                                <span class="testimonial-badge">Awardee Beasiswa</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section mentor-showcase" id="tentor">
+            <div class="container">
+                <div class="section-header" data-reveal>
+                    <span class="badge badge-soft">Mentor Profesional</span>
+                    <h2 class="section-title">Mentor Berkualitas Siap Mendampingi Belajarmu</h2>
+                    <p class="section-subtitle">
+                        Tenaga pendidik terbaik dari berbagai kampus unggulan siap memastikan setiap sesi belajar terasa dekat dan
+                        menyenangkan.
+                    </p>
+                </div>
+                <div class="mentor-grid">
+                    <article class="mentor-profile" data-reveal>
+                        <div class="mentor-pill">Bahasa &amp; Komunikasi</div>
+                        <div class="mentor-avatar">
+                            <img
+                                src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80"
+                                alt="Kak Henny"
+                            />
+                        </div>
+                        <div class="mentor-info">
+                            <strong>Kak Henny</strong>
+                            <span class="mentor-role">Mentor Bahasa Indonesia &amp; Inggris</span>
+                        </div>
+                        <p class="mentor-saying">“Bangun mindset juara lewat storytelling dan latihan speaking yang konsisten.”</p>
+                        <div class="mentor-meta">
+                            <span>8+ tahun mengajar</span>
+                            <span>700+ siswa dibimbing</span>
+                        </div>
+                    </article>
+                    <article class="mentor-profile" data-reveal data-reveal-delay="160">
+                        <div class="mentor-pill">Matematika &amp; TPS</div>
+                        <div class="mentor-avatar">
+                            <img
+                                src="https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=600&q=80"
+                                alt="Kak Husein"
+                            />
+                        </div>
+                        <div class="mentor-info">
+                            <strong>Kak Husein</strong>
+                            <span class="mentor-role">Mentor Matematika &amp; TPS</span>
+                        </div>
+                        <p class="mentor-saying">“Tidak ada perjalanan sulit jika kita pecah jadi milestone kecil yang terukur.”</p>
+                        <div class="mentor-meta">
+                            <span>Certified Math Trainer</span>
+                            <span>Rata-rata nilai siswa 87</span>
+                        </div>
+                    </article>
+                    <article class="mentor-profile" data-reveal data-reveal-delay="240">
+                        <div class="mentor-pill">SKD &amp; TPA</div>
+                        <div class="mentor-avatar">
+                            <img
+                                src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80"
+                                alt="Kak Pal"
+                            />
+                        </div>
+                        <div class="mentor-info">
+                            <strong>Kak Pal</strong>
+                            <span class="mentor-role">Mentor SKD &amp; TPA</span>
+                        </div>
+                        <p class="mentor-saying">“Strategi tepat, simulasi rutin, dan evaluasi detail bikin kamu siap setiap ujian.”</p>
+                        <div class="mentor-meta">
+                            <span>Coach CPNS Favorite</span>
+                            <span>95% siswa lulus seleksi</span>
                         </div>
                     </article>
                 </div>
@@ -1196,8 +1454,8 @@ footer {
                             <h4>Produk</h4>
                             <div class="footer-links">
                                 <a href="#paket">Paket Belajar</a>
-                                <a href="#keunggulan">Keunggulan</a>
-                                <a href="#alur">Cara Bergabung</a>
+                                <a href="#tentor">Super Teacher</a>
+                                <a href="#testimoni">Cerita Alumni</a>
                             </div>
                         </div>
                         <div>
