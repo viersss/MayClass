@@ -23,6 +23,8 @@ class Order extends Model
         'card_number_last_four',
         'payment_proof_path',
         'paid_at',
+        'expires_at',
+        'cancelled_at',
     ];
 
     protected $casts = [
@@ -30,6 +32,8 @@ class Order extends Model
         'tax' => 'float',
         'total' => 'float',
         'paid_at' => 'datetime',
+        'expires_at' => 'datetime',
+        'cancelled_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

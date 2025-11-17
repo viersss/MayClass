@@ -14,13 +14,16 @@
         <style>
             :root {
                 color-scheme: light;
-                --bg: #b9e3e0;
-                --panel: #f9ffff;
-                --accent: #42b7ad;
-                --accent-dark: #2f8f87;
-                --text: #1f2a37;
-                --text-muted: #6b7280;
-                --outline: rgba(47, 143, 135, 0.25);
+                --primary-dark: #1b6d4f;
+                --primary-main: #3fa67e;
+                --primary-light: #84d986;
+                --neutral-900: #1f2328;
+                --neutral-600: #4d5660;
+                --neutral-200: #f1f5f4;
+                --surface: #ffffff;
+                --panel-muted: #f6f7f8;
+                --outline: rgba(20, 59, 46, 0.18);
+                --shadow-lg: 0 32px 60px rgba(20, 59, 46, 0.15);
             }
 
             * {
@@ -30,8 +33,8 @@
             body {
                 margin: 0;
                 font-family: "Poppins", sans-serif;
-                color: var(--text);
-                background: linear-gradient(135deg, #dff5f2 0%, #9ed6d1 100%);
+                color: var(--neutral-900);
+                background: linear-gradient(180deg, #f4fbf9 0%, #ffffff 65%);
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
@@ -43,55 +46,66 @@
             }
 
             .back-link {
+                position: fixed;
+                top: 24px;
+                left: 32px;
+                z-index: 10;
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
-                margin: 24px;
+                padding: 8px 14px;
+                border-radius: 999px;
                 font-size: 0.95rem;
-                color: var(--accent-dark);
+                color: #ffffff;
                 font-weight: 500;
+                background: rgba(20, 59, 46, 0.55);
+                backdrop-filter: blur(8px);
             }
 
             .auth-wrapper {
                 flex: 1;
                 display: flex;
-                align-items: center;
+                align-items: stretch;
                 justify-content: center;
-                padding: 24px;
+                padding: clamp(16px, 4vw, 32px);
             }
 
             .auth-card {
-                background: var(--panel);
-                border-radius: 32px;
+                width: 100%;
+                max-width: 1100px;
                 display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                width: min(1080px, 100%);
+                grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+                border-radius: 32px;
                 overflow: hidden;
-                box-shadow: 0 35px 65px rgba(27, 71, 74, 0.18);
+                background: var(--surface);
+                box-shadow: var(--shadow-lg);
             }
 
             .auth-illustration {
-                background: linear-gradient(160deg, rgba(255, 255, 255, 0.3) 0%, rgba(59, 166, 158, 0.65) 100%);
-                padding: 48px;
+                position: relative;
+                background:
+                    linear-gradient(135deg, rgba(7, 16, 37, 0.7), rgba(20, 59, 46, 0.55)),
+                    url("https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=80")
+                        center/cover no-repeat;
+                padding: clamp(32px, 4vw, 56px);
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-start;
-                gap: 24px;
+                gap: 32px;
+                color: #f0fff7;
             }
 
             .auth-illustration .image-frame {
-                background: #f1faf9;
                 border-radius: 24px;
                 overflow: hidden;
                 position: relative;
-                box-shadow: 0 20px 45px rgba(45, 133, 126, 0.2);
+                box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
             }
 
             .auth-illustration .image-frame::after {
                 content: "";
                 position: absolute;
                 inset: 0;
-                background: linear-gradient(160deg, rgba(66, 183, 173, 0.2) 0%, rgba(66, 183, 173, 0.05) 100%);
+                background: linear-gradient(135deg, rgba(63, 166, 126, 0.3), transparent 65%);
             }
 
             .auth-illustration img {
@@ -102,45 +116,42 @@
             }
 
             .auth-illustration h1 {
-                font-size: clamp(1.9rem, 2.5vw, 2.6rem);
                 margin: 0;
+                font-size: clamp(2rem, 2.4vw, 2.8rem);
                 line-height: 1.3;
-            }
-
-            .auth-illustration p {
-                color: #f6fffe;
-                font-weight: 400;
-                margin: 0;
-            }
-
-            .auth-illustration strong {
-                color: #003a36;
-            }
-
-            .auth-panel {
-                padding: 48px;
-                background: #fdfefe;
-                display: flex;
-                flex-direction: column;
-                gap: 32px;
-            }
-
-            .auth-header h2 {
-                margin: 0 0 8px;
-                font-size: 1.6rem;
                 font-weight: 600;
             }
 
-            .auth-header p {
+            .auth-illustration p {
                 margin: 0;
-                color: var(--text-muted);
+                color: rgba(255, 255, 255, 0.82);
+                line-height: 1.6;
+            }
+
+            .auth-panel {
+                padding: clamp(32px, 5vw, 56px);
+                background: var(--surface);
+                display: flex;
+                flex-direction: column;
+                gap: 28px;
+            }
+
+            .auth-header h2 {
+                margin: 0;
+                font-size: clamp(1.8rem, 2.4vw, 2.2rem);
+            }
+
+            .auth-header p {
+                margin: 6px 0 0;
+                color: var(--neutral-600);
                 font-size: 0.95rem;
             }
 
             .summary-card {
-                background: rgba(66, 183, 173, 0.08);
-                border-radius: 20px;
-                padding: 20px 24px;
+                background: var(--panel-muted);
+                border-radius: 22px;
+                padding: 22px 26px;
+                border: 1px solid rgba(20, 59, 46, 0.08);
                 display: grid;
                 gap: 12px;
             }
@@ -148,40 +159,39 @@
             .summary-card h3 {
                 margin: 0;
                 font-size: 1rem;
-                color: var(--accent-dark);
+                color: var(--primary-dark);
             }
 
             .summary-grid {
                 display: grid;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 12px 16px;
+                gap: 14px 20px;
             }
 
             .summary-grid dt {
                 font-size: 0.78rem;
                 text-transform: uppercase;
-                letter-spacing: 0.04em;
-                color: var(--text-muted);
+                letter-spacing: 0.06em;
+                color: var(--neutral-600);
                 margin: 0 0 4px;
             }
 
             .summary-grid dd {
                 margin: 0;
                 font-weight: 600;
-                color: var(--text);
-                word-break: break-word;
+                color: var(--neutral-900);
             }
 
             form {
                 display: flex;
                 flex-direction: column;
-                gap: 16px;
+                gap: 18px;
             }
 
             label {
                 font-weight: 500;
                 font-size: 0.92rem;
-                color: var(--text);
+                color: var(--neutral-900);
             }
 
             input {
@@ -197,33 +207,33 @@
 
             input:focus {
                 outline: none;
-                border-color: var(--accent);
-                box-shadow: 0 0 0 3px rgba(66, 183, 173, 0.22);
+                border-color: var(--primary-main);
+                box-shadow: 0 0 0 3px rgba(63, 166, 126, 0.2);
             }
 
             .primary-action {
                 margin-top: 8px;
-                padding: 14px 16px;
-                border-radius: 14px;
+                padding: 14px 20px;
+                border-radius: 16px;
                 border: none;
-                background: linear-gradient(120deg, var(--accent) 0%, #5ed3c5 100%);
+                background: linear-gradient(120deg, var(--primary-main), var(--primary-light));
                 color: #fff;
                 font-weight: 600;
                 font-size: 1rem;
                 cursor: pointer;
-                box-shadow: 0 16px 30px rgba(66, 183, 173, 0.35);
+                box-shadow: 0 18px 32px rgba(63, 166, 126, 0.28);
                 transition: transform 0.15s ease, box-shadow 0.15s ease;
             }
 
             .primary-action:hover {
                 transform: translateY(-1px);
-                box-shadow: 0 18px 35px rgba(66, 183, 173, 0.42);
+                box-shadow: 0 22px 38px rgba(63, 166, 126, 0.35);
             }
 
             .form-helper {
                 margin: 0;
-                font-size: 0.78rem;
-                color: var(--text-muted);
+                font-size: 0.82rem;
+                color: var(--neutral-600);
             }
 
             .error-alert {
@@ -251,7 +261,7 @@
                 justify-content: space-between;
                 align-items: center;
                 gap: 16px;
-                margin-top: 12px;
+                flex-wrap: wrap;
             }
 
             .link-button {
@@ -259,7 +269,7 @@
                 background: transparent;
                 padding: 0;
                 font-size: 0.9rem;
-                color: var(--accent-dark);
+                color: var(--primary-dark);
                 font-weight: 500;
                 cursor: pointer;
             }
@@ -279,7 +289,8 @@
                 }
 
                 .back-link {
-                    margin: 16px 20px;
+                    position: static;
+                    margin: 16px 24px;
                 }
 
                 .summary-grid {
@@ -297,14 +308,6 @@
                     align-self: center;
                 }
             }
-
-            .auth-illustration h1 {
-                font-size: clamp(0.9rem, 1.7vw, 1.9rem);
-                font-weight: 400; 
-                margin: 0;
-                line-height: 1.3;
-            }
-
         </style>
     </head>
     <body>

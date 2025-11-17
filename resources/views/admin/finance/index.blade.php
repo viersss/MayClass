@@ -46,7 +46,7 @@
 
         .finance-status-grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 22px;
             margin-bottom: 32px;
         }
@@ -99,6 +99,11 @@
 
         .status-chip[data-type="rejected"] {
             background: rgba(248, 113, 113, 0.16);
+            color: #b91c1c;
+        }
+
+        .status-chip[data-type="failed"] {
+            background: rgba(185, 28, 28, 0.16);
             color: #b91c1c;
         }
 
@@ -310,6 +315,16 @@
             </header>
             <strong>{{ number_format($statusSummary['rejected']['count']) }}</strong>
             <p style="margin: 0; color: var(--text-muted);">{{ $statusSummary['rejected']['description'] }}</p>
+        </div>
+        <div class="status-card">
+            <header>
+                <h4>{{ $statusSummary['failed']['label'] }}</h4>
+                <span class="status-chip" data-type="failed">
+                    <span>⏱️</span> Timeout
+                </span>
+            </header>
+            <strong>{{ number_format($statusSummary['failed']['count']) }}</strong>
+            <p style="margin: 0; color: var(--text-muted);">{{ $statusSummary['failed']['description'] }}</p>
         </div>
     </div>
 

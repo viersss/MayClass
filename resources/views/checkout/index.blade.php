@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
         <title>Checkout - {{ $package['detail_title'] }}</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -84,6 +85,35 @@
                 object-fit: contain;
             }
 
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+
+            .profile-icon-btn {
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                border: 1px solid rgba(61, 183, 173, 0.35);
+                background: rgba(61, 183, 173, 0.12);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--primary-dark);
+            }
+
+            .profile-icon-btn svg {
+                width: 22px;
+                height: 22px;
+            }
+
             .nav-btn {
                 padding: 10px 24px;
                 border-radius: 999px;
@@ -117,6 +147,38 @@
                 padding: 36px;
                 display: grid;
                 gap: 24px;
+            }
+
+            .info-alert {
+                padding: 12px 16px;
+                border-radius: 16px;
+                background: rgba(252, 211, 77, 0.18);
+                color: #92400e;
+                font-size: 0.9rem;
+            }
+
+            .order-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 16px;
+                border-radius: 999px;
+                background: rgba(61, 183, 173, 0.12);
+                color: var(--primary-dark);
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+
+            .two-column {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 18px;
+            }
+
+            @media (max-width: 640px) {
+                .two-column {
+                    grid-template-columns: 1fr;
+                }
             }
 
             h1 {
@@ -198,6 +260,64 @@
                 text-align: center;
                 color: var(--text-muted);
                 font-size: 0.95rem;
+            }
+
+            .upload-preview {
+                border-radius: 18px;
+                border: 1.5px solid rgba(61, 183, 173, 0.25);
+                padding: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                background: rgba(61, 183, 173, 0.05);
+            }
+
+            .upload-preview[data-empty="true"] {
+                color: var(--text-muted);
+                font-style: italic;
+            }
+
+            .preview-clear {
+                border: none;
+                background: transparent;
+                color: var(--primary-dark);
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            .countdown-banner {
+                border-radius: 20px;
+                padding: 18px 22px;
+                background: rgba(249, 181, 59, 0.15);
+                border: 1px solid rgba(249, 181, 59, 0.4);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .countdown-banner strong {
+                font-size: 1.4rem;
+                letter-spacing: 0.08em;
+            }
+
+            .countdown-note {
+                margin: 0;
+                color: rgba(49, 46, 31, 0.8);
+                font-size: 0.9rem;
+            }
+
+            .countdown-banner[data-status='expired'] {
+                background: rgba(248, 113, 113, 0.14);
+                border-color: rgba(248, 113, 113, 0.4);
+                color: #b91c1c;
+            }
+
+            .is-disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
             }
 
             .confirm-btn {
@@ -337,12 +457,11 @@
                             Kembali ke Paket
                         </a>
                         @auth
-                            <a
-                                class="nav-btn"
-                                style="border-color: transparent; background: rgba(61, 183, 173, 0.15);"
-                                href="{{ route('student.profile') }}"
-                            >
-                                Profile
+                            <a class="profile-icon-btn" href="{{ route('student.profile') }}" aria-label="Lihat profil">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 3c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4Z" />
+                                </svg>
+                                <span class="sr-only">Profil</span>
                             </a>
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf
@@ -370,13 +489,23 @@
                     novalidate
                 >
                     @csrf
+                    <input type="hidden" name="order_id" value="{{ $order->id }}" />
                     <input type="hidden" name="payment_method" value="transfer_bank" />
+                    @error('order_id')
+                        <div class="error-alert" role="alert">{{ $message }}</div>
+                    @enderror
+                    @if (session('checkout_expired'))
+                        <div class="info-alert" role="status">Sesi checkout sebelumnya telah berakhir. Kami menyiapkan sesi baru agar kamu bisa melanjutkan pembayaran.</div>
+                    @endif
+                    @php($orderCode = 'MC-' . str_pad((string) $order->id, 6, '0', STR_PAD_LEFT))
+                    @php($countdownLabel = sprintf('%02d:%02d', floor($countdownSeconds / 60), $countdownSeconds % 60))
 
                     <div>
                         <h1>Checkout</h1>
                         <p style="color: var(--text-muted); margin: 12px 0 0;">
                             Lengkapi data yang dibutuhkan untuk mengamankan akses ke {{ $package['detail_title'] }}.
                         </p>
+                        <div class="order-chip">ID Pesanan: {{ $orderCode }}</div>
                         <div
                             style="
                                 margin-top: 16px;
@@ -395,6 +524,19 @@
                                 <span>• {{ $package['grade_range'] }}</span>
                             @endif
                         </div>
+                    </div>
+
+                    <div
+                        class="countdown-banner"
+                        data-countdown
+                        data-remaining="{{ $countdownSeconds }}"
+                        data-expire-endpoint="{{ route('checkout.expire', [$package['slug'], $order->id]) }}"
+                    >
+                        <div>
+                            <small>Batas Pembayaran</small>
+                            <strong data-countdown-display>{{ $countdownLabel }}</strong>
+                        </div>
+                        <p class="countdown-note" data-countdown-note>Segera unggah bukti pembayaran sebelum waktu berakhir.</p>
                     </div>
 
                     @if ($errors->any())
@@ -445,6 +587,37 @@
                         </div>
                     </div>
 
+                    <div class="two-column">
+                        <div class="input-group">
+                            <label for="cardholder_name">Nama Pemilik Rekening</label>
+                            <input
+                                id="cardholder_name"
+                                type="text"
+                                name="cardholder_name"
+                                value="{{ old('cardholder_name', auth()->user()->name ?? '') }}"
+                                placeholder="Masukkan nama pada rekening"
+                                required
+                            />
+                            @error('cardholder_name')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="input-group">
+                            <label for="card_number">Nomor Rekening / VA Pengirim</label>
+                            <input
+                                id="card_number"
+                                type="text"
+                                name="card_number"
+                                value="{{ old('card_number') }}"
+                                placeholder="Contoh: 1234 5678 9999"
+                                required
+                            />
+                            @error('card_number')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
                     <div>
                         <label for="payment-proof">Unggah Bukti Pembayaran</label>
                         <label class="upload-box" for="payment-proof">
@@ -458,6 +631,10 @@
                             style="display: none;"
                             required
                         />
+                        <div class="upload-preview" data-upload-preview data-empty="true">
+                            <span data-upload-filename>Belum ada file yang dipilih.</span>
+                            <button type="button" class="preview-clear" data-clear-upload>Hapus</button>
+                        </div>
                         @error('payment_proof')
                             <p class="input-error">{{ $message }}</p>
                         @enderror
@@ -568,7 +745,6 @@
                             const target = document.querySelector(targetSel);
                             if (!target) return;
 
-                            // Ambil angka saja (hapus spasi/tanda)
                             const raw = target.textContent || '';
                             const value = raw.replace(/\D+/g, '') || raw.trim();
 
@@ -584,7 +760,6 @@
                                     }, 1800);
                                 })
                                 .catch(function () {
-                                    // Jika gagal, tetap beri feedback sederhana
                                     btn.classList.add('copied');
                                     setTimeout(function () {
                                         btn.classList.remove('copied');
@@ -592,7 +767,132 @@
                                 });
                         });
                     });
+
+                    setupProofPreview();
+                    setupCountdown();
                 });
+
+                function setupProofPreview() {
+                    const input = document.getElementById('payment-proof');
+                    const preview = document.querySelector('[data-upload-preview]');
+                    const label = document.querySelector('[data-upload-filename]');
+                    const clearBtn = document.querySelector('[data-clear-upload]');
+
+                    if (!input || !preview || !label) {
+                        return;
+                    }
+
+                    const render = function (file) {
+                        if (!file) {
+                            preview.dataset.empty = 'true';
+                            label.textContent = 'Belum ada file yang dipilih.';
+
+                            return;
+                        }
+
+                        preview.dataset.empty = 'false';
+                        const size = Math.max(1, Math.round(file.size / 1024));
+                        label.textContent = file.name + ' (' + size + ' KB)';
+                    };
+
+                    input.addEventListener('change', function () {
+                        render(this.files && this.files[0]);
+                    });
+
+                    clearBtn?.addEventListener('click', function () {
+                        input.value = '';
+                        render(null);
+                    });
+
+                    render(input.files && input.files[0]);
+                }
+
+                function setupCountdown() {
+                    const banner = document.querySelector('[data-countdown]');
+                    if (!banner) {
+                        return;
+                    }
+
+                    let remaining = parseInt(banner.getAttribute('data-remaining') || '0', 10);
+                    const display = banner.querySelector('[data-countdown-display]');
+                    const note = banner.querySelector('[data-countdown-note]');
+                    const expireEndpoint = banner.getAttribute('data-expire-endpoint');
+                    const form = document.querySelector('form.checkout-card');
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    let expired = false;
+
+                    const updateDisplay = function () {
+                        const minutes = Math.max(0, Math.floor(remaining / 60));
+                        const seconds = Math.max(0, remaining % 60);
+                        if (display) {
+                            display.textContent = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+                        }
+                    };
+
+                    const lockForm = function () {
+                        if (!form) {
+                            return;
+                        }
+
+                        form.querySelectorAll('input, button, textarea, select').forEach(function (el) {
+                            if (el.type === 'hidden') {
+                                return;
+                            }
+
+                            el.disabled = true;
+                            el.classList.add('is-disabled');
+                        });
+                    };
+
+                    const markExpired = function () {
+                        if (expired) {
+                            return;
+                        }
+
+                        expired = true;
+                        remaining = 0;
+                        updateDisplay();
+                        banner.dataset.status = 'expired';
+                        if (note) {
+                            note.textContent = 'Waktu pembayaran telah habis. Muat ulang halaman untuk sesi baru.';
+                        }
+                        lockForm();
+
+                        if (expireEndpoint && token) {
+                            fetch(expireEndpoint, {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': token,
+                                    'Accept': 'application/json',
+                                },
+                                credentials: 'same-origin',
+                            }).catch(function () {
+                                /* no-op */
+                            });
+                        }
+                    };
+
+                    updateDisplay();
+
+                    if (remaining <= 0) {
+                        markExpired();
+
+                        return;
+                    }
+
+                    setInterval(function () {
+                        if (expired) {
+                            return;
+                        }
+
+                        remaining = Math.max(0, remaining - 1);
+                        updateDisplay();
+
+                        if (remaining === 0) {
+                            markExpired();
+                        }
+                    }, 1000);
+                }
             })();
         </script>
     </body>
