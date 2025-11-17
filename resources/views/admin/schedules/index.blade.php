@@ -100,13 +100,25 @@
         }
 
         .calendar-card,
-        .schedule-panel,
-        .history-stack > div {
+        .history-stack > div,
+        .template-section {
             background: var(--surface);
             border-radius: 20px;
             border: 1px solid var(--border);
             box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
             padding: 28px;
+            display: grid;
+            gap: 20px;
+        }
+
+        .schedule-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
         }
 
         .card-header {
@@ -446,7 +458,7 @@
                 @endif
             </article>
             <aside class="schedule-panel">
-                <div>
+                <div class="template-section">
                     <div class="card-header">
                         <div>
                             <h3>Atur pola jadwal</h3>
@@ -509,7 +521,7 @@
                         </form>
                     @endif
                 </div>
-                <div>
+                <div class="template-section">
                     <div class="card-header">
                         <div>
                             <h3>Pola aktif</h3>
