@@ -26,6 +26,7 @@ class CheckoutController extends Controller
         }
 
         $order = $this->resolveDraftOrder($user->id, $package);
+        $packageDetail = $this->formatPackage($package);
 
         if (! $order->expires_at) {
             $order->forceFill(['expires_at' => now()->addMinutes(30)])->save();
@@ -36,9 +37,10 @@ class CheckoutController extends Controller
         $remainingSeconds = max(0, now()->diffInSeconds($expiresAt, false));
 
         return view('checkout.index', [
-            'package' => $this->formatPackage($package),
+            'package' => $packageDetail,
             'order' => $order,
             'countdownSeconds' => $remainingSeconds,
+            'financeWhatsappLink' => $this->buildFinanceWhatsappLink($packageDetail),
         ]);
     }
 
@@ -127,6 +129,15 @@ class CheckoutController extends Controller
     private function formatPackage(Package $package): array
     {
         return PackagePresenter::detail($package);
+    }
+
+    private function buildFinanceWhatsappLink(array $packageDetail): string
+    {
+        $whatsappNumber = config('services.whatsapp.finance_admin', '6281234567890');
+        $packageName = $packageDetail['detail_title'] ?? $packageDetail['title'] ?? 'MayClass';
+        $message = rawurlencode('Halo Admin Keuangan MayClass, saya butuh bantuan pembayaran untuk paket ' . $packageName);
+
+        return "https://wa.me/{$whatsappNumber}?text={$message}";
     }
 
     private function resolveDraftOrder(int $userId, Package $package): Order

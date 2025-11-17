@@ -687,14 +687,9 @@
                             Jika ada kendala pembayaran, silakan hubungi Admin MayClass melalui WhatsApp.
                         </p>
 
-                        @php
-                            // Ganti nomor default di bawah dengan nomor WhatsApp admin Anda (format internasional, tanpa +)
-                            $whatsapp_number = config('services.whatsapp.finance_admin', '6281234567890');
-                            $wa_message = rawurlencode('Halo Admin Keuangan MayClass, saya butuh bantuan pembayaran untuk paket ' . ($package['detail_title'] ?? ''));
-                            $wa_link = "https://wa.me/{$whatsapp_number}?text={$wa_message}";
-                        @endphp
+                        @php($whatsappLink = $financeWhatsappLink ?? '#')
                         <div class="help-actions">
-                            <a class="whatsapp-btn" href="{{ $wa_link }}" target="_blank" rel="noopener">
+                            <a class="whatsapp-btn" href="{{ $whatsappLink }}" target="_blank" rel="noopener">
                                 <!-- WhatsApp icon -->
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
                                     <path fill="currentColor" d="M19.7 17.5c-.3-.1-1.7-.8-2-.9s-.5-.1-.7.1-.8.9-1 1.1-.4.2-.7.1a6.7 6.7 0 0 1-2-1.2 7.5 7.5 0 0 1-1.4-1.7c-.2-.3 0-.5.1-.7l.5-.5c.2-.2.3-.4.4-.6s0-.4 0-.6c0-.1-.7-1.7-1-2.3s-.6-.5-.8-.5h-.7a1.3 1.3 0 0 0-1 .5 4.1 4.1 0 0 0-1.3 3.1 7.2 7.2 0 0 0 1.5 3.8 15.8 15.8 0 0 0 3.8 3.6 8.7 8.7 0 0 0 3.7 1.6 3.9 3.9 0 0 0 2.6-.4 3.3 3.3 0 0 0 1.1-2.1c.1-1.1.1-1 .1-1.1s-.2-.1-.5-.2Z"/>
