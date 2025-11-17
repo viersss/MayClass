@@ -224,29 +224,62 @@
 
         .chart-wrapper {
             position: relative;
-            height: 240px;
+            min-height: 260px;
+            padding: 24px 18px 12px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            background:
+                linear-gradient(180deg, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.02) 40%, transparent 100%),
+                #fff;
             display: flex;
             align-items: flex-end;
-            gap: 16px;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .chart-wrapper::after,
+        .chart-wrapper::before {
+            content: '';
+            position: absolute;
+            left: 18px;
+            right: 18px;
+            border-top: 1px dashed rgba(15, 23, 42, 0.08);
+        }
+
+        .chart-wrapper::after {
+            top: 24px;
+        }
+
+        .chart-wrapper::before {
+            top: 50%;
         }
 
         .chart-bar {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .chart-bar strong {
+            font-size: 0.82rem;
+            color: rgba(15, 23, 42, 0.75);
         }
 
         .chart-bar div {
             width: 100%;
-            border-radius: 12px 12px 6px 6px;
-            background: rgba(37, 99, 235, 0.3);
+            border-radius: 14px 14px 8px 8px;
+            background: linear-gradient(180deg, rgba(37, 99, 235, 0.95), rgba(59, 130, 246, 0.75));
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
         }
 
         .chart-bar span {
             font-size: 0.85rem;
             color: var(--text-muted);
+            font-weight: 600;
         }
 
         .empty-state {
@@ -316,17 +349,27 @@
             color: #b91c1c;
         }
 
+        .status-badge[data-type='initiated'] {
+            background: rgba(59, 130, 246, 0.16);
+            color: #1d4ed8;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
         .data-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            min-width: 720px;
         }
 
         .data-table th,
         .data-table td {
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(15, 23, 42, 0.06);
             text-align: left;
             font-size: 0.92rem;
+            padding: 12px 16px;
         }
 
         .data-table th {
@@ -335,10 +378,31 @@
             text-transform: uppercase;
             font-size: 0.75rem;
             letter-spacing: 0.4px;
+            padding-bottom: 6px;
         }
 
-        .data-table td:last-child,
-        .data-table th:last-child {
+        .data-table tbody tr {
+            background: var(--surface-muted);
+            border-radius: 14px;
+            box-shadow: 0 6px 12px rgba(15, 23, 42, 0.08);
+        }
+
+        .data-table tbody td {
+            border: none;
+        }
+
+        .data-table tbody td:first-child {
+            border-top-left-radius: 14px;
+            border-bottom-left-radius: 14px;
+        }
+
+        .data-table tbody td:last-child {
+            border-top-right-radius: 14px;
+            border-bottom-right-radius: 14px;
+            text-align: right;
+        }
+
+        .data-table thead tr th:last-child {
             text-align: right;
         }
 
@@ -391,36 +455,6 @@
 
         .student-card strong {
             font-size: 1rem;
-        }
-
-        .sparkline {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 12px;
-            align-items: end;
-        }
-
-        .spark-bar {
-            display: grid;
-            gap: 6px;
-            justify-items: center;
-        }
-
-        .spark-bar span {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
-
-        .spark-bar div {
-            width: 100%;
-            border-radius: 12px 12px 6px 6px;
-            background: rgba(84, 101, 255, 0.28);
-        }
-
-        .spark-bar small {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: rgba(15, 23, 42, 0.72);
         }
 
         @media (max-width: 1200px) {
@@ -527,18 +561,19 @@
                 <h3>Grafik Pendapatan {{ now()->year }}</h3>
                 <span class="card-subtitle">Berdasarkan transaksi lunas per bulan</span>
             </div>
-            @if ($monthlyRevenue->isEmpty())
+            @if ($monthlyRevenue->sum('value') === 0)
                 <div class="empty-state">Belum ada transaksi lunas yang tercatat pada tahun ini.</div>
             @else
                 @php
                     $maxValue = max($monthlyRevenue->pluck('value')->all() ?: [1]);
                 @endphp
-                <div class="chart-wrapper">
+                <div class="chart-wrapper" role="img" aria-label="Grafik pendapatan bulanan">
                     @foreach ($monthlyRevenue as $entry)
                         @php
                             $height = $maxValue > 0 ? max(($entry['value'] / $maxValue) * 100, 6) : 6;
                         @endphp
                         <div class="chart-bar">
+                            <strong>{{ $entry['formatted'] }}</strong>
                             <div style="height: {{ $height }}%;"></div>
                             <span>{{ $entry['label'] }}</span>
                         </div>
@@ -581,32 +616,34 @@
             @if ($recentPayments->isEmpty())
                 <div class="empty-state">Belum ada transaksi yang tercatat.</div>
             @else
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Invoice</th>
-                            <th>Siswa</th>
-                            <th>Paket</th>
-                            <th>Status</th>
-                            <th>Total</th>
-                            <th>Tanggal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($recentPayments as $payment)
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead>
                             <tr>
-                                <td>{{ $payment['invoice'] }}</td>
-                                <td>{{ $payment['student'] }}</td>
-                                <td>{{ $payment['package'] }}</td>
-                                <td>
-                                    <span class="status-badge" data-type="{{ $payment['status'] }}">{{ $payment['status_label'] }}</span>
-                                </td>
-                                <td>{{ $payment['total'] }}</td>
-                                <td>{{ $payment['paid_at'] }}</td>
+                                <th>Invoice</th>
+                                <th>Siswa</th>
+                                <th>Paket</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>Tanggal</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach ($recentPayments as $payment)
+                                <tr>
+                                    <td>{{ $payment['invoice'] }}</td>
+                                    <td>{{ $payment['student'] }}</td>
+                                    <td>{{ $payment['package'] }}</td>
+                                    <td>
+                                        <span class="status-badge" data-type="{{ $payment['status'] }}">{{ $payment['status_label'] }}</span>
+                                    </td>
+                                    <td>{{ $payment['total'] }}</td>
+                                    <td>{{ $payment['paid_at'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             @endif
         </div>
         <div class="stacked">
@@ -654,29 +691,4 @@
         </div>
     </section>
 
-    <section class="card-panel" style="margin-top: 32px;">
-        <div class="card-header">
-            <h3>Pertumbuhan Siswa 6 Bulan Terakhir</h3>
-            <span class="card-subtitle">Jumlah siswa baru setiap bulan</span>
-        </div>
-        @if ($studentGrowth->sum('total') === 0)
-            <div class="empty-state">Belum ada pertambahan siswa pada enam bulan terakhir.</div>
-        @else
-            @php
-                $maxStudent = max($studentGrowth->pluck('total')->all() ?: [1]);
-            @endphp
-            <div class="sparkline">
-                @foreach ($studentGrowth as $point)
-                    @php
-                        $height = $maxStudent > 0 ? max(($point['total'] / $maxStudent) * 100, 8) : 8;
-                    @endphp
-                    <div class="spark-bar">
-                        <div style="height: {{ $height }}%;"></div>
-                        <span>{{ $point['label'] }}</span>
-                        <small>{{ number_format($point['total']) }}</small>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-    </section>
 @endsection

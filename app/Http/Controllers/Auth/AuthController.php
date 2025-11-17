@@ -29,6 +29,7 @@ class AuthController extends Controller
         return view('auth.index', [
             'mode' => 'login',
             'profile' => $request->session()->get('register.profile', []),
+            'captcha' => $this->generateCaptchaChallenge($request),
         ]);
     }
 
@@ -41,6 +42,7 @@ class AuthController extends Controller
         return view('auth.index', [
             'mode' => 'register',
             'profile' => $request->session()->get('register.profile', []),
+            'captcha' => $this->generateCaptchaChallenge($request),
         ]);
     }
 
@@ -66,7 +68,24 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique(User::class)],
             'phone' => ['nullable', 'string', 'max:30'],
             'gender' => ['nullable', Rule::in(['male', 'female', 'other'])],
+            'captcha_answer' => ['required', 'string', function ($attribute, $value, $fail) use ($request) {
+                $expected = (string) $request->session()->get('register.captcha_answer');
+
+                if ($expected === '' || $expected === null) {
+                    $fail(__('Captcha tidak tersedia. Muat ulang halaman dan coba lagi.'));
+
+                    return;
+                }
+
+                if (trim((string) $value) !== $expected) {
+                    $fail(__('Jawaban captcha tidak sesuai.'));
+                }
+            }],
         ]);
+
+        unset($data['captcha_answer']);
+
+        $request->session()->forget('register.captcha_answer');
 
         $request->session()->put('register.profile', $data);
 
@@ -193,6 +212,29 @@ class AuthController extends Controller
             'visitor' => route('packages.index'),
             default => route('packages.index'),
         };
+    }
+
+    private function generateCaptchaChallenge(Request $request): array
+    {
+        $first = random_int(2, 9);
+        $second = random_int(1, 8);
+        $operators = ['+', '−'];
+        $operator = $operators[array_rand($operators)];
+
+        if ($operator === '−' && $second > $first) {
+            [$first, $second] = [$second, $first];
+        }
+
+        $answer = $operator === '+'
+            ? $first + $second
+            : $first - $second;
+
+        $request->session()->put('register.captcha_answer', (string) $answer);
+
+        return [
+            'question' => sprintf('%d %s %d = ?', $first, $operator, $second),
+            'hint' => __('Masukkan jawaban dalam bentuk angka.'),
+        ];
     }
 
     private function isDatabaseConnectionIssue(Throwable $exception): bool

@@ -265,6 +265,11 @@
                 color: #8a5500;
             }
 
+            .student-alert--success {
+                background: rgba(53, 182, 168, 0.16);
+                color: var(--student-primary);
+            }
+
             .student-alert__actions {
                 display: inline-flex;
                 align-items: center;
@@ -330,6 +335,19 @@
                     <div class="student-alert__actions">
                         <a class="student-button student-button--primary" href="{{ route('packages.index') }}">Lihat paket</a>
                     </div>
+                </div>
+            @endif
+
+            @if (session('subscription_success'))
+                <div class="student-alert student-alert--success">
+                    <span>{{ session('subscription_success') }}</span>
+                    @if ($hasActivePackage)
+                        <div class="student-alert__actions">
+                            <a class="student-button student-button--primary" href="{{ route('student.materials') }}">
+                                Buka Materi
+                            </a>
+                        </div>
+                    @endif
                 </div>
             @endif
 
