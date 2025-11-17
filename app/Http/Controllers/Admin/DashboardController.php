@@ -49,7 +49,6 @@ class DashboardController extends BaseAdminController
             'paymentPipeline' => $this->paymentPipeline(),
             'recentPayments' => $this->recentPayments(),
             'topPackages' => $this->topPackages(),
-            'studentGrowth' => $this->studentGrowth(),
             'recentStudents' => $recentStudents,
         ]);
     }
@@ -75,11 +74,13 @@ class DashboardController extends BaseAdminController
         }
 
         $year = now()->year;
+        $paidReference = DB::raw('COALESCE(paid_at, updated_at, created_at)');
+
         $orders = Order::query()
-            ->selectRaw('MONTH(paid_at) as month, SUM(total) as total')
+            ->selectRaw('MONTH(' . $paidReference . ') as month, SUM(total) as total')
             ->where('status', 'paid')
-            ->whereYear('paid_at', $year)
-            ->groupByRaw('MONTH(paid_at)')
+            ->whereYear($paidReference, $year)
+            ->groupByRaw('MONTH(' . $paidReference . ')')
             ->pluck('total', 'month');
 
         return collect(range(1, 12))->map(function ($month) use ($orders, $year) {
@@ -88,6 +89,7 @@ class DashboardController extends BaseAdminController
             return [
                 'label' => $date->locale('id')->isoFormat('MMM'),
                 'value' => (float) ($orders[$month] ?? 0),
+                'formatted' => $this->formatCurrency((float) ($orders[$month] ?? 0)),
             ];
         });
     }
@@ -241,32 +243,6 @@ class DashboardController extends BaseAdminController
                     'revenue' => $this->formatCurrency((float) $package->revenue),
                 ];
             });
-    }
-
-    private function studentGrowth(): Collection
-    {
-        if (! Schema::hasTable('users')) {
-            return collect();
-        }
-
-        $start = CarbonImmutable::now()->startOfMonth()->subMonths(5);
-        $periods = collect(range(0, 5))->map(fn ($i) => $start->addMonths($i));
-
-        $raw = User::query()
-            ->where('role', 'student')
-            ->where('created_at', '>=', $start)
-            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as period, COUNT(*) as total')
-            ->groupBy('period')
-            ->pluck('total', 'period');
-
-        return $periods->map(function (CarbonImmutable $date) use ($raw) {
-            $key = $date->format('Y-m');
-
-            return [
-                'label' => $date->locale('id')->isoFormat('MMM'),
-                'total' => (int) ($raw[$key] ?? 0),
-            ];
-        });
     }
 
     private function sumPaidOrdersForMonth(int $year, int $month): float
