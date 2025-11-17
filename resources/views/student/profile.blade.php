@@ -329,7 +329,6 @@
                     </div>
                     <div class="nav-actions">
                         <a class="profile-chip" href="{{ route('student.profile') }}" data-active="true">
-                            <span>👋</span>
                             <span>Siswa</span>
                         </a>
                         <form method="post" action="{{ route('logout') }}">

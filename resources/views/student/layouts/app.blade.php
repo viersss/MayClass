@@ -68,8 +68,8 @@
             }
 
             .student-navbar__brand img {
-                width: 44px;
-                height: 44px;
+                width: 90px;
+                height: 70px;
                 border-radius: 12px;
                 object-fit: cover;
             }
@@ -306,8 +306,7 @@
         <div class="student-shell">
             <header class="student-navbar">
                 <a href="{{ route('student.dashboard') }}" class="student-navbar__brand">
-                    <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                    <span>MayClass</span>
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                 </a>
                 <nav class="student-navbar__links">
                     <a href="{{ route('student.dashboard') }}" class="student-navbar__link {{ request()->routeIs('student.dashboard') ? 'is-active' : '' }}">Beranda</a>
@@ -319,7 +318,6 @@
                 </nav>
                 <div class="student-navbar__actions">
                     <a class="student-navbar__profile" href="{{ route('student.profile') }}">
-                        <span>👋</span>
                         <span>{{ $user?->name ?? 'Siswa' }}</span>
                     </a>
                     <form method="post" action="{{ route('logout') }}">
