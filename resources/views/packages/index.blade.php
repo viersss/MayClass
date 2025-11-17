@@ -331,6 +331,7 @@
         </style>
     </head>
     <body>
+        @php($profileLink = $profileLink ?? null)
         <header>
             <div class="container">
                 <nav>
@@ -339,12 +340,14 @@
                     </a>
                     @auth
                         <div class="nav-actions">
-                            <a class="profile-icon-btn" href="{{ route('student.profile') }}" aria-label="Lihat profil">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 3c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4Z" />
-                                </svg>
-                                <span class="sr-only">Profil</span>
-                            </a>
+                            @if ($profileLink)
+                                <a class="profile-icon-btn" href="{{ $profileLink }}" aria-label="Lihat profil">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 3c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4Z" />
+                                    </svg>
+                                    <span class="sr-only">Profil</span>
+                                </a>
+                            @endif
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="nav-btn" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
