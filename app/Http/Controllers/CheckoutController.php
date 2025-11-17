@@ -19,14 +19,18 @@ class CheckoutController extends Controller
         $package = Package::with(['cardFeatures', 'inclusions'])->where('slug', $slug)->firstOrFail();
         $user = $request->user();
 
+        $packageDetail = $this->formatPackage($package);
         $existingOrder = $this->latestSubmittedOrder($user->id, $package->id);
 
         if ($existingOrder) {
+            if ($existingOrder->status === 'paid') {
+                return $this->redirectToStudentDashboard($packageDetail);
+            }
+
             return redirect()->route('checkout.success', ['slug' => $package->slug, 'order' => $existingOrder->id]);
         }
 
         $order = $this->resolveDraftOrder($user->id, $package);
-        $packageDetail = $this->formatPackage($package);
 
         if (! $order->expires_at) {
             $order->forceFill(['expires_at' => now()->addMinutes(30)])->save();
@@ -97,17 +101,55 @@ class CheckoutController extends Controller
     public function success(Request $request, string $slug)
     {
         $package = Package::with(['cardFeatures', 'inclusions'])->where('slug', $slug)->firstOrFail();
+        $packageDetail = $this->formatPackage($package);
         $orderId = $request->query('order');
 
-        $order = Order::with('user')
-            ->where('id', $orderId)
+        $orderQuery = Order::with('user')
             ->where('package_id', $package->id)
-            ->where('user_id', Auth::id())
-            ->firstOrFail();
+            ->where('user_id', Auth::id());
+
+        if ($orderId) {
+            $order = $orderQuery->where('id', $orderId)->first();
+        } else {
+            $order = $orderQuery
+                ->whereIn('status', ['pending', 'paid'])
+                ->latest('updated_at')
+                ->first();
+        }
+
+        if (! $order) {
+            return redirect()->route('checkout.show', $slug);
+        }
+
+        if ($order->status === 'paid') {
+            return $this->redirectToStudentDashboard($packageDetail);
+        }
+
+        if ($order->status !== 'pending') {
+            return redirect()->route('checkout.show', $slug);
+        }
 
         return view('checkout.success', [
-            'package' => $this->formatPackage($package),
+            'package' => $packageDetail,
             'order' => $order,
+            'statusCheckUrl' => route('checkout.status', ['slug' => $package->slug, 'order' => $order->id]),
+        ]);
+    }
+
+    public function status(Request $request, string $slug, Order $order): JsonResponse
+    {
+        abort_unless($order->user_id === $request->user()->id, 403);
+
+        $order->loadMissing('package');
+
+        if ($order->package?->slug !== $slug) {
+            abort(404);
+        }
+
+        return response()->json([
+            'status' => $order->status,
+            'should_redirect' => $order->status === 'paid',
+            'updated_at' => optional($order->updated_at)->toIso8601String(),
         ]);
     }
 
@@ -138,6 +180,24 @@ class CheckoutController extends Controller
         $message = rawurlencode('Halo Admin Keuangan MayClass, saya butuh bantuan pembayaran untuk paket ' . $packageName);
 
         return "https://wa.me/{$whatsappNumber}?text={$message}";
+    }
+
+    private function redirectToStudentDashboard(array $packageDetail): RedirectResponse
+    {
+        $targetRoute = Auth::user()?->role === 'student'
+            ? 'student.dashboard'
+            : 'packages.index';
+
+        return redirect()
+            ->route($targetRoute)
+            ->with('subscription_success', $this->buildActivationMessage($packageDetail));
+    }
+
+    private function buildActivationMessage(array $packageDetail): string
+    {
+        $title = $packageDetail['detail_title'] ?? $packageDetail['title'] ?? 'paket MayClass';
+
+        return 'Pembayaran ' . $title . ' sudah diverifikasi. Kamu bisa langsung mengakses materi dari dashboard siswa.';
     }
 
     private function resolveDraftOrder(int $userId, Package $package): Order

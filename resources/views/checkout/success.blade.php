@@ -262,7 +262,7 @@
             </div>
         </header>
         @php($status = $order->status ?? 'pending')
-        @php($isPending = $status !== 'paid')
+        @php($isPending = $status === 'pending')
         <main>
             <div class="success-card">
                 <div class="status-icon" aria-hidden="true" style="color: {{ $isPending ? '#f59e0b' : 'var(--primary)' }}; background: {{ $isPending ? 'rgba(245, 158, 11, 0.12)' : 'rgba(61, 183, 173, 0.12)' }};">
@@ -311,5 +311,43 @@
             </div>
         </main>
         <footer>© {{ now()->year }} MayClass. Tetap semangat belajar!</footer>
+
+        @if ($isPending && ! empty($statusCheckUrl ?? null))
+            <script>
+                (function () {
+                    const statusUrl = @json($statusCheckUrl);
+                    const refreshUrl = @json(route('checkout.success', ['slug' => $package['slug'], 'order' => $order->id]));
+                    const retryDelay = 8000;
+
+                    const pollStatus = () => {
+                        fetch(statusUrl, {
+                            headers: {
+                                'Accept': 'application/json',
+                            },
+                            credentials: 'same-origin',
+                        })
+                            .then((response) => {
+                                if (!response.ok) {
+                                    throw new Error('Status request failed');
+                                }
+                                return response.json();
+                            })
+                            .then((payload) => {
+                                if (payload?.status === 'paid' || payload?.should_redirect) {
+                                    window.location.href = refreshUrl;
+                                    return;
+                                }
+
+                                setTimeout(pollStatus, retryDelay);
+                            })
+                            .catch(() => {
+                                setTimeout(pollStatus, retryDelay * 1.5);
+                            });
+                    };
+
+                    pollStatus();
+                })();
+            </script>
+        @endif
     </body>
 </html>
