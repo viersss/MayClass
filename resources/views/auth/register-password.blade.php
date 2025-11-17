@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-mode="password">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>MayClass - Buat Password</title>
+        <title>MayClass - Konfirmasi Password</title>
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,13 +14,30 @@
         <style>
             :root {
                 color-scheme: light;
-                --bg: #b9e3e0;
-                --panel: #f9ffff;
-                --accent: #42b7ad;
-                --accent-dark: #2f8f87;
-                --text: #1f2a37;
-                --text-muted: #6b7280;
-                --outline: rgba(47, 143, 135, 0.25);
+                --nav-height: 64px;
+                --primary-dark: #1b6d4f;
+                --primary-main: #3fa67e;
+                --primary-light: #84d986;
+                --primary-accent: #a8e6a1;
+                --neutral-900: #1f2328;
+                --neutral-700: #4d5660;
+                --neutral-100: #f6f7f8;
+                --surface: #ffffff;
+                --ink-strong: #14352c;
+                --ink-muted: rgba(20, 59, 46, 0.78);
+                --ink-soft: rgba(20, 59, 46, 0.62);
+                --shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
+                --shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
+                --radius-lg: 20px;
+                --radius-xl: 28px;
+
+                --panel: var(--surface);
+                --panel-muted: var(--neutral-100);
+                --accent: var(--primary-main);
+                --accent-dark: var(--primary-dark);
+                --text: var(--ink-strong);
+                --text-muted: var(--ink-muted);
+                --outline: rgba(31, 107, 79, 0.25);
             }
 
             * {
@@ -31,7 +48,7 @@
                 margin: 0;
                 font-family: "Poppins", sans-serif;
                 color: var(--text);
-                background: linear-gradient(135deg, #dff5f2 0%, #9ed6d1 100%);
+                background: #ffffff;
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
@@ -43,124 +60,140 @@
             }
 
             .back-link {
+                position: fixed;
+                top: 20px;
+                left: 32px;
+                z-index: 20;
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
-                margin: 24px;
                 font-size: 0.95rem;
-                color: var(--accent-dark);
+                color: #ffffff;
                 font-weight: 500;
+                letter-spacing: 0.01em;
+                padding: 8px 14px;
+                border-radius: 999px;
+                background: rgba(15, 23, 42, 0.35);
+                backdrop-filter: blur(8px);
             }
 
             .auth-wrapper {
                 flex: 1;
                 display: flex;
-                align-items: center;
+                align-items: stretch;
                 justify-content: center;
-                padding: 24px;
+                min-height: 100vh;
             }
 
             .auth-card {
-                background: var(--panel);
-                border-radius: 32px;
+                width: 100%;
                 display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                width: min(1080px, 100%);
-                overflow: hidden;
-                box-shadow: 0 35px 65px rgba(27, 71, 74, 0.18);
+                grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+                min-height: 100vh;
             }
 
             .auth-illustration {
-                background: linear-gradient(160deg, rgba(255, 255, 255, 0.3) 0%, rgba(59, 166, 158, 0.65) 100%);
-                padding: 48px;
+                position: relative;
+                background:
+                    linear-gradient(130deg, rgba(7, 16, 37, 0.6), rgba(11, 31, 51, 0.45)),
+                    url("https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=80")
+                        center/cover no-repeat;
+                padding: clamp(32px, 5vw, 56px);
                 display: flex;
                 flex-direction: column;
-                justify-content: flex-start;
-                gap: 24px;
+                justify-content: space-between;
+                gap: 32px;
+                color: #f4f8ff;
             }
 
-            .auth-illustration .image-frame {
-                background: #f1faf9;
-                border-radius: 24px;
-                overflow: hidden;
-                position: relative;
-                box-shadow: 0 20px 45px rgba(45, 133, 126, 0.2);
+            .auth-hero-body {
+                margin-top: clamp(24px, 3vw, 40px);
+                max-width: 520px;
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
             }
 
-            .auth-illustration .image-frame::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(160deg, rgba(66, 183, 173, 0.2) 0%, rgba(66, 183, 173, 0.05) 100%);
-            }
-
-            .auth-illustration img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                display: block;
+            .hero-eyebrow {
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 0.18em;
+                color: rgba(255, 255, 255, 0.8);
             }
 
             .auth-illustration h1 {
-                font-size: clamp(1.9rem, 2.5vw, 2.6rem);
+                font-size: clamp(2.2rem, 3.2vw, 2.8rem);
+                font-weight: 600;
                 margin: 0;
-                line-height: 1.3;
+                line-height: 1.2;
             }
 
             .auth-illustration p {
-                color: #f6fffe;
+                color: rgba(255, 255, 255, 0.9);
                 font-weight: 400;
                 margin: 0;
-            }
-
-            .auth-illustration strong {
-                color: #003a36;
+                line-height: 1.7;
+                font-size: 1rem;
             }
 
             .auth-panel {
-                padding: 48px;
-                background: #fdfefe;
+                background: var(--panel);
+                border-left: 1px solid #e5e7eb;
+                padding: clamp(32px, 4vw, 48px);
                 display: flex;
                 flex-direction: column;
-                gap: 32px;
+                gap: 24px;
             }
 
-            .auth-header h2 {
-                margin: 0 0 8px;
-                font-size: 1.6rem;
+            .panel-header {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                padding-top: 8px;
+            }
+
+            .panel-header h2 {
+                margin: 0;
+                font-size: clamp(1.9rem, 2.4vw, 2.3rem);
                 font-weight: 600;
             }
 
-            .auth-header p {
+            .panel-desc {
                 margin: 0;
                 color: var(--text-muted);
                 font-size: 0.95rem;
+                line-height: 1.6;
+                max-width: 520px;
             }
 
             .summary-card {
-                background: rgba(66, 183, 173, 0.08);
-                border-radius: 20px;
-                padding: 20px 24px;
-                display: grid;
-                gap: 12px;
+                margin-top: 8px;
+                border-radius: 22px;
+                border: 1px solid rgba(20, 59, 46, 0.08);
+                background: var(--panel-muted);
+                padding: 22px 24px;
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
             }
 
             .summary-card h3 {
                 margin: 0;
                 font-size: 1rem;
                 color: var(--accent-dark);
+                letter-spacing: 0.04em;
             }
 
             .summary-grid {
                 display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 12px 16px;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 12px 24px;
             }
 
             .summary-grid dt {
-                font-size: 0.78rem;
+                font-size: 0.72rem;
                 text-transform: uppercase;
-                letter-spacing: 0.04em;
+                letter-spacing: 0.08em;
                 color: var(--text-muted);
                 margin: 0 0 4px;
             }
@@ -169,70 +202,100 @@
                 margin: 0;
                 font-weight: 600;
                 color: var(--text);
-                word-break: break-word;
+                font-size: 0.98rem;
             }
 
             form {
                 display: flex;
                 flex-direction: column;
                 gap: 16px;
+                text-align: left;
+                margin-top: 8px;
+            }
+
+            .input-group {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
             }
 
             label {
                 font-weight: 500;
-                font-size: 0.92rem;
+                font-size: 0.9rem;
                 color: var(--text);
             }
 
             input {
                 width: 100%;
-                padding: 14px 16px;
-                border-radius: 14px;
-                border: 1.5px solid var(--outline);
+                padding: 12px 14px;
+                border-radius: 12px;
+                border: 1px solid var(--outline);
                 font-family: inherit;
                 font-size: 0.95rem;
-                transition: border 0.2s ease, box-shadow 0.2s ease;
+                transition: border 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
                 background: #fff;
             }
 
             input:focus {
                 outline: none;
                 border-color: var(--accent);
-                box-shadow: 0 0 0 3px rgba(66, 183, 173, 0.22);
+                box-shadow: 0 0 0 3px rgba(63, 166, 126, 0.2);
+                transform: translateY(-1px);
             }
 
             .primary-action {
                 margin-top: 8px;
-                padding: 14px 16px;
-                border-radius: 14px;
+                padding: 14px 18px;
+                border-radius: 999px;
                 border: none;
-                background: linear-gradient(120deg, var(--accent) 0%, #5ed3c5 100%);
+                background: var(--accent);
                 color: #fff;
                 font-weight: 600;
-                font-size: 1rem;
+                font-size: 0.98rem;
                 cursor: pointer;
-                box-shadow: 0 16px 30px rgba(66, 183, 173, 0.35);
-                transition: transform 0.15s ease, box-shadow 0.15s ease;
+                box-shadow: 0 18px 32px rgba(31, 107, 79, 0.3);
+                transition: transform 0.18s ease, box-shadow 0.18s ease;
+                align-self: flex-start;
+                min-width: 220px;
             }
 
             .primary-action:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 18px 35px rgba(66, 183, 173, 0.42);
+                transform: translateY(-2px);
+                box-shadow: 0 24px 48px rgba(31, 107, 79, 0.35);
+            }
+
+            .actions-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .link-button {
+                border: none;
+                background: transparent;
+                padding: 0;
+                color: var(--accent-dark);
+                font-weight: 600;
+                font-size: 0.9rem;
+                cursor: pointer;
             }
 
             .form-helper {
                 margin: 0;
-                font-size: 0.78rem;
+                font-size: 0.82rem;
                 color: var(--text-muted);
             }
 
             .error-alert {
-                padding: 12px 16px;
-                border-radius: 12px;
-                background: rgba(220, 38, 38, 0.1);
+                padding: 14px 18px;
+                border-radius: 14px;
+                background: rgba(220, 38, 38, 0.06);
                 color: #991b1b;
                 font-size: 0.85rem;
                 line-height: 1.5;
+                border: 1px solid rgba(220, 38, 38, 0.2);
             }
 
             .error-alert ul {
@@ -243,68 +306,45 @@
             .input-error {
                 color: #dc2626;
                 font-size: 0.75rem;
-                margin: -6px 0 0;
-            }
-
-            .actions-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 16px;
-                margin-top: 12px;
-            }
-
-            .link-button {
-                border: none;
-                background: transparent;
-                padding: 0;
-                font-size: 0.9rem;
-                color: var(--accent-dark);
-                font-weight: 500;
-                cursor: pointer;
+                margin: -4px 0 0;
             }
 
             @media (max-width: 960px) {
                 .auth-card {
                     grid-template-columns: 1fr;
-                    max-width: 640px;
                 }
 
                 .auth-illustration {
-                    display: none;
+                    min-height: 260px;
                 }
 
                 .auth-panel {
-                    padding: 32px 24px 40px;
+                    border-left: none;
                 }
 
                 .back-link {
-                    margin: 16px 20px;
+                    left: 16px;
+                }
+            }
+
+            @media (max-width: 640px) {
+                .auth-panel {
+                    padding: 24px 20px 32px;
                 }
 
                 .summary-grid {
                     grid-template-columns: 1fr;
                 }
-            }
 
-            @media (max-width: 520px) {
                 .actions-row {
                     flex-direction: column;
-                    align-items: stretch;
+                    align-items: flex-start;
                 }
 
-                .link-button {
-                    align-self: center;
+                .primary-action {
+                    width: 100%;
                 }
             }
-
-            .auth-illustration h1 {
-                font-size: clamp(0.9rem, 1.7vw, 1.9rem);
-                font-weight: 400; 
-                margin: 0;
-                line-height: 1.3;
-            }
-
         </style>
     </head>
     <body>
@@ -319,19 +359,24 @@
         </a>
         <div class="auth-wrapper">
             <div class="auth-card">
-                <div class="auth-illustration">
-                    <div class="image-frame" aria-hidden="true">
-                        <img src="{{ \App\Support\ImageRepository::url('auth') }}" alt="Ilustrasi keamanan akun MayClass" />
-                    </div>
-                    <div>
-                     <h1 data-copy-mode="register">
-                        Daftar untuk akses penuh ke fitur belajar MayClass, mulai dari kelas interaktif hingga pendampingan tentor profesional.
-                    </h1>
+                <div class="auth-illustration" aria-hidden="true">
+                    <div></div>
+                    <div class="auth-hero-body">
+                        <p class="hero-eyebrow">Langkah terakhir</p>
+                        <h1>Kunci akses MayClass dengan password aman</h1>
+                        <p>
+                            Pastikan password kuat agar perjalanan belajar digitalmu tetap aman dan fokus. Setelah ini,
+                            akunmu siap digunakan untuk mengeksplor seluruh materi MayClass.
+                        </p>
                     </div>
                 </div>
+
                 <div class="auth-panel">
-                    <div class="auth-header">
+                    <div class="panel-header">
                         <h2>Konfirmasi Password</h2>
+                        <p class="panel-desc">
+                            Tinjau kembali data diri kamu dan buat password baru untuk menyelesaikan proses registrasi.
+                        </p>
                     </div>
 
                     <div class="summary-card">
@@ -400,7 +445,9 @@
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
                         </div>
-                        <p class="form-helper">Dengan menyelesaikan langkah ini, akun MayClass Anda akan dibuat.</p>
+                        <p class="form-helper">
+                            Setelah password disimpan, akun MayClass Anda langsung aktif dan siap digunakan.
+                        </p>
                         <div class="actions-row">
                             <a class="link-button" href="{{ route('register') }}">Perbarui data diri</a>
                             <button class="primary-action" type="submit">Simpan Password &amp; Daftar</button>
@@ -409,7 +456,5 @@
                 </div>
             </div>
         </div>
-
-        
     </body>
 </html>

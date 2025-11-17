@@ -316,6 +316,11 @@
             color: #b91c1c;
         }
 
+        .status-badge[data-type='initiated'] {
+            background: rgba(59, 130, 246, 0.16);
+            color: #1d4ed8;
+        }
+
         .data-table {
             width: 100%;
             border-collapse: collapse;

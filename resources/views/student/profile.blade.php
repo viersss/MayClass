@@ -205,6 +205,12 @@
                 text-align: center;
             }
 
+            .avatar-upload__filename {
+                margin: 4px 0 0;
+                font-size: 0.85rem;
+                color: var(--primary-dark);
+            }
+
             .avatar-input {
                 display: none;
             }
@@ -339,15 +345,19 @@
                 <h1>Edit Profil</h1>
                 @php($avatarUrl = $avatarUrl ?? null)
                 <div class="avatar-upload">
-                    <div class="avatar-preview">
-                        @if ($avatarUrl)
-                            <img src="{{ $avatarUrl }}" alt="Foto profil {{ $profile['name'] }}" />
-                        @else
-                            <span>🧑</span>
-                        @endif
+                    <div class="avatar-preview" data-avatar-preview>
+                        <img
+                            src="{{ $avatarUrl ?? '' }}"
+                            alt="Foto profil {{ $profile['name'] }}"
+                            data-avatar-image
+                            data-original="{{ $avatarUrl ?? '' }}"
+                            @if (! $avatarUrl) style="display: none;" @endif
+                        />
+                        <span data-avatar-placeholder @if($avatarUrl) style="display: none;" @endif>🧑</span>
                     </div>
                     <label class="avatar-upload__button" for="avatar">Pilih foto</label>
                     <p class="avatar-upload__hint">Format JPG/PNG, maksimal 2 MB</p>
+                    <p class="avatar-upload__filename" data-avatar-filename></p>
                     @error('avatar')
                         <p class="avatar-upload__error">{{ $message }}</p>
                     @enderror
@@ -449,9 +459,11 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const input = document.getElementById('avatar');
-                const preview = document.querySelector('.avatar-preview');
+                const imagePreview = document.querySelector('[data-avatar-image]');
+                const placeholder = document.querySelector('[data-avatar-placeholder]');
+                const filename = document.querySelector('[data-avatar-filename]');
 
-                if (!input || !preview) {
+                if (!input || (!imagePreview && !placeholder)) {
                     return;
                 }
 
@@ -459,22 +471,42 @@
                     const file = input.files && input.files[0];
 
                     if (!file) {
-                        preview.innerHTML = '<span>🧑</span>';
+                        if (imagePreview) {
+                            const original = imagePreview.getAttribute('data-original');
+                            const hasOriginal = Boolean(original);
+                            imagePreview.style.display = hasOriginal ? 'block' : 'none';
+
+                            if (hasOriginal) {
+                                imagePreview.src = original;
+                            } else {
+                                imagePreview.removeAttribute('src');
+                            }
+                        }
+
+                        if (placeholder) {
+                            const shouldShowPlaceholder = !imagePreview || imagePreview.style.display === 'none';
+                            placeholder.style.display = shouldShowPlaceholder ? 'grid' : 'none';
+                        }
+
+                        if (filename) {
+                            filename.textContent = '';
+                        }
 
                         return;
                     }
 
-                    const reader = new FileReader();
+                    if (imagePreview) {
+                        imagePreview.style.display = 'block';
+                        imagePreview.src = URL.createObjectURL(file);
+                    }
 
-                    reader.addEventListener('load', function (event) {
-                        const result = event.target?.result;
+                    if (placeholder) {
+                        placeholder.style.display = 'none';
+                    }
 
-                        if (typeof result === 'string') {
-                            preview.innerHTML = '<img src="' + result.replace(/"/g, '&quot;') + '" alt="Preview foto profil" />';
-                        }
-                    });
-
-                    reader.readAsDataURL(file);
+                    if (filename) {
+                        filename.textContent = file.name;
+                    }
                 });
             });
         </script>

@@ -781,61 +781,120 @@ nav {
             }
 
 footer {
-    background: var(--footer-surface);
-    padding: 80px 0 52px;
-    width: 100%;
-    border-top: 1px solid rgba(31, 107, 79, 0.12);
+    margin-top: 80px;
+    background: radial-gradient(circle at top, rgba(22, 63, 48, 0.92), rgba(8, 26, 24, 0.96));
+    color: rgba(255, 255, 255, 0.8);
 }
 
-.footer-grid {
+.footer-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(24px, 4vw, 80px);
+    align-items: flex-start;
+    padding: 80px 32px 40px;
+}
+
+.footer-brand {
+    flex: 1 1 280px;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 32px;
-
-    /* 🔥 full width tanpa batas */
-    width: 100%;
-    padding: 0 32px;  /* cukup padding, tidak ada max-width */
-    margin: 0;
+    gap: 16px;
 }
+
+.footer-brand img {
+    width: 140px;
+    height: auto;
+}
+
+.footer-brand p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.7;
+}
+
+.footer-nav {
+    flex: 1 1 420px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 24px;
+}
+
+.footer-links {
+    display: grid;
+    gap: 10px;
+    font-size: 0.95rem;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.75);
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+    color: var(--primary-light);
+}
+
+.footer-contact {
+    display: grid;
+    gap: 12px;
+}
+
+.contact-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 32px 40px;
+    flex-wrap: wrap;
+}
+
+.footer-bottom p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.footer-socials {
+    display: inline-flex;
+    gap: 12px;
+}
+
+.social-link {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: grid;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.85);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.social-link:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--primary-light);
+}
+
 @media (max-width: 768px) {
-    .footer-grid {
-        grid-template-columns: 1fr;
-        padding: 0 20px; /* sedikit lebih kecil */
+    .footer-wrapper {
+        padding: 60px 20px 32px;
+    }
+
+    .footer-bottom {
+        padding: 20px;
     }
 }
-
-            .footer-brand {
-                display: grid;
-                gap: 16px;
-            }
-
-            .footer-brand img {
-                width: 64px;
-                height: auto;
-            }
-
-            .footer-links {
-                display: grid;
-                gap: 10px;
-                color: var(--ink-soft);
-                font-size: 0.95rem;
-            }
-
-            .footer-links a {
-                color: inherit;
-            }
-
-            .footer-links a:hover {
-                color: var(--primary-main);
-            }
-
-            .copyright {
-                margin: 0;
-                text-align: center;
-                color: var(--ink-soft);
-                font-size: 0.9rem;
-                padding: 0 32px;
-            }
 
             @media (max-width: 1080px) {
                 .hero {
@@ -1099,9 +1158,11 @@ footer {
                                             </ul>
                                         @endif
                                         <div class="pricing-actions">
+                                            <a class="btn btn-ghost" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
                                             @auth
-                                            <a class="btn btn-primary" href="{{ route('checkout.show', $package['slug']) }}">Detail Paket</a>
+                                                <a class="btn btn-primary" href="{{ route('checkout.show', $package['slug']) }}">Langsung Checkout</a>
                                             @else
+                                                <a class="btn btn-primary" href="{{ route('login') }}">Mulai Sekarang</a>
                                             @endauth
                                         </div>
                                     </article>
@@ -1323,40 +1384,67 @@ footer {
         </section>
 
         <footer>
-                <div class="footer-grid" data-reveal>
+                <div class="footer-wrapper container" data-reveal>
                     <div class="footer-brand">
                         <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
                         <p>
-                            MayClass menghadirkan bimbingan belajar terpadu dengan tentor profesional, materi interaktif, dan
-                            layanan pelanggan responsif.
+                            MayClass mengintegrasikan materi interaktif, pendampingan mentor, dan layanan admin responsif
+                            untuk memastikan perjalanan belajarmu selalu terarah.
                         </p>
-                    </div>
-                    <div>
-                        <h4>Produk</h4>
-                        <div class="footer-links">
-                            <a href="#paket">Tryout &amp; Paket Belajar</a>
-                            <a href="#tentor">Super Teacher</a>
-                            <a href="#testimoni">Testimoni</a>
+                        <div class="footer-contact">
+                            <a class="contact-item" href="tel:+6281234567890">📞 +62 812-3456-7890</a>
+                            <a class="contact-item" href="mailto:hello@mayclass.id">✉️ hello@mayclass.id</a>
                         </div>
                     </div>
-                    <div>
-                        <h4>Bantuan</h4>
-                        <div class="footer-links">
-                            <a href="#faq">FAQ</a>
-                            <a href="mailto:hello@mayclass.id">Email Support</a>
-                            <a href="tel:+6281234567890">Hubungi Admin</a>
+                    <div class="footer-nav">
+                        <div>
+                            <h4>Produk</h4>
+                            <div class="footer-links">
+                                <a href="#paket">Paket Belajar</a>
+                                <a href="#tentor">Super Teacher</a>
+                                <a href="#testimoni">Cerita Alumni</a>
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <h4>Ikuti Kami</h4>
-                        <div class="footer-links">
-                            <a href="https://www.instagram.com" target="_blank" rel="noreferrer">Instagram</a>
-                            <a href="https://www.tiktok.com" target="_blank" rel="noreferrer">TikTok</a>
-                            <a href="https://www.youtube.com" target="_blank" rel="noreferrer">YouTube</a>
+                        <div>
+                            <h4>Bantuan</h4>
+                            <div class="footer-links">
+                                <a href="#faq">FAQ</a>
+                                <a href="{{ route('login') }}">Masuk Dashboard</a>
+                                <a href="https://wa.me/{{ config('services.whatsapp.finance_admin', '6281234567890') }}" target="_blank" rel="noopener">Chat Admin</a>
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Perusahaan</h4>
+                            <div class="footer-links">
+                                <a href="#beranda">Tentang MayClass</a>
+                                <a href="#artikel">Blog &amp; Artikel</a>
+                                <a href="{{ route('packages.index') }}">Semua Paket</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <p class="copyright">© {{ now()->year }} MayClass. All rights reserved.</p>
+                <div class="footer-bottom">
+                    <p>© {{ now()->year }} MayClass. All rights reserved.</p>
+                    <div class="footer-socials">
+                        <a class="social-link" href="https://www.instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram MayClass">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="18" height="18">
+                                <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.4" />
+                                <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.4" />
+                                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+                            </svg>
+                        </a>
+                        <a class="social-link" href="https://www.tiktok.com" target="_blank" rel="noreferrer" aria-label="TikTok MayClass">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="18" height="18">
+                                <path d="M15 3c.3 2.6 1.9 4 4 4v3.1c-1.6.1-3-.5-4-1.4v6.2c0 3.6-2.6 6-6 6s-6-2.4-6-5.6c0-3 2-5.1 5.2-5.4V12c-1.1.2-2 1-2 2.1 0 1.4 1.2 2.3 2.8 2.3s2.7-1 2.7-2.5V3h3.3Z" fill="currentColor" />
+                            </svg>
+                        </a>
+                        <a class="social-link" href="https://www.youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube MayClass">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="18" height="18">
+                                <path d="M21.5 7.5s-.2-1.4-.8-2c-.8-.8-1.8-.8-2.3-.9C15.2 4.4 12 4.4 12 4.4h0s-3.2 0-6.4.2c-.5.1-1.5.1-2.3.9-.6.6-.8 2-.8 2S2 9.1 2 10.6v1.9c0 1.5.2 3.1.2 3.1s.2 1.4.8 2c.8.8 1.8.8 2.3.9 1.7.2 6.7.2 6.7.2s3.2 0 6.4-.2c.5-.1 1.5-.1 2.3-.9.6-.6.8-2 .8-2s.2-1.6.2-3.1v-1.9c0-1.5-.2-3.1-.2-3.1Zm-12 6.4V8.1l5.2 3.9-5.2 1.9Z" fill="currentColor" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
         </footer>
 
         <script>
