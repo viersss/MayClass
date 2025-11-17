@@ -665,9 +665,8 @@
                             </li>
                         @endif
                         @php
-                            $subtotal = $package['price_numeric'];
-                            // Pajak dihapus dari ringkasan; total = subtotal
-                            $total = $subtotal;
+                            $subtotal = $order->subtotal ?? ($package['price_numeric'] ?? 0);
+                            $total = $order->total ?? $subtotal;
                         @endphp
                         <li>
                             <span>Subtotal</span>

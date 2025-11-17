@@ -33,7 +33,7 @@ class CheckoutController extends Controller
         }
 
         $expiresAt = $order->expires_at ?? now()->addMinutes(30);
-        $remainingSeconds = max(0, $expiresAt->diffInSeconds(now(), false));
+        $remainingSeconds = max(0, now()->diffInSeconds($expiresAt, false));
 
         return view('checkout.index', [
             'package' => $this->formatPackage($package),
