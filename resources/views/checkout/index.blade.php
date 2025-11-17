@@ -489,7 +489,8 @@
                     novalidate
                 >
                     @csrf
-                    <input type="hidden" name="order_id" value="{{ $order->id }}" />
+                    @php($checkoutOrderId = optional($order)->id)
+                    <input type="hidden" name="order_id" value="{{ $checkoutOrderId }}" />
                     <input type="hidden" name="payment_method" value="transfer_bank" />
                     @error('order_id')
                         <div class="error-alert" role="alert">{{ $message }}</div>
@@ -497,7 +498,7 @@
                     @if (session('checkout_expired'))
                         <div class="info-alert" role="status">Sesi checkout sebelumnya telah berakhir. Kami menyiapkan sesi baru agar kamu bisa melanjutkan pembayaran.</div>
                     @endif
-                    @php($orderCode = 'MC-' . str_pad((string) $order->id, 6, '0', STR_PAD_LEFT))
+                    @php($orderCode = $checkoutOrderId ? 'MC-' . str_pad((string) $checkoutOrderId, 6, '0', STR_PAD_LEFT) : '—')
                     @php($countdownLabel = sprintf('%02d:%02d', floor($countdownSeconds / 60), $countdownSeconds % 60))
 
                     <div>
@@ -530,7 +531,7 @@
                         class="countdown-banner"
                         data-countdown
                         data-remaining="{{ $countdownSeconds }}"
-                        data-expire-endpoint="{{ route('checkout.expire', [$package['slug'], $order->id]) }}"
+                        data-expire-endpoint="{{ $checkoutOrderId ? route('checkout.expire', [$package['slug'], $checkoutOrderId]) : '' }}"
                     >
                         <div>
                             <small>Batas Pembayaran</small>
@@ -664,10 +665,8 @@
                                 <span>{{ $package['grade_range'] }}</span>
                             </li>
                         @endif
-                        @php
-                            $subtotal = $order->subtotal ?? ($package['price_numeric'] ?? 0);
-                            $total = $order->total ?? $subtotal;
-                        @endphp
+                        @php($subtotal = optional($order)->subtotal ?? ($package['price_numeric'] ?? 0))
+                        @php($total = optional($order)->total ?? $subtotal)
                         <li>
                             <span>Subtotal</span>
                             <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
