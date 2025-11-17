@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Package;
 use App\Support\PackagePresenter;
+use App\Support\ProfileLinkResolver;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 
 class PackageController extends Controller
@@ -14,6 +16,7 @@ class PackageController extends Controller
             return view('packages.index', [
                 'catalog' => collect(),
                 'stageDefinitions' => config('mayclass.package_stages', []),
+                'profileLink' => ProfileLinkResolver::forUser(Auth::user()),
             ]);
         }
 
@@ -29,6 +32,7 @@ class PackageController extends Controller
         return view('packages.index', [
             'catalog' => $catalog,
             'stageDefinitions' => config('mayclass.package_stages', []),
+            'profileLink' => ProfileLinkResolver::forUser(Auth::user()),
         ]);
     }
 

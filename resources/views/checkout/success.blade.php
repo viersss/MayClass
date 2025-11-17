@@ -85,6 +85,35 @@
                 object-fit: contain;
             }
 
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+
+            .profile-icon-btn {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                border: 1px solid rgba(61, 183, 173, 0.35);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--primary-dark);
+                background: rgba(61, 183, 173, 0.1);
+            }
+
+            .profile-icon-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+
             main {
                 flex: 1;
                 display: grid;
@@ -208,6 +237,7 @@
         </style>
     </head>
     <body>
+        @php($profileLink = $profileLink ?? null)
         <header>
             <div class="container">
                 <nav>
@@ -217,7 +247,14 @@
                     <div class="nav-actions">
                         <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Lain</a>
                         @auth
-                            <a class="btn btn-outline" style="border-color: rgba(31, 42, 55, 0.15);" href="{{ route('student.profile') }}">Profile</a>
+                            @if ($profileLink)
+                                <a class="profile-icon-btn" href="{{ $profileLink }}" aria-label="Lihat profil">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 3c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4Z" />
+                                    </svg>
+                                    <span class="sr-only">Profil</span>
+                                </a>
+                            @endif
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="btn btn-outline" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
@@ -228,7 +265,7 @@
             </div>
         </header>
         @php($status = $order->status ?? 'pending')
-        @php($isPending = $status !== 'paid')
+        @php($isPending = $status === 'pending')
         <main>
             <div class="success-card">
                 <div class="status-icon" aria-hidden="true" style="color: {{ $isPending ? '#f59e0b' : 'var(--primary)' }}; background: {{ $isPending ? 'rgba(245, 158, 11, 0.12)' : 'rgba(61, 183, 173, 0.12)' }};">
@@ -277,5 +314,43 @@
             </div>
         </main>
         <footer>© {{ now()->year }} MayClass. Tetap semangat belajar!</footer>
+
+        @if ($isPending && ! empty($statusCheckUrl ?? null))
+            <script>
+                (function () {
+                    const statusUrl = @json($statusCheckUrl);
+                    const refreshUrl = @json(route('checkout.success', ['slug' => $package['slug'], 'order' => $order->id]));
+                    const retryDelay = 8000;
+
+                    const pollStatus = () => {
+                        fetch(statusUrl, {
+                            headers: {
+                                'Accept': 'application/json',
+                            },
+                            credentials: 'same-origin',
+                        })
+                            .then((response) => {
+                                if (!response.ok) {
+                                    throw new Error('Status request failed');
+                                }
+                                return response.json();
+                            })
+                            .then((payload) => {
+                                if (payload?.status === 'paid' || payload?.should_redirect) {
+                                    window.location.href = refreshUrl;
+                                    return;
+                                }
+
+                                setTimeout(pollStatus, retryDelay);
+                            })
+                            .catch(() => {
+                                setTimeout(pollStatus, retryDelay * 1.5);
+                            });
+                    };
+
+                    pollStatus();
+                })();
+            </script>
+        @endif
     </body>
 </html>
