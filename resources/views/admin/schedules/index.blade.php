@@ -233,22 +233,34 @@
         .template-form,
         .template-card form {
             display: grid;
-            gap: 14px;
+            gap: 20px;
         }
 
-        .template-form label,
-        .template-card label {
+        .template-form-grid,
+        .template-card-grid {
             display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .template-card-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .template-form-grid label,
+        .template-card-grid label {
+            display: flex;
+            flex-direction: column;
             gap: 6px;
             font-weight: 600;
             color: var(--text-muted);
         }
 
-        .template-form input,
-        .template-form select,
-        .template-card input,
-        .template-card select,
-        .template-card textarea {
+        .template-form-grid input,
+        .template-form-grid select,
+        .template-card-grid input,
+        .template-card-grid select,
+        .template-card-grid textarea {
             padding: 10px 12px;
             border-radius: 12px;
             border: 1px solid var(--border);
@@ -258,6 +270,8 @@
         .template-actions {
             display: flex;
             gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         .template-actions form {
@@ -274,7 +288,12 @@
 
         .template-grid {
             display: grid;
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+        }
+
+        .template-card-footer {
+            justify-content: space-between;
         }
 
         .history-stack {
@@ -442,46 +461,48 @@
                         <form class="template-form" method="POST" action="{{ route('admin.schedule.templates.store') }}">
                             @csrf
                             <input type="hidden" name="user_id" value="{{ $schedule['selectedTutorId'] }}">
-                            <label>
-                                <span>Paket belajar</span>
-                                <select name="package_id" required>
-                                    @foreach ($schedule['packages'] as $package)
-                                        <option value="{{ $package->id }}">{{ $package->detail_title }}</option>
-                                    @endforeach
-                                </select>
-                            </label>
-                            <label>
-                                <span>Judul sesi</span>
-                                <input type="text" name="title" value="{{ old('title') }}" required>
-                            </label>
-                            <label>
-                                <span>Pelajaran</span>
-                                <input type="text" name="category" value="{{ old('category') }}">
-                            </label>
-                            <label>
-                                <span>Tingkat kelas</span>
-                                <input type="text" name="class_level" value="{{ old('class_level') }}">
-                            </label>
-                            <label>
-                                <span>Lokasi</span>
-                                <input type="text" name="location" value="{{ old('location') }}">
-                            </label>
-                            <label>
-                                <span>Tanggal pertama</span>
-                                <input type="date" name="reference_date" value="{{ old('reference_date', $schedule['referenceDate']) }}" required>
-                            </label>
-                            <label>
-                                <span>Jam mulai</span>
-                                <input type="time" name="start_time" value="{{ old('start_time') }}" required>
-                            </label>
-                            <label>
-                                <span>Durasi (menit)</span>
-                                <input type="number" name="duration_minutes" min="30" max="240" step="15" value="{{ old('duration_minutes', 90) }}" required>
-                            </label>
-                            <label>
-                                <span>Jumlah siswa</span>
-                                <input type="number" name="student_count" min="1" max="200" value="{{ old('student_count') }}">
-                            </label>
+                            <div class="template-form-grid">
+                                <label>
+                                    <span>Paket belajar</span>
+                                    <select name="package_id" required>
+                                        @foreach ($schedule['packages'] as $package)
+                                            <option value="{{ $package->id }}">{{ $package->detail_title }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                                <label>
+                                    <span>Judul sesi</span>
+                                    <input type="text" name="title" value="{{ old('title') }}" required>
+                                </label>
+                                <label>
+                                    <span>Pelajaran</span>
+                                    <input type="text" name="category" value="{{ old('category') }}">
+                                </label>
+                                <label>
+                                    <span>Tingkat kelas</span>
+                                    <input type="text" name="class_level" value="{{ old('class_level') }}">
+                                </label>
+                                <label>
+                                    <span>Lokasi</span>
+                                    <input type="text" name="location" value="{{ old('location') }}">
+                                </label>
+                                <label>
+                                    <span>Tanggal pertama</span>
+                                    <input type="date" name="reference_date" value="{{ old('reference_date', $schedule['referenceDate']) }}" required>
+                                </label>
+                                <label>
+                                    <span>Jam mulai</span>
+                                    <input type="time" name="start_time" value="{{ old('start_time') }}" required>
+                                </label>
+                                <label>
+                                    <span>Durasi (menit)</span>
+                                    <input type="number" name="duration_minutes" min="30" max="240" step="15" value="{{ old('duration_minutes', 90) }}" required>
+                                </label>
+                                <label>
+                                    <span>Jumlah siswa</span>
+                                    <input type="number" name="student_count" min="1" max="200" value="{{ old('student_count') }}">
+                                </label>
+                            </div>
                             <div class="template-actions">
                                 <button type="submit">Tambah jadwal</button>
                             </div>
@@ -503,53 +524,55 @@
                                         @csrf
                                         @method('PUT')
                                         <input type="hidden" name="user_id" value="{{ $template['user_id'] }}">
-                                        <label>
-                                            <span>Paket</span>
-                                            <select name="package_id" required>
-                                                @foreach ($schedule['packages'] as $package)
-                                                    <option value="{{ $package->id }}" @selected($package->id === $template['package_id'])>
-                                                        {{ $package->detail_title }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </label>
-                                        <label>
-                                            <span>Judul</span>
-                                            <input type="text" name="title" value="{{ $template['title'] }}" required>
-                                        </label>
-                                        <label>
-                                            <span>Pelajaran</span>
-                                            <input type="text" name="category" value="{{ $template['category'] }}">
-                                        </label>
-                                        <label>
-                                            <span>Tingkat</span>
-                                            <input type="text" name="class_level" value="{{ $template['class_level'] }}">
-                                        </label>
-                                        <label>
-                                            <span>Lokasi</span>
-                                            <input type="text" name="location" value="{{ $template['location'] }}">
-                                        </label>
-                                        <label>
-                                            <span>Tanggal pertama</span>
-                                            <input type="date" name="reference_date" value="{{ $template['reference_date_value'] ?? $schedule['referenceDate'] }}" required>
-                                        </label>
-                                        <label>
-                                            <span>Jam mulai</span>
-                                            <input type="time" name="start_time" value="{{ $template['start_time'] }}" required>
-                                        </label>
-                                        <label>
-                                            <span>Durasi</span>
-                                            <input type="number" name="duration_minutes" min="30" max="240" step="15" value="{{ $template['duration_minutes'] }}" required>
-                                        </label>
-                                        <label>
-                                            <span>Kuota siswa</span>
-                                            <input type="number" name="student_count" min="1" max="200" value="{{ $template['student_count'] }}">
-                                        </label>
+                                        <div class="template-card-grid">
+                                            <label>
+                                                <span>Paket</span>
+                                                <select name="package_id" required>
+                                                    @foreach ($schedule['packages'] as $package)
+                                                        <option value="{{ $package->id }}" @selected($package->id === $template['package_id'])>
+                                                            {{ $package->detail_title }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </label>
+                                            <label>
+                                                <span>Judul</span>
+                                                <input type="text" name="title" value="{{ $template['title'] }}" required>
+                                            </label>
+                                            <label>
+                                                <span>Pelajaran</span>
+                                                <input type="text" name="category" value="{{ $template['category'] }}">
+                                            </label>
+                                            <label>
+                                                <span>Tingkat</span>
+                                                <input type="text" name="class_level" value="{{ $template['class_level'] }}">
+                                            </label>
+                                            <label>
+                                                <span>Lokasi</span>
+                                                <input type="text" name="location" value="{{ $template['location'] }}">
+                                            </label>
+                                            <label>
+                                                <span>Tanggal pertama</span>
+                                                <input type="date" name="reference_date" value="{{ $template['reference_date_value'] ?? $schedule['referenceDate'] }}" required>
+                                            </label>
+                                            <label>
+                                                <span>Jam mulai</span>
+                                                <input type="time" name="start_time" value="{{ $template['start_time'] }}" required>
+                                            </label>
+                                            <label>
+                                                <span>Durasi</span>
+                                                <input type="number" name="duration_minutes" min="30" max="240" step="15" value="{{ $template['duration_minutes'] }}" required>
+                                            </label>
+                                            <label>
+                                                <span>Kuota siswa</span>
+                                                <input type="number" name="student_count" min="1" max="200" value="{{ $template['student_count'] }}">
+                                            </label>
+                                        </div>
                                         <div class="template-actions">
                                             <button type="submit">Simpan</button>
                                         </div>
                                     </form>
-                                    <div class="template-actions">
+                                    <div class="template-actions template-card-footer">
                                         <form method="POST" action="{{ route('admin.schedule.templates.destroy', $template['id']) }}" onsubmit="return confirm('Hapus pola jadwal ini?');">
                                             @csrf
                                             @method('DELETE')
