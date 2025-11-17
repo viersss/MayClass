@@ -28,8 +28,9 @@
             gap: 10px;
             padding: 10px 16px;
             border-radius: 999px;
-            background: rgba(84, 101, 255, 0.12);
-            color: #3730a3;
+            background: rgba(15, 23, 42, 0.06);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            color: #1f2937;
             font-weight: 600;
             font-size: 0.95rem;
         }
