@@ -352,12 +352,6 @@
                                 'route' => 'tutor.quizzes.index',
                                 'patterns' => ['tutor.quizzes.*'],
                             ],
-                            [
-                                'label' => 'Jadwal',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M7 3v3m10-3v3" /><rect x="3" y="5" width="18" height="16" rx="2" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 11h18" /><path stroke-linecap="round" stroke-linejoin="round" d="m15 15-3 3-2-2" /></svg>',
-                                'route' => 'tutor.schedule.index',
-                                'patterns' => ['tutor.schedule.*'],
-                            ],
                         ];
                         $avatarCandidates = array_filter([
                             $tutorProfile?->avatar_path,
