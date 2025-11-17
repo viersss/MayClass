@@ -45,7 +45,7 @@ class ScheduleSessionController extends BaseAdminController
             $routeParameters['tutor_id'] = $tutorId;
         }
 
-        return redirect()->route('admin.dashboard', $routeParameters)
+        return redirect()->route('admin.schedules.index', $routeParameters)
             ->with('status', $message);
     }
 }

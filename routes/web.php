@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AccountController as AdminAccountController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\FinanceController as AdminFinanceController;
 use App\Http\Controllers\Admin\PackageController as AdminPackageController;
+use App\Http\Controllers\Admin\ScheduleController as AdminScheduleController;
 use App\Http\Controllers\Admin\ScheduleSessionController as AdminScheduleSessionController;
 use App\Http\Controllers\Admin\ScheduleTemplateController as AdminScheduleTemplateController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
@@ -134,6 +135,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/finance', [AdminFinanceController::class, 'index'])->name('finance.index');
     Route::post('/finance/{order}/approve', [AdminFinanceController::class, 'approve'])->name('finance.approve');
     Route::post('/finance/{order}/reject', [AdminFinanceController::class, 'reject'])->name('finance.reject');
+
+    Route::get('/schedules', [AdminScheduleController::class, 'index'])->name('schedules.index');
 
     Route::post('/schedule/template', [AdminScheduleTemplateController::class, 'store'])->name('schedule.templates.store');
     Route::put('/schedule/template/{template}', [AdminScheduleTemplateController::class, 'update'])->name('schedule.templates.update');

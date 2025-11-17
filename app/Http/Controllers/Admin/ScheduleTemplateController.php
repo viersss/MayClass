@@ -15,7 +15,7 @@ class ScheduleTemplateController extends BaseAdminController
     public function store(Request $request): RedirectResponse
     {
         if (! Schema::hasTable('schedule_templates')) {
-            return redirect()->route('admin.dashboard')
+            return redirect()->route('admin.schedules.index')
                 ->with('alert', __('Tabel template jadwal belum tersedia. Jalankan migrasi terbaru.'));
         }
 
@@ -25,8 +25,8 @@ class ScheduleTemplateController extends BaseAdminController
 
         ScheduleTemplateGenerator::refreshTemplate($template);
 
-        return redirect()->route('admin.dashboard', ['tutor_id' => $data['user_id']])
-            ->with('status', __('Pola jadwal berhasil ditambahkan.'));
+        return redirect()->route('admin.schedules.index', ['tutor_id' => $data['user_id']])
+            ->with('status', __('Jadwal berhasil ditambahkan.'));
     }
 
     public function update(Request $request, ScheduleTemplate $template): RedirectResponse
@@ -37,7 +37,7 @@ class ScheduleTemplateController extends BaseAdminController
 
         ScheduleTemplateGenerator::refreshTemplate($template);
 
-        return redirect()->route('admin.dashboard', ['tutor_id' => $data['user_id']])
+        return redirect()->route('admin.schedules.index', ['tutor_id' => $data['user_id']])
             ->with('status', __('Pola jadwal berhasil diperbarui.'));
     }
 
@@ -58,7 +58,7 @@ class ScheduleTemplateController extends BaseAdminController
             $routeParameters['tutor_id'] = $tutorId;
         }
 
-        return redirect()->route('admin.dashboard', $routeParameters)
+        return redirect()->route('admin.schedules.index', $routeParameters)
             ->with('status', __('Pola jadwal dihapus dan sesi mendatang dibatalkan.'));
     }
 
