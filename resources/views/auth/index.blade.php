@@ -251,6 +251,34 @@
                 margin: -4px 0 0;
             }
 
+            .captcha-card {
+                margin-top: 16px;
+                border-radius: 20px;
+                border: 1.5px dashed rgba(63, 166, 126, 0.4);
+                padding: 20px 22px;
+                background: rgba(63, 166, 126, 0.06);
+                display: grid;
+                gap: 10px;
+            }
+
+            .captcha-card strong {
+                font-size: 1rem;
+                color: var(--ink-strong);
+            }
+
+            .captcha-card p {
+                margin: 0;
+                color: var(--ink-soft);
+                font-size: 0.9rem;
+            }
+
+            .captcha-question {
+                font-size: 1.2rem;
+                font-weight: 600;
+                color: var(--primary-dark);
+                letter-spacing: 0.06em;
+            }
+
             label {
                 font-weight: 500;
                 font-size: 0.9rem;
@@ -757,6 +785,27 @@
                                 <option value="male" @selected($selectedGender === 'male')>Laki-laki</option>
                             </select>
                             @error('gender')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="captcha-card" role="group" aria-labelledby="captcha-label">
+                            <div>
+                                <strong id="captcha-label">Verifikasi Keamanan</strong>
+                                <p>{{ $captcha['hint'] ?? 'Jawab pertanyaan berikut untuk melanjutkan registrasi.' }}</p>
+                            </div>
+                            <div class="captcha-question">{{ $captcha['question'] ?? '0 + 0 = ?' }}</div>
+                            <input
+                                type="text"
+                                name="captcha_answer"
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                placeholder="Masukkan jawaban benar"
+                                value="{{ old('captcha_answer') }}"
+                                autocomplete="off"
+                                required
+                            />
+                            @error('captcha_answer')
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
                         </div>
