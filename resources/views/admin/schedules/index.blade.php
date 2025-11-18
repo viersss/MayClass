@@ -4,616 +4,570 @@
 
 @push('styles')
     <style>
-        .hero-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: var(--surface-muted);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.85rem;
-            width: fit-content;
+        :root {
+            --primary: #0f766e;
+            --primary-light: #ccfbf1;
+            --primary-hover: #115e59;
+            --bg-surface: #ffffff;
+            --bg-body: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
         }
 
-        .schedule-admin {
-            margin-top: 8px;
-            display: grid;
-            gap: 28px;
-        }
-
-        .schedule-header {
-            padding: 32px;
-            border-radius: 20px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 24px;
-        }
-
-        .schedule-header h3 {
-            margin: 12px 0 10px;
-            font-size: 1.9rem;
-        }
-
-        .schedule-header p {
-            margin: 0;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        .schedule-header-content {
-            flex: 1;
-        }
-
-        .tutor-filter {
-            min-width: 220px;
-            display: grid;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        .tutor-filter label {
-            display: grid;
-            gap: 6px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .tutor-filter select {
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            padding: 10px 12px;
-            font: inherit;
-        }
-
-        .schedule-metrics {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 16px;
-        }
-
-        .schedule-metric {
-            padding: 20px;
-            border-radius: 16px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            display: grid;
-            gap: 8px;
-        }
-
-        .schedule-metric span {
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .schedule-metric strong {
-            font-size: 1.8rem;
-        }
-
-        /* New Two Column Layout */
-        .schedule-main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-
-        /* Card Styling */
-        .schedule-card {
-            background: var(--surface);
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-            padding: 28px;
-            display: grid;
-            gap: 20px;
-            height: fit-content;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .card-header h3 {
-            margin: 0;
-            font-size: 1.4rem;
-        }
-
-        .card-subtitle {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 4px;
-        }
-
-        .empty-state {
-            padding: 32px 24px;
-            background: var(--surface-muted);
-            border-radius: 16px;
-            border: 1px dashed var(--border);
-            text-align: center;
-            color: var(--text-muted);
-        }
-
-        /* Template Form Styling */
-        .template-form {
-            display: grid;
-            gap: 20px;
-        }
-
-        .template-form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
-        .template-form-grid label {
+        .schedule-container {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            font-weight: 600;
-            color: var(--text-muted);
-            font-size: 0.9rem;
+            gap: 32px;
+            max-width: 1600px;
+            margin: 0 auto;
         }
 
-        .template-form-grid input,
-        .template-form-grid select {
-            padding: 10px 12px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            font: inherit;
-            transition: border-color 0.2s;
-        }
-
-        .template-form-grid input:focus,
-        .template-form-grid select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .template-actions {
+        /* --- 1. HEADER & FILTER --- */
+        .header-panel {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            padding: 24px 32px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
             display: flex;
-            gap: 10px;
-            justify-content: flex-end;
             flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
         }
 
-        .template-actions button {
-            border: none;
-            border-radius: 10px;
-            padding: 12px 24px;
-            font: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            background: var(--primary);
-            color: #fff;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .template-actions button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .template-actions button[type='submit']:last-child {
-            background: #ea580c;
-        }
-
-        /* Active Templates Table */
-        .template-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .template-table th,
-        .template-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .template-table th {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
+        .header-content h3 {
+            font-size: 1.5rem;
             font-weight: 700;
-            background: var(--surface-muted);
+            color: var(--text-main);
+            margin: 0 0 8px 0;
+            letter-spacing: -0.02em;
         }
 
-        .template-table tbody tr {
-            transition: background-color 0.2s;
+        .header-content p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            max-width: 700px;
+            line-height: 1.5;
         }
 
-        .template-table tbody tr:hover {
-            background: var(--surface-muted);
-        }
-
-        .template-table input,
-        .template-table select {
-            padding: 6px 8px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            font: inherit;
-            font-size: 0.85rem;
-            width: 100%;
-            background: var(--surface);
-        }
-
-        .template-table input[type="time"],
-        .template-table input[type="date"] {
-            min-width: 110px;
-        }
-
-        .template-table input[type="number"] {
-            min-width: 70px;
-        }
-
-        .template-table-actions {
+        .filter-box {
             display: flex;
-            gap: 6px;
-            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-body);
+            padding: 8px 16px;
+            border-radius: 99px;
+            border: 1px solid var(--border-color);
         }
 
-        .template-table-actions button {
-            border: none;
-            border-radius: 6px;
-            padding: 6px 12px;
-            font: inherit;
+        .filter-box label {
             font-weight: 600;
-            cursor: pointer;
             font-size: 0.85rem;
-            transition: transform 0.2s;
+            color: var(--text-muted);
             white-space: nowrap;
         }
 
-        .template-table-actions button[type='submit']:first-child {
-            background: var(--primary);
-            color: #fff;
-        }
-
-        .template-table-actions form:last-child button {
-            background: #ea580c;
-            color: #fff;
-        }
-
-        .template-table-actions button:hover {
-            transform: translateY(-1px);
-        }
-
-        /* History Tables */
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .history-table th,
-        .history-table td {
-            padding: 14px 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .history-table th {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            font-weight: 700;
-            background: var(--surface-muted);
-        }
-
-        .history-table tbody tr {
-            transition: background-color 0.2s;
-        }
-
-        .history-table tbody tr:hover {
-            background: var(--surface-muted);
-        }
-
-        .history-table button {
+        .filter-select {
+            background: transparent;
             border: none;
-            background: var(--primary);
-            color: #fff;
-            padding: 6px 14px;
-            border-radius: 8px;
-            cursor: pointer;
+            font-size: 0.9rem;
             font-weight: 600;
-            font-size: 0.85rem;
+            color: var(--text-main);
+            cursor: pointer;
+            outline: none;
+            min-width: 150px;
+        }
+
+        /* --- 2. METRICS --- */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .metric-card {
+            background: var(--bg-surface);
+            padding: 20px 24px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             transition: transform 0.2s;
         }
 
-        .history-table button:hover {
-            transform: translateY(-1px);
+        .metric-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
         }
 
-        /* Agenda Section - Full Width */
-        .agenda-section {
-            grid-column: 1 / -1;
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        .calendar-stack {
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1;
+        }
+
+        /* --- 3. MAIN CONTENT GRID --- */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* Common Card Styles */
+        .content-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .card-head {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: #fcfcfc;
+        }
+
+        .card-head h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .card-head span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: block;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* Form Styling */
+        .form-stack {
             display: flex;
             flex-direction: column;
-            gap: 18px;
-        }
-
-        .calendar-day {
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 20px;
-            display: grid;
             gap: 16px;
-            background: var(--surface-muted);
         }
 
-        .calendar-day header {
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Table Styling */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            min-width: 800px; /* Force scroll on small columns */
+        }
+
+        .modern-table th {
+            background: #f8fafc;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modern-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        .modern-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-input {
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            width: 100%;
+        }
+
+        .action-btn-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-save { background: var(--primary); color: white; }
+        .btn-delete { background: #fee2e2; color: #b91c1c; }
+        .btn-cancel { background: #f1f5f9; color: #64748b; }
+        .btn-restore { background: #dcfce7; color: #15803d; }
+
+        /* --- 4. AGENDA TIMELINE --- */
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .timeline-day {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        /* Timeline line */
+        .timeline-day::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+
+        .day-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .day-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .day-date {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .session-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .session-item {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Colored Left Border */
+        .session-item::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
         }
 
-        .calendar-day header strong {
-            font-size: 1.2rem;
+        .session-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transform: translateX(4px);
         }
 
-        .calendar-sessions {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+        .session-info h5 {
+            margin: 0 0 4px 0;
+            font-size: 1rem;
+            color: var(--text-main);
         }
 
-        .session-card {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            padding: 18px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: var(--surface);
-        }
-
-        .session-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
+        .session-details {
+            font-size: 0.85rem;
             color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 6px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
 
-        .subject-badge {
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: rgba(37, 99, 235, 0.12);
-            color: var(--primary);
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            display: inline-block;
-        }
-
-        .session-card h4 {
-            margin: 4px 0;
-            font-size: 1.1rem;
+        .dot-sep {
+            width: 4px;
+            height: 4px;
+            background: #cbd5e1;
+            border-radius: 50%;
         }
 
         .session-time {
-            min-width: 160px;
-            display: grid;
-            gap: 4px;
             text-align: right;
+            min-width: 120px;
         }
 
-        .session-actions {
-            margin-top: 8px;
-            display: inline-flex;
-            gap: 8px;
-            justify-content: flex-end;
+        .time-range {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            display: block;
         }
 
-        .session-actions button {
-            border: none;
-            border-radius: 8px;
-            padding: 8px 16px;
-            font: inherit;
-            font-weight: 600;
-            cursor: pointer;
-            background: #ea580c;
-            color: #fff;
+        .time-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* --- 5. FOOTER GRIDS --- */
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            background: #f8fafc;
+            border: 1px dashed var(--border-color);
+            border-radius: var(--radius);
             font-size: 0.9rem;
-            transition: transform 0.2s;
         }
 
-        .session-actions button:hover {
-            transform: translateY(-1px);
-        }
-
-        /* Responsive Design */
         @media (max-width: 1200px) {
-            .schedule-main-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .template-form-grid,
-            .template-card-grid {
-                grid-template-columns: 1fr;
-            }
+            .main-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
-            .schedule-metrics {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .schedule-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+            .footer-grid { grid-template-columns: 1fr; }
+            .header-panel { flex-direction: column; align-items: flex-start; }
+            .session-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .session-time { text-align: left; }
         }
     </style>
 @endpush
 
 @section('content')
-    <section class="schedule-admin">
-        <!-- Header Section -->
-        <div class="schedule-header">
-            <div class="schedule-header-content">
-                <h3>Kalender pengajaran MayClass</h3>
-                <p>
-                    Admin dapat meninjau jadwal setiap tutor, mengatur pola pertemuan, dan memastikan sesi yang telah
-                    berlalu otomatis berpindah ke histori.
-                </p>
-            </div>
-            @if ($schedule['tutors']->isNotEmpty())
-                <form method="GET" action="{{ route('admin.schedules.index') }}" class="tutor-filter">
-                    <label>
-                        <span>Pilih tutor</span>
-                        <select name="tutor_id" onchange="this.form.submit()">
-                            <option value="all" @selected($schedule['activeFilter'] === 'all')>Semua tutor</option>
-                            @foreach ($schedule['tutors'] as $tutor)
-                                <option value="{{ $tutor->id }}" @selected($schedule['activeFilter'] === (string) $tutor->id)>
-                                    {{ $tutor->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </label>
-                </form>
-            @endif
-        </div>
+<div class="schedule-container">
 
-        <!-- Metrics Section -->
-        <div class="schedule-metrics">
-            <article class="schedule-metric">
-                <span>Sesi akan datang</span>
-                <strong>{{ number_format($schedule['metrics']['upcoming']) }}</strong>
-            </article>
-            <article class="schedule-metric">
-                <span>Histori selesai</span>
-                <strong>{{ number_format($schedule['metrics']['history']) }}</strong>
-            </article>
-            <article class="schedule-metric">
-                <span>Dibatalkan</span>
-                <strong>{{ number_format($schedule['metrics']['cancelled']) }}</strong>
-            </article>
-            <article class="schedule-metric">
-                <span>Pola aktif</span>
-                <strong>{{ number_format($schedule['metrics']['templates']) }}</strong>
-            </article>
+    {{-- 1. Header & Filter --}}
+    <div class="header-panel">
+        <div class="header-content">
+            <h3>Kalender Pengajaran</h3>
+            <p>Tinjau jadwal, atur pola pertemuan, dan kelola sesi tutor secara terpusat.</p>
         </div>
-
-        <!-- Main Grid: Template Management -->
-        <div class="schedule-main-grid">
-            <!-- Left Column: Create Template -->
-            <article class="schedule-card">
-                <div class="card-header">
-                    <div>
-                        <h3>Atur pola jadwal</h3>
-                        <span class="card-subtitle">Buat template sesi untuk tutor terpilih</span>
-                    </div>
+        @if ($schedule['tutors']->isNotEmpty())
+            <form method="GET" action="{{ route('admin.schedules.index') }}">
+                <div class="filter-box">
+                    <label>Filter Tutor:</label>
+                    <select name="tutor_id" onchange="this.form.submit()" class="filter-select">
+                        <option value="all" @selected($schedule['activeFilter'] === 'all')>Semua Tutor</option>
+                        @foreach ($schedule['tutors'] as $tutor)
+                            <option value="{{ $tutor->id }}" @selected($schedule['activeFilter'] === (string) $tutor->id)>
+                                {{ $tutor->name }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
+            </form>
+        @endif
+    </div>
+
+    {{-- 2. Metrics --}}
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <span class="metric-label">Akan Datang</span>
+            <div class="metric-value">{{ number_format($schedule['metrics']['upcoming']) }}</div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">Selesai</span>
+            <div class="metric-value">{{ number_format($schedule['metrics']['history']) }}</div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">Dibatalkan</span>
+            <div class="metric-value" style="color: #ef4444;">{{ number_format($schedule['metrics']['cancelled']) }}</div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-label">Pola Aktif</span>
+            <div class="metric-value" style="color: var(--primary);">{{ number_format($schedule['metrics']['templates']) }}</div>
+        </div>
+    </div>
+
+    {{-- 3. Main Management Area --}}
+    <div class="main-grid">
+        
+        {{-- Left Column: Form Input --}}
+        <div class="content-card">
+            <div class="card-head">
+                <h4>Tambah Jadwal Baru</h4>
+                <span>Buat pola berulang untuk tutor terpilih</span>
+            </div>
+            <div class="card-body">
                 @if (! $schedule['selectedTutorId'])
-                    <div class="empty-state">Pilih tutor terlebih dahulu untuk menambahkan jadwal.</div>
+                    <div class="empty-state">Silakan pilih tutor pada filter di atas untuk menambahkan jadwal.</div>
                 @elseif ($schedule['packages']->isEmpty())
-                    <div class="empty-state">Belum ada paket belajar yang bisa dihubungkan. Tambahkan paket terlebih dahulu.</div>
+                    <div class="empty-state">Tutor ini belum memiliki paket belajar aktif.</div>
                 @else
-                    <form class="template-form" method="POST" action="{{ route('admin.schedule.templates.store') }}">
+                    <form method="POST" action="{{ route('admin.schedule.templates.store') }}" class="form-stack">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $schedule['selectedTutorId'] }}">
-                        <div class="template-form-grid">
-                            <label>
-                                <span>Paket belajar</span>
-                                <select name="package_id" required>
-                                    @foreach ($schedule['packages'] as $package)
-                                        <option value="{{ $package->id }}">{{ $package->detail_title }}</option>
-                                    @endforeach
-                                </select>
-                            </label>
-                            <label>
-                                <span>Judul sesi</span>
-                                <input type="text" name="title" value="{{ old('title') }}" required>
-                            </label>
-                            <label>
-                                <span>Pelajaran</span>
-                                <input type="text" name="category" value="{{ old('category') }}">
-                            </label>
-                            <label>
-                                <span>Tingkat kelas</span>
-                                <input type="text" name="class_level" value="{{ old('class_level') }}">
-                            </label>
-                            <label>
-                                <span>Lokasi</span>
-                                <input type="text" name="location" value="{{ old('location') }}">
-                            </label>
-                            <label>
-                                <span>Tanggal pertama</span>
-                                <input type="date" name="reference_date" value="{{ old('reference_date', $schedule['referenceDate']) }}" required>
-                            </label>
-                            <label>
-                                <span>Jam mulai</span>
-                                <input type="time" name="start_time" value="{{ old('start_time') }}" required>
-                            </label>
-                            <label>
-                                <span>Durasi (menit)</span>
-                                <input type="number" name="duration_minutes" min="30" max="240" step="15" value="{{ old('duration_minutes', 90) }}" required>
-                            </label>
-                            <label>
-                                <span>Jumlah siswa</span>
-                                <input type="number" name="student_count" min="1" max="200" value="{{ old('student_count') }}">
-                            </label>
+                        
+                        <div class="form-group">
+                            <label>Paket Belajar</label>
+                            <select name="package_id" class="form-control" required>
+                                @foreach ($schedule['packages'] as $package)
+                                    <option value="{{ $package->id }}">{{ $package->detail_title }}</option>
+                                @endforeach
+                            </select>
                         </div>
-                        <div class="template-actions">
-                            <button type="submit">Tambah jadwal</button>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label>Judul Sesi</label>
+                                <input type="text" name="title" class="form-control" placeholder="Contoh: Pertemuan 1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mata Pelajaran</label>
+                                <input type="text" name="category" class="form-control" placeholder="Contoh: Matematika">
+                            </div>
                         </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label>Tingkat Kelas</label>
+                                <input type="text" name="class_level" class="form-control" placeholder="Contoh: 12 SMA">
+                            </div>
+                            <div class="form-group">
+                                <label>Lokasi</label>
+                                <input type="text" name="location" class="form-control" placeholder="Contoh: Google Meet / Rumah">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label>Tanggal Mulai</label>
+                                <input type="date" name="reference_date" class="form-control" value="{{ $schedule['referenceDate'] }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Jam Mulai</label>
+                                <input type="time" name="start_time" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group">
+                                <label>Durasi (Menit)</label>
+                                <input type="number" name="duration_minutes" class="form-control" value="90" min="30" step="15" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Jml. Siswa</label>
+                                <input type="number" name="student_count" class="form-control" value="1" min="1">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Simpan Jadwal</button>
                     </form>
                 @endif
-            </article>
+            </div>
+        </div>
 
-            <!-- Right Column: Active Templates -->
-            <article class="schedule-card">
-                <div class="card-header">
-                    <div>
-                        <h3>Pola aktif</h3>
-                        <span class="card-subtitle">Perbarui atau hapus jadwal berulang</span>
-                    </div>
-                </div>
-                @if ($schedule['templates']->isNotEmpty())
-                    <table class="template-table">
+        {{-- Right Column: Active Templates Table --}}
+        <div class="content-card">
+            <div class="card-head">
+                <h4>Pola Jadwal Aktif</h4>
+                <span>Daftar jadwal berulang yang sedang berjalan</span>
+            </div>
+            @if ($schedule['templates']->isNotEmpty())
+                <div class="table-responsive">
+                    <table class="modern-table">
                         <thead>
                             <tr>
-                                <th>Paket</th>
-                                <th>Judul</th>
-                                <th>Pelajaran</th>
-                                <th>Tingkat</th>
-                                <th>Lokasi</th>
-                                <th>Tanggal</th>
-                                <th>Jam</th>
-                                <th>Durasi</th>
-                                <th>Siswa</th>
-                                <th>Aksi</th>
+                                <th>Judul & Paket</th>
+                                <th>Detail</th>
+                                <th>Waktu</th>
+                                <th style="text-align: right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($schedule['templates'] as $template)
                                 <tr>
                                     <form method="POST" action="{{ route('admin.schedule.templates.update', $template['id']) }}">
-                                        @csrf
-                                        @method('PUT')
+                                        @csrf @method('PUT')
                                         <input type="hidden" name="user_id" value="{{ $template['user_id'] }}">
-                                        <td>
-                                            <select name="package_id" required>
+                                        
+                                        <td style="min-width: 200px;">
+                                            <input type="text" name="title" value="{{ $template['title'] }}" class="table-input" style="font-weight: 600; margin-bottom: 4px;">
+                                            <select name="package_id" class="table-input" style="font-size: 0.8rem; color: var(--text-muted);">
                                                 @foreach ($schedule['packages'] as $package)
                                                     <option value="{{ $package->id }}" @selected($package->id === $template['package_id'])>
                                                         {{ $package->detail_title }}
@@ -621,39 +575,27 @@
                                                 @endforeach
                                             </select>
                                         </td>
-                                        <td>
-                                            <input type="text" name="title" value="{{ $template['title'] }}" required>
+                                        <td style="min-width: 140px;">
+                                            <input type="text" name="category" value="{{ $template['category'] }}" class="table-input" placeholder="Mapel" style="margin-bottom: 4px;">
+                                            <input type="text" name="location" value="{{ $template['location'] }}" class="table-input" placeholder="Lokasi">
                                         </td>
-                                        <td>
-                                            <input type="text" name="category" value="{{ $template['category'] }}">
+                                        <td style="min-width: 160px;">
+                                            <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                                                <input type="date" name="reference_date" value="{{ $template['reference_date_value'] ?? $schedule['referenceDate'] }}" class="table-input">
+                                            </div>
+                                            <div style="display: flex; gap: 4px;">
+                                                <input type="time" name="start_time" value="{{ $template['start_time'] }}" class="table-input">
+                                                <input type="number" name="duration_minutes" value="{{ $template['duration_minutes'] }}" class="table-input" style="width: 60px;">
+                                            </div>
                                         </td>
-                                        <td>
-                                            <input type="text" name="class_level" value="{{ $template['class_level'] }}">
-                                        </td>
-                                        <td>
-                                            <input type="text" name="location" value="{{ $template['location'] }}">
-                                        </td>
-                                        <td>
-                                            <input type="date" name="reference_date" value="{{ $template['reference_date_value'] ?? $schedule['referenceDate'] }}" required>
-                                        </td>
-                                        <td>
-                                            <input type="time" name="start_time" value="{{ $template['start_time'] }}" required>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="duration_minutes" min="30" max="240" step="15" value="{{ $template['duration_minutes'] }}" required>
-                                        </td>
-                                        <td>
-                                            <input type="number" name="student_count" min="1" max="200" value="{{ $template['student_count'] }}">
-                                        </td>
-                                        <td>
-                                            <div class="template-table-actions">
-                                                <button type="submit">Simpan</button>
+                                        <td style="text-align: right;">
+                                            <div class="action-btn-group" style="justify-content: flex-end;">
+                                                <button type="submit" class="btn-sm btn-save">Simpan</button>
                                     </form>
-                                                <form method="POST" action="{{ route('admin.schedule.templates.destroy', $template['id']) }}" onsubmit="return confirm('Hapus pola jadwal ini?');">
-                                                    @csrf
-                                                    @method('DELETE')
+                                                <form method="POST" action="{{ route('admin.schedule.templates.destroy', $template['id']) }}" onsubmit="return confirm('Hapus pola ini?');">
+                                                    @csrf @method('DELETE')
                                                     <input type="hidden" name="redirect_tutor_id" value="{{ $schedule['activeFilter'] }}">
-                                                    <button type="submit">Hapus</button>
+                                                    <button type="submit" class="btn-sm btn-delete">Hapus</button>
                                                 </form>
                                             </div>
                                         </td>
@@ -661,90 +603,78 @@
                             @endforeach
                         </tbody>
                     </table>
-                @else
-                    <div class="empty-state">Belum ada pola yang tersimpan.</div>
-                @endif
-            </article>
-       <!-- Full Width: Agenda Section -->
-        <article class="schedule-card agenda-section">
-            <div class="card-header">
-                <div>
-                    <h3>Agenda mendatang</h3>
-                    <span class="card-subtitle">Kelompokkan jadwal berdasarkan tanggal kalender</span>
                 </div>
-            </div>
-            @if (! $schedule['ready'])
-                <div class="empty-state">Sistem jadwal belum siap. Pastikan migrasi jadwal telah dijalankan.</div>
-            @elseif ($schedule['upcomingDays']->isEmpty())
-                <div class="empty-state">Belum ada sesi mengajar yang tercatat.</div>
             @else
-                <div class="calendar-stack">
+                <div class="empty-state" style="border: none; background: transparent;">Belum ada pola jadwal aktif.</div>
+            @endif
+        </div>
+
+    </div>
+
+    {{-- 4. Agenda Timeline --}}
+    <div class="content-card">
+        <div class="card-head">
+            <h4>Agenda Mendatang</h4>
+            <span>Jadwal sesi berdasarkan urutan waktu</span>
+        </div>
+        <div class="card-body">
+            @if (! $schedule['ready'])
+                <div class="empty-state">Sistem belum siap. Jalankan migrasi terlebih dahulu.</div>
+            @elseif ($schedule['upcomingDays']->isEmpty())
+                <div class="empty-state">Belum ada sesi mendatang yang dijadwalkan.</div>
+            @else
+                <div class="timeline-container">
                     @foreach ($schedule['upcomingDays'] as $day)
-                        <article class="calendar-day">
-                            <header>
-                                <div>
-                                    <strong>{{ $day['weekday'] }}</strong>
-                                    <span>{{ $day['full_date'] }}</span>
-                                </div>
-                                <span class="card-subtitle">{{ count($day['items']) }} sesi</span>
-                            </header>
-                            <div class="calendar-sessions">
+                        <div class="timeline-day">
+                            <div class="day-header">
+                                <span class="day-name">{{ $day['weekday'] }}</span>
+                                <span class="day-date">{{ $day['full_date'] }}</span>
+                            </div>
+                            <div class="session-list">
                                 @foreach ($day['items'] as $session)
-                                    <div class="session-card">
-                                        <div>
-                                            <span class="subject-badge">{{ $session['subject'] }}</span>
-                                            <h4>{{ $session['title'] }}</h4>
-                                            <div class="session-meta">
-                                                <span>{{ $session['package'] }}</span>
-                                                <span>&middot;</span>
-                                                <span>{{ $session['class_level'] }}</span>
-                                            </div>
-                                            <div class="session-meta">
-                                                <span>Pengajar: {{ $session['tutor'] }}</span>
-                                            </div>
-                                            <div class="session-meta">
-                                                <span>Lokasi: {{ $session['location'] }}</span>
-                                                @if ($session['student_count'])
-                                                    <span>&middot;</span>
-                                                    <span>{{ $session['student_count'] }} siswa</span>
-                                                @endif
+                                    <div class="session-item">
+                                        <div class="session-info">
+                                            <h5>{{ $session['title'] }}</h5>
+                                            <div class="session-details">
+                                                <span>{{ $session['subject'] }}</span>
+                                                <span class="dot-sep"></span>
+                                                <span>{{ $session['tutor'] }}</span>
+                                                <span class="dot-sep"></span>
+                                                <span>{{ $session['location'] }}</span>
                                             </div>
                                         </div>
                                         <div class="session-time">
-                                            <strong>{{ $session['time_range'] }}</strong>
-                                            <small>Waktu belajar</small>
-                                            <div class="session-actions">
-                                                <form method="POST" action="{{ route('admin.schedule.sessions.cancel', $session['id']) }}" onsubmit="return confirm('Batalkan sesi ini?');">
-                                                    @csrf
-                                                    <input type="hidden" name="redirect_tutor_id" value="{{ $schedule['activeFilter'] }}">
-                                                    <button type="submit">Batalkan</button>
-                                                </form>
-                                            </div>
+                                            <span class="time-label">Waktu Belajar</span>
+                                            <span class="time-range">{{ $session['time_range'] }}</span>
+                                            <form method="POST" action="{{ route('admin.schedule.sessions.cancel', $session['id']) }}" onsubmit="return confirm('Batalkan sesi ini?');" style="margin-top: 6px;">
+                                                @csrf
+                                                <input type="hidden" name="redirect_tutor_id" value="{{ $schedule['activeFilter'] }}">
+                                                <button type="submit" class="btn-sm btn-cancel" style="width: 100%;">Batalkan</button>
+                                            </form>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
-                        </article>
+                        </div>
                     @endforeach
                 </div>
             @endif
-        </article>
-            <!-- Left Column: History Sessions -->
-            <article class="schedule-card">
-                <div class="card-header">
-                    <div>
-                        <h3>Histori sesi selesai</h3>
-                        <span class="card-subtitle">Pertemuan yang selesai otomatis tersimpan di daftar ini</span>
-                    </div>
-                </div>
-                @if ($schedule['historySessions']->isEmpty())
-                    <div class="empty-state">Belum ada sesi yang selesai.</div>
-                @else
-                    <table class="history-table">
+        </div>
+    </div>
+
+    {{-- 5. History & Cancelled (Side by Side) --}}
+    <div class="footer-grid">
+        {{-- History --}}
+        <div class="content-card">
+            <div class="card-head">
+                <h4>Histori Selesai</h4>
+            </div>
+            @if ($schedule['historySessions']->isNotEmpty())
+                <div class="table-responsive">
+                    <table class="modern-table">
                         <thead>
                             <tr>
                                 <th>Tanggal</th>
-                                <th>Waktu</th>
                                 <th>Pengajar</th>
                                 <th>Paket</th>
                             </tr>
@@ -752,59 +682,62 @@
                         <tbody>
                             @foreach ($schedule['historySessions'] as $history)
                                 <tr>
-                                    <td>{{ $history['label'] }}</td>
-                                    <td>{{ $history['time_range'] }}</td>
+                                    <td>
+                                        <div style="font-weight: 600;">{{ $history['label'] }}</div>
+                                        <small style="color: var(--text-muted);">{{ $history['time_range'] }}</small>
+                                    </td>
                                     <td>{{ $history['tutor'] }}</td>
                                     <td>{{ $history['package'] }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
-                @endif
-            </article>
-
-            <!-- Right Column: Cancelled Sessions -->
-            <article class="schedule-card">
-                <div class="card-header">
-                    <div>
-                        <h3>Sesi dibatalkan</h3>
-                        <span class="card-subtitle">Pulihkan jadwal jika pertemuan dijadwalkan ulang</span>
-                    </div>
                 </div>
-                @if ($schedule['cancelledSessions']->isEmpty())
-                    <div class="empty-state">Tidak ada sesi yang dibatalkan.</div>
-                @else
-                    <table class="history-table">
+            @else
+                <div class="empty-state">Belum ada riwayat.</div>
+            @endif
+        </div>
+
+        {{-- Cancelled --}}
+        <div class="content-card">
+            <div class="card-head">
+                <h4>Sesi Dibatalkan</h4>
+            </div>
+            @if ($schedule['cancelledSessions']->isNotEmpty())
+                <div class="table-responsive">
+                    <table class="modern-table">
                         <thead>
                             <tr>
-                                <th>Tanggal</th>
-                                <th>Waktu</th>
+                                <th>Waktu Awal</th>
                                 <th>Pengajar</th>
-                                <th>Paket</th>
-                                <th>Aksi</th>
+                                <th style="text-align: right;">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($schedule['cancelledSessions'] as $cancelled)
                                 <tr>
-                                    <td>{{ $cancelled['label'] }}</td>
-                                    <td>{{ $cancelled['time_range'] }}</td>
-                                    <td>{{ $cancelled['tutor'] }}</td>
-                                    <td>{{ $cancelled['package'] }}</td>
                                     <td>
+                                        <div style="font-weight: 600;">{{ $cancelled['label'] }}</div>
+                                        <small style="color: var(--text-muted);">{{ $cancelled['time_range'] }}</small>
+                                    </td>
+                                    <td>{{ $cancelled['tutor'] }}</td>
+                                    <td style="text-align: right;">
                                         <form method="POST" action="{{ route('admin.schedule.sessions.restore', $cancelled['id']) }}">
                                             @csrf
                                             <input type="hidden" name="redirect_tutor_id" value="{{ $schedule['activeFilter'] }}">
-                                            <button type="submit">Pulihkan</button>
+                                            <button type="submit" class="btn-sm btn-restore">Pulihkan</button>
                                         </form>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
-                @endif
-            </article>
+                </div>
+            @else
+                <div class="empty-state">Tidak ada sesi batal.</div>
+            @endif
         </div>
+    </div>
 
-    </section>
+</div>
 @endsection

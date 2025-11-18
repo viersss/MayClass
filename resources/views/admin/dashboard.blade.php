@@ -1,666 +1,536 @@
 @extends('admin.layout')
 
-@section('title', 'Dashboard Admin MayClass')
+@section('title', 'Dashboard Admin - MayClass')
 
 @push('styles')
     <style>
-        .dashboard {
-            display: grid;
-            gap: 24px;
+        :root {
+            --primary: #0f766e;
+            --primary-light: #ccfbf1;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-surface: #ffffff;
+            --bg-body: #f1f5f9;
+            --border-subtle: #e2e8f0;
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --radius-lg: 16px;
+            --radius-md: 12px;
         }
 
-        /* Hero Section */
-        .hero-card {
+        .dashboard-container {
             display: grid;
-            grid-template-columns: 1fr 380px;
             gap: 32px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* --- 1. HERO SECTION --- */
+        .hero-panel {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
             padding: 32px;
-            border-radius: 20px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
-        }
-
-        .hero-main {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .hero-chip {
-            display: inline-flex;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 40px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-subtle);
             align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: var(--surface-muted);
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.85rem;
-            width: fit-content;
         }
 
-        .hero-main h2 {
-            margin: 0;
-            font-size: 2rem;
-            line-height: 1.3;
+        .hero-content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 12px 0;
+            letter-spacing: -0.02em;
         }
 
-        .hero-main p {
-            margin: 0;
+        .hero-content p {
             font-size: 1rem;
             color: var(--text-muted);
             line-height: 1.6;
+            max-width: 600px;
+            margin: 0;
         }
 
-        .hero-side {
-            display: grid;
-            gap: 16px;
-            align-content: start;
-        }
-
-        .hero-metric {
-            display: grid;
-            gap: 8px;
+        .hero-stats-sidebar {
+            background: #f8fafc;
+            border-radius: var(--radius-md);
             padding: 20px;
-            border-radius: 16px;
-            background: var(--surface-muted);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        .hero-metric small {
-            font-weight: 600;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .hero-metric strong {
-            font-size: 1.8rem;
-            line-height: 1.2;
-        }
-
-        .hero-trend {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .hero-trend[data-direction="1"] {
-            color: #15803d;
-        }
-
-        .hero-trend[data-direction="-1"] {
-            color: #b91c1c;
-        }
-
-        .hero-trend[data-direction="0"] {
-            color: var(--text-muted);
-        }
-
-        .hero-trend::before {
-            content: attr(data-icon);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 22px;
-            height: 22px;
-            border-radius: 8px;
-            background: rgba(15, 23, 42, 0.08);
-            color: inherit;
-            font-size: 0.75rem;
-        }
-
-        .hero-trend[data-direction="1"]::before {
-            background: rgba(21, 128, 61, 0.12);
-        }
-
-        .hero-trend[data-direction="-1"]::before {
-            background: rgba(185, 28, 28, 0.12);
-        }
-
-        .hero-mini-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .mini-metric {
-            padding: 16px;
-            border-radius: 14px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            display: grid;
-            gap: 4px;
-        }
-
-        .mini-metric small {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .mini-metric strong {
-            font-size: 1.2rem;
-        }
-
-        .mini-metric span {
-            font-size: 0.82rem;
-            color: var(--text-muted);
-        }
-
-        /* KPI Stats Grid */
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .stat-card {
-            padding: 22px;
-            border-radius: 16px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            display: grid;
-            gap: 10px;
-        }
-
-        .stat-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--primary);
-            background: rgba(37, 99, 235, 0.12);
-        }
-
-        .stat-card span {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .stat-card strong {
-            font-size: 1.5rem;
-        }
-
-        .stat-card em {
-            font-style: normal;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        /* Insights Section - 60/40 Split */
-        .insights-grid {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 24px;
-        }
-
-        .card-panel {
-            background: var(--surface);
-            border-radius: 18px;
-            padding: 28px;
-            border: 1px solid var(--border);
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-            display: grid;
-            gap: 24px;
-            align-content: start;
-        }
-
-        .card-header {
+        .hero-trend-box {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .card-header h3 {
-            margin: 0;
-            font-size: 1.3rem;
-        }
-
-        .card-subtitle {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* Chart */
-        .chart-wrapper {
-            position: relative;
-            height: 280px;
-            padding: 24px 18px 12px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            background: linear-gradient(180deg, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.02) 40%, transparent 100%), #fff;
-            display: flex;
             align-items: flex-end;
-            gap: 10px;
-            overflow: hidden;
         }
 
-        .chart-wrapper::after,
-        .chart-wrapper::before {
-            content: '';
-            position: absolute;
-            left: 18px;
-            right: 18px;
-            border-top: 1px dashed rgba(15, 23, 42, 0.08);
+        .hero-trend-box label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
         }
 
-        .chart-wrapper::after {
-            top: 24px;
+        .hero-trend-box .amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1;
         }
 
-        .chart-wrapper::before {
-            top: 50%;
+        .trend-badge {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 99px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .trend-up { background: #dcfce7; color: #15803d; }
+        .trend-down { background: #fee2e2; color: #b91c1c; }
+        .trend-neutral { background: #f1f5f9; color: #64748b; }
+
+        .hero-mini-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border-subtle);
         }
 
-        .chart-bar {
-            flex: 1;
+        .mini-stat-item strong {
+            display: block;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+        .mini-stat-item span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* --- 2. KPI CARDS --- */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .kpi-card {
+            background: var(--bg-surface);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
             gap: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .kpi-header {
+            display: flex;
             align-items: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .chart-bar strong {
-            font-size: 0.8rem;
-            color: rgba(15, 23, 42, 0.75);
-            font-weight: 700;
-        }
-
-        .chart-bar div {
-            width: 100%;
-            border-radius: 12px 12px 6px 6px;
-            background: linear-gradient(180deg, rgba(37, 99, 235, 0.95), rgba(59, 130, 246, 0.75));
-            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
-        }
-
-        .chart-bar span {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .empty-state {
-            padding: 32px 24px;
-            border-radius: 16px;
-            background: var(--surface-muted);
-            border: 1px dashed var(--border);
-            color: var(--text-muted);
+            gap: 10px;
             font-size: 0.9rem;
-            text-align: center;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
         }
 
-        /* Pipeline */
-        .pipeline {
+        .kpi-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 4px;
+        }
+
+        .kpi-desc {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        /* --- 3. CHARTS & PIPELINE --- */
+        .insights-section {
             display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .section-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-card);
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .card-title h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .card-title span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* CSS Chart */
+        .chart-container {
+            height: 250px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 20px;
+        }
+
+        .chart-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            height: 100%;
+            justify-content: flex-end;
+            group: hover;
+        }
+
+        .chart-bar {
+            width: 100%;
+            background: linear-gradient(180deg, #0f766e 0%, #2dd4bf 100%);
+            border-radius: 6px 6px 2px 2px;
+            opacity: 0.85;
+            transition: height 0.4s ease, opacity 0.2s;
+            position: relative;
+            min-height: 4px;
+        }
+
+        .chart-col:hover .chart-bar {
+            opacity: 1;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+        }
+
+        /* Tooltip sederhana pakai CSS */
+        .chart-bar::before {
+            content: attr(data-value);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+
+        .chart-col:hover .chart-bar::before {
+            opacity: 1;
+        }
+
+        .chart-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Pipeline List */
+        .pipeline-list {
+            display: flex;
+            flex-direction: column;
             gap: 18px;
         }
 
-        .pipeline-row {
-            display: grid;
-            gap: 10px;
-        }
-
-        .pipeline-header {
+        .pipeline-item {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            flex-direction: column;
+            gap: 6px;
         }
 
-        .pipeline-progress {
-            position: relative;
-            height: 10px;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.08);
+        .pipeline-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .pipeline-bar-bg {
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 99px;
             overflow: hidden;
         }
 
-        .pipeline-progress span {
-            position: absolute;
-            inset: 0 auto 0 0;
-            border-radius: inherit;
-            background: linear-gradient(90deg, rgba(37, 99, 235, 0.6), rgba(37, 99, 235, 0.4));
+        .pipeline-bar-fill {
+            height: 100%;
+            border-radius: 99px;
         }
 
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-badge[data-type='paid'] {
-            background: rgba(21, 128, 61, 0.12);
-            color: #15803d;
-        }
-
-        .status-badge[data-type='pending'] {
-            background: rgba(234, 179, 8, 0.16);
-            color: #b45309;
-        }
-
-        .status-badge[data-type='failed'] {
-            background: rgba(185, 28, 28, 0.16);
-            color: #b91c1c;
-        }
-
-        .status-badge[data-type='initiated'] {
-            background: rgba(59, 130, 246, 0.16);
-            color: #1d4ed8;
-        }
-
-        /* Detail Grid - Better Split */
-        .detail-grid {
+        /* --- 4. TABLE & LISTS --- */
+        .details-section {
             display: grid;
-            grid-template-columns: 1.6fr 1fr;
+            grid-template-columns: 1.8fr 1.2fr;
             gap: 24px;
         }
 
-        /* Table */
-        .table-scroll {
+        .table-wrapper {
             overflow-x: auto;
         }
 
-        .data-table {
+        .modern-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0 8px;
-            min-width: 700px;
-        }
-
-        .data-table th,
-        .data-table td {
-            text-align: left;
+            border-spacing: 0;
             font-size: 0.9rem;
-            padding: 14px 16px;
         }
 
-        .data-table th {
+        .modern-table th {
+            text-align: left;
+            padding: 12px 16px;
             color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-subtle);
+            letter-spacing: 0.03em;
+        }
+
+        .modern-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-main);
+        }
+
+        .modern-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-pill {
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            padding-bottom: 8px;
-            background: var(--surface-muted);
+        }
+        .status-paid { background: #dcfce7; color: #15803d; }
+        .status-pending { background: #fef9c3; color: #a16207; }
+        .status-failed { background: #fee2e2; color: #b91c1c; }
+        .status-default { background: #f1f5f9; color: #475569; }
+
+        .list-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        .data-table th:first-child {
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
-        }
-
-        .data-table th:last-child {
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
-        }
-
-        .data-table tbody tr {
-            background: var(--surface-muted);
-            border-radius: 12px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .data-table tbody tr:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
-        }
-
-        .data-table tbody td {
-            border: none;
-        }
-
-        .data-table tbody td:first-child {
-            border-top-left-radius: 12px;
-            border-bottom-left-radius: 12px;
-        }
-
-        .data-table tbody td:last-child {
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-            text-align: right;
-        }
-
-        .data-table thead tr th:last-child {
-            text-align: right;
-        }
-
-        /* Sidebar Lists */
-        .stacked {
-            display: grid;
-            gap: 24px;
-            align-content: start;
-        }
-
-        .top-package-list,
-        .student-list {
-            display: grid;
-            gap: 12px;
-        }
-
-        .package-item {
+        .list-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px;
-            border-radius: 14px;
-            background: var(--surface-muted);
-            border: 1px solid var(--border);
-            transition: transform 0.2s, box-shadow 0.2s;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
         }
+        .list-item:last-child { border-bottom: none; }
 
-        .package-item:hover {
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-        }
+        .item-main strong { display: block; font-size: 0.95rem; color: var(--text-main); }
+        .item-main span { font-size: 0.85rem; color: var(--text-muted); }
+        .item-side { font-weight: 700; font-size: 0.95rem; color: var(--primary); }
 
-        .package-item strong {
-            display: block;
-            font-size: 1rem;
-            margin-bottom: 2px;
-        }
-
-        .package-item span {
+        .empty-state {
+            text-align: center;
+            padding: 40px;
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px dashed var(--border-subtle);
         }
 
-        .student-card {
-            padding: 16px;
-            border-radius: 14px;
-            background: var(--surface-muted);
-            border: 1px solid var(--border);
-            display: grid;
-            gap: 4px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .student-card:hover {
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
-        }
-
-        .student-card strong {
-            font-size: 1rem;
-        }
-
-        .student-card small {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .stat-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .hero-card {
-                grid-template-columns: 1fr;
-            }
-
-            .insights-grid,
-            .detail-grid {
+        @media (max-width: 1024px) {
+            .hero-panel, .insights-section, .details-section {
                 grid-template-columns: 1fr;
             }
         }
-
-        @media (max-width: 768px) {
-            .hero-card {
-                padding: 24px;
-                gap: 20px;
-            }
-
-            .hero-mini-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Supaya card "Transaksi Terbaru" tidak ikut stretch setinggi kolom kanan */
-        .detail-grid > .card-panel {
-            align-self: start;
-        }
-
     </style>
 @endpush
 
 @section('content')
-<section class="dashboard">
+<div class="dashboard-container">
 
-    {{-- Hero Section --}}
-    <section class="hero-card">
-        <div class="hero-main">
-            <h2>Monitor seluruh aktivitas MayClass dalam satu tempat</h2>
-            <p>Data finansial, pendaftaran siswa, dan performa paket belajar diperbarui secara langsung sehingga tim administrasi dapat mengambil keputusan cepat setiap hari.</p>
+    {{-- 1. Hero Section --}}
+    <section class="hero-panel">
+        <div class="hero-content">
+            <h2>Halo Admin, Selamat Datang!</h2>
+            <p>
+                Berikut adalah ringkasan performa platform MayClass hari ini. 
+                Pantau pendapatan, pendaftaran siswa, dan status pembayaran secara real-time.
+            </p>
         </div>
-        <div class="hero-side">
+        
+        <div class="hero-stats-sidebar">
             @php
                 $direction = $monthComparison['direction'];
-                $trendIcon = $direction === 1 ? '▲' : ($direction === -1 ? '▼' : '●');
+                $trendClass = $direction === 1 ? 'trend-up' : ($direction === -1 ? 'trend-down' : 'trend-neutral');
+                $trendIcon = $direction === 1 ? '▲' : ($direction === -1 ? '▼' : '•');
             @endphp
-            <div class="hero-metric">
-                <small>Pendapatan terverifikasi bulan ini</small>
-                <strong>{{ $monthComparison['formatted'] }}</strong>
-                <span class="hero-trend" data-direction="{{ $direction }}" data-icon="{{ $trendIcon }}">
-                    {{ $direction === 0 ? 'Stabil' : ($direction === 1 ? 'Naik' : 'Turun') }}
-                    {{ number_format(abs($monthComparison['delta']), 1, ',', '.') }}%
-                    dibanding bulan lalu
-                </span>
+            
+            <div class="hero-trend-box">
+                <div>
+                    <label>Pendapatan Bulan Ini</label>
+                    <div class="amount">{{ $monthComparison['formatted'] }}</div>
+                </div>
+                <div class="trend-badge {{ $trendClass }}">
+                    {{ $trendIcon }} {{ number_format(abs($monthComparison['delta']), 1, ',', '.') }}%
+                </div>
             </div>
-            <div class="hero-mini-grid">
-                <article class="mini-metric">
-                    <small>Total siswa aktif</small>
+
+            <div class="hero-mini-stats">
+                <div class="mini-stat-item">
                     <strong>{{ number_format($stats['totalStudents']) }}</strong>
-                    <span>Seluruh siswa terdaftar</span>
-                </article>
-                <article class="mini-metric">
-                    <small>Pembayaran menunggu aksi</small>
+                    <span>Total Siswa</span>
+                </div>
+                <div class="mini-stat-item">
                     <strong>{{ number_format($stats['pendingPayments']) }}</strong>
-                    <span>Perlu verifikasi admin</span>
-                </article>
+                    <span>Menunggu Verifikasi</span>
+                </div>
             </div>
         </div>
     </section>
 
-    {{-- KPI Stats --}}
-    <section class="stat-grid">
-        <article class="stat-card">
-            <div class="stat-icon">Rp</div>
-            <span>Pendapatan Tahun Ini</span>
-            <strong>{{ $stats['yearRevenue'] }}</strong>
-            <em>Akumulasi transaksi berstatus lunas {{ now()->year }}</em>
-        </article>
-        <article class="stat-card">
-            <div class="stat-icon">Σ</div>
-            <span>Pendapatan Sepanjang Waktu</span>
-            <strong>{{ $stats['totalRevenue'] }}</strong>
-            <em>Total pemasukan bersih yang tercatat</em>
-        </article>
-        <article class="stat-card">
-            <div class="stat-icon">Ø</div>
-            <span>Nilai Rata-rata Transaksi</span>
-            <strong>{{ $stats['averageTicket'] }}</strong>
-            <em>Rerata nominal dari setiap pembayaran sukses</em>
-        </article>
-        <article class="stat-card">
-            <div class="stat-icon">✓</div>
-            <span>Transaksi Selesai</span>
-            <strong>{{ number_format($stats['paidOrders']) }}</strong>
-            <em>Jumlah order berstatus lunas sepanjang waktu</em>
-        </article>
+    {{-- 2. KPI Cards --}}
+    <section class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <div class="kpi-icon">Rp</div>
+                <span>Tahun Ini</span>
+            </div>
+            <div class="kpi-value">{{ $stats['yearRevenue'] }}</div>
+            <div class="kpi-desc">Total pendapatan bersih 2025</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <div class="kpi-icon">Σ</div>
+                <span>Total</span>
+            </div>
+            <div class="kpi-value">{{ $stats['totalRevenue'] }}</div>
+            <div class="kpi-desc">Akumulasi sejak awal</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <div class="kpi-icon">Ø</div>
+                <span>Rata-rata</span>
+            </div>
+            <div class="kpi-value">{{ $stats['averageTicket'] }}</div>
+            <div class="kpi-desc">Per transaksi sukses</div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <div class="kpi-icon">✓</div>
+                <span>Transaksi</span>
+            </div>
+            <div class="kpi-value">{{ number_format($stats['paidOrders']) }}</div>
+            <div class="kpi-desc">Pembayaran berhasil</div>
+        </div>
     </section>
 
-    {{-- Insights: Chart & Pipeline --}}
-    <section class="insights-grid">
-        <div class="card-panel">
-            <div class="card-header">
-                <div>
-                    <h3>Grafik Pendapatan {{ now()->year }}</h3>
-                    <span class="card-subtitle">Berdasarkan transaksi lunas per bulan</span>
-                </div>
+    {{-- 3. Charts & Pipeline --}}
+    <section class="insights-section">
+        {{-- Chart --}}
+        <div class="section-card">
+            <div class="card-title">
+                <h3>Grafik Pendapatan</h3>
+                <span>{{ now()->year }}</span>
             </div>
 
             @if ($monthlyRevenue->sum('value') === 0)
-                <div class="empty-state">Belum ada transaksi lunas yang tercatat pada tahun ini</div>
+                <div class="empty-state">Belum ada data transaksi untuk ditampilkan</div>
             @else
                 @php $maxValue = max($monthlyRevenue->pluck('value')->all() ?: [1]); @endphp
-                <div class="chart-wrapper" role="img" aria-label="Grafik pendapatan bulanan">
+                <div class="chart-container">
                     @foreach ($monthlyRevenue as $entry)
-                        @php $h = $maxValue > 0 ? max(($entry['value'] / $maxValue) * 100, 6) : 6; @endphp
-                        <div class="chart-bar">
-                            <strong>{{ $entry['formatted'] }}</strong>
-                            <div style="height: {{ $h }}%;"></div>
-                            <span>{{ $entry['label'] }}</span>
+                        @php $h = $maxValue > 0 ? max(($entry['value'] / $maxValue) * 100, 5) : 5; @endphp
+                        <div class="chart-col">
+                            {{-- Tooltip data-value added --}}
+                            <div class="chart-bar" style="height: {{ $h }}%;" data-value="{{ $entry['formatted'] }}"></div>
+                            <span class="chart-label">{{ $entry['label'] }}</span>
                         </div>
                     @endforeach
                 </div>
             @endif
         </div>
 
-        <div class="card-panel">
-            <div class="card-header">
-                <div>
-                    <h3>Pipeline Pembayaran</h3>
-                    <span class="card-subtitle">Distribusi status order terbaru</span>
-                </div>
+        {{-- Pipeline --}}
+        <div class="section-card">
+            <div class="card-title">
+                <h3>Status Pembayaran</h3>
+                <span>Distribusi Order</span>
             </div>
 
             @if ($paymentPipeline['total'] === 0)
-                <div class="empty-state">Belum ada order yang tercatat pada sistem</div>
+                <div class="empty-state">Data tidak tersedia</div>
             @else
-                <div class="pipeline">
+                <div class="pipeline-list">
                     @foreach ($paymentPipeline['rows'] as $row)
-                        <div class="pipeline-row">
-                            <div class="pipeline-header">
-                                <span class="status-badge" data-type="{{ $row['status'] }}">{{ $row['label'] }}</span>
-                                <strong>{{ number_format($row['count']) }}</strong>
-                                <small class="card-subtitle">{{ $row['percentage'] }}%</small>
+                        @php
+                            $color = match($row['status']) {
+                                'paid' => '#22c55e',
+                                'pending' => '#eab308',
+                                'failed' => '#ef4444',
+                                default => '#3b82f6'
+                            };
+                        @endphp
+                        <div class="pipeline-item">
+                            <div class="pipeline-info">
+                                <span>{{ $row['label'] }}</span>
+                                <span>{{ number_format($row['count']) }} ({{ $row['percentage'] }}%)</span>
                             </div>
-                            <div class="pipeline-progress">
-                                <span style="width: {{ max($row['percentage'], 6) }}%;"></span>
+                            <div class="pipeline-bar-bg">
+                                <div class="pipeline-bar-fill" style="width: {{ $row['percentage'] }}%; background: {{ $color }};"></div>
                             </div>
                         </div>
                     @endforeach
@@ -669,40 +539,48 @@
         </div>
     </section>
 
-    {{-- Detail: Table & Sidebar --}}
-    <section class="detail-grid">
-        <div class="card-panel">
-            <div class="card-header">
-                <div>
-                    <h3>Transaksi Terbaru</h3>
-                    <span class="card-subtitle">6 order terakhir yang masuk ke sistem</span>
-                </div>
+    {{-- 4. Tables & Lists --}}
+    <section class="details-section">
+        {{-- Recent Transactions --}}
+        <div class="section-card">
+            <div class="card-title">
+                <h3>Transaksi Terbaru</h3>
+                <a href="#" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">Lihat Semua &rarr;</a>
             </div>
 
             @if ($recentPayments->isEmpty())
-                <div class="empty-state">Belum ada transaksi yang tercatat</div>
+                <div class="empty-state">Belum ada transaksi</div>
             @else
-                <div class="table-scroll">
-                    <table class="data-table">
+                <div class="table-wrapper">
+                    <table class="modern-table">
                         <thead>
                             <tr>
                                 <th>Invoice</th>
                                 <th>Siswa</th>
                                 <th>Paket</th>
                                 <th>Status</th>
-                                <th>Total</th>
-                                <th>Tanggal</th>
+                                <th style="text-align: right;">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($recentPayments as $payment)
+                                @php
+                                    $badgeClass = match($payment['status']) {
+                                        'paid' => 'status-paid',
+                                        'pending' => 'status-pending',
+                                        'failed' => 'status-failed',
+                                        default => 'status-default'
+                                    };
+                                @endphp
                                 <tr>
-                                    <td>{{ $payment['invoice'] }}</td>
-                                    <td>{{ $payment['student'] }}</td>
+                                    <td style="font-family: monospace;">{{ $payment['invoice'] }}</td>
+                                    <td>
+                                        <div style="font-weight: 600;">{{ $payment['student'] }}</div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ $payment['paid_at'] }}</div>
+                                    </td>
                                     <td>{{ $payment['package'] }}</td>
-                                    <td><span class="status-badge" data-type="{{ $payment['status'] }}">{{ $payment['status_label'] }}</span></td>
-                                    <td>{{ $payment['total'] }}</td>
-                                    <td>{{ $payment['paid_at'] }}</td>
+                                    <td><span class="status-pill {{ $badgeClass }}">{{ $payment['status_label'] }}</span></td>
+                                    <td style="text-align: right; font-weight: 700;">{{ $payment['total'] }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -711,50 +589,49 @@
             @endif
         </div>
 
-        <div class="stacked">
-            <div class="card-panel">
-                <div class="card-header">
-                    <div>
-                        <h3>Paket Teratas</h3>
-                        <span class="card-subtitle">Berdasarkan jumlah transaksi lunas</span>
-                    </div>
+        {{-- Top Packages & Students --}}
+        <div style="display: grid; gap: 24px;">
+            {{-- Top Packages --}}
+            <div class="section-card">
+                <div class="card-title">
+                    <h3>Paket Terpopuler</h3>
                 </div>
-
                 @if ($topPackages->isEmpty())
-                    <div class="empty-state">Belum ada data paket yang terhubung dengan transaksi</div>
+                    <div class="empty-state">Data belum cukup</div>
                 @else
-                    <div class="top-package-list">
+                    <div class="list-group">
                         @foreach ($topPackages as $package)
-                            <div class="package-item">
-                                <div>
+                            <div class="list-item">
+                                <div class="item-main">
                                     <strong>{{ $package['title'] }}</strong>
-                                    <span>{{ number_format($package['orders']) }} transaksi lunas</span>
+                                    <span>{{ number_format($package['orders']) }} Terjual</span>
                                 </div>
-                                <strong>{{ $package['revenue'] }}</strong>
+                                <div class="item-side">{{ $package['revenue'] }}</div>
                             </div>
                         @endforeach
                     </div>
                 @endif
             </div>
 
-            <div class="card-panel">
-                <div class="card-header">
-                    <div>
-                        <h3>Siswa Terbaru</h3>
-                        <a href="{{ route('admin.students.index') }}" class="card-subtitle">Lihat semua siswa</a>
-                    </div>
+            {{-- Recent Students --}}
+            <div class="section-card">
+                <div class="card-title">
+                    <h3>Siswa Baru</h3>
+                    <a href="{{ route('admin.students.index') }}" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">Semua Siswa</a>
                 </div>
-
                 @if ($recentStudents->isEmpty())
-                    <div class="empty-state">Belum ada pendaftaran siswa baru</div>
+                    <div class="empty-state">Belum ada pendaftaran</div>
                 @else
-                    <div class="student-list">
+                    <div class="list-group">
                         @foreach ($recentStudents as $student)
-                            <div class="student-card">
-                                <strong>{{ $student['name'] }}</strong>
-                                <small>{{ $student['email'] }}</small>
-                                <small>ID: {{ $student['student_id'] ?? 'Belum ditetapkan' }}</small>
-                                <small>Bergabung {{ $student['joined_at'] }}</small>
+                            <div class="list-item">
+                                <div class="item-main">
+                                    <strong>{{ $student['name'] }}</strong>
+                                    <span>{{ $student['email'] }}</span>
+                                </div>
+                                <div class="item-side" style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted);">
+                                    {{ $student['joined_at'] }}
+                                </div>
                             </div>
                         @endforeach
                     </div>
@@ -763,5 +640,5 @@
         </div>
     </section>
 
-</section>
+</div>
 @endsection

@@ -4,286 +4,332 @@
 
 @push('styles')
     <style>
-        /* Layout Umum */
-        .student-section {
-            margin-bottom: 60px;
+        :root {
+            --primary: #0f766e;
+            --primary-hover: #115e59;
+            --primary-light: #ccfbf1;
+            --surface: #ffffff;
+            --bg-body: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
 
-        /* 1. Hero Section (Banner Style) */
-        .student-materials__hero {
-            background: linear-gradient(135deg, var(--student-primary) 0%, #2a8c82 100%); /* Menggunakan warna program */
-            border-radius: 24px;
-            padding: clamp(30px, 5vw, 60px);
-            color: white;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(47, 152, 140, 0.2);
+        /* --- Layout Container Full Width --- */
+        .materials-container {
+            width: 100%;
+            padding: 0 40px; /* Jarak aman kiri kanan */
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 40px;
         }
 
-        .student-materials__hero h1 {
-            margin: 0;
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .student-materials__hero p {
-            margin: 0;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-            max-width: 600px;
-            line-height: 1.6;
-        }
-
-        .student-materials__actions {
+        /* --- Hero Section --- */
+        .hero-banner {
+            background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
             display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        /* Tombol Custom untuk Hero */
-        .hero-btn {
-            padding: 12px 28px;
-            border-radius: 50px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform 0.2s;
-            display: inline-flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
         }
         
-        .hero-btn--primary {
-            background: #FFA726; /* Warna aksen oranye seperti desain, atau ganti var(--student-accent) */
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4);
-        }
-
-        .hero-btn--outline {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .hero-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        /* 2. Section Header (Centered) */
-        .section-header-center {
-            text-align: center;
-            margin-bottom: 40px;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .section-header-center h2 {
-            font-size: 2rem;
-            color: var(--student-primary);
-            margin-bottom: 12px;
-        }
-
-        .section-header-center p {
-            color: var(--student-text-muted);
-        }
-
-        /* 3. Grid Kartu Materi (Blue Cards Style) */
-        .student-materials__collections {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        .student-materials__collection-card {
-            background: var(--student-surface);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Header Kartu (Bagian Berwarna) */
-        .collection-header {
-            background: var(--student-primary); /* Warna biru/teal program */
-            padding: 30px;
-            color: white;
-            position: relative;
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .collection-badge {
+        .hero-banner::before {
+            content: '';
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(4px);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: white;
+            top: -50%; right: -10%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
         }
 
-        .collection-title {
-            margin: 0 0 8px 0;
-            font-size: 1.8rem;
+        .hero-content { position: relative; z-index: 2; max-width: 800px; }
+        
+        .hero-title {
+            font-size: 2rem;
             font-weight: 700;
+            margin: 0 0 12px;
+            line-height: 1.2;
+        }
+        
+        .hero-desc {
+            font-size: 1.05rem;
+            opacity: 0.95;
+            margin: 0 0 24px;
+            line-height: 1.6;
         }
 
-        .collection-desc {
-            margin: 0;
-            font-size: 0.95rem;
-            opacity: 0.9;
-            line-height: 1.5;
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
-        /* Body Kartu (List Item) */
-        .collection-body {
-            padding: 20px;
-            background: #f8f9fa; /* Background abu sangat muda */
-            flex-grow: 1;
+        .btn-hero {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+        }
+        .btn-hero:hover { background: white; color: var(--primary); }
+
+        /* --- Section Title --- */
+        .section-title {
+            text-align: left; /* Rata kiri agar sesuai layout lebar */
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-title h2 { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin: 0 0 4px; }
+        .section-title p { color: var(--text-muted); margin: 0; font-size: 0.95rem; }
+
+        /* --- Collections Grid --- */
+        .collections-grid {
+            display: grid;
+            /* Grid otomatis mengisi lebar, minimal 400px per kartu */
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 32px;
+        }
+
+        /* --- Collection Card --- */
+        .collection-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        /* Item Materi (Baris Putih) */
-        .material-list-item {
+        .collection-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: #cbd5e1;
+        }
+
+        /* Header Kartu */
+        .collection-header {
+            padding: 20px 24px;
+            background: var(--bg-body);
+            position: relative;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        
+        .collection-badge {
             background: white;
-            padding: 16px 20px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: var(--student-text-main, #333);
-            border: 1px solid rgba(0,0,0,0.04);
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+            border: 1px solid var(--border);
         }
 
-        .material-list-item:hover {
-            transform: translateX(5px);
-            border-color: var(--student-primary);
-            box-shadow: 0 4px 12px rgba(47, 152, 140, 0.1);
+        .collection-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        /* Body Kartu (List) */
+        .collection-body {
+            padding: 0;
+            background: var(--surface);
+            flex: 1;
         }
 
-        .material-list-item span {
-            font-weight: 500;
+        /* Material Item Row */
+        .material-item {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+        .material-item:last-child { border-bottom: none; }
+        .material-item:hover { background: #fcfcfc; }
+
+        .material-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .material-info h4 {
+            margin: 0 0 4px;
             font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        
+        .material-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
         }
 
-        .material-arrow {
-            color: var(--student-text-muted);
+        .material-tag {
+            background: var(--bg-body);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            border: 1px solid var(--border);
+            white-space: nowrap;
         }
+
+        .material-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .material-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+        
+        .btn-primary-sm {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary-sm:hover { background: var(--primary-hover); }
+        
+        .btn-outline-sm {
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            background: white;
+        }
+        .btn-outline-sm:hover { border-color: var(--primary); color: var(--primary); }
 
         /* Empty State */
-        .student-materials__empty {
+        .empty-state {
             text-align: center;
-            padding: 40px;
-            background: var(--student-surface);
-            border-radius: 20px;
-            grid-column: 1 / -1;
+            padding: 80px 0;
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-lg);
+            color: var(--text-muted);
         }
 
         @media (max-width: 768px) {
-            .student-materials__collections {
-                grid-template-columns: 1fr;
-            }
-            .collection-header {
-                min-height: auto;
-                padding: 24px;
-            }
+            .materials-container { padding: 0 20px; }
+            .hero-banner { padding: 24px; }
+            .hero-title { font-size: 1.5rem; }
+            .collections-grid { grid-template-columns: 1fr; }
         }
     </style>
 @endpush
 
-@php($materialsLink = $materialsLink ?? config('mayclass.links.materials_drive'))
-@php($quizLink = $quizLink ?? config('mayclass.links.quiz_platform'))
-
 @section('content')
-    <section class="student-section">
-        <div class="student-materials__hero">
-            <div>
-                <h1>Mulai Belajar</h1>
-                <p>
+    <div class="materials-container">
+
+        {{-- 1. Hero Section --}}
+        <div class="hero-banner">
+            <div class="hero-content">
+                <h1 class="hero-title">Mulai Belajar</h1>
+                <p class="hero-desc">
                     @if (! empty($activePackage))
-                        Materi eksklusif untuk paket {{ $activePackage->detail_title ?? $activePackage->title }}.
+                        Materi eksklusif untuk paket <strong>{{ $activePackage->detail_title ?? $activePackage->title }}</strong>.
                     @endif
-                    {{ number_format($stats['total']) }} materi aktif mencakup {{ number_format($stats['subjects']) }} mata pelajaran
-                    dan {{ number_format(count($stats['levels'])) }} jenjang belajar.
+                    Terdapat {{ number_format($stats['total']) }} materi aktif yang mencakup {{ number_format($stats['subjects']) }} mata pelajaran 
+                    dan {{ number_format(count($stats['levels'])) }} jenjang belajar untuk mendukung prestasimu.
                 </p>
-            </div>
-            
-            <div class="student-materials__actions">
-                <a class="hero-btn hero-btn--primary" href="{{ $materialsLink }}" target="_blank" rel="noopener">
-                    Mulai Belajar
-                </a>
-                <a class="hero-btn hero-btn--outline" href="{{ route('student.dashboard') }}">
-                    Kembali ke Beranda
-                </a>
+                <div class="hero-actions">
+                    <a href="{{ $materialsLink }}" target="_blank" rel="noopener" class="btn-hero">
+                        Buka Semua Materi
+                    </a>
+                    <a href="{{ route('student.dashboard') }}" class="btn-hero">
+                        Kembali ke Dashboard
+                    </a>
+                </div>
             </div>
         </div>
-    </section>
 
-    <section class="student-section">
-        <div class="section-header-center">
+        {{-- 2. Section Header --}}
+        <div class="section-title">
             <h2>Materi Pembelajaran & Bank Soal</h2>
-            <p>
-                Belajar terarah dan menyenangkan. Kuasai materi pelajaran serta TWK, TIU, dan TKP dengan metode yang mudah dipahami.
-            </p>
+            <p>Kuasai materi pelajaran serta persiapan ujian dengan metode yang terstruktur.</p>
         </div>
 
+        {{-- 3. Materials Grid --}}
         @if ($collections->isNotEmpty())
-            <div class="student-materials__collections">
+            <div class="collections-grid">
                 @foreach ($collections as $collection)
-                    <article class="student-materials__collection-card">
-                        <div class="collection-header">
-                            <span class="collection-badge">
-                                {{ count($collection['items']) }} Bab
-                            </span>
-                            <h3 class="collection-title">{{ $collection['label'] }}</h3>
-                            <p class="collection-desc">
-                                Materi tentang {{ $collection['label'] }}, Peluang, Aritmatika dll.
-                            </p>
+                    <article class="collection-card">
+                        {{-- Header Kartu --}}
+                        <div class="collection-header" style="border-left: 4px solid {{ $collection['accent'] }};">
+                            <h3 class="collection-title" style="color: var(--text-main);">{{ $collection['label'] }}</h3>
+                            <span class="collection-badge">{{ count($collection['items']) }} BAB</span>
                         </div>
 
                         <div class="collection-body">
                             @foreach ($collection['items'] as $material)
-                                <article class="student-materials__card" style="border-color: {{ $collection['accent'] }}33; background: {{ $collection['accent'] }}14;">
-                                    <span class="student-chip" style="background: #ffffff; color: {{ $collection['accent'] }};">Level {{ $material['level'] }}</span>
-                                    <h3>{{ $material['title'] }}</h3>
-                                    <p>{{ $material['summary'] }}</p>
-                                    <div class="student-materials__meta">
-                                        <span>{{ $material['chapter_count'] }} bab</span>
-                                        <span>{{ $material['objective_count'] }} tujuan</span>
-                                    </div>
-                                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                                        <a class="student-button student-button--primary" style="padding: 10px 20px;" href="{{ route('student.materials.show', $material['slug']) }}">Detail materi</a>
-                                        <a class="student-button student-button--outline" style="padding: 10px 20px;" href="{{ $material['view_url'] }}" target="_blank" rel="noopener">Lihat materi</a>
+                                <div class="material-item">
+                                    <div class="material-top">
+                                        <div class="material-info">
+                                            <h4>{{ $material['title'] }}</h4>
+                                            <p>{{ Str::limit($material['summary'], 100) }}</p>
+                                        </div>
+                                        <span class="material-tag">{{ $material['level'] }}</span>
                                     </div>
                                     
-                                    <svg class="material-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </a>
+                                    <div class="material-meta">
+                                        <span>{{ $material['chapter_count'] }} Bab</span>
+                                        <span>{{ $material['objective_count'] }} Tujuan Pembelajaran</span>
+                                    </div>
+
+                                    <div class="material-actions">
+                                        <a href="{{ route('student.materials.show', $material['slug']) }}" class="btn-sm btn-primary-sm">
+                                            Buka Materi
+                                        </a>
+                                        <a href="{{ $material['view_url'] }}" target="_blank" rel="noopener" class="btn-sm btn-outline-sm">
+                                            Lihat Sumber
+                                        </a>
+                                    </div>
+                                </div>
                             @endforeach
 
                             @if(count($collection['items']) === 0)
-                                <div style="text-align: center; padding: 20px; color: var(--student-text-muted);">
-                                    Belum ada materi
+                                <div style="text-align: center; padding: 32px; color: var(--text-muted); font-size: 0.9rem;">
+                                    Belum ada materi di kategori ini.
                                 </div>
                             @endif
                         </div>
@@ -291,10 +337,16 @@
                 @endforeach
             </div>
         @else
-            <div class="student-materials__empty">
-                <p>Belum ada materi yang tercatat. Unggah materi melalui dashboard tutor untuk mulai membagikannya.</p>
-                <a class="student-button student-button--primary" href="{{ $materialsLink }}" target="_blank" rel="noopener">Buka Google Drive</a>
+            <div class="empty-state">
+                <h3>Belum ada materi tercatat</h3>
+                <p>Materi pembelajaran akan muncul di sini setelah diterbitkan oleh tutor atau admin.</p>
+                <div style="margin-top: 20px;">
+                    <a href="{{ $materialsLink }}" target="_blank" rel="noopener" class="btn-sm btn-primary-sm">
+                        Cek Google Drive
+                    </a>
+                </div>
             </div>
         @endif
-    </section>
+
+    </div>
 @endsection

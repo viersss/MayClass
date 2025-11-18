@@ -26,7 +26,9 @@
                 --ink-muted: rgba(20, 59, 46, 0.78);
                 --ink-soft: rgba(20, 59, 46, 0.62);
                 --nav-surface: linear-gradient(135deg, rgba(80, 190, 150, 0.98), rgba(63, 166, 126, 0.98));
-                --footer-surface: #e8f3ef;
+                --footer-bg: #0d261f; /* Warna background footer baru (Deep Teal) */
+                --footer-text: #a3b3ad;
+                --footer-heading: #ffffff;
                 --shadow-lg: 0 24px 60px rgba(31, 107, 79, 0.2);
                 --shadow-md: 0 18px 40px rgba(31, 107, 79, 0.12);
                 --radius-lg: 20px;
@@ -94,40 +96,38 @@
             }
 
             /* ==== NAVBAR TRANSLUCENT + BLUR ==== */
-header {
-  overflow: visible;           /* biar elemen nav tidak ter-clipping */
-  padding-top: 0;
-}
+            header {
+                overflow: visible;
+                padding-top: 0;
+            }
 
-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  width: 100%;
-  padding: 12px clamp(12px, 3vw, 24px);
-  
-  /* 🔸 Glassmorphism putih */
-  background: rgba(255, 255, 255, 0.4); /* putih transparan */
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                width: 100%;
+                padding: 12px clamp(12px, 3vw, 24px);
+                
+                /* Glassmorphism putih */
+                background: rgba(255, 255, 255, 0.4); 
+                backdrop-filter: blur(16px) saturate(180%);
+                -webkit-backdrop-filter: blur(16px) saturate(180%);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-}
+                transition: background 0.3s ease, box-shadow 0.3s ease;
+            }
 
-
-
-.nav-inner {
-  display: grid;
-  grid-template-columns: auto 1fr auto; /* kiri - tengah - kanan */
-  align-items: center;
-  width: 100%;
-  padding: 0 32px; /* tidak terlalu besar */
-  gap: 20px;
-}
+            .nav-inner {
+                display: grid;
+                grid-template-columns: auto 1fr auto; /* kiri - tengah - kanan */
+                align-items: center;
+                width: 100%;
+                padding: 0 32px;
+                gap: 20px;
+            }
 
             @media (max-width: 1024px) {
                 nav {
@@ -167,22 +167,20 @@ nav {
                 justify-self: start;
             }
 
-.brand img {
-    width: 130px;    /* 🔸 dari 48px → 72px (lebih besar tapi masih proporsional) */
-    height: auto;   /* biar tinggi menyesuaikan proporsi */
-    object-fit: contain;
-}
+            .brand img {
+                width: 130px;
+                height: auto;
+                object-fit: contain;
+            }
 
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* 🔸 dorong ke kanan */
-  gap: 28px;
-  font-size: 0.95rem;
-  margin-left: 57px;
-}
-
+            .nav-links {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 28px;
+                font-size: 0.95rem;
+                margin-left: 57px;
+            }
 
             .nav-links a {
                 color: #000;
@@ -190,7 +188,7 @@ nav {
             }
 
             .nav-links a:hover {
-                color: #ffffff;
+                color: var(--primary-main);
             }
 
             .nav-actions {
@@ -238,12 +236,12 @@ nav {
                     width: 100%;
                     justify-content: center;
                 }
-            }
-
-            @media (max-width: 768px) {
-                .nav-actions {
-                    width: 100%;
+                
+                .nav-links {
+                    flex-wrap: wrap;
                     justify-content: center;
+                    gap: 16px;
+                    margin-left: 0;
                 }
             }
 
@@ -302,10 +300,10 @@ nav {
                 justify-content: center; 
                 text-align: center;
                 width: 100%;
+                height: 900px;
                 min-height: calc(100vh + 120px);
-                padding-top: calc(var(--nav-height) + 40px);
+                padding-top: calc(var(--nav-height) + 60px);
                 padding-bottom: 100px;
-
                 background: 
                     linear-gradient(
                         to bottom,
@@ -314,8 +312,6 @@ nav {
                     ),
                     url('/images/stis_contoh.jpeg') center/cover no-repeat;
             }
-
-
 
             .hero-content {
                 max-width: 800px;
@@ -365,59 +361,6 @@ nav {
                 flex-wrap: wrap;
                 gap: 16px;
                 margin-bottom: 40px;
-            }
-
-            .hero-stats {
-                display: grid;
-                gap: 18px;
-                background: rgba(255, 255, 255, 0.12);
-                border-radius: var(--radius-xl);
-                padding: 28px 32px;
-                backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.16);
-                max-width: 440px;
-                color: rgba(255, 255, 255, 0.9);
-            }
-
-            .hero-stats-row {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 18px;
-            }
-
-            .hero-stat {
-                flex: 1 1 160px;
-                display: grid;
-                gap: 2px;
-            }
-
-            .hero-stat strong {
-                font-size: 1.6rem;
-                color: #ffffff;
-            }
-
-            .hero-stat span {
-                color: rgba(255, 255, 255, 0.8);
-            }
-
-            .hero-art {
-                position: relative;
-            }
-
-            .hero-art::after {
-                content: "";
-                position: absolute;
-                inset: 10% 0 -6% 12%;
-                background: radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.22), transparent 65%);
-                border-radius: var(--radius-xl);
-                z-index: 0;
-            }
-
-            .hero-art img {
-                position: relative;
-                z-index: 1;
-                border-radius: var(--radius-xl);
-                box-shadow: var(--shadow-lg);
             }
 
             .section-header {
@@ -486,166 +429,151 @@ nav {
             }
 
             /* Full-width pricing section */
-     .pricing-section {
-        padding: 64px 0;
-        background: var(--neutral-100, #f6f7f8);
-    }
+            .pricing-section {
+                padding: 64px 0;
+                background: var(--neutral-100);
+            }
 
-    .pricing-section .section-header {
-        max-width: 720px;
-        margin: 0 auto 32px;
-        text-align: center;
-    }
+            .pricing-section .section-header {
+                max-width: 720px;
+                margin: 0 auto 32px;
+                text-align: center;
+            }
 
-    .pricing-section .section-title {
-        margin: 0 0 8px;
-        font-size: 2.5rem;
-    }
+            .pricing-section .section-title {
+                margin: 0 0 8px;
+                font-size: 2.5rem;
+            }
 
-    .pricing-section .section-subtitle {
-        margin: 0;
-        color: var(--ink-soft, #6b7280);
-        font-size: 0.98rem;
-    }
+            .pricing-section .section-subtitle {
+                margin: 0;
+                color: var(--ink-soft);
+                font-size: 0.98rem;
+            }
 
-    .pricing-group {
-        margin-top: 32px;
-        display: grid;
-        gap: 18px;
-    }
+            .pricing-group {
+                margin-top: 32px;
+                display: grid;
+                gap: 18px;
+            }
 
-    .pricing-group > div:first-child {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
+            .pricing-group > div:first-child {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
 
-    .pricing-group > div:first-child h3 {
-        margin: 0;
-        font-size: 1.2rem;
-    }
+            .pricing-group > div:first-child h3 {
+                margin: 0;
+                font-size: 1.2rem;
+            }
 
-    .pricing-group > div:first-child p {
-        margin: 0;
-        color: var(--ink-soft, #6b7280);
-        font-size: 0.92rem;
-    }
+            .pricing-group > div:first-child p {
+                margin: 0;
+                color: var(--ink-soft);
+                font-size: 0.92rem;
+            }
 
-    .pricing-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 20px;
-    }
+            .pricing-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 20px;
+            }
 
-    .pricing-card {
-        position: relative;
-        display: grid;
-        gap: 14px;
-        padding: 20px 18px 18px;
-        border-radius: 18px;
-        background: var(--surface, #ffffff);
-        border: 1px solid var(--border, #e5e7eb);
-        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.06);
-        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-    }
+            .pricing-card {
+                position: relative;
+                display: grid;
+                gap: 14px;
+                padding: 20px 18px 18px;
+                border-radius: 18px;
+                background: var(--surface);
+                border: 1px solid var(--neutral-100);
+                box-shadow: 0 16px 30px rgba(15, 23, 42, 0.06);
+                transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            }
 
-    .pricing-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 20px 38px rgba(15, 23, 42, 0.08);
-        border-color: rgba(63, 166, 126, 0.28);
-    }
+            .pricing-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 20px 38px rgba(15, 23, 42, 0.08);
+                border-color: rgba(63, 166, 126, 0.28);
+            }
 
-    .pricing-card .badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        background: rgba(63, 166, 126, 0.12);
-        color: var(--primary-main, #3fa67e);
-    }
+            .pricing-card .badge {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 6px 12px;
+                border-radius: 999px;
+                font-size: 0.78rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                background: rgba(63, 166, 126, 0.12);
+                color: var(--primary-main);
+            }
 
-    .pricing-card strong {
-        font-size: 1.1rem;
-    }
+            .pricing-card strong {
+                font-size: 1.1rem;
+            }
 
-    .pricing-price {
-        font-size: 1.4rem;
-        font-weight: 700;
-        color: var(--primary-dark, #1b6d4f);
-    }
+            .pricing-price {
+                font-size: 1.4rem;
+                font-weight: 700;
+                color: var(--primary-dark);
+            }
 
-    .pricing-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        font-size: 0.9rem;
-        color: var(--ink-soft, #6b7280);
-    }
+            .pricing-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                font-size: 0.9rem;
+                color: var(--ink-soft);
+            }
 
-    .pricing-summary {
-        margin: 0;
-        font-size: 0.94rem;
-        color: var(--ink-soft, #6b7280);
-    }
+            .pricing-features {
+                list-style: none;
+                padding: 0;
+                margin: 6px 0 0;
+                display: grid;
+                gap: 6px;
+                font-size: 0.9rem;
+                color: var(--ink-soft);
+            }
 
-    .pricing-features {
-        list-style: none;
-        padding: 0;
-        margin: 6px 0 0;
-        display: grid;
-        gap: 6px;
-        font-size: 0.9rem;
-        color: var(--ink-soft, #6b7280);
-    }
+            .pricing-features li::before {
+                content: '•';
+                margin-right: 6px;
+                color: var(--primary-main);
+                font-weight: 700;
+            }
 
-    .pricing-features li::before {
-        content: '•';
-        margin-right: 6px;
-        color: var(--primary-main, #3fa67e);
-        font-weight: 700;
-    }
+            .pricing-actions {
+                margin-top: 6px;
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                justify-content: flex-start;
+            }
 
-    .pricing-actions {
-        margin-top: 6px;
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        justify-content: flex-start;
-    }
+            .pricing-actions .btn {
+                font-size: 0.92rem;
+                border-radius: 999px;
+                padding: 10px 18px;
+                text-decoration: none;
+            }
 
-    .pricing-actions .btn {
-        font-size: 0.92rem;
-        border-radius: 999px;
-        padding: 10px 18px;
-        text-decoration: none;
-    }
+            .pricing-actions .btn-primary {
+                background: var(--primary-main);
+                border: none;
+                color: #ffffff;
+                font-weight: 600;
+            }
 
-    .pricing-actions .btn-primary {
-        background: var(--primary-main, #3fa67e);
-        border: none;
-        color: #ffffff;
-        font-weight: 600;
-    }
+            .pricing-actions .btn-primary:hover {
+                background: var(--primary-dark);
+            }
 
-    .pricing-actions .btn-primary:hover {
-        background: var(--primary-dark, #1b6d4f);
-    }
-
-    @media (max-width: 768px) {
-        .pricing-section {
-            padding: 48px 0;
-        }
-
-        .pricing-card {
-            padding: 18px 16px 16px;
-        }
-    }
-            /* Highlight section as full-width block */
+            /* Highlight section */
             .highlight-section {
                 position: relative;
                 width: 100%;
@@ -692,7 +620,7 @@ nav {
                 margin: 0;
             }
 
-            /* Testimonial showcase */
+            /* Testimonials */
             .testimonials {
                 background: radial-gradient(circle at top, rgba(63, 166, 126, 0.1), transparent 55%), #f6fbf8;
                 position: relative;
@@ -862,16 +790,6 @@ nav {
                 font-size: 0.9rem;
             }
 
-            .mentor-pill {
-                align-self: flex-start;
-                border-radius: 999px;
-                padding: 4px 12px;
-                font-size: 0.78rem;
-                font-weight: 600;
-                background: rgba(63, 166, 126, 0.12);
-                color: var(--primary-dark);
-            }
-
             .mentor-saying {
                 font-style: italic;
                 color: var(--ink-soft);
@@ -894,238 +812,250 @@ nav {
                 border: 1px solid rgba(20, 59, 46, 0.06);
             }
 
-            /* FAQ grid in full-width container */
- .faq-section {
-        padding: 64px 0;
-        background: var(--surface, #ffffff);
-    }
-
-    .faq-section .section-header {
-        max-width: 640px;
-        margin: 0 auto 32px;
-        text-align: center;
-    }
-
-    .faq-section .section-title {
-        margin: 0 0 8px;
-        font-size: 1.9rem;
-    }
-
-    .faq-section .section-subtitle {
-        margin: 0;
-        color: var(--ink-soft, #6b7280);
-        font-size: 0.95rem;
-    }
-
-    .faq-grid {
-        max-width: 860px;
-        margin: 0 auto;
-        display: grid;
-        gap: 14px;
-    }
-
-    .faq-grid details {
-        border-radius: 14px;
-        background: var(--neutral-100, #f6f7f8);
-        border: 1px solid var(--border, #e5e7eb);
-        padding: 10px 14px;
-        transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-    }
-
-    .faq-grid details[open] {
-        background: #ffffff;
-        border-color: rgba(63, 166, 126, 0.35);
-        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06);
-    }
-
-    .faq-grid summary {
-        list-style: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        font-weight: 500;
-        font-size: 0.98rem;
-        padding: 4px 0;
-    }
-
-    .faq-grid summary::-webkit-details-marker {
-        display: none;
-    }
-
-    .faq-grid summary::after {
-        content: '+';
-        flex-shrink: 0;
-        width: 22px;
-        height: 22px;
-        border-radius: 999px;
-        border: 1px solid #d1d5db;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.85rem;
-        color: var(--ink-soft, #6b7280);
-        transition: background 0.15s ease, transform 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-    }
-
-    .faq-grid details[open] summary::after {
-        content: '–';
-        background: var(--primary-main, #3fa67e);
-        color: #ffffff;
-        border-color: var(--primary-main, #3fa67e);
-        transform: rotate(0deg);
-    }
-
-    .faq-grid p {
-        margin: 8px 2px 6px;
-        color: var(--ink-soft, #6b7280);
-        font-size: 0.94rem;
-        line-height: 1.6;
-    }
-
-    @media (max-width: 768px) {
-        .faq-section {
-            padding: 48px 0;
-        }
-    }
-
-            details {
-                border-radius: var(--radius-lg);
+            /* FAQ Section */
+            .faq-section {
+                padding: 64px 0;
                 background: var(--surface);
-                padding: 20px 24px;
-                box-shadow: var(--shadow-md);
             }
 
-footer {
-    margin-top: 80px;
-    background: radial-gradient(circle at top, rgba(22, 63, 48, 0.92), rgba(8, 26, 24, 0.96));
-    color: rgba(255, 255, 255, 0.8);
-}
+            .faq-section .section-header {
+                max-width: 640px;
+                margin: 0 auto 32px;
+                text-align: center;
+            }
 
-.footer-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(24px, 4vw, 80px);
-    align-items: flex-start;
-    padding: 80px 32px 40px;
-}
+            .faq-section .section-title {
+                margin: 0 0 8px;
+                font-size: 1.9rem;
+            }
 
-.footer-brand {
-    flex: 1 1 280px;
-    display: grid;
-    gap: 16px;
-}
+            .faq-section .section-subtitle {
+                margin: 0;
+                color: var(--ink-soft);
+                font-size: 0.95rem;
+            }
 
-.footer-brand img {
-    width: 140px;
-    height: auto;
-}
+            .faq-grid {
+                max-width: 860px;
+                margin: 0 auto;
+                display: grid;
+                gap: 14px;
+            }
 
-.footer-brand p {
-    margin: 0;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.7;
-}
+            .faq-grid details {
+                border-radius: 14px;
+                background: var(--neutral-100);
+                border: 1px solid var(--neutral-100);
+                padding: 10px 14px;
+                transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+            }
 
-.footer-nav {
-    flex: 1 1 420px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 24px;
-}
+            .faq-grid details[open] {
+                background: #ffffff;
+                border-color: rgba(63, 166, 126, 0.35);
+                box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06);
+            }
 
-.footer-links {
-    display: grid;
-    gap: 10px;
-    font-size: 0.95rem;
-}
+            .faq-grid summary {
+                list-style: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                font-weight: 500;
+                font-size: 0.98rem;
+                padding: 4px 0;
+            }
 
-.footer-links a {
-    color: rgba(255, 255, 255, 0.75);
-    transition: color 0.2s ease;
-}
+            .faq-grid summary::-webkit-details-marker {
+                display: none;
+            }
 
-.footer-links a:hover {
-    color: var(--primary-light);
-}
+            .faq-grid summary::after {
+                content: '+';
+                flex-shrink: 0;
+                width: 22px;
+                height: 22px;
+                border-radius: 999px;
+                border: 1px solid #d1d5db;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.85rem;
+                color: var(--ink-soft);
+                transition: background 0.15s ease, transform 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+            }
 
-.footer-contact {
-    display: grid;
-    gap: 12px;
-}
+            .faq-grid details[open] summary::after {
+                content: '–';
+                background: var(--primary-main);
+                color: #ffffff;
+                border-color: var(--primary-main);
+                transform: rotate(0deg);
+            }
 
-.contact-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 16px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
-    font-size: 0.95rem;
-}
+            .faq-grid p {
+                margin: 8px 2px 6px;
+                color: var(--ink-soft);
+                font-size: 0.94rem;
+                line-height: 1.6;
+            }
 
-.footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    padding: 20px 32px 40px;
-    flex-wrap: wrap;
-}
+            /* ============== REDESIGNED FOOTER STYLES ============== */
+            footer {
+                background-color: var(--footer-bg);
+                color: var(--footer-text);
+                padding: 80px 0 32px;
+                position: relative;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+            }
 
-.footer-bottom p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.65);
-}
+            .footer-top {
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr 1.2fr; /* Brand Wide, Link, Link, Contact */
+                gap: 48px;
+                padding-bottom: 64px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
 
-.footer-socials {
-    display: inline-flex;
-    gap: 12px;
-}
+            .footer-brand-col {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                max-width: 360px;
+            }
 
-.social-link {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    display: grid;
-    place-items: center;
-    color: rgba(255, 255, 255, 0.85);
-    transition: background 0.2s ease, color 0.2s ease;
-}
+            .footer-logo {
+                width: 160px;
+                height: auto;
+                filter: brightness(0) invert(1); /* Membuat logo menjadi putih jika aslinya berwarna */
+                opacity: 0.9;
+            }
 
-.social-link:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: var(--primary-light);
-}
+            .footer-desc {
+                font-size: 0.95rem;
+                line-height: 1.7;
+                color: rgba(255, 255, 255, 0.6);
+                margin: 0;
+            }
 
-@media (max-width: 768px) {
-    .footer-wrapper {
-        padding: 60px 20px 32px;
-    }
+            .footer-heading {
+                font-size: 1.05rem;
+                font-weight: 600;
+                color: var(--footer-heading);
+                margin-bottom: 24px;
+                display: block;
+                letter-spacing: 0.02em;
+            }
 
-    .footer-bottom {
-        padding: 20px;
-    }
-}
+            .footer-links {
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+            }
 
+            .footer-links a {
+                font-size: 0.95rem;
+                color: var(--footer-text);
+                transition: color 0.2s ease, padding-left 0.2s ease;
+            }
+
+            .footer-links a:hover {
+                color: var(--primary-accent);
+                padding-left: 4px;
+            }
+
+            .footer-contact-info {
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
+            }
+
+            .contact-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                font-size: 0.95rem;
+                color: rgba(255, 255, 255, 0.75);
+            }
+
+            .contact-icon {
+                margin-top: 3px;
+                flex-shrink: 0;
+                color: var(--primary-main);
+            }
+
+            .social-icons {
+                display: flex;
+                gap: 12px;
+                margin-top: 8px;
+            }
+
+            .social-btn {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.05);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #ffffff;
+                transition: background 0.2s ease, transform 0.2s ease;
+            }
+
+            .social-btn:hover {
+                background: var(--primary-main);
+                transform: translateY(-2px);
+            }
+
+            .footer-bottom {
+                padding-top: 32px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 16px;
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+            .footer-legal {
+                display: flex;
+                gap: 24px;
+            }
+
+            .footer-legal a:hover {
+                color: #ffffff;
+                text-decoration: underline;
+            }
+
+            /* Responsive adjustments for Footer */
+            @media (max-width: 1024px) {
+                .footer-top {
+                    grid-template-columns: 1fr 1fr;
+                    gap: 40px;
+                }
+            }
+
+            @media (max-width: 640px) {
+                .footer-top {
+                    grid-template-columns: 1fr;
+                    gap: 32px;
+                }
+                
+                .footer-bottom {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .footer-legal {
+                    justify-content: center;
+                }
+            }
+
+            /* General Media Queries */
             @media (max-width: 1080px) {
-                .hero {
-                    padding: 60px 24px;
-                }
-
-                .hero h1 {
-                    font-size: clamp(2.2rem, 3.5vw, 2.9rem);
-                }
-
-                .hero p {
-                    font-size: 1rem;
-                }
-
                 .articles-grid,
                 .pricing-grid,
                 .highlight-grid,
@@ -1137,42 +1067,12 @@ footer {
             }
 
             @media (max-width: 768px) {
-                nav {
-                    padding: 18px 18px;
-                    gap: 16px;
-                    width: calc(100% - 32px);
-                    margin: 0 auto 24px;
-                }
-
-                .nav-links {
-                    flex-wrap: wrap;
-                    justify-content: center;
-                    gap: 16px;
-                }
-
-                .section {
-                    padding: 60px 0;
-                }
-
                 .pricing-section {
-                    padding: 60px 0;
+                    padding: 48px 0;
                 }
-
-.hero {
-  height: 900px;
-  padding-top: calc(var(--nav-height) + 60px);
-}
-
-
-
-                .highlight-section {
-                    padding: 60px 16px;
+                .pricing-card {
+                    padding: 18px 16px 16px;
                 }
-
-                .section .container {
-                    padding: 0 16px;
-                }
-
                 .articles-grid,
                 .pricing-grid,
                 .highlight-grid,
@@ -1180,30 +1080,6 @@ footer {
                 .testimonials-grid,
                 .mentor-grid {
                     grid-template-columns: 1fr;
-                }
-
-                .hero-stats {
-                    max-width: none;
-                    width: 100%;
-                }
-
-                footer {
-                    padding: 60px 0 40px;
-                }
-
-                .footer-grid {
-                    grid-template-columns: 1fr;
-                    padding: 0 16px;
-                    margin: 0 auto 40px;
-                }
-
-                .copyright {
-                    padding: 0 16px;
-                }
-
-                .testimonial-card,
-                .mentor-profile {
-                    padding: 24px;
                 }
             }
         </style>
@@ -1241,7 +1117,7 @@ footer {
                             </a>
                             <form method="post" action="{{ route('logout') }}" style="margin: 0;">
                                 @csrf
-                                <button type="submit" class="btn btn-outline">Keluar</button>
+                                <button type="submit" class="btn btn-outline" style="color: #000; border-color: #ccc;">Keluar</button>
                             </form>
                         @else
                             <a class="btn btn-primary" href="{{ $joinLink }}">
@@ -1259,7 +1135,6 @@ footer {
                         Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel, dan
                         penuh dukungan menuju Perguruan Tinggi impianmu.
                     </p>
-                    </div>
                 </div>
             </div>
         </header>
@@ -1267,7 +1142,6 @@ footer {
         <section class="section" id="artikel">
             <div class="container">
                 <div class="section-header" data-reveal>
-
                     <h2 class="section-title">Wawasan Terbaru untuk Dukung Persiapanmu</h2>
                     <p class="section-subtitle">
                         Nikmati rangkuman materi, strategi ujian, dan cerita motivasi dari tim akademik MayClass agar kamu
@@ -1321,7 +1195,6 @@ footer {
         <section class="pricing-section" id="paket">
             <div class="container">
                 <div class="section-header" data-reveal>
-
                     <h2 class="section-title">Pilih Paket Favoritmu &amp; Belajar Bareng Mentor Andal</h2>
                     <p class="section-subtitle">
                         Mulai dari kelas reguler, persiapan UTBK, hingga bimbingan CPNS—MayClass siap menemanimu dengan sesi
@@ -1369,9 +1242,6 @@ footer {
                                         @endif
                                         <div class="pricing-actions">
                                             <a class="btn btn-primary" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
-                                            @auth
-                                            @else
-                                            @endauth
                                         </div>
                                     </article>
                                 @endforeach
@@ -1579,118 +1449,126 @@ footer {
             </div>
         </section>
 
- <section class="section faq-section" id="faq">
-    <div class="container">
-        <div class="section-header" data-reveal>
-            <h2 class="section-title">FAQ</h2>
-        </div>
+        <section class="section faq-section" id="faq">
+            <div class="container">
+                <div class="section-header" data-reveal>
+                    <h2 class="section-title">FAQ</h2>
+                </div>
 
-        <div class="faq-grid" data-reveal>
-            <details>
-                <summary>Apakah MayClass menyediakan kelas online dan tatap muka?</summary>
-                <p>
-                    Ya. Kamu bisa memilih mode belajar sesuai kebutuhan. Tim kami bantu atur jadwal dan mentor terbaik
-                    untukmu.
-                </p>
-            </details>
-            <details>
-                <summary>Bagaimana cara mengakses materi dan rekaman kelas?</summary>
-                <p>
-                    Siswa dapat login ke dashboard MayClass untuk melihat materi, rekaman kelas, dan rangkuman progres
-                    belajar.
-                </p>
-            </details>
-            <details>
-                <summary>Apakah bisa reschedule jika ada jadwal mendadak?</summary>
-                <p>
-                    Bisa. Hubungi admin maksimal 24 jam sebelum sesi dimulai dan kami akan bantu atur ulang jadwalmu.
-                </p>
-            </details>
-            <details>
-                <summary>Bagaimana sistem evaluasi progres siswa?</summary>
-                <p>
-                    Kami menyediakan laporan mingguan, evaluasi tryout, dan coaching pribadi agar target belajar tercapai.
-                </p>
-            </details>
-            <details>
-                <summary>Apakah ada grup diskusi komunitas?</summary>
-                <p>
-                    Ada. Semua siswa akan bergabung di komunitas eksklusif untuk diskusi, motivasi, dan info terbaru.
-                </p>
-            </details>
-            <details>
-                <summary>Metode pembayaran apa yang tersedia?</summary>
-                <p>
-                    Pembayaran dapat melalui transfer bank, e-wallet, dan virtual account dengan konfirmasi otomatis.
-                </p>
-            </details>
-        </div>
-    </div>
-</section>
-
-        <footer>
-                <div class="footer-wrapper container" data-reveal>
-                    <div class="footer-brand">
-                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
+                <div class="faq-grid" data-reveal>
+                    <details>
+                        <summary>Apakah MayClass menyediakan kelas online dan tatap muka?</summary>
                         <p>
-                            MayClass mengintegrasikan materi interaktif, pendampingan mentor, dan layanan admin responsif
-                            untuk memastikan perjalanan belajarmu selalu terarah.
+                            Ya. Kamu bisa memilih mode belajar sesuai kebutuhan. Tim kami bantu atur jadwal dan mentor terbaik
+                            untukmu.
                         </p>
-                        <div class="footer-contact">
-                            <a class="contact-item" href="tel:+6281234567890">📞 +62 812-3456-7890</a>
-                            <a class="contact-item" href="mailto:hello@mayclass.id">✉️ hello@mayclass.id</a>
+                    </details>
+                    <details>
+                        <summary>Bagaimana cara mengakses materi dan rekaman kelas?</summary>
+                        <p>
+                            Siswa dapat login ke dashboard MayClass untuk melihat materi, rekaman kelas, dan rangkuman progres
+                            belajar.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Apakah bisa reschedule jika ada jadwal mendadak?</summary>
+                        <p>
+                            Bisa. Hubungi admin maksimal 24 jam sebelum sesi dimulai dan kami akan bantu atur ulang jadwalmu.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Bagaimana sistem evaluasi progres siswa?</summary>
+                        <p>
+                            Kami menyediakan laporan mingguan, evaluasi tryout, dan coaching pribadi agar target belajar tercapai.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Apakah ada grup diskusi komunitas?</summary>
+                        <p>
+                            Ada. Semua siswa akan bergabung di komunitas eksklusif untuk diskusi, motivasi, dan info terbaru.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Metode pembayaran apa yang tersedia?</summary>
+                        <p>
+                            Pembayaran dapat melalui transfer bank, e-wallet, dan virtual account dengan konfirmasi otomatis.
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        {{-- REDESIGNED FOOTER START --}}
+        <footer>
+            <div class="container">
+                <div class="footer-top">
+                    <div class="footer-brand-col">
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" class="footer-logo" />
+                        <p class="footer-desc">
+                            MayClass adalah platform bimbingan belajar premium yang menggabungkan materi berkualitas, mentor berpengalaman, dan teknologi terkini untuk mengantarkan siswa menuju prestasi akademik terbaik.
+                        </p>
+                        <div class="social-icons">
+                            <a href="#" class="social-btn" aria-label="Instagram">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                            </a>
+                            <a href="#" class="social-btn" aria-label="TikTok">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 448 512"><path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A162.55 162.55 0 1 1 185 188.31V278.2a74.62 74.62 0 1 0 52.23 71.18V0l88 0a121.18 121.18 0 0 0 1.86 22.17h0A122.18 122.18 0 0 0 381 102.39a121.43 121.43 0 0 0 67 20.14z"/></svg>
+                            </a>
+                            <a href="#" class="social-btn" aria-label="YouTube">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.25z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+                            </a>
                         </div>
                     </div>
-                    <div class="footer-nav">
-                        <div>
-                            <h4>Produk</h4>
-                            <div class="footer-links">
-                                <a href="#paket">Paket Belajar</a>
-                                <a href="#tentor">Super Teacher</a>
-                                <a href="#testimoni">Cerita Alumni</a>
-                            </div>
+
+                    <div>
+                        <span class="footer-heading">Program</span>
+                        <div class="footer-links">
+                            <a href="#paket">Paket Belajar</a>
+                            <a href="#tentor">Super Teacher</a>
+                            <a href="#testimoni">Cerita Alumni</a>
+                            <a href="{{ route('packages.index') }}">Katalog Lengkap</a>
                         </div>
-                        <div>
-                            <h4>Bantuan</h4>
-                            <div class="footer-links">
-                                <a href="#faq">FAQ</a>
-                                <a href="{{ route('login') }}">Masuk Dashboard</a>
-                                <a href="https://wa.me/{{ config('services.whatsapp.finance_admin', '6281234567890') }}" target="_blank" rel="noopener">Chat Admin</a>
-                            </div>
+                    </div>
+
+                    <div>
+                        <span class="footer-heading">Bantuan</span>
+                        <div class="footer-links">
+                            <a href="#faq">FAQ (Tanya Jawab)</a>
+                            <a href="{{ route('login') }}">Masuk Dashboard</a>
+                            <a href="{{ route('join') }}">Daftar Siswa Baru</a>
+                            <a href="https://wa.me/6281234567890" target="_blank">Hubungi Admin</a>
                         </div>
-                        <div>
-                            <h4>Perusahaan</h4>
-                            <div class="footer-links">
-                                <a href="#beranda">Tentang MayClass</a>
-                                <a href="#artikel">Blog &amp; Artikel</a>
-                                <a href="{{ route('packages.index') }}">Semua Paket</a>
+                    </div>
+
+                    <div>
+                        <span class="footer-heading">Hubungi Kami</span>
+                        <div class="footer-contact-info">
+                            <div class="contact-row">
+                                <svg class="contact-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <span>Jl. Pendidikan No. 123, Jakarta Selatan, DKI Jakarta 12430</span>
+                            </div>
+                            <div class="contact-row">
+                                <svg class="contact-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.12 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                <span>+62 812-3456-7890</span>
+                            </div>
+                            <div class="contact-row">
+                                <svg class="contact-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                <span>hello@mayclass.id</span>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="footer-bottom">
-                    <p>© {{ now()->year }} MayClass. All rights reserved.</p>
-                    <div class="footer-socials">
-                        <a class="social-link" href="https://www.instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram MayClass">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="18" height="18">
-                                <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.4" />
-                                <circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="1.4" />
-                                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
-                            </svg>
-                        </a>
-                        <a class="social-link" href="https://www.tiktok.com" target="_blank" rel="noreferrer" aria-label="TikTok MayClass">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="18" height="18">
-                                <path d="M15 3c.3 2.6 1.9 4 4 4v3.1c-1.6.1-3-.5-4-1.4v6.2c0 3.6-2.6 6-6 6s-6-2.4-6-5.6c0-3 2-5.1 5.2-5.4V12c-1.1.2-2 1-2 2.1 0 1.4 1.2 2.3 2.8 2.3s2.7-1 2.7-2.5V3h3.3Z" fill="currentColor" />
-                            </svg>
-                        </a>
-                        <a class="social-link" href="https://www.youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube MayClass">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="18" height="18">
-                                <path d="M21.5 7.5s-.2-1.4-.8-2c-.8-.8-1.8-.8-2.3-.9C15.2 4.4 12 4.4 12 4.4h0s-3.2 0-6.4.2c-.5.1-1.5.1-2.3.9-.6.6-.8 2-.8 2S2 9.1 2 10.6v1.9c0 1.5.2 3.1.2 3.1s.2 1.4.8 2c.8.8 1.8.8 2.3.9 1.7.2 6.7.2 6.7.2s3.2 0 6.4-.2c.5-.1 1.5-.1 2.3-.9.6-.6.8-2 .8-2s.2-1.6.2-3.1v-1.9c0-1.5-.2-3.1-.2-3.1Zm-12 6.4V8.1l5.2 3.9-5.2 1.9Z" fill="currentColor" />
-                            </svg>
-                        </a>
+                    <p>&copy; {{ date('Y') }} MayClass Education. All rights reserved.</p>
+                    <div class="footer-legal">
+                        <a href="#">Kebijakan Privasi</a>
+                        <a href="#">Syarat & Ketentuan</a>
                     </div>
                 </div>
+            </div>
         </footer>
+        {{-- REDESIGNED FOOTER END --}}
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -1828,4 +1706,3 @@ footer {
 
     </body>
 </html>
-

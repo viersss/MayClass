@@ -4,313 +4,413 @@
 
 @push('styles')
     <style>
-        /* HERO SECTION */
-        .student-schedule__hero {
-            background: linear-gradient(135deg, var(--student-primary) 0%, #2a8c82 100%);
-            border-radius: 24px;
-            padding: clamp(30px, 5vw, 60px);
-            color: white;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(47, 152, 140, 0.2);
+        :root {
+            --primary: #0f766e;
+            --primary-hover: #115e59;
+            --primary-light: #ccfbf1;
+            --surface: #ffffff;
+            --bg-body: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        /* --- Layout Container --- */
+        .schedule-container {
+            width: 100%;
+            padding: 0 40px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 48px;
+            max-width: 1600px; /* Batas lebar agar tidak terlalu stretch di layar ultrawide */
+            margin: 0 auto;
         }
 
-        .student-schedule__hero h1 {
-            margin: 0;
-            font-size: clamp(2rem, 4vw, 3rem);
+        /* --- 1. Hero Section --- */
+        .hero-banner {
+            background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -10%;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content { position: relative; z-index: 2; max-width: 800px; }
+        
+        .hero-title {
+            font-size: 2rem;
             font-weight: 700;
+            margin: 0 0 12px;
             line-height: 1.2;
         }
-
-        .student-schedule__hero p {
-            margin: 0;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-            max-width: 600px;
+        
+        .hero-desc {
+            font-size: 1.05rem;
+            opacity: 0.95;
+            margin: 0 0 24px;
             line-height: 1.6;
         }
 
-        .hero-actions {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        .student-schedule__stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 16px;
-        }
-
-        .hero-btn {
-            padding: 12px 28px;
-            border-radius: 50px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform 0.2s;
+        .hero-stats {
             display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
         }
 
-        .hero-btn--primary {
-            background: #ffa726;
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 167, 38, 0.4);
-        }
-
-        .hero-btn--outline {
+        .hero-badge {
             background: rgba(255, 255, 255, 0.2);
-            color: white;
+            padding: 6px 16px;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 600;
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        .hero-btn:hover {
-            transform: translateY(-2px);
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
-        /* HIGHLIGHT CARD */
-        .highlight-card {
-            background: var(--student-surface, #ffffff);
-            border-radius: 20px;
-            padding: clamp(24px, 4vw, 32px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.03);
+        .btn-hero {
+            background: white;
+            color: var(--primary);
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid white;
         }
-
-        .highlight-card .student-chip {
-            background: var(--student-primary);
+        .btn-hero:hover { background: transparent; color: white; }
+        
+        .btn-hero-outline {
+            background: transparent;
             color: white;
+            border: 1px solid rgba(255,255,255,0.6);
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-hero-outline:hover { background: rgba(255,255,255,0.1); border-color: white; }
+
+        /* --- Section Title --- */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        .section-title h2 { font-size: 1.5rem; font-weight: 700; color: var(--text-main); margin: 0 0 4px; }
+        .section-title p { color: var(--text-muted); margin: 0; font-size: 0.95rem; }
+        
+        /* --- Highlight Card (Nearest Session) --- */
+        .highlight-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+            border-left: 6px solid var(--primary); /* Aksen warna di kiri */
         }
 
-        .highlight-card h2 {
-            margin: 12px 0 8px 0;
-            font-size: 1.5rem;
-            color: var(--student-primary);
+        .highlight-label {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.05em;
+        }
+
+        .highlight-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0;
         }
 
         .highlight-meta {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px 20px;
-            font-size: 0.95rem;
-            color: var(--student-text-muted);
-            margin-bottom: 24px;
+            gap: 16px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            align-items: center;
         }
+        .highlight-meta span { display: inline-flex; align-items: center; gap: 6px; }
 
-        /* UPCOMING GRID */
+        /* --- Upcoming Grid --- */
         .upcoming-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 24px;
         }
 
         .session-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            background: var(--student-primary);
-            color: white;
-            border-radius: 20px;
-            padding: 28px;
-            min-height: 180px;
-            box-shadow: 0 10px 30px rgba(47, 152, 140, 0.2);
-            transition: all 0.2s ease;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
         }
 
         .session-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(47, 152, 140, 0.3);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: #cbd5e1;
         }
 
-        .session-card:nth-child(3n+2) {
-            background: #5f6af8;
-            box-shadow: 0 10px 30px rgba(95, 106, 248, 0.2);
-        }
-
-        .session-card:nth-child(3n+3) {
-            background: #27a4b8;
-            box-shadow: 0 10px 30px rgba(39, 164, 184, 0.2);
-        }
-
-        .session-card .category {
-            font-size: 0.9rem;
-            font-weight: 600;
-            opacity: 0.8;
-            margin-bottom: 8px;
-        }
-
-        .session-card h3 {
-            margin: 0;
-            font-size: 1.5rem;
+        .session-cat {
+            font-size: 0.8rem;
             font-weight: 700;
-            line-height: 1.3;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 4px 10px;
+            border-radius: 6px;
+            width: fit-content;
+            margin-bottom: 12px;
         }
 
-        .session-card .meta {
+        .session-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 8px;
+            line-height: 1.4;
+        }
+
+        .session-time {
             margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
             font-size: 0.9rem;
-            opacity: 0.9;
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
-        /* KALENDER SECTION - CONTROLS */
+        /* --- Calendar Controls --- */
         .calendar-controls {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
             gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
             margin-bottom: 24px;
         }
 
-        .student-schedule__tabs {
+        /* Segmented Control for Tabs */
+        .tabs-group {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            background: var(--student-surface, #f8f9fa);
-            padding: 8px;
-            border-radius: 50px;
-            width: max-content;
+            background: var(--bg-body);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
         }
 
-        .student-schedule__tab {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 18px;
-            border-radius: var(--student-radius-md, 999px);
-            border: 1px solid rgba(47, 152, 140, 0.16);
-            background: #ffffff;
-            color: var(--student-text-muted);
+        .tab-link {
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
             font-weight: 600;
-            font-size: 0.92rem;
-            transition: all 0.2s ease;
+            color: var(--text-muted);
             text-decoration: none;
+            transition: all 0.2s;
         }
 
-        .student-schedule__tab.is-active {
-            background: linear-gradient(120deg, var(--student-primary), var(--student-primary-soft));
-            color: #ffffff;
-            border-color: transparent;
-            box-shadow: 0 18px 32px rgba(27, 119, 110, 0.22);
+        .tab-link.is-active {
+            background: white;
+            color: var(--text-main);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        .student-schedule__nav {
+        .nav-group {
             display: flex;
             align-items: center;
             gap: 16px;
-            flex-wrap: wrap;
-            justify-content: space-between;
         }
-
-        .student-schedule__nav a {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--student-primary);
-            font-weight: 600;
+        
+        .nav-btn {
             text-decoration: none;
-        }
-
-        /* KALENDER SECTION - GRID */
-        .student-schedule__calendar {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .student-schedule__calendar-grid {
-            display: grid;
-            gap: 12px;
-        }
-
-        .student-schedule__calendar-cell {
-            border-radius: 16px;
-            padding: 16px 18px;
-            background: rgba(47, 152, 140, 0.08);
-            border: 1px solid rgba(47, 152, 140, 0.12);
-            display: grid;
-            gap: 10px;
-        }
-
-        .student-schedule__calendar-cell.is-active {
-            background: linear-gradient(120deg, var(--student-primary), var(--student-primary-soft));
-            color: #ffffff;
-            box-shadow: 0 18px 32px rgba(27, 119, 110, 0.22);
-        }
-
-        .student-schedule__calendar-cell.is-muted {
-            opacity: 0.5;
-        }
-
-        .student-schedule__calendar-headline {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
+            color: var(--text-main);
             font-weight: 600;
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: var(--bg-body); }
+
+        .current-date {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-main);
         }
 
-        .student-schedule__calendar-events {
+        /* --- Calendar Grid --- */
+        .calendar-grid {
             display: grid;
+            gap: 1px;
+            background: var(--border); /* Creates grid lines */
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .calendar-cell {
+            background: var(--surface);
+            padding: 16px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
             gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .calendar-cell.is-active {
+            background: #f0fdfa; /* Light Teal background for active day */
+        }
+
+        .calendar-cell:hover {
+            background: #fafafa;
+        }
+
+        .cell-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .day-number {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .day-name {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Event Item inside Calendar */
+        .calendar-event {
+            background: var(--primary-light);
+            border-left: 3px solid var(--primary);
+            padding: 6px 10px;
+            border-radius: 4px;
             font-size: 0.85rem;
+            color: var(--text-main);
+        }
+        
+        .event-time {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 2px;
         }
 
-        .student-schedule__calendar-event {
-            padding: 8px 10px;
-            border-radius: var(--student-radius-sm, 10px);
-            background: rgba(255, 255, 255, 0.18);
-            color: inherit;
+        /* --- Range List --- */
+        .range-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        /* RANGE DETAIL */
-        .student-schedule__range {
-            display: grid;
-            gap: 16px;
+        .range-day {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--surface);
+            overflow: hidden;
         }
 
-        .student-schedule__range-day {
-            border-radius: var(--student-radius-lg, 18px);
-            padding: clamp(20px, 3vw, 26px);
-            background: var(--student-surface);
-            box-shadow: 0 20px 42px rgba(33, 115, 105, 0.12);
-            display: grid;
-            gap: 12px;
+        .range-header {
+            background: var(--bg-body);
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            color: var(--text-main);
         }
 
-        .student-schedule__range-day h3 {
-            margin: 0;
-            font-size: 1.05rem;
+        .range-session {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
+        .range-session:last-child { border-bottom: none; }
 
-        .student-schedule__range-sessions {
-            display: grid;
-            gap: 10px;
+        .rs-title { font-weight: 600; color: var(--text-main); }
+        .rs-meta { font-size: 0.9rem; color: var(--text-muted); }
+
+        /* Empty State */
+        .empty-box {
+            text-align: center;
+            padding: 40px;
+            background: var(--bg-body);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
         }
-
-        .student-schedule__range-session {
-            display: grid;
-            gap: 6px;
-            padding: 12px 14px;
-            border-radius: var(--student-radius-md, 14px);
-            background: rgba(95, 106, 248, 0.08);
-            border: 1px solid rgba(95, 106, 248, 0.12);
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
         }
+        .btn-primary:hover { background: var(--primary-hover); }
 
-        @media (max-width: 640px) {
-            .student-schedule__nav {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .student-schedule__calendar-grid {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            }
+        @media (max-width: 768px) {
+            .schedule-container { padding: 0 20px; }
+            .calendar-controls { flex-direction: column; align-items: stretch; }
+            .nav-group { justify-content: space-between; }
+            .calendar-cell { min-height: auto; }
         }
     </style>
 @endpush
@@ -320,169 +420,172 @@
 @php($rangeSessions = $schedule['rangeSessions'])
 
 @section('content')
-    <!-- SECTION 1: HERO -->
-    <section class="student-section">
-        <div class="student-schedule__hero">
-            <div>
-                <h1>Jadwal Bimbel</h1>
-                <p>
+    <div class="schedule-container">
+
+        {{-- 1. Hero Section --}}
+        <div class="hero-banner">
+            <div class="hero-content">
+                <h1 class="hero-title">Jadwal Bimbel</h1>
+                <p class="hero-desc">
                     @if (! empty($activePackage))
-                        Agenda eksklusif paket {{ $activePackage->detail_title ?? $activePackage->title }}.
+                        Agenda eksklusif untuk paket <strong>{{ $activePackage->detail_title ?? $activePackage->title }}</strong>.
                     @endif
-                    Total {{ number_format($stats['total']) }} sesi tercatat dengan {{ number_format($stats['upcoming']) }} agenda
-                    mendatang dan {{ number_format($stats['completed']) }} sesi telah selesai.
+                    Total <strong>{{ number_format($stats['total']) }}</strong> sesi tercatat, dengan 
+                    <strong>{{ number_format($stats['upcoming']) }}</strong> agenda mendatang.
                 </p>
-                <div class="student-schedule__stats">
-                    <span class="student-chip">{{ $calendar['label'] }}</span>
-                    <span class="student-chip">Hari aktif: {{ number_format(count($rangeSessions)) }}</span>
+                
+                <div class="hero-stats">
+                    <span class="hero-badge">{{ $calendar['label'] }}</span>
+                    <span class="hero-badge">Hari Aktif: {{ number_format(count($rangeSessions)) }}</span>
+                </div>
+
+                <div class="hero-actions">
+                    <a class="btn-hero" href="#calendar-section">Lihat Kalender</a>
+                    <a class="btn-hero-outline" href="{{ route('student.dashboard') }}">Kembali ke Beranda</a>
                 </div>
             </div>
-            <div class="hero-actions">
-                <a class="hero-btn hero-btn--primary" href="#calendar-section">Lihat Jadwal</a>
-                <a class="hero-btn hero-btn--outline" href="{{ route('student.dashboard') }}">Kembali ke Beranda</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 2: SESI TERDEKAT -->
-    <section class="student-section">
-        <div class="highlight-card">
-            <span class="student-chip">Sesi Terdekat</span>
-            <h2>{{ $schedule['highlight']['title'] }}</h2>
-            <div class="highlight-meta">
-                <span>{{ $schedule['highlight']['date'] }}</span>
-                <span>•</span>
-                <span>{{ $schedule['highlight']['time'] }}</span>
-                <span>•</span>
-                <span>Mentor {{ $schedule['highlight']['mentor'] }}</span>
-                <span>•</span>
-                <span>Kategori {{ $schedule['highlight']['category'] }}</span>
-            </div>
-            <a class="student-button student-button--primary" style="width: max-content;" href="{{ route('student.dashboard') }}">
-                Buka Dashboard
-            </a>
-        </div>
-    </section>
-
-    <!-- SECTION 3: AGENDA MENDATANG -->
-    <section class="student-section">
-        <div class="student-section__header">
-            <h2 class="student-section__title">Agenda Mendatang</h2>
-        </div>
-        @if (! empty($schedule['upcoming']) && count($schedule['upcoming']) > 0)
-            <div class="upcoming-grid">
-                @foreach ($schedule['upcoming'] as $session)
-                    <article class="session-card">
-                        <div>
-                            <div class="category">{{ $session['category'] }}</div>
-                            <h3>{{ $session['title'] }}</h3>
-                        </div>
-                        <div class="meta">
-                            {{ $session['date'] }} • {{ $session['time'] }}
-                        </div>
-                    </article>
-                @endforeach
-            </div>
-        @else
-            <div class="student-schedule__empty">
-                <p>Belum ada jadwal aktif. Tambahkan sesi baru dari dashboard tutor.</p>
-            </div>
-        @endif
-    </section>
-
-    <!-- SECTION 4: KALENDER SESI -->
-    <section class="student-section" id="calendar-section">
-        <div class="student-section__header">
-            <h2 class="student-section__title">Kalender Sesi</h2>
         </div>
 
-        {{-- Satu set kontrol saja (tabs + nav) --}}
-        <div class="calendar-controls">
-            <div class="student-schedule__tabs">
-                @foreach (['day' => 'Harian', 'week' => 'Mingguan', 'month' => 'Bulanan'] as $mode => $label)
-                    <a
-                        class="student-schedule__tab {{ $viewMode === $mode ? 'is-active' : '' }}"
-                        href="{{ route('student.schedule', ['view' => $mode, 'date' => $calendar['currentDate']]) }}"
-                    >
-                        {{ $label }}
+        {{-- 2. Sesi Terdekat --}}
+        <section>
+            <div class="highlight-card">
+                <span class="highlight-label">Sesi Berikutnya</span>
+                <h2 class="highlight-title">{{ $schedule['highlight']['title'] }}</h2>
+                <div class="highlight-meta">
+                    <span> {{ $schedule['highlight']['date'] }}</span>
+                    <span> {{ $schedule['highlight']['time'] }}</span>
+                    <span> {{ $schedule['highlight']['mentor'] }}</span>
+                    <span> {{ $schedule['highlight']['category'] }}</span>
+                </div>
+                <div style="margin-top: 8px;">
+                    <a href="{{ route('student.dashboard') }}" class="btn-primary">
+                        Buka Dashboard
                     </a>
-                @endforeach
+                </div>
             </div>
-            <div class="student-schedule__nav">
-                <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['prevDate']]) }}">
-                    &larr; Sebelumnya
-                </a>
-                <span style="font-weight: 600; color: var(--student-text-muted);">
-                    {{ $calendar['label'] }}
-                </span>
-                <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['nextDate']]) }}">
-                    Berikutnya &rarr;
-                </a>
-            </div>
-        </div>
+        </section>
 
-        <div class="student-schedule__calendar">
-            <div class="student-schedule__calendar-grid" style="grid-template-columns: repeat({{ $calendar['columns'] }}, minmax(0, 1fr));">
+        {{-- 3. Agenda Mendatang --}}
+        <section>
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>Agenda Mendatang</h2>
+                </div>
+            </div>
+
+            @if (! empty($schedule['upcoming']) && count($schedule['upcoming']) > 0)
+                <div class="upcoming-grid">
+                    @foreach ($schedule['upcoming'] as $session)
+                        <article class="session-card">
+                            <div>
+                                <div class="session-cat">{{ $session['category'] }}</div>
+                                <h3 class="session-title">{{ $session['title'] }}</h3>
+                            </div>
+                            <div class="session-time">
+                                {{ $session['date'] }} • {{ $session['time'] }}
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            @else
+                <div class="empty-box">
+                    Belum ada jadwal sesi mendatang.
+                </div>
+            @endif
+        </section>
+
+        {{-- 4. Kalender Sesi --}}
+        <section id="calendar-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>Kalender Sesi</h2>
+                    <p>Lihat jadwal lengkap dalam tampilan kalender.</p>
+                </div>
+            </div>
+
+            {{-- Calendar Controls --}}
+            <div class="calendar-controls">
+                <div class="tabs-group">
+                    @foreach (['day' => 'Harian', 'week' => 'Mingguan', 'month' => 'Bulanan'] as $mode => $label)
+                        <a 
+                            class="tab-link {{ $viewMode === $mode ? 'is-active' : '' }}"
+                            href="{{ route('student.schedule', ['view' => $mode, 'date' => $calendar['currentDate']]) }}"
+                        >
+                            {{ $label }}
+                        </a>
+                    @endforeach
+                </div>
+
+                <div class="nav-group">
+                    <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['prevDate']]) }}" class="nav-btn">
+                        &larr; Sebelumnya
+                    </a>
+                    <span class="current-date">{{ $calendar['label'] }}</span>
+                    <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['nextDate']]) }}" class="nav-btn">
+                        Berikutnya &rarr;
+                    </a>
+                </div>
+            </div>
+
+            {{-- Calendar Grid --}}
+            <div class="calendar-grid" style="grid-template-columns: repeat({{ $calendar['columns'] }}, minmax(0, 1fr));">
                 @foreach ($calendar['weeks'] as $week)
                     @foreach ($week as $day)
-                        <div class="student-schedule__calendar-cell {{ $day['isActive'] ? 'is-active' : '' }} {{ $day['isMuted'] ? 'is-muted' : '' }}">
-                            <div class="student-schedule__calendar-headline">
-                                <span>{{ $day['display'] }}</span>
-                                <span style="font-size: 0.85rem; color: inherit;">
+                        <div class="calendar-cell {{ $day['isActive'] ? 'is-active' : '' }}">
+                            <div class="cell-header">
+                                <span class="day-number">{{ $day['display'] }}</span>
+                                <span class="day-name">
                                     {{ $viewMode === 'day' ? $day['fullLabel'] : $day['weekday'] }}
                                 </span>
                             </div>
+
                             @if (! empty($day['sessions']))
-                                <div class="student-schedule__calendar-events">
-                                    @foreach ($day['sessions'] as $event)
-                                        <div class="student-schedule__calendar-event">
-                                            <strong>{{ $event['start_time'] ?? '-' }} WIB</strong>
-                                            <div>{{ $event['title'] }}</div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <p style="margin: 0; font-size: 0.85rem; color: inherit; opacity: 0.8;">
-                                    Tidak ada sesi.
-                                </p>
+                                @foreach ($day['sessions'] as $event)
+                                    <div class="calendar-event">
+                                        <span class="event-time">{{ $event['start_time'] ?? '-' }} WIB</span>
+                                        <span>{{ $event['title'] }}</span>
+                                    </div>
+                                @endforeach
                             @endif
                         </div>
                     @endforeach
                 @endforeach
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- SECTION 5: RINCIAN RANGE -->
-    <section class="student-section">
-        <div class="student-section__header">
-            <h2 class="student-section__title">Rincian jadwal periode ini</h2>
-        </div>
-        @if (! empty($rangeSessions))
-            <div class="student-schedule__range">
-                @foreach ($rangeSessions as $day)
-                    <article class="student-schedule__range-day">
-                        <h3>{{ $day['label'] }}</h3>
-                        <div class="student-schedule__range-sessions">
-                            @foreach ($day['sessions'] as $session)
-                                <div class="student-schedule__range-session">
-                                    <strong>{{ $session['title'] }}</strong>
-                                    <span style="color: var(--student-text-muted);">
-                                        {{ $session['time'] }} • Mentor {{ $session['mentor'] }}
-                                    </span>
-                                    <span style="color: var(--student-text-muted);">
-                                        Kategori {{ $session['category'] }}
-                                    </span>
-                                </div>
-                            @endforeach
+        {{-- 5. Rincian Range List --}}
+        <section>
+            <div class="section-header">
+                <div class="section-title">
+                    <h2>Rincian Jadwal</h2>
+                    <p>Detail sesi pada periode ini.</p>
+                </div>
+            </div>
+
+            @if (! empty($rangeSessions))
+                <div class="range-list">
+                    @foreach ($rangeSessions as $day)
+                        <div class="range-day">
+                            <div class="range-header">{{ $day['label'] }}</div>
+                            <div>
+                                @foreach ($day['sessions'] as $session)
+                                    <div class="range-session">
+                                        <span class="rs-title">{{ $session['title'] }}</span>
+                                        <div class="rs-meta">
+                                            {{ $session['time'] }} • Mentor {{ $session['mentor'] }} • {{ $session['category'] }}
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </article>
-                @endforeach
-            </div>
-        @else
-            <div class="student-schedule__empty">
-                <p>Belum ada sesi pada rentang tanggal ini. Coba pindah ke bulan atau minggu lainnya.</p>
-            </div>
-        @endif
-    </section>
+                    @endforeach
+                </div>
+            @else
+                <div class="empty-box">
+                    Tidak ada sesi pada rentang tanggal ini.
+                </div>
+            @endif
+        </section>
+
+    </div>
 @endsection

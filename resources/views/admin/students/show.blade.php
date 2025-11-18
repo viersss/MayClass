@@ -226,7 +226,7 @@
 
 @section('content')
     <a href="{{ route('admin.students.index') }}" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); margin-bottom: 22px;">
-        ← Kembali ke daftar siswa
+        Kembali ke daftar siswa
     </a>
 
     <div class="detail-layout">

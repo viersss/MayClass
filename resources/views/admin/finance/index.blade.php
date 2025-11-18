@@ -4,483 +4,440 @@
 
 @push('styles')
     <style>
-        .finance-wrapper {
-            display: grid;
-            gap: 24px;
+        :root {
+            --primary: #0f766e;
+            --primary-light: #ccfbf1;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-surface: #ffffff;
+            --bg-body: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
         }
 
-        /* Header */
-        .finance-header {
-            padding: 32px;
-            border-radius: 20px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+        .finance-container {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            max-width: 1600px;
+            margin: 0 auto;
         }
 
-        .finance-header h2 {
-            margin: 0;
-            font-size: 1.9rem;
-        }
-
-        .finance-header p {
-            margin: 8px 0 0;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        /* Stats Grid */
-        .finance-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .finance-card {
-            background: var(--surface);
-            border-radius: 16px;
-            padding: 22px;
-            border: 1px solid var(--border);
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-            display: grid;
-            gap: 10px;
-        }
-
-        .finance-card span {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .finance-card strong {
-            font-size: 1.6rem;
-        }
-
-        /* Status Grid */
-        .finance-status-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .status-card {
-            background: var(--surface);
-            border-radius: 18px;
-            padding: 22px;
-            border: 1px solid var(--border);
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-            display: grid;
-            gap: 12px;
-        }
-
-        .status-card-header {
+        /* --- 1. HEADER --- */
+        .page-header {
+            background: var(--bg-surface);
+            padding: 24px 32px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 12px;
         }
 
-        .status-card h4 {
-            margin: 0;
-            font-size: 1rem;
+        .header-content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 4px 0;
         }
 
-        .status-card strong {
-            font-size: 1.8rem;
-        }
-
-        .status-card p {
+        .header-content p {
             margin: 0;
             color: var(--text-muted);
             font-size: 0.9rem;
-            line-height: 1.4;
         }
 
-        .status-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-chip[data-type="pending"] {
-            background: rgba(234, 179, 8, 0.16);
-            color: #b45309;
-        }
-
-        .status-chip[data-type="paid"] {
-            background: rgba(21, 128, 61, 0.12);
-            color: #15803d;
-        }
-
-        .status-chip[data-type="rejected"] {
-            background: rgba(185, 28, 28, 0.16);
-            color: #b91c1c;
-        }
-
-        .status-chip[data-type="failed"] {
-            background: rgba(185, 28, 28, 0.16);
-            color: #b91c1c;
-        }
-
-        /* Main Content */
-        .finance-columns {
+        /* --- 2. STATS CARDS --- */
+        .stats-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 24px;
         }
 
-        .panel {
-            background: var(--surface);
-            border-radius: 20px;
-            padding: 28px;
-            border: 1px solid var(--border);
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-            display: grid;
-            gap: 20px;
+        .stat-card {
+            background: var(--bg-surface);
+            padding: 24px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: transform 0.2s;
         }
 
-        .panel-header {
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
         }
 
-        .panel h3 {
-            margin: 0;
-            font-size: 1.3rem;
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .panel-header p {
-            margin: 4px 0 0;
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 600;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        /* Chart */
-        .chart-wrapper {
-            height: 280px;
-            padding: 24px 18px 12px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            background: linear-gradient(180deg, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.02) 40%, transparent 100%), #fff;
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--bg-body);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Status Summary row within Stats */
+        .status-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .status-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 4px;
+        }
+
+        .status-box strong {
+            font-size: 1.25rem;
+            color: var(--text-main);
+        }
+
+        .status-box span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 99px;
+        }
+
+        .bg-pending { background: #fffbeb; color: #b45309; }
+        .bg-paid { background: #ecfdf5; color: #047857; }
+        .bg-rejected { background: #fef2f2; color: #b91c1c; }
+        .bg-failed { background: #f1f5f9; color: #475569; }
+
+        /* --- 3. CHART SECTION --- */
+        .chart-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
+            padding: 24px;
+        }
+
+        .chart-header {
+            margin-bottom: 24px;
+        }
+
+        .chart-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .chart-canvas {
+            height: 300px;
             display: flex;
             align-items: flex-end;
-            gap: 10px;
-            position: relative;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 20px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .chart-wrapper::after,
-        .chart-wrapper::before {
-            content: '';
-            position: absolute;
-            left: 18px;
-            right: 18px;
-            border-top: 1px dashed rgba(15, 23, 42, 0.08);
-        }
-
-        .chart-wrapper::after {
-            top: 24px;
-        }
-
-        .chart-wrapper::before {
-            top: 50%;
-        }
-
-        .chart-bar {
+        .chart-col {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
+            height: 100%;
+            justify-content: flex-end;
             position: relative;
-            z-index: 2;
         }
 
-        .chart-bar div {
+        .chart-bar {
             width: 100%;
-            border-radius: 12px 12px 6px 6px;
-            background: linear-gradient(180deg, rgba(37, 99, 235, 0.95), rgba(59, 130, 246, 0.75));
-            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+            background: linear-gradient(180deg, #0f766e 0%, #2dd4bf 100%);
+            border-radius: 4px 4px 0 0;
+            opacity: 0.8;
+            transition: all 0.3s;
         }
 
-        .chart-bar span {
-            font-size: 0.8rem;
+        .chart-col:hover .chart-bar {
+            opacity: 1;
+            transform: scaleX(1.1);
+        }
+
+        /* Tooltip on hover */
+        .chart-col:hover::after {
+            content: attr(data-label);
+            position: absolute;
+            top: -30px;
+            background: #1e293b;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .chart-label {
+            font-size: 0.75rem;
             color: var(--text-muted);
-            font-weight: 600;
         }
 
-        /* Table */
-        .table-scroll {
+        /* --- 4. VERIFICATION TABLE --- */
+        .table-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .table-responsive {
             overflow-x: auto;
         }
 
-        .pending-table {
+        .finance-table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 8px;
+            border-collapse: collapse;
+            font-size: 0.9rem;
             min-width: 900px;
         }
 
-        .pending-table thead {
-            background: var(--surface-muted);
-        }
-
-        .pending-table th {
-            padding: 14px 16px;
+        .finance-table th {
+            background: #f8fafc;
             text-align: left;
+            padding: 16px 24px;
             font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .pending-table th:first-child {
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
+        .finance-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            vertical-align: middle;
         }
 
-        .pending-table th:last-child {
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
+        .finance-table tr:last-child td {
+            border-bottom: none;
         }
 
-        .pending-table tbody tr {
-            background: var(--surface-muted);
-            transition: transform 0.2s, box-shadow 0.2s;
+        .finance-table tbody tr:hover {
+            background: #f8fafc;
         }
 
-        .pending-table tbody tr:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
-        }
-
-        .pending-table td {
-            padding: 14px 16px;
-            font-size: 0.9rem;
-        }
-
-        .pending-table tbody td:first-child {
-            border-top-left-radius: 12px;
-            border-bottom-left-radius: 12px;
-        }
-
-        .pending-table tbody td:last-child {
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
-        }
-
-        .status-pill {
+        /* Status Badges */
+        .status-badge {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            min-width: 90px;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 99px;
             font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        .status-pill--pending {
-            background: rgba(234, 179, 8, 0.16);
-            color: #b45309;
-        }
+        .status-pending { background: #fef9c3; color: #a16207; }
+        .status-paid { background: #dcfce7; color: #047857; }
+        .status-rejected { background: #fee2e2; color: #b91c1c; }
+        .status-failed { background: #f1f5f9; color: #475569; }
 
-        .status-pill--paid {
-            background: rgba(21, 128, 61, 0.12);
-            color: #15803d;
-        }
-
-        .status-pill--rejected {
-            background: rgba(185, 28, 28, 0.16);
-            color: #b91c1c;
-        }
-
-        .action-buttons {
+        /* Action Buttons */
+        .btn-group {
             display: flex;
-            gap: 6px;
+            gap: 8px;
         }
 
-        .approve-btn,
-        .reject-btn {
-            padding: 8px 14px;
-            border-radius: 8px;
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 6px;
             border: none;
+            font-size: 0.8rem;
             font-weight: 600;
-            font-size: 0.85rem;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.1s;
         }
 
-        .approve-btn {
-            background: var(--primary);
-            color: #fff;
-        }
+        .btn-approve { background: var(--primary); color: white; }
+        .btn-approve:hover { background: #115e59; }
 
-        .approve-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
+        .btn-reject { background: #fee2e2; color: #b91c1c; }
+        .btn-reject:hover { background: #fecaca; }
 
-        .reject-btn {
-            background: rgba(239, 68, 68, 0.12);
-            color: #b91c1c;
-        }
-
-        .reject-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .proof-link {
+        .btn-proof {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             color: var(--primary);
             font-weight: 600;
             text-decoration: none;
+            font-size: 0.85rem;
         }
-
-        .proof-link:hover {
-            text-decoration: underline;
-        }
+        .btn-proof:hover { text-decoration: underline; }
 
         .empty-state {
             text-align: center;
-            padding: 48px 24px;
+            padding: 48px;
             color: var(--text-muted);
         }
 
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .finance-stats,
-            .finance-status-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        @media (max-width: 1024px) {
+            .status-summary { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) {
-            .finance-stats,
-            .finance-status-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .finance-header {
-                padding: 24px;
-            }
+            .status-summary { grid-template-columns: 1fr; }
+            .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
         }
     </style>
 @endpush
 
 @section('content')
-    <div class="finance-wrapper">
-        <!-- Header -->
-        <div class="finance-header">
-            <h2>Manajemen Keuangan</h2>
-            <p>Monitor pendapatan, verifikasi pembayaran siswa, dan kelola transaksi secara real-time</p>
+    <div class="finance-container">
+
+        {{-- 1. Header --}}
+        <div class="page-header">
+            <div class="header-content">
+                <h2>Manajemen Keuangan</h2>
+                <p>Monitor arus kas, verifikasi pembayaran, dan kelola status transaksi siswa.</p>
+            </div>
+            {{-- Bisa tambah tombol export report di sini jika perlu --}}
         </div>
 
-        <!-- Stats Cards -->
-        <div class="finance-stats">
-            <div class="finance-card">
-                <span>Total Pemasukan</span>
-                <strong>{{ $stats['totalRevenue'] }}</strong>
-            </div>
-            <div class="finance-card">
-                <span>Pendapatan Tahun Ini</span>
-                <strong>{{ $stats['yearRevenue'] }}</strong>
-            </div>
-            <div class="finance-card">
-                <span>Total Siswa Aktif</span>
-                <strong>{{ number_format($stats['totalStudents']) }}</strong>
-            </div>
-            <div class="finance-card">
-                <span>Pembayaran Pending</span>
-                <strong>{{ number_format($stats['pendingPayments']) }}</strong>
-            </div>
-        </div>
-
-        <!-- Status Summary -->
-        <div class="finance-status-grid">
-            <div class="status-card">
-                <div class="status-card-header">
-                    <h4>{{ $statusSummary['pending']['label'] }}</h4>
-                    <span class="status-chip" data-type="pending">
-                        <span>⏳</span> Pending
-                    </span>
+        {{-- 2. Stats Overview --}}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Total Pemasukan</span>
+                    <div class="stat-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
                 </div>
+                <div class="stat-value">{{ $stats['totalRevenue'] }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Tahun Ini</span>
+                    <div class="stat-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                </div>
+                <div class="stat-value">{{ $stats['yearRevenue'] }}</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Siswa Aktif</span>
+                    <div class="stat-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                </div>
+                <div class="stat-value">{{ number_format($stats['totalStudents']) }}</div>
+            </div>
+        </div>
+
+        {{-- 3. Status Summary --}}
+        <div class="status-summary">
+            <div class="status-box">
+                <span class="bg-pending">Pending</span>
                 <strong>{{ number_format($statusSummary['pending']['count']) }}</strong>
-                <p>{{ $statusSummary['pending']['description'] }}</p>
             </div>
-            <div class="status-card">
-                <div class="status-card-header">
-                    <h4>{{ $statusSummary['paid']['label'] }}</h4>
-                    <span class="status-chip" data-type="paid">
-                        <span>✔️</span> Paid
-                    </span>
-                </div>
+            <div class="status-box">
+                <span class="bg-paid">Paid</span>
                 <strong>{{ number_format($statusSummary['paid']['count']) }}</strong>
-                <p>{{ $statusSummary['paid']['description'] }}</p>
             </div>
-            <div class="status-card">
-                <div class="status-card-header">
-                    <h4>{{ $statusSummary['rejected']['label'] }}</h4>
-                    <span class="status-chip" data-type="rejected">
-                        <span>⚠️</span> Rejected
-                    </span>
-                </div>
+            <div class="status-box">
+                <span class="bg-rejected">Rejected</span>
                 <strong>{{ number_format($statusSummary['rejected']['count']) }}</strong>
-                <p>{{ $statusSummary['rejected']['description'] }}</p>
             </div>
-            <div class="status-card">
-                <div class="status-card-header">
-                    <h4>{{ $statusSummary['failed']['label'] }}</h4>
-                    <span class="status-chip" data-type="failed">
-                        <span>⏱️</span> Timeout
-                    </span>
-                </div>
+            <div class="status-box">
+                <span class="bg-failed">Timeout</span>
                 <strong>{{ number_format($statusSummary['failed']['count']) }}</strong>
-                <p>{{ $statusSummary['failed']['description'] }}</p>
             </div>
         </div>
 
-        <!-- Chart Section -->
-        <section class="panel">
-            <div class="panel-header">
-                <h3>Grafik Pendapatan {{ now()->year }}</h3>
-                <p>Visualisasi pemasukan bulanan berdasarkan transaksi yang sudah diverifikasi</p>
+        {{-- 4. Chart --}}
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3>Grafik Pendapatan Bulanan {{ now()->year }}</h3>
             </div>
-            <div class="chart-wrapper">
-                @php
-                    $maxValue = max($monthlyRevenue->pluck('value')->all() ?: [1]);
-                @endphp
+            @php $maxValue = max($monthlyRevenue->pluck('value')->all() ?: [1]); @endphp
+            <div class="chart-canvas">
                 @foreach ($monthlyRevenue as $entry)
-                    @php
-                        $height = $maxValue > 0 ? max(($entry['value'] / $maxValue) * 100, 4) : 4;
-                    @endphp
-                    <div class="chart-bar">
-                        <div style="height: {{ $height }}%;"></div>
-                        <span>{{ $entry['label'] }}</span>
+                    @php $height = $maxValue > 0 ? max(($entry['value'] / $maxValue) * 100, 5) : 5; @endphp
+                    <div class="chart-col" data-label="{{ $entry['label'] }}: {{ $entry['formatted_short'] ?? $entry['value'] }}">
+                        <div class="chart-bar" style="height: {{ $height }}%;"></div>
+                        <span class="chart-label">{{ $entry['label'] }}</span>
                     </div>
                 @endforeach
             </div>
-        </section>
+        </div>
 
-        <!-- Verification Table -->
-        <section class="panel">
-            <div class="panel-header">
-                <h3>Verifikasi Pembayaran</h3>
-                <p>Periksa bukti transfer dan lakukan approval transaksi siswa</p>
+        {{-- 5. Verification Table --}}
+        <div class="table-card">
+            <div class="table-header">
+                <h3>Verifikasi Pembayaran Terbaru</h3>
             </div>
-            <div class="table-scroll">
-                <table class="pending-table">
+            <div class="table-responsive">
+                <table class="finance-table">
                     <thead>
                         <tr>
-                            <th>Paket</th>
+                            <th>Invoice</th>
+                            <th>Paket Belajar</th>
                             <th>Siswa</th>
                             <th>Total</th>
                             <th>Tanggal</th>
@@ -492,53 +449,66 @@
                     <tbody>
                         @forelse ($orders as $order)
                             <tr>
-                                <td>{{ $order['package'] }}</td>
+                                <td style="font-family: monospace;">#{{ substr($order['id'], 0, 8) }}</td>
+                                <td style="font-weight: 600;">{{ $order['package'] }}</td>
                                 <td>{{ $order['student'] }}</td>
                                 <td>{{ $order['total'] }}</td>
                                 <td>{{ $order['due_at'] }}</td>
                                 <td>
-                                    <span class="{{ $order['status_class'] }}">{{ $order['status_label'] }}</span>
+                                    @php
+                                        $badgeClass = match($order['status']) {
+                                            'paid' => 'status-paid',
+                                            'pending' => 'status-pending',
+                                            'rejected' => 'status-rejected',
+                                            default => 'status-failed'
+                                        };
+                                    @endphp
+                                    <span class="status-badge {{ $badgeClass }}">{{ $order['status_label'] }}</span>
                                 </td>
                                 <td>
                                     @if ($order['proof'])
-                                        <a class="proof-link" href="{{ $order['proof'] }}" target="_blank" rel="noopener">
-                                            {{ $order['proof_name'] ?? __('Lihat') }}
+                                        <a href="{{ $order['proof'] }}" target="_blank" class="btn-proof">
+                                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                            Lihat
                                         </a>
                                     @else
-                                        <span style="color: var(--text-muted);">Tidak ada</span>
+                                        <span style="color: var(--text-muted);">-</span>
                                     @endif
                                 </td>
                                 <td>
                                     @if ($order['canApprove'] || $order['canReject'])
-                                        <div class="action-buttons">
+                                        <div class="btn-group">
                                             @if ($order['canApprove'])
                                                 <form action="{{ route('admin.finance.approve', $order['id']) }}" method="POST">
                                                     @csrf
-                                                    <button type="submit" class="approve-btn">Verifikasi</button>
+                                                    <button type="submit" class="btn-action btn-approve">Terima</button>
                                                 </form>
                                             @endif
                                             @if ($order['canReject'])
                                                 <form action="{{ route('admin.finance.reject', $order['id']) }}" method="POST">
                                                     @csrf
-                                                    <button type="submit" class="reject-btn">Tolak</button>
+                                                    <button type="submit" class="btn-action btn-reject">Tolak</button>
                                                 </form>
                                             @endif
                                         </div>
                                     @else
-                                        <span style="color: var(--text-muted);">Tidak ada aksi</span>
+                                        <span style="color: var(--text-muted); font-size: 0.8rem;">Selesai</span>
                                     @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="empty-state">
-                                    Belum ada transaksi pembayaran yang tercatat
+                                <td colspan="8">
+                                    <div class="empty-state">
+                                        <p>Belum ada transaksi pembayaran yang tercatat.</p>
+                                    </div>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-        </section>
+        </div>
+
     </div>
 @endsection

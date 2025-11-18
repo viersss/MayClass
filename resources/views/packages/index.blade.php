@@ -7,50 +7,46 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
             rel="stylesheet"
         />
         <style>
             :root {
-                color-scheme: light;
-                --primary: #3db7ad;
-                --primary-dark: #2c8c84;
-                --accent: #f9b233;
-                --text-dark: #1f2a37;
-                --text-muted: #6b7280;
-                --bg-soft: #f4fbfb;
-                --card: #ffffff;
-                --border: rgba(61, 183, 173, 0.15);
-                --shadow: 0 12px 30px rgba(25, 77, 76, 0.08);
+                /* Palette */
+                --primary: #0f766e;
+                --primary-hover: #115e59;
+                --primary-light: #ccfbf1;
+                --accent: #f59e0b; /* Orange untuk badge/best value */
+                
+                --bg-body: #f8fafc;
+                --surface: #ffffff;
+                
+                --text-main: #0f172a;
+                --text-muted: #64748b;
+                
+                --border: #e2e8f0;
+                --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+                --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+                
+                --radius: 16px;
             }
 
-            * {
-                box-sizing: border-box;
-            }
+            * { box-sizing: border-box; }
 
             body {
                 margin: 0;
-                font-family: "Poppins", sans-serif;
-                background: linear-gradient(180deg, #f7ffff 0%, #edf7f6 100%);
-                color: var(--text-dark);
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                background-color: var(--bg-body);
+                color: var(--text-main);
+                line-height: 1.5;
+                -webkit-font-smoothing: antialiased;
             }
 
-            a {
-                color: inherit;
-                text-decoration: none;
-            }
+            a { text-decoration: none; color: inherit; transition: all 0.2s; }
+            ul { list-style: none; padding: 0; margin: 0; }
 
-            /* Header & Navigation */
-            header {
-                padding: 24px 0;
-                background: rgba(255, 255, 255, 0.6);
-                backdrop-filter: blur(10px);
-                border-bottom: 1px solid var(--border);
-                position: sticky;
-                top: 0;
-                z-index: 100;
-            }
-
+            /* --- Layout --- */
             .container {
                 width: 100%;
                 max-width: 1200px;
@@ -58,405 +54,265 @@
                 padding: 0 24px;
             }
 
+            /* --- Navigation --- */
+            header {
+                background: var(--surface);
+                border-bottom: 1px solid var(--border);
+                position: sticky;
+                top: 0;
+                z-index: 50;
+            }
+
             nav {
+                height: 70px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                gap: 24px;
             }
 
             .brand {
-                display: inline-flex;
-                align-items: center;
-                gap: 12px;
-                font-weight: 600;
-                font-size: 1.2rem;
-                color: var(--primary-dark);
-            }
-
-            .brand img {
-                width: 40px;
-                height: 40px;
-                object-fit: contain;
-            }
-
-            .sr-only {
-                position: absolute;
-                width: 1px;
-                height: 1px;
-                padding: 0;
-                margin: -1px;
-                overflow: hidden;
-                clip: rect(0, 0, 0, 0);
-                white-space: nowrap;
-                border: 0;
-            }
-
-            .nav-actions {
                 display: flex;
                 align-items: center;
-                gap: 12px;
+                gap: 10px;
+                font-weight: 700;
+                font-size: 1.25rem;
+                color: var(--primary);
             }
+            .brand img { height: 32px; width: auto; }
 
-            .nav-actions form {
-                margin: 0;
-            }
+            .nav-actions { display: flex; gap: 12px; align-items: center; }
 
-            .profile-icon-btn {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                border: 1px solid rgba(61, 183, 173, 0.35);
+            .btn {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                color: var(--primary-dark);
-                background: rgba(61, 183, 173, 0.12);
-                transition: transform 0.2s, background 0.2s;
-                overflow: hidden;
-            }
-
-            .profile-icon-btn:hover {
-                transform: scale(1.05);
-                background: rgba(61, 183, 173, 0.18);
-            }
-
-            .profile-icon-btn img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .nav-btn {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 10px 20px;
-                border-radius: 10px;
-                border: 1px solid rgba(61, 183, 173, 0.35);
+                padding: 8px 16px;
+                border-radius: 8px;
                 font-weight: 600;
-                font-size: 0.9rem;
-                background: rgba(255, 255, 255, 0.75);
-                color: var(--primary-dark);
-                transition: all 0.2s ease;
+                font-size: 0.875rem;
                 cursor: pointer;
+                transition: all 0.2s;
+                border: 1px solid transparent;
             }
 
-            .nav-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 16px rgba(47, 137, 131, 0.15);
+            .btn-outline {
+                background: transparent;
+                border-color: var(--border);
+                color: var(--text-main);
             }
+            .btn-outline:hover { background: var(--bg-body); border-color: #cbd5e1; }
 
-            .nav-btn.primary {
+            .btn-primary {
                 background: var(--primary);
-                color: #fff;
-                border-color: transparent;
-                box-shadow: 0 4px 12px rgba(61, 183, 173, 0.25);
+                color: white;
             }
+            .btn-primary:hover { background: var(--primary-hover); }
 
-            .nav-btn.primary:hover {
-                box-shadow: 0 8px 20px rgba(61, 183, 173, 0.35);
+            .profile-avatar {
+                width: 40px; height: 40px;
+                border-radius: 50%;
+                overflow: hidden;
+                border: 2px solid var(--border);
             }
+            .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-            /* Page Title */
-            .page-title {
-                padding: 48px 0 32px;
+            /* --- Hero Title --- */
+            .page-hero {
                 text-align: center;
+                padding: 60px 0 40px;
             }
-
-            .page-title h1 {
-                margin: 0;
-                font-size: clamp(1.8rem, 4vw, 2.5rem);
-                font-weight: 700;
-                line-height: 1.3;
+            .page-hero h1 {
+                font-size: 2.5rem;
+                font-weight: 800;
+                color: var(--text-main);
+                margin: 0 0 12px;
+                letter-spacing: -0.025em;
             }
-
-            .page-title p {
-                margin: 16px auto 0;
-                max-width: 640px;
+            .page-hero p {
+                font-size: 1.1rem;
                 color: var(--text-muted);
-                font-size: 1.05rem;
-                line-height: 1.6;
+                max-width: 600px;
+                margin: 0 auto;
             }
 
-            /* Stage Groups */
-            .stage-group {
-                margin-bottom: 56px;
+            /* --- Active Package Alert --- */
+            .alert-box {
+                background: #eff6ff;
+                border: 1px solid #bfdbfe;
+                color: #1e40af;
+                padding: 16px;
+                border-radius: var(--radius);
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+                margin-bottom: 40px;
             }
+            .alert-icon { flex-shrink: 0; margin-top: 2px; }
 
-            .stage-group__header {
-                margin-bottom: 28px;
+            /* --- Packages Section --- */
+            .stage-section { margin-bottom: 60px; }
+            
+            .stage-header {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 24px;
             }
-
-            .stage-group__header h2 {
-                margin: 0 0 8px;
-                font-size: clamp(1.5rem, 3vw, 2rem);
+            .stage-header::after {
+                content: ''; flex: 1; height: 1px; background: var(--border);
+            }
+            .stage-title {
+                font-size: 1.5rem;
                 font-weight: 700;
-            }
-
-            .stage-group__description {
+                color: var(--text-main);
                 margin: 0;
-                color: var(--text-muted);
-                font-size: 0.95rem;
-                line-height: 1.6;
             }
-
-            /* Packages Grid */
-            .packages-grid {
+            
+            /* --- Grid --- */
+            .grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 24px;
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+                gap: 32px;
             }
 
-            .package-card {
-                background: var(--card);
-                border-radius: 20px;
-                padding: 28px;
-                box-shadow: var(--shadow);
+            /* --- Card --- */
+            .card {
+                background: var(--surface);
                 border: 1px solid var(--border);
+                border-radius: var(--radius);
+                padding: 32px 24px;
+                position: relative;
+                transition: all 0.3s ease;
                 display: flex;
                 flex-direction: column;
-                gap: 16px;
-                position: relative;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                height: 100%;
             }
 
-            .package-card:hover {
-                transform: translateY(-6px);
-                box-shadow: 0 20px 40px rgba(25, 76, 75, 0.15);
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--shadow-hover);
+                border-color: #cbd5e1;
             }
 
-            .package-card[data-tag="Best"] {
-                border-color: rgba(249, 178, 51, 0.5);
-                box-shadow: 0 16px 35px rgba(249, 178, 51, 0.12);
+            /* Highlighted Card Style (e.g. Best Value) */
+            .card[data-highlight="true"] {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 1px var(--primary), var(--shadow-md);
             }
 
-            .badge {
+            .badge-tag {
                 position: absolute;
-                top: 20px;
-                right: 24px;
-                padding: 6px 12px;
-                border-radius: 8px;
-                background: rgba(47, 143, 135, 0.12);
-                color: var(--primary-dark);
+                top: 16px; right: 16px;
+                background: var(--primary-light);
+                color: var(--primary);
                 font-size: 0.75rem;
                 font-weight: 700;
                 text-transform: uppercase;
-                letter-spacing: 0.5px;
+                padding: 4px 10px;
+                border-radius: 99px;
+                letter-spacing: 0.05em;
             }
 
-            .package-card h3 {
-                margin: 0;
+            .badge-best {
+                background: #fef3c7;
+                color: #b45309;
+            }
+
+            .card-header { margin-bottom: 20px; }
+            
+            .pkg-title {
                 font-size: 1.25rem;
-                font-weight: 600;
-                padding-right: 80px;
+                font-weight: 700;
+                margin: 0 0 4px;
+                padding-right: 60px; /* Space for badge */
             }
-
-            .package-meta {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 6px 12px;
-                font-size: 0.85rem;
+            
+            .pkg-level {
+                font-size: 0.9rem;
                 color: var(--text-muted);
                 font-weight: 500;
             }
 
-            .price {
-                font-size: 1.8rem;
-                font-weight: 700;
-                color: var(--primary-dark);
-                margin: 8px 0;
+            .pkg-price-wrapper {
+                margin: 24px 0;
+                padding-bottom: 24px;
+                border-bottom: 1px solid var(--border);
             }
-
-            .detail-price {
-                margin: -8px 0 0;
-                color: var(--text-muted);
+            
+            .pkg-price {
+                font-size: 2rem;
+                font-weight: 800;
+                color: var(--text-main);
+                line-height: 1;
+            }
+            
+            .pkg-period {
                 font-size: 0.9rem;
+                color: var(--text-muted);
+                margin-top: 4px;
             }
 
-            .summary {
-                margin: 8px 0;
-                color: var(--text-muted);
-                line-height: 1.5;
+            .pkg-features {
+                flex: 1;
+                margin-bottom: 24px;
+            }
+            
+            .feature-item {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 12px;
                 font-size: 0.95rem;
-            }
-
-            /* Features List */
-            .features {
-                list-style: none;
-                padding: 0;
-                margin: 12px 0 0;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .features li {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 0.9rem;
                 color: var(--text-muted);
+                align-items: flex-start;
             }
-
-            .features li span {
-                width: 24px;
-                height: 24px;
-                border-radius: 6px;
-                background: rgba(61, 183, 173, 0.12);
-                display: grid;
-                place-items: center;
-                color: var(--primary-dark);
-                font-size: 0.75rem;
-                font-weight: 700;
+            
+            .check-icon {
+                color: var(--primary);
                 flex-shrink: 0;
+                margin-top: 3px;
             }
 
-            /* Card Footer */
-            .card-footer {
-                display: flex;
-                gap: 10px;
+            .card-actions {
                 margin-top: auto;
-                padding-top: 16px;
-                border-top: 1px solid var(--border);
             }
 
-            .purchase-notice {
-                margin-bottom: 32px;
-                padding: 20px clamp(18px, 4vw, 32px);
-                border-radius: 16px;
-                border: 1px solid rgba(95, 106, 248, 0.25);
-                background: rgba(95, 106, 248, 0.08);
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                color: #2b2c55;
-                box-shadow: 0 16px 32px rgba(44, 72, 146, 0.08);
+            .btn-block { width: 100%; }
+            .btn-ghost {
+                background: var(--bg-body);
+                color: var(--text-main);
+                border: 1px solid transparent;
             }
+            .btn-ghost:hover { background: #e2e8f0; }
 
-            .purchase-notice strong {
-                font-size: 1rem;
-            }
-
-            .purchase-lock-chip {
-                flex: 1;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: 10px 16px;
-                border-radius: 999px;
-                border: 1px dashed rgba(95, 106, 248, 0.4);
-                background: rgba(95, 106, 248, 0.08);
-                color: #3d3f7d;
-                font-weight: 600;
-                font-size: 0.85rem;
-            }
-
-            .more-link {
-                flex: 1;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 6px;
-                padding: 12px 20px;
-                border-radius: 10px;
-                border: 1px solid rgba(61, 183, 173, 0.35);
-                background: rgba(61, 183, 173, 0.08);
-                color: var(--primary-dark);
-                font-weight: 600;
-                font-size: 0.9rem;
-                transition: all 0.2s ease;
-            }
-
-            .more-link:hover {
-                transform: translateY(-2px);
-                background: rgba(61, 183, 173, 0.15);
-                box-shadow: 0 8px 16px rgba(47, 137, 131, 0.15);
-            }
-
-            .checkout-link {
-                flex: 1;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 6px;
-                padding: 12px 20px;
-                border-radius: 10px;
-                background: var(--primary);
-                color: #fff;
-                font-weight: 600;
-                font-size: 0.9rem;
-                box-shadow: 0 4px 12px rgba(61, 183, 173, 0.25);
-                transition: all 0.2s ease;
-            }
-
-            .checkout-link:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(34, 108, 104, 0.3);
+            .btn-disabled {
+                background: #f1f5f9;
+                color: #94a3b8;
+                cursor: not-allowed;
+                border: 1px solid #e2e8f0;
             }
 
             /* Empty State */
             .empty-state {
                 text-align: center;
-                padding: 64px 24px;
-                border-radius: 20px;
-                background: rgba(61, 183, 173, 0.04);
+                padding: 80px 20px;
+                background: var(--surface);
+                border-radius: var(--radius);
                 border: 1px dashed var(--border);
             }
 
-            .empty-state h2 {
-                margin: 0 0 12px;
-                font-size: 1.5rem;
-                font-weight: 600;
-            }
-
-            .empty-state p {
-                margin: 0 auto;
-                max-width: 560px;
-                color: var(--text-muted);
-                line-height: 1.6;
-            }
-
             /* Footer */
-            .student-footer {
-                margin-top: 64px;
-                padding: 32px 24px;
+            .simple-footer {
                 text-align: center;
-                font-size: 0.9rem;
+                padding: 40px 0;
+                margin-top: 40px;
                 color: var(--text-muted);
+                font-size: 0.9rem;
                 border-top: 1px solid var(--border);
             }
 
-            /* Responsive */
-            @media (max-width: 768px) {
-                header {
-                    padding: 16px 0;
-                }
-
-                .page-title {
-                    padding: 32px 0 24px;
-                }
-
-                .page-title h1 {
-                    font-size: 1.8rem;
-                }
-
-                .packages-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .package-card {
-                    padding: 24px;
-                }
-
-                .nav-actions {
-                    gap: 8px;
-                }
-
-                .nav-btn {
-                    padding: 8px 16px;
-                    font-size: 0.85rem;
-                }
+            @media (max-width: 640px) {
+                .page-hero h1 { font-size: 2rem; }
+                .grid { grid-template-columns: 1fr; }
             }
         </style>
     </head>
@@ -465,105 +321,122 @@
         @php($profileAvatar = $profileAvatar ?? asset('images/avatar-placeholder.svg'))
         @php($studentHasActivePackage = $studentHasActivePackage ?? false)
         @php($studentActivePackageName = $studentActivePackageName ?? null)
+
         <header>
-            <div class="container">
-                <nav>
-                    <a href="/" class="brand">
-                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
-                    </a>
-                    @auth
-                        <div class="nav-actions">
-                            <a class="profile-icon-btn" href="{{ $profileLink ?? route('student.profile') }}" aria-label="Lihat profil">
-                                <img src="{{ $profileAvatar }}" alt="Foto profil MayClass" />
-                                <span class="sr-only">Profil</span>
-                            </a>
-                            <form method="post" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="nav-btn">Keluar</button>
-                            </form>
-                        </div>
-                    @else
-                        <div class="nav-actions">
-                            <a class="nav-btn" href="{{ route('login') }}">Masuk</a>
-                            <a class="nav-btn primary" href="{{ route('register') }}">Daftar</a>
-                        </div>
-                    @endauth
-                </nav>
-            </div>
+            <nav class="container">
+                <a href="/" class="brand">
+                    <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo">
+                </a>
+                
+                @auth
+                    <div class="nav-actions">
+                        <a href="{{ $profileLink ?? route('student.profile') }}" class="profile-avatar">
+                            <img src="{{ $profileAvatar }}" alt="Profil">
+                        </a>
+                        <form method="post" action="{{ route('logout') }}" style="margin:0">
+                            @csrf
+                            <button type="submit" class="btn btn-outline">Keluar</button>
+                        </form>
+                    </div>
+                @else
+                    <div class="nav-actions">
+                        <a href="{{ route('login') }}" class="btn btn-outline">Masuk</a>
+                        <a href="{{ route('register') }}" class="btn btn-primary">Daftar</a>
+                    </div>
+                @endauth
+            </nav>
         </header>
 
-        <div class="container">
-            <div class="page-title">
-                <h1>Pilih Paket Belajar Terbaik untuk Kamu</h1>
-                <p>
-                    Tersedia pilihan paket lengkap dari tingkat dasar hingga program intensif.
-                    Semua dirancang untuk membantu kamu mencapai target akademik secara maksimal.
-                </p>
-            </div>
+        <div class="page-hero container">
+            <h1>Pilih Paket Belajar</h1>
+            <p>Investasikan masa depanmu dengan metode belajar terstruktur dan bimbingan mentor terbaik.</p>
         </div>
 
         <main class="container">
-            @php($catalog = collect($catalog ?? []))
-            @php($isStudent = auth()->check() && auth()->user()->role === 'student')
-
-            @if ($isStudent && $studentHasActivePackage)
-                <div class="purchase-notice" role="status">
-                    <strong>Paket belajar aktif sedang berjalan</strong>
-                    <p style="margin: 0; font-size: 0.95rem; color: #3b4158;">
-                        Kamu masih terdaftar di paket {{ $studentActivePackageName ?? 'MayClass' }}. Paket baru dapat dibeli
-                        setelah paket tersebut berakhir atau dinonaktifkan oleh admin.
-                    </p>
+            @if (auth()->check() && auth()->user()->role === 'student' && $studentHasActivePackage)
+                <div class="alert-box">
+                    <div class="alert-icon">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <strong>Paket Aktif Berlangsung</strong>
+                        <p style="margin: 4px 0 0; font-size: 0.95rem;">
+                            Kamu saat ini terdaftar di paket <strong>{{ $studentActivePackageName ?? 'Belajar' }}</strong>. Nikmati akses penuh hingga masa berlaku habis.
+                        </p>
+                    </div>
                 </div>
             @endif
 
+            @php($catalog = collect($catalog ?? []))
+
             @if ($catalog->isNotEmpty())
                 @foreach ($catalog as $group)
-                    <section class="stage-group">
-                        <div class="stage-group__header">
-                            <h2>{{ $group['stage_label'] ?? $group['stage'] }}</h2>
-                            @php($stageDescription = $group['stage_description'] ?? '')
-                            @if (!empty($stageDescription))
-                                <p class="stage-group__description">{{ $stageDescription }}</p>
-                            @endif
+                    <section class="stage-section">
+                        <div class="stage-header">
+                            <h2 class="stage-title">{{ $group['stage_label'] ?? $group['stage'] }}</h2>
                         </div>
-                        <div class="packages-grid">
+
+                        <div class="grid">
                             @foreach ($group['packages'] as $package)
-                                @php($features = collect($package['card_features'] ?? $package['features'] ?? [])->take(4))
-                                <article class="package-card" data-tag="{{ $package['tag'] }}">
+                                @php($features = collect($package['card_features'] ?? $package['features'] ?? [])->take(5))
+                                @php($isBestValue = ($package['tag'] ?? '') === 'Best Value' || ($package['tag'] ?? '') === 'Terlaris')
+                                
+                                <article class="card" data-highlight="{{ $isBestValue ? 'true' : 'false' }}">
                                     @if (!empty($package['tag']))
-                                        <span class="badge">{{ $package['tag'] }}</span>
+                                        <span class="badge-tag {{ $isBestValue ? 'badge-best' : '' }}">
+                                            {{ $package['tag'] }}
+                                        </span>
                                     @endif
-                                    <h3>{{ $package['detail_title'] }}</h3>
-                                    <div class="package-meta">
-                                        <span>{{ $group['stage_label'] ?? $group['stage'] }}</span>
-                                        @if (!empty($package['grade_range']))
-                                            <span>• {{ $package['grade_range'] }}</span>
+
+                                    <div class="card-header">
+                                        <h3 class="pkg-title">{{ $package['detail_title'] }}</h3>
+                                        <div class="pkg-level">
+                                            {{ $group['stage_label'] ?? $group['stage'] }}
+                                            @if (!empty($package['grade_range']))
+                                                &bull; {{ $package['grade_range'] }}
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="pkg-price-wrapper">
+                                        <div class="pkg-price">{{ $package['card_price'] }}</div>
+                                        @if (!empty($package['detail_price']))
+                                            <div class="pkg-period">{{ $package['detail_price'] }}</div>
+                                        @endif
+                                        @if ($package['summary'] ?? false)
+                                            <div style="margin-top: 12px; font-size: 0.9rem; color: var(--text-muted);">
+                                                {{ $package['summary'] }}
+                                            </div>
                                         @endif
                                     </div>
-                                    <p class="price">{{ $package['card_price'] }}</p>
-                                    @if (!empty($package['detail_price']))
-                                        <p class="detail-price">{{ $package['detail_price'] }}</p>
-                                    @endif
-                                    @if ($package['summary'] ?? false)
-                                        <p class="summary">{{ $package['summary'] }}</p>
-                                    @endif
-                                    @if ($features->isNotEmpty())
-                                        <ul class="features">
-                                            @foreach ($features as $feature)
-                                                <li><span>✓</span>{{ $feature }}</li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
-                                    <div class="card-footer">
-                                        <a class="more-link" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
+
+                                    <ul class="pkg-features">
+                                        @foreach ($features as $feature)
+                                            <li class="feature-item">
+                                                <svg class="check-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                                <span>{{ $feature }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+
+                                    <div class="card-actions">
                                         @auth
-                                            @if ($isStudent && $studentHasActivePackage)
-                                                <span class="purchase-lock-chip">Paket aktif berlangsung</span>
+                                            @if (auth()->user()->role === 'student' && $studentHasActivePackage)
+                                                <button class="btn btn-block btn-disabled" disabled>Sedang Aktif</button>
                                             @else
+                                                <a href="{{ route('packages.show', $package['slug']) }}" class="btn btn-block btn-primary">
+                                                    Pilih Paket
+                                                </a>
                                             @endif
                                         @else
-                                            <a class="checkout-link" href="{{ route('register') }}">Daftar & Checkout</a>
+                                            <a href="{{ route('register') }}" class="btn btn-block btn-primary">
+                                                Daftar &amp; Pilih
+                                            </a>
                                         @endauth
+                                        
+                                        @if(auth()->check() && !(auth()->user()->role === 'student' && $studentHasActivePackage))
+
+                                        @endif
                                     </div>
                                 </article>
                             @endforeach
@@ -572,16 +445,20 @@
                 @endforeach
             @else
                 <div class="empty-state">
-                    <h2>Paket belum tersedia</h2>
-                    <p>
-                        Admin MayClass dapat menambahkan paket melalui dashboard untuk menampilkan katalog jenjang SD, SMP, dan SMA secara otomatis.
-                    </p>
+                    <div style="font-size: 3rem; margin-bottom: 16px;">📦</div>
+                    <h2 style="margin-top:0;">Paket Belum Tersedia</h2>
+                    <p>Katalog paket belajar sedang disiapkan oleh admin. Silakan kembali lagi nanti.</p>
+                    @if(!auth()->check())
+                        <div style="margin-top: 24px;">
+                            <a href="{{ route('login') }}" class="btn btn-primary">Masuk Dashboard</a>
+                        </div>
+                    @endif
                 </div>
             @endif
         </main>
 
-        <footer class="student-footer">
-            © {{ now()->year }} MayClass. Portal siswa diperbarui otomatis.
+        <footer class="simple-footer container">
+            &copy; {{ date('Y') }} MayClass Education. Semua hak dilindungi.
         </footer>
     </body>
 </html>

@@ -178,7 +178,7 @@
         </style>
     </head>
     <body>
-        <a class="back-link" href="{{ route('login') }}">← Kembali ke halaman login</a>
+        <a class="back-link" href="{{ route('login') }}">Kembali ke halaman login</a>
         <div class="page-grid">
             <section class="info-card">
                 <header>
