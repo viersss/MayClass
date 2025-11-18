@@ -125,20 +125,26 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.show', $slug);
         }
 
-        if ($order->status === 'paid') {
+        $activationRequest = $request->boolean('activated');
+
+        if ($order->status === 'paid' && ! $activationRequest) {
             return $this->redirectToStudentDashboard($packageDetail);
         }
 
-        if ($order->status !== 'pending') {
+        if ($order->status !== 'pending' && ! ($order->status === 'paid' && $activationRequest)) {
             return redirect()->route('checkout.show', $slug);
         }
 
         return view('checkout.success', [
             'package' => $packageDetail,
             'order' => $order,
-            'statusCheckUrl' => route('checkout.status', ['slug' => $package->slug, 'order' => $order->id]),
+            'statusCheckUrl' => $order->status === 'pending'
+                ? route('checkout.status', ['slug' => $package->slug, 'order' => $order->id])
+                : null,
             'profileLink' => ProfileLinkResolver::forUser($request->user()),
             'profileAvatar' => ProfileAvatar::forUser($request->user()),
+            'showActivationModal' => $order->status === 'paid' && $activationRequest,
+            'activationRedirectUrl' => route('student.dashboard'),
         ]);
     }
 

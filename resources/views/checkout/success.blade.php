@@ -220,6 +220,77 @@
                 transform: translateY(-2px);
             }
 
+            .activation-modal {
+                position: fixed;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(15, 23, 42, 0.55);
+                backdrop-filter: blur(4px);
+                z-index: 999;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.2s ease;
+            }
+
+            .activation-modal.is-visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .activation-modal__content {
+                background: #ffffff;
+                border-radius: 20px;
+                padding: clamp(28px, 6vw, 40px);
+                max-width: 420px;
+                width: 90%;
+                text-align: center;
+                box-shadow: 0 35px 65px rgba(15, 23, 42, 0.25);
+                display: grid;
+                gap: 18px;
+            }
+
+            .activation-modal__icon {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                background: rgba(47, 152, 140, 0.15);
+                color: var(--primary);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+            }
+
+            .activation-modal__title {
+                margin: 0;
+                font-size: 1.3rem;
+                font-weight: 600;
+            }
+
+            .activation-modal__text {
+                margin: 0;
+                color: rgba(15, 23, 42, 0.75);
+            }
+
+            .activation-modal__cta {
+                background: var(--primary);
+                color: #ffffff;
+                border: none;
+                border-radius: 999px;
+                padding: 14px 24px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .activation-modal__cta:hover,
+            .activation-modal__cta:focus-visible {
+                transform: translateY(-1px);
+                box-shadow: 0 15px 35px rgba(47, 152, 140, 0.35);
+            }
+
             footer {
                 padding: 24px 0 40px;
                 text-align: center;
@@ -314,11 +385,27 @@
         </main>
         <footer>© {{ now()->year }} MayClass. Tetap semangat belajar!</footer>
 
+        @if (! empty($showActivationModal))
+            <div class="activation-modal" data-activation-modal aria-live="assertive">
+                <div class="activation-modal__content" role="dialog" aria-modal="true" aria-labelledby="activation-modal-title">
+                    <div class="activation-modal__icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="32" height="32">
+                            <path d="M9 16.2 4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4L9 16.2Z" fill="currentColor" />
+                        </svg>
+                    </div>
+                    <h2 class="activation-modal__title" id="activation-modal-title">Paket Belajar Aktif</h2>
+                    <p class="activation-modal__text">Pembayaran Anda telah diverifikasi oleh admin.</p>
+                    <button type="button" class="activation-modal__cta" data-start-learning="true">Mulai belajar</button>
+                </div>
+            </div>
+        @endif
+
         @if ($isPending && ! empty($statusCheckUrl ?? null))
             <script>
                 (function () {
                     const statusUrl = @json($statusCheckUrl);
-                    const refreshUrl = @json(route('checkout.success', ['slug' => $package['slug'], 'order' => $order->id]));
+                    const refreshUrl = new URL(@json(route('checkout.success', ['slug' => $package['slug'], 'order' => $order->id])), window.location.origin);
+                    refreshUrl.searchParams.set('activated', '1');
                     const retryDelay = 8000;
 
                     const pollStatus = () => {
@@ -336,7 +423,7 @@
                             })
                             .then((payload) => {
                                 if (payload?.status === 'paid' || payload?.should_redirect) {
-                                    window.location.href = refreshUrl;
+                                    window.location.href = refreshUrl.toString();
                                     return;
                                 }
 
@@ -348,6 +435,35 @@
                     };
 
                     pollStatus();
+                })();
+            </script>
+        @endif
+        @if (! empty($showActivationModal))
+            <script>
+                (function () {
+                    const modal = document.querySelector('[data-activation-modal]');
+                    if (!modal) {
+                        return;
+                    }
+
+                    const startLearning = modal.querySelector('[data-start-learning]');
+                    const destination = @json($activationRedirectUrl ?? route('student.dashboard'));
+
+                    requestAnimationFrame(() => {
+                        modal.classList.add('is-visible');
+                    });
+
+                    if (startLearning) {
+                        startLearning.addEventListener('click', () => {
+                            window.location.href = destination;
+                        });
+                    }
+
+                    const currentUrl = new URL(window.location.href);
+                    if (currentUrl.searchParams.has('activated')) {
+                        currentUrl.searchParams.delete('activated');
+                        window.history.replaceState({}, document.title, currentUrl.toString());
+                    }
                 })();
             </script>
         @endif
