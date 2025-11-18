@@ -374,8 +374,12 @@
                             ],
                         ];
 
-                        $providedMenuItems = isset($menuItems) && is_array($menuItems) ? $menuItems : [];
-                        $menuItemsToRender = count($providedMenuItems) ? $providedMenuItems : $defaultMenuItems;
+                        if (!isset($menuItems) || !is_array($menuItems)) {
+                            $menuItems = $defaultMenuItems;
+                        }
+
+                        // Pastikan variabel yang digunakan saat render menu selalu tersedia
+                        $menuItemsToRender = $menuItems ?? $defaultMenuItems;
                     @endphp
                     @foreach ($menuItemsToRender as $item)
                         @php
