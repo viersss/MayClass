@@ -253,10 +253,6 @@
         ← Kembali ke daftar siswa
     </a>
 
-    @if (session('status'))
-        <div class="page-alert" role="status">{{ session('status') }}</div>
-    @endif
-
     <div class="detail-layout">
         <section class="profile-card">
             <header>
