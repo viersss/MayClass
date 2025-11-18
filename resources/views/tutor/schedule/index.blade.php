@@ -535,7 +535,7 @@
                                 <form method="POST" action="{{ route('tutor.schedule.templates.destroy', $template) }}" onsubmit="return confirm('Hapus pola jadwal ini?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit">Hapus Pola</button>
+                                    <button type="submit">Hapus</button>
                                 </form>
                             </div>
                         </div>

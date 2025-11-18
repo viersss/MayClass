@@ -41,4 +41,9 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'whatsapp' => [
+        'support_admin' => env('WHATSAPP_SUPPORT_ADMIN', env('WHATSAPP_FINANCE_ADMIN', '6281234567890')),
+        'finance_admin' => env('WHATSAPP_FINANCE_ADMIN', env('WHATSAPP_SUPPORT_ADMIN', '6281234567890')),
+    ],
+
 ];

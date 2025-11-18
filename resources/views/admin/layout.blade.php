@@ -290,6 +290,12 @@
                                 'patterns' => ['admin.dashboard'],
                             ],
                             [
+                                'label' => 'Manajemen Jadwal',
+                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M8 3v2m8-2v2" /><rect width="18" height="16" x="3" y="5" rx="2" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18" /></svg>',
+                                'route' => 'admin.schedules.index',
+                                'patterns' => ['admin.schedules.*', 'admin.schedule.*'],
+                            ],
+                            [
                                 'label' => 'Manajemen Siswa',
                                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M7 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm10 0a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2 20a4.5 4.5 0 0 1 4.5-4.5H9a4.5 4.5 0 0 1 4.5 4.5v1H2zm9.5 1v-1A4.5 4.5 0 0 1 16 15.5h2.5A4.5 4.5 0 0 1 23 20v1z" /></svg>',
                                 'route' => 'admin.students.index',
