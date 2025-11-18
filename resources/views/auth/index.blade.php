@@ -305,70 +305,6 @@
                 transform: translateY(-1px);
             }
 
-            .terms-consent {
-    margin: 16px 20px 0;
-    padding: 12px 14px;
-    border-radius: 12px;
-    background: rgba(63, 166, 126, 0.06); /* hijau soft */
-}
-
-.terms-consent__label {
-    display: inline-flex;
-    align-items: flex-start;
-    gap: 10px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: #374151;
-}
-
-/* Hide default checkbox */
-.terms-checkbox {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* Kotak custom */
-.terms-checkmark {
-    width: 18px;
-    height: 18px;
-    border-radius: 6px;
-    border: 1.5px solid #9ca3af;
-    background: #fff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-/* Bentuk ceklis: pakai border yang diputar */
-.terms-checkmark::before {
-    content: '';
-    width: 10px;
-    height: 6px;
-    border-left: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
-    transform: rotate(-45deg) scale(0);    /* awalnya kecil (hilang) */
-    transform-origin: center;
-    transition: transform 0.15s ease;
-}
-
-/* Saat dicentang */
-.terms-checkbox:checked + .terms-checkmark {
-    border-color: #3fa67e;                 /* hijau outline */
-    background: #3fa67e;                   /* hijau fill */
-}
-
-.terms-checkbox:checked + .terms-checkmark::before {
-    transform: rotate(-45deg) scale(1);    /* ceklis muncul */
-}
-
-.terms-consent__text {
-    line-height: 1.5;
-}
-
-
             .two-column {
                 display: grid;
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -396,8 +332,6 @@
                 align-self: flex-start;
                 min-width: 150px;
             }
-
-            
 
             .primary-action:hover {
                 transform: translateY(-2px);
@@ -937,86 +871,67 @@
             </div>
         </div>
 
- <div class="terms-modal" data-terms-dialog aria-hidden="true">
-    <div class="terms-dialog" role="dialog" aria-modal="true" aria-labelledby="terms-title">
-        <header>
-            <h3 id="terms-title">Syarat Layanan &amp; Kebijakan Privasi MayClass</h3>
-            <button class="terms-close" type="button" aria-label="Tutup" data-terms-close>&times;</button>
-        </header>
+        <div class="terms-modal" data-terms-dialog aria-hidden="true">
+            <div class="terms-dialog" role="dialog" aria-modal="true" aria-labelledby="terms-title">
+                <header>
+                    <h3 id="terms-title">Syarat Layanan &amp; Kebijakan Privasi MayClass</h3>
+                    <button class="terms-close" type="button" aria-label="Tutup" data-terms-close>&times;</button>
+                </header>
+                <div class="terms-body">
+                    <h4>1. Pendaftaran Akun</h4>
+                    <p>
+                        MayClass menyediakan platform belajar terpadu yang menghubungkan siswa, tentor, dan admin.
+                        Saat mendaftar, Anda perlu memberikan <strong>nama lengkap</strong>, <strong>username</strong>,
+                        <strong>email</strong>, <strong>nomor telepon</strong>, dan <strong>jenis kelamin</strong> untuk
+                        membangun profil pembelajaran. Informasi ini membantu kami merekomendasikan paket dan
+                        menghubungkan Anda dengan tentor yang relevan.
+                    </p>
 
-        <div class="terms-body">
-            <h4>1. Pendaftaran Akun</h4>
-            <p>
-                MayClass menyediakan platform belajar terpadu yang menghubungkan siswa, tentor, dan admin.
-                Saat mendaftar, Anda perlu memberikan <strong>nama lengkap</strong>, <strong>username</strong>,
-                <strong>email</strong>, <strong>nomor telepon</strong>, dan <strong>jenis kelamin</strong> untuk
-                membangun profil pembelajaran. Informasi ini membantu kami merekomendasikan paket dan
-                menghubungkan Anda dengan tentor yang relevan.
-            </p>
+                    <h4>2. Langganan &amp; Pembayaran</h4>
+                    <p>
+                        Setelah akun dibuat, Anda dapat memilih paket belajar berdasarkan jenjang SD, SMP, atau SMA.
+                        Setiap transaksi checkout akan berstatus <strong>menunggu verifikasi admin</strong>. Paket baru
+                        aktif ketika tim keuangan MayClass memvalidasi bukti pembayaran. Hingga proses tersebut selesai,
+                        akses ke materi, kuis, dan jadwal premium tetap terbatas.
+                    </p>
 
-            <h4>2. Langganan &amp; Pembayaran</h4>
-            <p>
-                Setelah akun dibuat, Anda dapat memilih paket belajar berdasarkan jenjang SD, SMP, atau SMA.
-                Setiap transaksi checkout akan berstatus <strong>menunggu verifikasi admin</strong>. Paket baru
-                aktif ketika tim keuangan MayClass memvalidasi bukti pembayaran. Hingga proses tersebut selesai,
-                akses ke materi, kuis, dan jadwal premium tetap terbatas.
-            </p>
+                    <h4>3. Materi, Kuis, dan Jadwal</h4>
+                    <p>
+                        Konten belajar tersedia secara dinamis sesuai paket yang Anda pilih. Materi dapat dilihat atau
+                        diunduh melalui portal siswa, kuis terhubung ke latihan interaktif pihak ketiga, dan jadwal kelas
+                        mengikuti sesi yang dirancang tentor. Kami mencatat progres dan aktivitas guna memberikan
+                        pengalaman belajar yang konsisten.
+                    </p>
 
-            <h4>3. Materi, Kuis, dan Jadwal</h4>
-            <p>
-                Konten belajar tersedia secara dinamis sesuai paket yang Anda pilih. Materi dapat dilihat atau
-                diunduh melalui portal siswa, kuis terhubung ke latihan interaktif pihak ketiga, dan jadwal kelas
-                mengikuti sesi yang dirancang tentor. Kami mencatat progres dan aktivitas guna memberikan
-                pengalaman belajar yang konsisten.
-            </p>
+                    <h4>4. Kewajiban Pengguna</h4>
+                    <ul>
+                        <li>Menjaga kerahasiaan kredensial akun dan tidak membagikannya ke pihak lain.</li>
+                        <li>Mengunggah dokumen atau foto profil yang sesuai dengan etika komunitas MayClass.</li>
+                        <li>Menggunakan fitur materi, kuis, dan jadwal hanya untuk kebutuhan belajar pribadi.</li>
+                        <li>Memberikan data pembayaran yang valid saat melakukan checkout paket.</li>
+                    </ul>
 
-            <h4>4. Kewajiban Pengguna</h4>
-            <ul>
-                <li>Menjaga kerahasiaan kredensial akun dan tidak membagikannya ke pihak lain.</li>
-                <li>Mengunggah dokumen atau foto profil yang sesuai dengan etika komunitas MayClass.</li>
-                <li>Menggunakan fitur materi, kuis, dan jadwal hanya untuk kebutuhan belajar pribadi.</li>
-                <li>Memberikan data pembayaran yang valid saat melakukan checkout paket.</li>
-            </ul>
+                    <h4>5. Pengelolaan Data Pribadi</h4>
+                    <p>
+                        Data pribadi Anda disimpan dengan aman pada sistem MayClass. Kami menggunakan informasi kontak
+                        untuk pengingat jadwal, pembaruan paket, serta komunikasi dukungan. Dokumen pembelajaran yang
+                        diunggah tentor hanya dibagikan kepada siswa dalam paket terkait. Kami tidak menjual atau
+                        mendistribusikan data pribadi ke pihak ketiga di luar kebutuhan layanan inti MayClass.
+                    </p>
 
-            <h4>5. Pengelolaan Data Pribadi</h4>
-            <p>
-                Data pribadi Anda disimpan dengan aman pada sistem MayClass. Kami menggunakan informasi kontak
-                untuk pengingat jadwal, pembaruan paket, serta komunikasi dukungan. Dokumen pembelajaran yang
-                diunggah tentor hanya dibagikan kepada siswa dalam paket terkait. Kami tidak menjual atau
-                mendistribusikan data pribadi ke pihak ketiga di luar kebutuhan layanan inti MayClass.
-            </p>
-
-            <h4>6. Keamanan &amp; Dukungan</h4>
-            <p>
-                MayClass menerapkan kontrol akses berbasis peran (admin, tentor, siswa) dan pencatatan aktivitas
-                untuk menjaga keamanan. Jika Anda menemukan aktivitas mencurigakan atau memerlukan bantuan,
-                hubungi dukungan kami melalui email <strong>support@mayclass.id</strong> atau WhatsApp resmi yang
-                tercantum di dashboard.
-            </p>
+                    <h4>6. Keamanan &amp; Dukungan</h4>
+                    <p>
+                        MayClass menerapkan kontrol akses berbasis peran (admin, tentor, siswa) dan pencatatan aktivitas
+                        untuk menjaga keamanan. Jika Anda menemukan aktivitas mencurigakan atau memerlukan bantuan,
+                        hubungi dukungan kami melalui email <strong>support@mayclass.id</strong> atau WhatsApp resmi yang
+                        tercantum di dashboard.
+                    </p>
+                </div>
+                <div class="terms-actions">
+                    <button type="button" data-terms-close>Tutup</button>
+                </div>
+            </div>
         </div>
-
-        <!-- Tambahan: ceklis setuju -->
-<div class="terms-consent">
-    <label class="terms-consent__label">
-        <input
-            type="checkbox"
-            data-terms-accept
-            class="terms-checkbox"
-        >
-        <span class="terms-checkmark"></span>
-        <span class="terms-consent__text">
-            Saya telah membaca dan menyetujui Syarat Layanan dan Kebijakan Privasi MayClass.
-        </span>
-    </label>
-</div>
-
-
-        <div class="terms-actions">
-            <button type="button" data-terms-close>Tutup</button>
-        </div>
-    </div>
-</div>
-
 
         <script>
             const doc = document.documentElement;
@@ -1131,22 +1046,6 @@
 
                 document.addEventListener("keydown", handleKeydown);
             }
-
-                document.addEventListener('DOMContentLoaded', function () {
-        const consentCheckbox = document.querySelector('[data-terms-accept]');
-        if (!consentCheckbox) return;
-
-        consentCheckbox.addEventListener('change', function () {
-            if (!this.checked) return;
-
-            // Kasih jeda dulu sebelum nutup (misal 900ms)
-            setTimeout(function () {
-                document.querySelectorAll('[data-terms-close]').forEach(function (btn) {
-                    btn.click();
-                });
-            }, 600); // atur aja mau 800 / 1000 ms
-        });
-    });
         </script>
     </body>
 </html>
