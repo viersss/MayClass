@@ -379,7 +379,7 @@
                             $menuItems = $defaultMenuItems;
                         }
                     @endphp
-                    @foreach ($menuItems as $item)
+                    @foreach ($menuItemsToRender as $item)
                         @php
                             $isActive = false;
                             foreach ($item['patterns'] as $pattern) {
