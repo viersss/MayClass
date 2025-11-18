@@ -351,13 +351,12 @@
             <aside class="nav-panel">
                 @php($tutorSummaryAvatar = \App\Support\ProfileAvatar::forUser($tutor))
                 <nav class="navigation">
-                    @php
+                    <?php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
 
-                        if (!isset($menuItems) || empty($menuItems)) {
-                            $menuItems = [
-                                [
-                                    'label' => 'Beranda',
+                        $defaultMenuItems = [
+                            [
+                                'label' => 'Beranda',
                                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></svg>',
                                 'route' => 'tutor.dashboard',
                                 'patterns' => ['tutor.dashboard'],
@@ -375,9 +374,11 @@
                                 'patterns' => ['tutor.quizzes.*'],
                             ],
                         ];
-                        }
-                    @endphp
-                    @foreach ($menuItems as $item)
+
+                        $providedMenuItems = isset($menuItems) && is_array($menuItems) ? $menuItems : [];
+                        $menuItemsToRender = count($providedMenuItems) ? $providedMenuItems : $defaultMenuItems;
+                    ?>
+                    @foreach (($menuItemsToRender ?? $defaultMenuItems) as $item)
                         @php
                             $isActive = false;
                             foreach ($item['patterns'] as $pattern) {
