@@ -29,22 +29,9 @@ use Illuminate\Support\Facades\Schema;
 use App\Models\Package;
 use App\Support\PackagePresenter;
 use App\Support\ProfileAvatar;
+use App\Support\ProfileLinkResolver;
 
 Route::get('/', function () {
-    $user = Auth::user();
-
-    if ($user) {
-        $homeRoute = match ($user->role) {
-            'tutor' => route('tutor.dashboard'),
-            'student' => route('student.dashboard'),
-            'admin' => route('admin.dashboard'),
-            'visitor' => route('packages.index'),
-            default => route('packages.index'),
-        };
-
-        return redirect()->to($homeRoute);
-    }
-
     $catalog = collect();
     $stageDefinitions = config('mayclass.package_stages', []);
 
@@ -59,11 +46,13 @@ Route::get('/', function () {
         $catalog = PackagePresenter::groupByStage($packages);
     }
 
+    $user = Auth::user();
+
     return view('welcome', [
         'landingPackages' => $catalog,
         'stageDefinitions' => $stageDefinitions,
-        'profileLink' => null,
-        'profileAvatar' => ProfileAvatar::forUser(null),
+        'profileLink' => ProfileLinkResolver::forUser($user),
+        'profileAvatar' => ProfileAvatar::forUser($user),
     ]);
 });
 
