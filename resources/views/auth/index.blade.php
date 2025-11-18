@@ -466,6 +466,46 @@
                 color: var(--text);
             }
 
+            .terms-consent {
+                margin: 8px 0 4px;
+                padding: 12px 16px;
+                border-radius: 14px;
+                border: 1px solid rgba(31, 107, 79, 0.2);
+                background: rgba(31, 107, 79, 0.05);
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .terms-consent input[type="checkbox"] {
+                width: 20px;
+                height: 20px;
+                margin-top: 2px;
+                accent-color: var(--accent);
+            }
+
+            .terms-consent label {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                font-size: 0.95rem;
+                color: var(--text-muted);
+            }
+
+            .terms-consent label strong {
+                color: var(--text-primary);
+            }
+
+            .terms-consent small {
+                font-size: 0.85rem;
+                color: var(--text-muted);
+            }
+
+            .terms-consent.is-approved {
+                border-color: var(--accent);
+                background: rgba(31, 107, 79, 0.1);
+            }
+
             .terms-body h4 {
                 margin-top: 0;
                 margin-bottom: 8px;
@@ -922,6 +962,18 @@
                         hubungi dukungan kami melalui email <strong>support@mayclass.id</strong> atau WhatsApp resmi yang
                         tercantum di dashboard.
                     </p>
+                    <div class="terms-consent" data-terms-consent>
+                        <input
+                            type="checkbox"
+                            id="terms-consent-checkbox"
+                            name="terms_consent"
+                            data-terms-consent-checkbox
+                        />
+                        <label for="terms-consent-checkbox">
+                            <strong>Saya setuju dengan ketentuan layanan &amp; kebijakan privasi MayClass.</strong>
+                            <small>Popup akan tertutup otomatis 1 detik setelah kotak ini dicentang.</small>
+                        </label>
+                    </div>
                 </div>
                 <div class="terms-actions">
                     <button type="button" data-terms-close>Tutup</button>
@@ -958,9 +1010,28 @@
             const termsModal = document.querySelector("[data-terms-dialog]");
             const termsOpeners = document.querySelectorAll("[data-terms-open]");
             const termsClosers = document.querySelectorAll("[data-terms-close]");
+            const termsConsentInput = document.querySelector("[data-terms-consent-checkbox]");
+            const termsConsentWrapper = document.querySelector("[data-terms-consent]");
+            let termsConsentTimer = null;
+
+            function resetTermsConsent() {
+                if (!termsConsentInput) return;
+
+                if (termsConsentTimer) {
+                    clearTimeout(termsConsentTimer);
+                    termsConsentTimer = null;
+                }
+
+                termsConsentInput.checked = false;
+                termsConsentWrapper?.classList.remove("is-approved");
+            }
 
             function toggleTerms(visible) {
                 if (!termsModal) return;
+
+                if (visible) {
+                    resetTermsConsent();
+                }
 
                 termsModal.setAttribute("data-visible", visible ? "true" : "false");
                 termsModal.setAttribute("aria-hidden", visible ? "false" : "true");
@@ -971,6 +1042,10 @@
                     document.body.style.overflow = "hidden";
                 } else {
                     document.body.style.overflow = "";
+                    if (termsConsentTimer) {
+                        clearTimeout(termsConsentTimer);
+                        termsConsentTimer = null;
+                    }
                 }
             }
 
@@ -995,6 +1070,23 @@
             document.addEventListener("keydown", (event) => {
                 if (event.key === "Escape") {
                     toggleTerms(false);
+                }
+            });
+
+            termsConsentInput?.addEventListener("change", (event) => {
+                const isChecked = event.target.checked;
+
+                if (isChecked) {
+                    termsConsentWrapper?.classList.add("is-approved");
+                    termsConsentTimer = window.setTimeout(() => {
+                        toggleTerms(false);
+                    }, 1000);
+                } else {
+                    termsConsentWrapper?.classList.remove("is-approved");
+                    if (termsConsentTimer) {
+                        clearTimeout(termsConsentTimer);
+                        termsConsentTimer = null;
+                    }
                 }
             });
 
