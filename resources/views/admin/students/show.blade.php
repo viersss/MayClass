@@ -155,6 +155,63 @@
             font-size: 0.9rem;
         }
 
+        .security-card {
+            margin-top: 24px;
+            padding: 20px 24px;
+            border-radius: 22px;
+            border: 1px dashed rgba(15, 23, 42, 0.1);
+            background: rgba(15, 23, 42, 0.02);
+            display: grid;
+            gap: 16px;
+        }
+
+        .security-card h4 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .security-card p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .security-card form {
+            display: inline-flex;
+        }
+
+        .security-card button {
+            padding: 12px 18px;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 12px 24px rgba(79, 70, 229, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .security-card button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 32px rgba(79, 70, 229, 0.35);
+        }
+
+        .password-alert {
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: #0f172a;
+            color: #fff;
+            display: grid;
+            gap: 6px;
+        }
+
+        .password-alert code {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
         @media (max-width: 1024px) {
             .detail-layout {
                 grid-template-columns: 1fr;
@@ -207,6 +264,26 @@
                     <span>Jenis Kelamin</span>
                     <strong>{{ $student->gender ? \Illuminate\Support\Str::title($student->gender) : 'Tidak tersedia' }}</strong>
                 </div>
+            </div>
+
+            <div class="security-card">
+                <div>
+                    <h4>Reset Password Akun</h4>
+                    <p>Admin tidak dapat melihat kata sandi lama. Tekan tombol di bawah untuk membuat kata sandi baru secara otomatis.</p>
+                </div>
+                <form method="POST" action="{{ route('admin.students.reset-password', $student) }}" onsubmit="return confirm('Buat kata sandi baru untuk {{ $student->name }}?');">
+                    @csrf
+                    <button type="submit">Generate Password Baru</button>
+                </form>
+                <p>Bagikan kata sandi terbaru langsung ke siswa melalui kanal komunikasi resmi MayClass.</p>
+
+                @if (session('generated_password'))
+                    <div class="password-alert" role="status">
+                        <span>Password baru untuk {{ $student->name }}:</span>
+                        <code>{{ session('generated_password') }}</code>
+                        <small>Segera teruskan ke siswa dan anjurkan untuk mengganti password setelah berhasil login.</small>
+                    </div>
+                @endif
             </div>
         </section>
 

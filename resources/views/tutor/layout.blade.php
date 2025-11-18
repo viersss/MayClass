@@ -205,6 +205,25 @@
                 align-items: flex-end;
             }
 
+            .header-profile-link {
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                border: 2px solid rgba(226, 232, 240, 0.5);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                background: var(--surface-muted);
+                box-shadow: 0 6px 18px rgba(15, 23, 42, 0.18);
+            }
+
+            .header-profile-link img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
             .date-pill {
                 padding: 10px 18px;
                 border-radius: 999px;
@@ -330,6 +349,7 @@
     <body>
         <div class="dashboard-shell">
             <aside class="nav-panel">
+                @php($tutorSummaryAvatar = \App\Support\ProfileAvatar::forUser($tutor))
                 <nav class="navigation">
                     @php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
@@ -353,13 +373,6 @@
                                 'patterns' => ['tutor.quizzes.*'],
                             ],
                         ];
-                        $avatarCandidates = array_filter([
-                            $tutorProfile?->avatar_path,
-                            $tutor?->avatar_path,
-                        ]);
-                        $resolvedAvatar = \App\Support\AvatarResolver::resolve($avatarCandidates);
-                        $avatarPlaceholder = asset('images/avatar-placeholder.svg');
-                        $tutorSummaryAvatar = $resolvedAvatar ?? $avatarPlaceholder;
                     @endphp
                     @foreach ($menuItems as $item)
                         @php
@@ -404,6 +417,9 @@
                     </div>
                     <div class="header-meta">
                         <span class="status-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
+                        <a class="header-profile-link" href="{{ route('tutor.account.edit') }}" aria-label="Profil tutor">
+                            <img src="{{ $tutorSummaryAvatar }}" alt="Foto tutor" />
+                        </a>
                     </div>
                 </header>
                 <main>

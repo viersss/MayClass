@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Package;
 use App\Support\PackagePresenter;
+use App\Support\ProfileAvatar;
 use App\Support\ProfileLinkResolver;
+use App\Support\StudentAccess;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,6 +21,10 @@ class CheckoutController extends Controller
     {
         $package = Package::with(['cardFeatures', 'inclusions'])->where('slug', $slug)->firstOrFail();
         $user = $request->user();
+
+        if ($redirect = $this->redirectIfPurchaseLocked($user)) {
+            return $redirect;
+        }
 
         $packageDetail = $this->formatPackage($package);
         $existingOrder = $this->latestSubmittedOrder($user->id, $package->id);
@@ -47,11 +53,16 @@ class CheckoutController extends Controller
             'countdownSeconds' => $remainingSeconds,
             'financeWhatsappLink' => $this->buildFinanceWhatsappLink($packageDetail),
             'profileLink' => ProfileLinkResolver::forUser($user),
+            'profileAvatar' => ProfileAvatar::forUser($user),
         ]);
     }
 
     public function store(Request $request, string $slug): RedirectResponse
     {
+        if ($redirect = $this->redirectIfPurchaseLocked($request->user())) {
+            return $redirect;
+        }
+
         $package = Package::where('slug', $slug)->firstOrFail();
 
         $data = $request->validate([
@@ -123,19 +134,26 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.show', $slug);
         }
 
-        if ($order->status === 'paid') {
+        $activationRequest = $request->boolean('activated');
+
+        if ($order->status === 'paid' && ! $activationRequest) {
             return $this->redirectToStudentDashboard($packageDetail);
         }
 
-        if ($order->status !== 'pending') {
+        if ($order->status !== 'pending' && ! ($order->status === 'paid' && $activationRequest)) {
             return redirect()->route('checkout.show', $slug);
         }
 
         return view('checkout.success', [
             'package' => $packageDetail,
             'order' => $order,
-            'statusCheckUrl' => route('checkout.status', ['slug' => $package->slug, 'order' => $order->id]),
+            'statusCheckUrl' => $order->status === 'pending'
+                ? route('checkout.status', ['slug' => $package->slug, 'order' => $order->id])
+                : null,
             'profileLink' => ProfileLinkResolver::forUser($request->user()),
+            'profileAvatar' => ProfileAvatar::forUser($request->user()),
+            'showActivationModal' => $order->status === 'paid' && $activationRequest,
+            'activationRedirectUrl' => route('student.dashboard'),
         ]);
     }
 
@@ -255,5 +273,32 @@ class CheckoutController extends Controller
             ->whereNotNull('payment_proof_path')
             ->latest('updated_at')
             ->first();
+    }
+
+    private function redirectIfPurchaseLocked($user): ?RedirectResponse
+    {
+        if (! $user || $user->role !== 'student') {
+            return null;
+        }
+
+        if (! StudentAccess::hasActivePackage($user)) {
+            return null;
+        }
+
+        $enrollment = StudentAccess::activeEnrollment($user);
+        $package = optional($enrollment)->package;
+
+        if (! $package) {
+            return null;
+        }
+
+        $packageName = $package->detail_title
+            ?? $package->title
+            ?? $package->name
+            ?? 'paket MayClass';
+
+        return redirect()
+            ->route('student.dashboard')
+            ->with('purchase_locked', 'Kamu sudah aktif di ' . $packageName . '. Paket baru dapat dibeli setelah paket ini selesai atau dinonaktifkan.');
     }
 }

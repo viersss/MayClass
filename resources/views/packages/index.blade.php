@@ -113,6 +113,7 @@
                 color: var(--primary-dark);
                 background: rgba(61, 183, 173, 0.12);
                 transition: transform 0.2s, background 0.2s;
+                overflow: hidden;
             }
 
             .profile-icon-btn:hover {
@@ -120,9 +121,10 @@
                 background: rgba(61, 183, 173, 0.18);
             }
 
-            .profile-icon-btn svg {
-                width: 20px;
-                height: 20px;
+            .profile-icon-btn img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
 
             .nav-btn {
@@ -319,6 +321,37 @@
                 border-top: 1px solid var(--border);
             }
 
+            .purchase-notice {
+                margin-bottom: 32px;
+                padding: 20px clamp(18px, 4vw, 32px);
+                border-radius: 16px;
+                border: 1px solid rgba(95, 106, 248, 0.25);
+                background: rgba(95, 106, 248, 0.08);
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                color: #2b2c55;
+                box-shadow: 0 16px 32px rgba(44, 72, 146, 0.08);
+            }
+
+            .purchase-notice strong {
+                font-size: 1rem;
+            }
+
+            .purchase-lock-chip {
+                flex: 1;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 10px 16px;
+                border-radius: 999px;
+                border: 1px dashed rgba(95, 106, 248, 0.4);
+                background: rgba(95, 106, 248, 0.08);
+                color: #3d3f7d;
+                font-weight: 600;
+                font-size: 0.85rem;
+            }
+
             .more-link {
                 flex: 1;
                 display: inline-flex;
@@ -429,6 +462,9 @@
     </head>
     <body>
         @php($profileLink = $profileLink ?? null)
+        @php($profileAvatar = $profileAvatar ?? asset('images/avatar-placeholder.svg'))
+        @php($studentHasActivePackage = $studentHasActivePackage ?? false)
+        @php($studentActivePackageName = $studentActivePackageName ?? null)
         <header>
             <div class="container">
                 <nav>
@@ -437,14 +473,10 @@
                     </a>
                     @auth
                         <div class="nav-actions">
-                            @if ($profileLink)
-                                <a class="profile-icon-btn" href="{{ $profileLink }}" aria-label="Lihat profil">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 3c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4Z" />
-                                    </svg>
-                                    <span class="sr-only">Profil</span>
-                                </a>
-                            @endif
+                            <a class="profile-icon-btn" href="{{ $profileLink ?? route('student.profile') }}" aria-label="Lihat profil">
+                                <img src="{{ $profileAvatar }}" alt="Foto profil MayClass" />
+                                <span class="sr-only">Profil</span>
+                            </a>
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="nav-btn">Keluar</button>
@@ -472,6 +504,17 @@
 
         <main class="container">
             @php($catalog = collect($catalog ?? []))
+            @php($isStudent = auth()->check() && auth()->user()->role === 'student')
+
+            @if ($isStudent && $studentHasActivePackage)
+                <div class="purchase-notice" role="status">
+                    <strong>Paket belajar aktif sedang berjalan</strong>
+                    <p style="margin: 0; font-size: 0.95rem; color: #3b4158;">
+                        Kamu masih terdaftar di paket {{ $studentActivePackageName ?? 'MayClass' }}. Paket baru dapat dibeli
+                        setelah paket tersebut berakhir atau dinonaktifkan oleh admin.
+                    </p>
+                </div>
+            @endif
 
             @if ($catalog->isNotEmpty())
                 @foreach ($catalog as $group)
@@ -514,6 +557,13 @@
                                     <div class="card-footer">
                                         <a class="more-link" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
                                         @auth
+                                            @if ($isStudent && $studentHasActivePackage)
+                                                <span class="purchase-lock-chip">Paket aktif berlangsung</span>
+                                            @else
+                                                <a class="checkout-link" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
+                                            @endif
+                                        @else
+                                            <a class="checkout-link" href="{{ route('register') }}">Daftar & Checkout</a>
                                         @endauth
                                     </div>
                                 </article>

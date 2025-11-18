@@ -195,6 +195,25 @@
                 font-weight: 500;
             }
 
+            .header-profile-link {
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                border: 2px solid var(--border);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                background: var(--surface-muted);
+                box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+            }
+
+            .header-profile-link img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
             .date-pill {
                 padding: 8px 14px;
                 border-radius: 999px;
@@ -314,8 +333,7 @@
                                 'patterns' => ['admin.finance.*'],
                             ],
                         ];
-                        $avatarPlaceholder = asset('images/avatar-placeholder.svg');
-                        $adminSummaryAvatar = \App\Support\AvatarResolver::resolve([$admin?->avatar_path]) ?? $avatarPlaceholder;
+                        $adminSummaryAvatar = \App\Support\ProfileAvatar::forUser($admin);
                     @endphp
                     @foreach ($menuItems as $item)
                         @php
@@ -358,6 +376,9 @@
                     </div>
                     <div class="header-meta">
                         <span class="date-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
+                        <a class="header-profile-link" href="{{ route('admin.account.edit') }}" aria-label="Profil admin">
+                            <img src="{{ $adminSummaryAvatar }}" alt="Foto profil admin" />
+                        </a>
                     </div>
                 </header>
                 <main>

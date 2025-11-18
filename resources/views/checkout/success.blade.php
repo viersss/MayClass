@@ -107,11 +107,13 @@
                 justify-content: center;
                 color: var(--primary-dark);
                 background: rgba(61, 183, 173, 0.1);
+                overflow: hidden;
             }
 
-            .profile-icon-btn svg {
-                width: 20px;
-                height: 20px;
+            .profile-icon-btn img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
 
             main {
@@ -218,6 +220,77 @@
                 transform: translateY(-2px);
             }
 
+            .activation-modal {
+                position: fixed;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(15, 23, 42, 0.55);
+                backdrop-filter: blur(4px);
+                z-index: 999;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.2s ease;
+            }
+
+            .activation-modal.is-visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            .activation-modal__content {
+                background: #ffffff;
+                border-radius: 20px;
+                padding: clamp(28px, 6vw, 40px);
+                max-width: 420px;
+                width: 90%;
+                text-align: center;
+                box-shadow: 0 35px 65px rgba(15, 23, 42, 0.25);
+                display: grid;
+                gap: 18px;
+            }
+
+            .activation-modal__icon {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                background: rgba(47, 152, 140, 0.15);
+                color: var(--primary);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+            }
+
+            .activation-modal__title {
+                margin: 0;
+                font-size: 1.3rem;
+                font-weight: 600;
+            }
+
+            .activation-modal__text {
+                margin: 0;
+                color: rgba(15, 23, 42, 0.75);
+            }
+
+            .activation-modal__cta {
+                background: var(--primary);
+                color: #ffffff;
+                border: none;
+                border-radius: 999px;
+                padding: 14px 24px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .activation-modal__cta:hover,
+            .activation-modal__cta:focus-visible {
+                transform: translateY(-1px);
+                box-shadow: 0 15px 35px rgba(47, 152, 140, 0.35);
+            }
+
             footer {
                 padding: 24px 0 40px;
                 text-align: center;
@@ -238,6 +311,7 @@
     </head>
     <body>
         @php($profileLink = $profileLink ?? null)
+        @php($profileAvatar = $profileAvatar ?? asset('images/avatar-placeholder.svg'))
         <header>
             <div class="container">
                 <nav>
@@ -247,14 +321,10 @@
                     <div class="nav-actions">
                         <a class="btn btn-outline" href="{{ route('packages.index') }}">Lihat Paket Lain</a>
                         @auth
-                            @if ($profileLink)
-                                <a class="profile-icon-btn" href="{{ $profileLink }}" aria-label="Lihat profil">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 3c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4Z" />
-                                    </svg>
-                                    <span class="sr-only">Profil</span>
-                                </a>
-                            @endif
+                            <a class="profile-icon-btn" href="{{ $profileLink ?? route('student.profile') }}" aria-label="Lihat profil">
+                                <img src="{{ $profileAvatar }}" alt="Foto profil MayClass" />
+                                <span class="sr-only">Profil</span>
+                            </a>
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="btn btn-outline" style="background: rgba(31, 42, 55, 0.05); border-color: transparent;">Keluar</button>
@@ -315,11 +385,27 @@
         </main>
         <footer>© {{ now()->year }} MayClass. Tetap semangat belajar!</footer>
 
+        @if (! empty($showActivationModal))
+            <div class="activation-modal" data-activation-modal aria-live="assertive">
+                <div class="activation-modal__content" role="dialog" aria-modal="true" aria-labelledby="activation-modal-title">
+                    <div class="activation-modal__icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="32" height="32">
+                            <path d="M9 16.2 4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4L9 16.2Z" fill="currentColor" />
+                        </svg>
+                    </div>
+                    <h2 class="activation-modal__title" id="activation-modal-title">Paket Belajar Aktif</h2>
+                    <p class="activation-modal__text">Pembayaran Anda telah diverifikasi oleh admin.</p>
+                    <button type="button" class="activation-modal__cta" data-start-learning="true">Mulai belajar</button>
+                </div>
+            </div>
+        @endif
+
         @if ($isPending && ! empty($statusCheckUrl ?? null))
             <script>
                 (function () {
                     const statusUrl = @json($statusCheckUrl);
-                    const refreshUrl = @json(route('checkout.success', ['slug' => $package['slug'], 'order' => $order->id]));
+                    const refreshUrl = new URL(@json(route('checkout.success', ['slug' => $package['slug'], 'order' => $order->id])), window.location.origin);
+                    refreshUrl.searchParams.set('activated', '1');
                     const retryDelay = 8000;
 
                     const pollStatus = () => {
@@ -337,7 +423,7 @@
                             })
                             .then((payload) => {
                                 if (payload?.status === 'paid' || payload?.should_redirect) {
-                                    window.location.href = refreshUrl;
+                                    window.location.href = refreshUrl.toString();
                                     return;
                                 }
 
@@ -349,6 +435,35 @@
                     };
 
                     pollStatus();
+                })();
+            </script>
+        @endif
+        @if (! empty($showActivationModal))
+            <script>
+                (function () {
+                    const modal = document.querySelector('[data-activation-modal]');
+                    if (!modal) {
+                        return;
+                    }
+
+                    const startLearning = modal.querySelector('[data-start-learning]');
+                    const destination = @json($activationRedirectUrl ?? route('student.dashboard'));
+
+                    requestAnimationFrame(() => {
+                        modal.classList.add('is-visible');
+                    });
+
+                    if (startLearning) {
+                        startLearning.addEventListener('click', () => {
+                            window.location.href = destination;
+                        });
+                    }
+
+                    const currentUrl = new URL(window.location.href);
+                    if (currentUrl.searchParams.has('activated')) {
+                        currentUrl.searchParams.delete('activated');
+                        window.history.replaceState({}, document.title, currentUrl.toString());
+                    }
                 })();
             </script>
         @endif

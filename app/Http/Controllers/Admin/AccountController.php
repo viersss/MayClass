@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AccountController extends BaseAdminController
 {
@@ -60,5 +61,23 @@ class AccountController extends BaseAdminController
         return redirect()
             ->route('admin.account.edit')
             ->with('status', __('Profil admin berhasil diperbarui.'));
+    }
+
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('passwordUpdate', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', PasswordRule::min(8), 'confirmed'],
+        ], [
+            'current_password.current_password' => __('Password lama tidak sesuai.'),
+        ]);
+
+        $request->user()?->forceFill([
+            'password' => $validated['password'],
+        ])->save();
+
+        return redirect()
+            ->route('admin.account.edit')
+            ->with('password_status', __('Password admin berhasil diperbarui.'));
     }
 }
