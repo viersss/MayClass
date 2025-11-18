@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Package;
 use App\Support\PackagePresenter;
+use App\Support\ProfileAvatar;
 use App\Support\ProfileLinkResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -47,6 +48,7 @@ class CheckoutController extends Controller
             'countdownSeconds' => $remainingSeconds,
             'financeWhatsappLink' => $this->buildFinanceWhatsappLink($packageDetail),
             'profileLink' => ProfileLinkResolver::forUser($user),
+            'profileAvatar' => ProfileAvatar::forUser($user),
         ]);
     }
 
@@ -136,6 +138,7 @@ class CheckoutController extends Controller
             'order' => $order,
             'statusCheckUrl' => route('checkout.status', ['slug' => $package->slug, 'order' => $order->id]),
             'profileLink' => ProfileLinkResolver::forUser($request->user()),
+            'profileAvatar' => ProfileAvatar::forUser($request->user()),
         ]);
     }
 

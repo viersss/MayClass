@@ -202,6 +202,37 @@ nav {
                 color: #000
             }
 
+            .nav-profile {
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                border: 2px solid rgba(255, 255, 255, 0.6);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                background: rgba(255, 255, 255, 0.2);
+                box-shadow: 0 4px 16px rgba(15, 23, 42, 0.18);
+            }
+
+            .nav-profile img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+
             @media (max-width: 768px) {
                 .nav-actions {
                     width: 100%;
@@ -1027,6 +1058,8 @@ footer {
     <body>
         @php
             $joinLink = route('join');
+            $profileLink = $profileLink ?? null;
+            $profileAvatar = $profileAvatar ?? asset('images/avatar-placeholder.svg');
         @endphp
 
         <header>
@@ -1044,9 +1077,25 @@ footer {
                         <a href="#faq">FAQ</a>
                     </div>
                     <div class="nav-actions">
-                        <a class="btn btn-primary" href="{{ $joinLink }}">
-                            Gabung Sekarang
-                        </a>
+                        @auth
+                            <a
+                                class="nav-profile"
+                                href="{{ $profileLink ?? route('student.profile') }}"
+                                aria-label="Buka profil"
+                            >
+                                <img src="{{ $profileAvatar }}" alt="Foto profil MayClass" />
+                                <span class="sr-only">Menuju profil</span>
+                            </a>
+                            <form method="post" action="{{ route('logout') }}" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="btn btn-outline">Keluar</button>
+                            </form>
+                        @else
+                            <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
+                            <a class="btn btn-primary" href="{{ $joinLink }}">
+                                Gabung Sekarang
+                            </a>
+                        @endauth
                     </div>
                 </div>
             </nav>

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class ProfileController extends Controller
 {
@@ -86,6 +87,24 @@ class ProfileController extends Controller
         return redirect()
             ->route('student.profile')
             ->with('status', 'Profil berhasil diperbarui.');
+    }
+
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('passwordUpdate', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', PasswordRule::min(8), 'confirmed'],
+        ], [
+            'current_password.current_password' => 'Password lama tidak sesuai.',
+        ]);
+
+        $request->user()->forceFill([
+            'password' => $validated['password'],
+        ])->save();
+
+        return redirect()
+            ->route('student.profile')
+            ->with('password_status', 'Kata sandi berhasil diperbarui.');
     }
 
     private function translateGender(?string $gender): ?string

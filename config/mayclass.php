@@ -147,4 +147,15 @@ return [
         'materials_drive' => 'https://drive.google.com/drive/u/0/folders/1oZ3MIlb9T5LvPefjrdX4n9eE06INrZbu',
         'quiz_platform' => 'https://wayground.com/join',
     ],
+    'support' => [
+        'whatsapp' => [
+            'number' => env('MAYCLASS_SUPPORT_WHATSAPP', '6281111111111'),
+            'contact_name' => env('MAYCLASS_SUPPORT_CONTACT_NAME', 'Admin MayClass'),
+            'predefined_message' => env(
+                'MAYCLASS_SUPPORT_WHATSAPP_MESSAGE',
+                'Halo Admin MayClass, saya lupa password akun siswa dan membutuhkan bantuan reset. Mohon dibantu ya.'
+            ),
+            'availability' => env('MAYCLASS_SUPPORT_WHATSAPP_AVAILABILITY', 'Setiap hari pukul 08.00 - 21.00 WIB'),
+        ],
+    ],
 ];

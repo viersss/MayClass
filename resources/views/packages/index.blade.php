@@ -113,6 +113,7 @@
                 color: var(--primary-dark);
                 background: rgba(61, 183, 173, 0.12);
                 transition: transform 0.2s, background 0.2s;
+                overflow: hidden;
             }
 
             .profile-icon-btn:hover {
@@ -120,9 +121,10 @@
                 background: rgba(61, 183, 173, 0.18);
             }
 
-            .profile-icon-btn svg {
-                width: 20px;
-                height: 20px;
+            .profile-icon-btn img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
 
             .nav-btn {
@@ -429,6 +431,7 @@
     </head>
     <body>
         @php($profileLink = $profileLink ?? null)
+        @php($profileAvatar = $profileAvatar ?? asset('images/avatar-placeholder.svg'))
         <header>
             <div class="container">
                 <nav>
@@ -437,14 +440,10 @@
                     </a>
                     @auth
                         <div class="nav-actions">
-                            @if ($profileLink)
-                                <a class="profile-icon-btn" href="{{ $profileLink }}" aria-label="Lihat profil">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 3c-4 0-7 2-7 4v1h14v-1c0-2-3-4-7-4Z" />
-                                    </svg>
-                                    <span class="sr-only">Profil</span>
-                                </a>
-                            @endif
+                            <a class="profile-icon-btn" href="{{ $profileLink ?? route('student.profile') }}" aria-label="Lihat profil">
+                                <img src="{{ $profileAvatar }}" alt="Foto profil MayClass" />
+                                <span class="sr-only">Profil</span>
+                            </a>
                             <form method="post" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="nav-btn">Keluar</button>
