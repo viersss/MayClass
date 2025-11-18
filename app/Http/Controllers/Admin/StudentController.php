@@ -6,9 +6,7 @@ use App\Models\Enrollment;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class StudentController extends BaseAdminController
@@ -115,23 +113,5 @@ class StudentController extends BaseAdminController
             'summary' => $summary,
             'timeline' => $timeline,
         ]);
-    }
-
-    public function resetPassword(User $student): RedirectResponse
-    {
-        if ($student->role !== 'student') {
-            return redirect()->route('admin.students.index')->with('status', __('Pengguna tersebut bukan siswa.'));
-        }
-
-        $newPassword = Str::random(12);
-
-        $student->forceFill([
-            'password' => Hash::make($newPassword),
-        ])->save();
-
-        return redirect()
-            ->route('admin.students.show', $student)
-            ->with('status', __('Password baru berhasil dibuat. Berikan kredensial ini secara langsung kepada siswa.'))
-            ->with('generated_password', $newPassword);
     }
 }

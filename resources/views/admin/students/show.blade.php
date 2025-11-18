@@ -10,28 +10,13 @@
             gap: 28px;
         }
 
-        .side-stack {
-            display: grid;
-            gap: 24px;
-        }
-
         .profile-card,
-        .timeline-card,
-        .password-card {
+        .timeline-card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 26px;
             padding: 28px;
             border: 1px solid rgba(15, 23, 42, 0.06);
             box-shadow: 0 22px 46px rgba(15, 23, 42, 0.08);
-        }
-
-        .page-alert {
-            margin-bottom: 18px;
-            padding: 16px 20px;
-            border-radius: 18px;
-            background: rgba(37, 99, 235, 0.1);
-            color: #1d4ed8;
-            font-weight: 500;
         }
 
         .profile-card header {
@@ -128,68 +113,6 @@
             margin-bottom: 18px;
         }
 
-        .password-card h3 {
-            margin: 0 0 8px;
-            font-size: 1.3rem;
-        }
-
-        .password-card p {
-            margin: 0 0 18px;
-            color: var(--text-muted);
-        }
-
-        .password-card form {
-            margin: 0;
-        }
-
-        .password-card button[type='submit'] {
-            padding: 12px 22px;
-            border-radius: 16px;
-            border: none;
-            background: linear-gradient(120deg, #2563eb, #3db7ad);
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 18px 32px rgba(37, 99, 235, 0.2);
-            width: 100%;
-        }
-
-        .password-card__meta {
-            margin-top: 18px;
-            padding: 16px;
-            border-radius: 18px;
-            background: rgba(37, 99, 235, 0.08);
-            color: #1e3a8a;
-        }
-
-        .password-chip {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 16px;
-            background: #fff;
-            margin-top: 10px;
-            border: 1px dashed rgba(15, 23, 42, 0.12);
-            font-family: 'Courier New', Consolas, monospace;
-            font-size: 1.1rem;
-        }
-
-        .password-chip button {
-            border: none;
-            background: #0f172a;
-            color: #fff;
-            border-radius: 12px;
-            padding: 8px 14px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .password-chip button[data-state='copied'] {
-            background: #22c55e;
-        }
-
         .timeline {
             display: grid;
             gap: 18px;
@@ -240,10 +163,6 @@
             .info-grid {
                 grid-template-columns: 1fr;
             }
-
-            .password-card button[type='submit'] {
-                width: 100%;
-            }
         }
     </style>
 @endpush
@@ -252,10 +171,6 @@
     <a href="{{ route('admin.students.index') }}" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); margin-bottom: 22px;">
         ← Kembali ke daftar siswa
     </a>
-
-    @if (session('status'))
-        <div class="page-alert" role="status">{{ session('status') }}</div>
-    @endif
 
     <div class="detail-layout">
         <section class="profile-card">
@@ -295,72 +210,22 @@
             </div>
         </section>
 
-        <div class="side-stack">
-            <section class="password-card">
-                <h3>Reset Password Siswa</h3>
-                <p>
-                    Sistem akan membuat kata sandi acak baru. Sampaikan langsung kepada siswa dan sarankan untuk
-                    menggantinya setelah berhasil login.
-                </p>
-                <form method="POST" action="{{ route('admin.students.reset-password', $student) }}">
-                    @csrf
-                    <button type="submit">Buat Password Baru</button>
-                </form>
-
-                @if (session('generated_password'))
-                    <div class="password-card__meta">
-                        <strong>Password terbaru siap dibagikan:</strong>
-                        <div class="password-chip">
-                            <span id="generated-password-value">{{ session('generated_password') }}</span>
-                            <button type="button" data-copy-target="generated-password-value">Salin</button>
-                        </div>
-                        <small>Beritahu siswa untuk memperbarui password di menu profil setelah login.</small>
-                    </div>
-                @endif
-            </section>
-
-            <section class="timeline-card">
-                <h3>Riwayat Paket & Pembayaran</h3>
-                <div class="timeline">
-                    @forelse ($timeline as $entry)
-                        <article class="timeline-entry">
-                            <strong>{{ $entry['package'] }}</strong>
-                            <span data-state="{{ $entry['status_state'] }}">{{ $entry['status'] }}</span>
-                            <div style="color: var(--text-muted); font-size: 0.9rem;">Periode: {{ $entry['period'] }}</div>
-                            <footer>
-                                Invoice #{{ $entry['invoice'] ?? '-' }} · Total {{ $entry['total'] }}
-                            </footer>
-                        </article>
-                    @empty
-                        <p style="color: var(--text-muted);">Belum ada riwayat paket untuk siswa ini.</p>
-                    @endforelse
-                </div>
-            </section>
-        </div>
+        <section class="timeline-card">
+            <h3>Riwayat Paket & Pembayaran</h3>
+            <div class="timeline">
+                @forelse ($timeline as $entry)
+                    <article class="timeline-entry">
+                        <strong>{{ $entry['package'] }}</strong>
+                        <span data-state="{{ $entry['status_state'] }}">{{ $entry['status'] }}</span>
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">Periode: {{ $entry['period'] }}</div>
+                        <footer>
+                            Invoice #{{ $entry['invoice'] ?? '-' }} · Total {{ $entry['total'] }}
+                        </footer>
+                    </article>
+                @empty
+                    <p style="color: var(--text-muted);">Belum ada riwayat paket untuk siswa ini.</p>
+                @endforelse
+            </div>
+        </section>
     </div>
 @endsection
-
-@push('scripts')
-    <script>
-        document.querySelectorAll('[data-copy-target]').forEach((button) => {
-            button.addEventListener('click', async () => {
-                const target = document.getElementById(button.dataset.copyTarget);
-                if (!target) return;
-
-                const text = target.textContent.trim();
-                try {
-                    await navigator.clipboard.writeText(text);
-                    button.dataset.state = 'copied';
-                    const original = button.textContent;
-                    button.textContent = 'Tersalin';
-                    setTimeout(() => {
-                        button.dataset.state = '';
-                        button.textContent = original;
-                    }, 2000);
-                } catch (error) {
-                    alert('Gagal menyalin password. Salin secara manual.');
-                }
-            });
-        });
-    </script>
-@endpush

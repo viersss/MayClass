@@ -538,7 +538,6 @@
                 grid-template-columns: 1fr;
             }
         }
-
     </style>
 @endpush
 
@@ -759,5 +758,5 @@
         </div>
     </section>
 
-
+</section>
 @endsection
