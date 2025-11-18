@@ -697,14 +697,6 @@
                         <p class="panel-desc" data-copy-mode="login">
                             Masukkan username dan password untuk melanjutkan progres belajar tanpa hambatan.
                         </p>
-                        <div class="tab-switcher" role="tablist">
-                            <button type="button" data-mode="register" role="tab" aria-selected="false">
-                                Daftar
-                            </button>
-                            <button type="button" data-mode="login" role="tab" aria-selected="false">
-                                Masuk
-                            </button>
-                        </div>
                     </div>
 
                     @if (session('status'))
