@@ -23,10 +23,13 @@ use App\Http\Controllers\Tutor\QuizController as TutorQuizController;
 use App\Http\Controllers\Tutor\ScheduleController as TutorScheduleController;
 use App\Http\Controllers\Tutor\ScheduleSessionController;
 use App\Http\Controllers\Tutor\ScheduleTemplateController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Package;
 use App\Support\PackagePresenter;
+use App\Support\ProfileAvatar;
+use App\Support\ProfileLinkResolver;
 
 Route::get('/', function () {
     $catalog = collect();
@@ -43,9 +46,13 @@ Route::get('/', function () {
         $catalog = PackagePresenter::groupByStage($packages);
     }
 
+    $user = Auth::user();
+
     return view('welcome', [
         'landingPackages' => $catalog,
         'stageDefinitions' => $stageDefinitions,
+        'profileLink' => ProfileLinkResolver::forUser($user),
+        'profileAvatar' => ProfileAvatar::forUser($user),
     ]);
 });
 
@@ -88,6 +95,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     });
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
 Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->name('tutor.')->group(function () {
@@ -115,6 +123,7 @@ Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->name('tutor.')->grou
 
     Route::get('/pengaturan', [TutorAccountController::class, 'edit'])->name('account.edit');
     Route::put('/pengaturan', [TutorAccountController::class, 'update'])->name('account.update');
+    Route::put('/pengaturan/password', [TutorAccountController::class, 'updatePassword'])->name('account.password');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -122,6 +131,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/account', [AdminAccountController::class, 'edit'])->name('account.edit');
     Route::put('/account', [AdminAccountController::class, 'update'])->name('account.update');
+    Route::put('/account/password', [AdminAccountController::class, 'updatePassword'])->name('account.password');
 
     Route::get('/students', [AdminStudentController::class, 'index'])->name('students.index');
     Route::get('/students/{student}', [AdminStudentController::class, 'show'])->name('students.show');

@@ -155,6 +155,69 @@
             box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
         }
 
+        .password-panel {
+            margin-top: 24px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .password-panel h2 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+
+        .password-panel p {
+            margin: 0;
+            color: var(--text-muted);
+        }
+
+        .password-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .password-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .password-input {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid var(--border-subtle, #e5e7eb);
+            padding: 14px 16px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: var(--surface-muted, #f8fafc);
+        }
+
+        .password-error {
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: #dc2626;
+        }
+
+        .password-submit {
+            width: fit-content;
+            border: none;
+            border-radius: 999px;
+            padding: 12px 26px;
+            background: #125e66;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 12px 24px rgba(18, 94, 102, 0.2);
+        }
+
+        .password-alert {
+            padding: 12px 16px;
+            border-radius: 16px;
+            background: rgba(18, 94, 102, 0.08);
+            color: #125e66;
+            font-weight: 500;
+        }
+
         .form-header {
             display: flex;
             flex-direction: column;
@@ -590,6 +653,38 @@
                         Simpan Perubahan
                     </button>
                 </div>
+            </form>
+        </div>
+        <div class="form-card password-panel">
+            <h2>Ubah Password</h2>
+            <p>Gunakan kombinasi huruf, angka, dan simbol untuk menjaga kerahasiaan akun.</p>
+            @if (session('password_status'))
+                <div class="password-alert">{{ session('password_status') }}</div>
+            @endif
+            <form class="password-form" method="post" action="{{ route('tutor.account.password') }}">
+                @csrf
+                @method('PUT')
+                <div class="password-grid">
+                    <label>
+                        <span>Password Lama</span>
+                        <input class="password-input" type="password" name="current_password" autocomplete="current-password" required />
+                        @error('current_password', 'passwordUpdate')
+                            <div class="password-error">{{ $message }}</div>
+                        @enderror
+                    </label>
+                    <label>
+                        <span>Password Baru</span>
+                        <input class="password-input" type="password" name="password" autocomplete="new-password" required />
+                        @error('password', 'passwordUpdate')
+                            <div class="password-error">{{ $message }}</div>
+                        @enderror
+                    </label>
+                    <label>
+                        <span>Konfirmasi Password Baru</span>
+                        <input class="password-input" type="password" name="password_confirmation" autocomplete="new-password" required />
+                    </label>
+                </div>
+                <button class="password-submit" type="submit">Perbarui Password</button>
             </form>
         </div>
     </div>

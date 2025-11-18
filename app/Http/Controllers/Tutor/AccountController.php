@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Support\Str;
 
 class AccountController extends BaseTutorController
@@ -106,5 +107,23 @@ class AccountController extends BaseTutorController
         return redirect()
             ->route('tutor.account.edit')
             ->with('status', __('Profil tutor berhasil diperbarui.'));
+    }
+
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validateWithBag('passwordUpdate', [
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', PasswordRule::min(8), 'confirmed'],
+        ], [
+            'current_password.current_password' => __('Password lama tidak sesuai.'),
+        ]);
+
+        $request->user()?->forceFill([
+            'password' => $validated['password'],
+        ])->save();
+
+        return redirect()
+            ->route('tutor.account.edit')
+            ->with('password_status', __('Password tutor berhasil diperbarui.'));
     }
 }
