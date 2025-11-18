@@ -471,7 +471,6 @@
         <!-- Header Section -->
         <div class="schedule-header">
             <div class="schedule-header-content">
-                <span class="hero-chip">Penjadwalan tutor</span>
                 <h3>Kalender pengajaran MayClass</h3>
                 <p>
                     Admin dapat meninjau jadwal setiap tutor, mengatur pola pertemuan, dan memastikan sesi yang telah

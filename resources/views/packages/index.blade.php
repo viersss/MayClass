@@ -560,7 +560,6 @@
                                             @if ($isStudent && $studentHasActivePackage)
                                                 <span class="purchase-lock-chip">Paket aktif berlangsung</span>
                                             @else
-                                                <a class="checkout-link" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
                                             @endif
                                         @else
                                             <a class="checkout-link" href="{{ route('register') }}">Daftar & Checkout</a>

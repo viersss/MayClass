@@ -370,17 +370,6 @@
                 </div>
             </aside>
             <div class="main-area">
-                <header class="main-header">
-                    <div>
-                        <h1 style="margin: 4px 0 0; font-size: 1.8rem;">Halo, {{ $admin?->name ?? 'Admin' }}!</h1>
-                    </div>
-                    <div class="header-meta">
-                        <span class="date-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
-                        <a class="header-profile-link" href="{{ route('admin.account.edit') }}" aria-label="Profil admin">
-                            <img src="{{ $adminSummaryAvatar }}" alt="Foto profil admin" />
-                        </a>
-                    </div>
-                </header>
                 <main>
                     <div class="page-wrapper">
                         <div class="page-content">

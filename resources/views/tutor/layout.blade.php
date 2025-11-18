@@ -410,18 +410,7 @@
                 </div>
             </aside>
             <div class="main-area">
-                <header class="main-header">
-                    <div class="header-intro">
-                        <h1>Halo, {{ $tutor?->name ?? 'Tutor' }}!</h1>
-                        <p>{{ $tutorProfile?->headline ?? 'Tetap fokus mengajar dan selesaikan agenda penting hari ini.' }}</p>
-                    </div>
-                    <div class="header-meta">
-                        <span class="status-pill">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</span>
-                        <a class="header-profile-link" href="{{ route('tutor.account.edit') }}" aria-label="Profil tutor">
-                            <img src="{{ $tutorSummaryAvatar }}" alt="Foto tutor" />
-                        </a>
-                    </div>
-                </header>
+
                 <main>
                     <div class="page-wrapper">
                         <div class="page-content">

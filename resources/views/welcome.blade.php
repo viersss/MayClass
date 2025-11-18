@@ -486,100 +486,165 @@ nav {
             }
 
             /* Full-width pricing section */
-            .pricing-section {
-                width: 100%;
-                background: linear-gradient(135deg, #f0fdf4 0%, #f7fef5 100%);
-                padding: 96px 0;
-            }
+     .pricing-section {
+        padding: 64px 0;
+        background: var(--neutral-100, #f6f7f8);
+    }
 
-            .pricing-group {
-                display: grid;
-                gap: 24px;
-                margin-top: 48px;
-            }
+    .pricing-section .section-header {
+        max-width: 720px;
+        margin: 0 auto 32px;
+        text-align: center;
+    }
 
-            .pricing-group h3 {
-                margin: 0;
-                font-size: 1.6rem;
-            }
+    .pricing-section .section-title {
+        margin: 0 0 8px;
+        font-size: 2.5rem;
+    }
 
-            .pricing-group p {
-                margin: 6px 0 0;
-                color: var(--ink-soft);
-            }
+    .pricing-section .section-subtitle {
+        margin: 0;
+        color: var(--ink-soft, #6b7280);
+        font-size: 0.98rem;
+    }
 
-            .pricing-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                gap: 28px;
-                width: 100%;
-            }
+    .pricing-group {
+        margin-top: 32px;
+        display: grid;
+        gap: 18px;
+    }
 
-            .pricing-card {
-                background: var(--surface);
-                border-radius: var(--radius-xl);
-                padding: 36px 32px;
-                box-shadow: var(--shadow-md);
-                display: grid;
-                gap: 18px;
-                position: relative;
-            }
+    .pricing-group > div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
 
-            .pricing-card::after {
-                content: "";
-                position: absolute;
-                inset: 18px;
-                border-radius: 24px;
-                border: 1px dashed rgba(63, 166, 126, 0.18);
-                pointer-events: none;
-            }
+    .pricing-group > div:first-child h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
 
-            .pricing-card strong {
-                font-size: 1.4rem;
-            }
+    .pricing-group > div:first-child p {
+        margin: 0;
+        color: var(--ink-soft, #6b7280);
+        font-size: 0.92rem;
+    }
 
-            .pricing-price {
-                font-size: 2rem;
-                color: var(--primary-main);
-                font-weight: 700;
-            }
+    .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
 
-            .pricing-meta {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                font-size: 0.9rem;
-                color: var(--ink-soft);
-            }
+    .pricing-card {
+        position: relative;
+        display: grid;
+        gap: 14px;
+        padding: 20px 18px 18px;
+        border-radius: 18px;
+        background: var(--surface, #ffffff);
+        border: 1px solid var(--border, #e5e7eb);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.06);
+        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
 
-            .pricing-features {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-                display: grid;
-                gap: 12px;
-                color: var(--ink-soft);
-            }
+    .pricing-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 38px rgba(15, 23, 42, 0.08);
+        border-color: rgba(63, 166, 126, 0.28);
+    }
 
-            .pricing-features li::before {
-                content: "•";
-                margin-right: 8px;
-                color: var(--primary-light);
-            }
+    .pricing-card .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        background: rgba(63, 166, 126, 0.12);
+        color: var(--primary-main, #3fa67e);
+    }
 
-            .pricing-actions {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 12px;
-                margin-top: 8px;
-            }
+    .pricing-card strong {
+        font-size: 1.1rem;
+    }
 
-            .pricing-actions a {
-                flex: 1;
-                min-width: 120px;
-                text-align: center;
-            }
+    .pricing-price {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--primary-dark, #1b6d4f);
+    }
 
+    .pricing-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 0.9rem;
+        color: var(--ink-soft, #6b7280);
+    }
+
+    .pricing-summary {
+        margin: 0;
+        font-size: 0.94rem;
+        color: var(--ink-soft, #6b7280);
+    }
+
+    .pricing-features {
+        list-style: none;
+        padding: 0;
+        margin: 6px 0 0;
+        display: grid;
+        gap: 6px;
+        font-size: 0.9rem;
+        color: var(--ink-soft, #6b7280);
+    }
+
+    .pricing-features li::before {
+        content: '•';
+        margin-right: 6px;
+        color: var(--primary-main, #3fa67e);
+        font-weight: 700;
+    }
+
+    .pricing-actions {
+        margin-top: 6px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .pricing-actions .btn {
+        font-size: 0.92rem;
+        border-radius: 999px;
+        padding: 10px 18px;
+        text-decoration: none;
+    }
+
+    .pricing-actions .btn-primary {
+        background: var(--primary-main, #3fa67e);
+        border: none;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .pricing-actions .btn-primary:hover {
+        background: var(--primary-dark, #1b6d4f);
+    }
+
+    @media (max-width: 768px) {
+        .pricing-section {
+            padding: 48px 0;
+        }
+
+        .pricing-card {
+            padding: 18px 16px 16px;
+        }
+    }
             /* Highlight section as full-width block */
             .highlight-section {
                 position: relative;
@@ -830,12 +895,100 @@ nav {
             }
 
             /* FAQ grid in full-width container */
-            .faq-grid {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 18px;
-                width: 100%;
-            }
+ .faq-section {
+        padding: 64px 0;
+        background: var(--surface, #ffffff);
+    }
+
+    .faq-section .section-header {
+        max-width: 640px;
+        margin: 0 auto 32px;
+        text-align: center;
+    }
+
+    .faq-section .section-title {
+        margin: 0 0 8px;
+        font-size: 1.9rem;
+    }
+
+    .faq-section .section-subtitle {
+        margin: 0;
+        color: var(--ink-soft, #6b7280);
+        font-size: 0.95rem;
+    }
+
+    .faq-grid {
+        max-width: 860px;
+        margin: 0 auto;
+        display: grid;
+        gap: 14px;
+    }
+
+    .faq-grid details {
+        border-radius: 14px;
+        background: var(--neutral-100, #f6f7f8);
+        border: 1px solid var(--border, #e5e7eb);
+        padding: 10px 14px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .faq-grid details[open] {
+        background: #ffffff;
+        border-color: rgba(63, 166, 126, 0.35);
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    .faq-grid summary {
+        list-style: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        font-weight: 500;
+        font-size: 0.98rem;
+        padding: 4px 0;
+    }
+
+    .faq-grid summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .faq-grid summary::after {
+        content: '+';
+        flex-shrink: 0;
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        border: 1px solid #d1d5db;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        color: var(--ink-soft, #6b7280);
+        transition: background 0.15s ease, transform 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .faq-grid details[open] summary::after {
+        content: '–';
+        background: var(--primary-main, #3fa67e);
+        color: #ffffff;
+        border-color: var(--primary-main, #3fa67e);
+        transform: rotate(0deg);
+    }
+
+    .faq-grid p {
+        margin: 8px 2px 6px;
+        color: var(--ink-soft, #6b7280);
+        font-size: 0.94rem;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+        .faq-section {
+            padding: 48px 0;
+        }
+    }
 
             details {
                 border-radius: var(--radius-lg);
@@ -1091,7 +1244,6 @@ footer {
                                 <button type="submit" class="btn btn-outline">Keluar</button>
                             </form>
                         @else
-                            <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
                             <a class="btn btn-primary" href="{{ $joinLink }}">
                                 Gabung Sekarang
                             </a>
@@ -1427,55 +1579,54 @@ footer {
             </div>
         </section>
 
-        <section class="section" id="faq">
-            <div class="container">
-                <div class="section-header" data-reveal>
+ <section class="section faq-section" id="faq">
+    <div class="container">
+        <div class="section-header" data-reveal>
+            <h2 class="section-title">FAQ</h2>
+        </div>
 
-                    <h2 class="section-title">FAQ</h2>
-
-                </div>
-                <div class="faq-grid" data-reveal>
-                    <details>
-                        <summary>Apakah MayClass menyediakan kelas online dan tatap muka?</summary>
-                        <p>
-                            Ya. Kamu bisa memilih mode belajar sesuai kebutuhan. Tim kami bantu atur jadwal dan mentor terbaik
-                            untukmu.
-                        </p>
-                    </details>
-                    <details>
-                        <summary>Bagaimana cara mengakses materi dan rekaman kelas?</summary>
-                        <p>
-                            Siswa dapat login ke dashboard MayClass untuk melihat materi, rekaman kelas, dan rangkuman progres
-                            belajar.
-                        </p>
-                    </details>
-                    <details>
-                        <summary>Apakah bisa reschedule jika ada jadwal mendadak?</summary>
-                        <p>
-                            Bisa. Hubungi admin maksimal 24 jam sebelum sesi dimulai dan kami akan bantu atur ulang jadwalmu.
-                        </p>
-                    </details>
-                    <details>
-                        <summary>Bagaimana sistem evaluasi progres siswa?</summary>
-                        <p>
-                            Kami menyediakan laporan mingguan, evaluasi tryout, dan coaching pribadi agar target belajar tercapai.
-                        </p>
-                    </details>
-                    <details>
-                        <summary>Apakah ada grup diskusi komunitas?</summary>
-                        <p>
-                            Ada. Semua siswa akan bergabung di komunitas eksklusif untuk diskusi, motivasi, dan info terbaru.
-                        </p>
-                    </details>
-                    <details>
-                        <summary>Metode pembayaran apa yang tersedia?</summary>
-                        <p>
-                            Pembayaran dapat melalui transfer bank, e-wallet, dan virtual account dengan konfirmasi otomatis.
-                        </p>
-                    </details>
-                </div>
-            </div>
-        </section>
+        <div class="faq-grid" data-reveal>
+            <details>
+                <summary>Apakah MayClass menyediakan kelas online dan tatap muka?</summary>
+                <p>
+                    Ya. Kamu bisa memilih mode belajar sesuai kebutuhan. Tim kami bantu atur jadwal dan mentor terbaik
+                    untukmu.
+                </p>
+            </details>
+            <details>
+                <summary>Bagaimana cara mengakses materi dan rekaman kelas?</summary>
+                <p>
+                    Siswa dapat login ke dashboard MayClass untuk melihat materi, rekaman kelas, dan rangkuman progres
+                    belajar.
+                </p>
+            </details>
+            <details>
+                <summary>Apakah bisa reschedule jika ada jadwal mendadak?</summary>
+                <p>
+                    Bisa. Hubungi admin maksimal 24 jam sebelum sesi dimulai dan kami akan bantu atur ulang jadwalmu.
+                </p>
+            </details>
+            <details>
+                <summary>Bagaimana sistem evaluasi progres siswa?</summary>
+                <p>
+                    Kami menyediakan laporan mingguan, evaluasi tryout, dan coaching pribadi agar target belajar tercapai.
+                </p>
+            </details>
+            <details>
+                <summary>Apakah ada grup diskusi komunitas?</summary>
+                <p>
+                    Ada. Semua siswa akan bergabung di komunitas eksklusif untuk diskusi, motivasi, dan info terbaru.
+                </p>
+            </details>
+            <details>
+                <summary>Metode pembayaran apa yang tersedia?</summary>
+                <p>
+                    Pembayaran dapat melalui transfer bank, e-wallet, dan virtual account dengan konfirmasi otomatis.
+                </p>
+            </details>
+        </div>
+    </div>
+</section>
 
         <footer>
                 <div class="footer-wrapper container" data-reveal>

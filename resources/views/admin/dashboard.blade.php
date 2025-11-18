@@ -538,6 +538,12 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Supaya card "Transaksi Terbaru" tidak ikut stretch setinggi kolom kanan */
+        .detail-grid > .card-panel {
+            align-self: start;
+        }
+
     </style>
 @endpush
 
@@ -547,7 +553,6 @@
     {{-- Hero Section --}}
     <section class="hero-card">
         <div class="hero-main">
-            <span class="hero-chip">Ringkasan operasional</span>
             <h2>Monitor seluruh aktivitas MayClass dalam satu tempat</h2>
             <p>Data finansial, pendaftaran siswa, dan performa paket belajar diperbarui secara langsung sehingga tim administrasi dapat mengambil keputusan cepat setiap hari.</p>
         </div>
