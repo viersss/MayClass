@@ -309,6 +309,10 @@
                 margin: -4px 0 0;
             }
 
+            .recaptcha-wrapper {
+                margin-top: 4px;
+            }
+
             @media (max-width: 960px) {
                 .auth-card {
                     grid-template-columns: 1fr;
@@ -346,6 +350,9 @@
                 }
             }
         </style>
+
+        {{-- Script reCAPTCHA --}}
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     </head>
     <body>
         @php($genderLabel = match ($profile['gender'] ?? null) {
@@ -445,6 +452,21 @@
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
                         </div>
+
+                        {{-- reCAPTCHA --}}
+                        <div class="input-group">
+                            <label>Verifikasi Keamanan</label>
+                            <div class="recaptcha-wrapper">
+                                <div
+                                    class="g-recaptcha"
+                                    data-sitekey="{{ config('services.recaptcha.key') }}"
+                                ></div>
+                            </div>
+                            @error('g-recaptcha-response')
+                                <p class="input-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <p class="form-helper">
                             Setelah password disimpan, akun MayClass Anda langsung aktif dan siap digunakan.
                         </p>

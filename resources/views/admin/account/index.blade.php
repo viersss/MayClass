@@ -186,7 +186,7 @@
                     </div>
                     <label class="avatar-field__button" for="avatar">Unggah Foto Baru</label>
                     <input type="file" class="avatar-field__input" id="avatar" name="avatar" accept="image/*" />
-                    <p class="avatar-field__hint">Format JPG/PNG, maksimum 2 MB</p>
+                    <p class="avatar-field__hint">Format JPG/PNG, maksimum 5 MB</p>
                     @error('avatar')
                         <p class="avatar-field__error">{{ $message }}</p>
                     @enderror

@@ -329,7 +329,6 @@
                     </div>
                     <div class="nav-actions">
                         <a class="profile-chip" href="{{ route('student.profile') }}" data-active="true">
-                            <span>👋</span>
                             <span>Siswa</span>
                         </a>
                         <form method="post" action="{{ route('logout') }}">
@@ -356,7 +355,7 @@
                         <span data-avatar-placeholder @if($avatarUrl) style="display: none;" @endif>🧑</span>
                     </div>
                     <label class="avatar-upload__button" for="avatar">Pilih foto</label>
-                    <p class="avatar-upload__hint">Format JPG/PNG, maksimal 2 MB</p>
+                    <p class="avatar-upload__hint">Format JPG/PNG, maksimal 5 MB</p>
                     <p class="avatar-upload__filename" data-avatar-filename></p>
                     @error('avatar')
                         <p class="avatar-upload__error">{{ $message }}</p>

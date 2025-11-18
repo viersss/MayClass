@@ -657,21 +657,31 @@
         </style>
     </head>
     <body>
-        @php($profileData = $profile ?? [])
-        @if (session('register_success'))
-            <div class="register-popup-backdrop is-visible" id="register-popup" role="dialog" aria-modal="true">
-                <div class="register-popup">
-                    <p class="register-popup-title">Registrasi berhasil!</p>
-                    <p class="register-popup-text">
-                        {{ session('status') ?? 'Akun berhasil dibuat. Silakan login untuk mulai belajar.' }}
-                    </p>
-                    <div class="register-popup-actions">
-                        <a href="{{ route('login') }}">Masuk Sekarang</a>
-                        <button type="button" data-close-register-popup>Tutup</button>
-                    </div>
-                </div>
-            </div>
-        @endif
+@php($profileData = $profile ?? [])
+@if (session('register_success'))
+    <div class="register-popup-backdrop is-visible" id="register-popup" role="dialog" aria-modal="true">
+        <div class="register-popup">
+            <p class="register-popup-title">Registrasi berhasil!</p>
+            <p class="register-popup-text">
+                {{ session('status') ?? 'Akun berhasil dibuat. Silakan login untuk mulai belajar.' }}
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-close after 1 second
+        setTimeout(() => {
+            const popup = document.getElementById('register-popup');
+            if (popup) {
+                popup.classList.remove('is-visible');
+
+                // optionally remove from DOM:
+                setTimeout(() => popup.remove(), 300);
+            }
+        }, 1000);
+    </script>
+@endif
+
 
         <a class="back-link" href="{{ url('/') }}">
             <span aria-hidden="true">&lt;</span>
@@ -703,14 +713,6 @@
                         <p class="panel-desc" data-copy-mode="login">
                             Masukkan username dan password untuk melanjutkan progres belajar tanpa hambatan.
                         </p>
-                        <div class="tab-switcher" role="tablist">
-                            <button type="button" data-mode="register" role="tab" aria-selected="false">
-                                Daftar
-                            </button>
-                            <button type="button" data-mode="login" role="tab" aria-selected="false">
-                                Masuk
-                            </button>
-                        </div>
                     </div>
 
                     @if (session('status'))
@@ -801,27 +803,6 @@
                                 <option value="male" @selected($selectedGender === 'male')>Laki-laki</option>
                             </select>
                             @error('gender')
-                                <p class="input-error">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="captcha-card" role="group" aria-labelledby="captcha-label">
-                            <div>
-                                <strong id="captcha-label">Verifikasi Keamanan</strong>
-                                <p>{{ $captcha['hint'] ?? 'Jawab pertanyaan berikut untuk melanjutkan registrasi.' }}</p>
-                            </div>
-                            <div class="captcha-question">{{ $captcha['question'] ?? '0 + 0 = ?' }}</div>
-                            <input
-                                type="text"
-                                name="captcha_answer"
-                                inputmode="numeric"
-                                pattern="[0-9]*"
-                                placeholder="Masukkan jawaban benar"
-                                value="{{ old('captcha_answer') }}"
-                                autocomplete="off"
-                                required
-                            />
-                            @error('captcha_answer')
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
                         </div>

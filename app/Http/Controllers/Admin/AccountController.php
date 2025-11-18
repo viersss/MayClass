@@ -31,7 +31,7 @@ class AccountController extends BaseAdminController
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($admin?->id)],
             'phone' => ['nullable', 'string', 'max:40'],
-            'avatar' => ['nullable', 'image', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'max:5000'],
         ]);
 
         $avatarPath = $admin?->avatar_path;

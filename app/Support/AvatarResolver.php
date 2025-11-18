@@ -14,6 +14,7 @@ class AvatarResolver
     {
         $disk = Storage::disk('public');
 
+        // 1. Cek path yang disimpan di disk public (storage/app/public/...)
         foreach ($candidates as $candidate) {
             $normalized = self::normalize($candidate);
 
@@ -22,19 +23,23 @@ class AvatarResolver
             }
 
             if ($disk->exists($normalized)) {
-                return $disk->url($normalized);
+                // KUNCI: pakai asset('storage/...'), bukan $disk->url()
+                return asset('storage/' . $normalized);
             }
         }
 
+        // 2. Fallback: kalau ternyata kandidat sudah berupa URL penuh / storage/...
         foreach ($candidates as $candidate) {
             if (! $candidate) {
                 continue;
             }
 
+            // sudah URL lengkap (https://...)
             if (filter_var($candidate, FILTER_VALIDATE_URL)) {
                 return $candidate;
             }
 
+            // sudah dalam bentuk "storage/avatars/xxx.jpg"
             if (Str::startsWith($candidate, 'storage/')) {
                 return asset($candidate);
             }
@@ -55,6 +60,7 @@ class AvatarResolver
             return null;
         }
 
+        // buang prefix storage/ atau public/ kalau ada
         return preg_replace('#^(?:storage/|public/)+#', '', $trimmed) ?: $trimmed;
     }
 }
