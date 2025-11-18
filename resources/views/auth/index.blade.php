@@ -350,6 +350,17 @@
                 font-weight: 600;
             }
 
+            .help-link {
+                font-size: 0.88rem;
+                color: var(--text-muted);
+                margin-top: 12px;
+            }
+
+            .help-link a {
+                color: var(--accent-dark);
+                font-weight: 600;
+            }
+
             .form-support {
                 display: flex;
                 align-items: center;
@@ -841,6 +852,11 @@
                         </div>
 
                         <button class="primary-action" type="submit">Masuk</button>
+
+                        <p class="help-link">
+                            Lupa password?
+                            <a href="{{ route('password.request') }}">Hubungi admin</a>
+                        </p>
 
                         <p class="switch-message">
                             Baru di MayClass?
