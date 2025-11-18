@@ -125,7 +125,6 @@ class PackageSeeder extends Seeder
                 'slug' => $packageData['slug'],
                 'level' => $packageData['level'],
                 'grade_range' => $packageData['grade_range'],
-                'tag' => $packageData['tag'],
                 'card_price_label' => $packageData['card_price_label'],
                 'detail_title' => $packageData['detail_title'],
                 'detail_price_label' => $packageData['detail_price_label'],

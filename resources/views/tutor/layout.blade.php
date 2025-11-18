@@ -354,6 +354,9 @@
                     @php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
 
+                        // Normalize any menu data provided by child views before using it below.
+                        $providedMenuItems = $menuItems ?? null;
+
                         $defaultMenuItems = [
                             [
                                 'label' => 'Beranda',
