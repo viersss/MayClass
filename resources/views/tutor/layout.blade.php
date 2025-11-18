@@ -378,11 +378,16 @@
                             ],
                         ];
 
-                        $menuItems = is_array($providedMenuItems) && $providedMenuItems !== []
-                            ? $providedMenuItems
-                            : $defaultMenuItems;
+                        $layoutMenuItems = $menuItems ?? null;
+
+                        if (! is_array($layoutMenuItems) || $layoutMenuItems === []) {
+                            $layoutMenuItems = $defaultMenuItems;
+                        }
+
+                        // Reindex to avoid issues if the provided array uses associative keys.
+                        $layoutMenuItems = array_values($layoutMenuItems);
                     @endphp
-                    @foreach ($menuItems as $item)
+                    @foreach ($layoutMenuItems as $item)
                         @php
                             $isActive = false;
                             foreach ($item['patterns'] as $pattern) {
