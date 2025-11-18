@@ -62,7 +62,6 @@
             }
 
             .back-link::before {
-                content: '←';
                 display: inline-block;
                 font-size: 1rem;
             }

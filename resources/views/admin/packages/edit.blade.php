@@ -85,7 +85,7 @@
 @endpush
 
 @section('content')
-    <a href="{{ route('admin.packages.index') }}" class="cancel-link" style="margin-bottom: 22px;">← Kembali ke daftar paket</a>
+    <a href="{{ route('admin.packages.index') }}" class="cancel-link" style="margin-bottom: 22px;">Kembali ke daftar paket</a>
 
     @php($stageOptions = $stages ?? [])
 

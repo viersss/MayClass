@@ -142,17 +142,18 @@
             margin: 0;
         }
 
-        .password-card button[type='submit'] {
-            padding: 12px 22px;
-            border-radius: 16px;
-            border: none;
-            background: linear-gradient(120deg, #2563eb, #3db7ad);
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 18px 32px rgba(37, 99, 235, 0.2);
-            width: 100%;
-        }
+    .password-card button[type='submit'] {
+        padding: 12px 22px;
+        border-radius: 16px;
+        border: none;
+        background: #3fa67e; /* hijau solid */
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 22px 46px rgba(15, 23, 42, 0.08);
+        width: 100%;
+    }
+
 
         .password-card__meta {
             margin-top: 18px;
@@ -250,7 +251,7 @@
 
 @section('content')
     <a href="{{ route('admin.students.index') }}" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); margin-bottom: 22px;">
-        ← Kembali ke daftar siswa
+        Kembali ke daftar siswa
     </a>
 
     <div class="detail-layout">
