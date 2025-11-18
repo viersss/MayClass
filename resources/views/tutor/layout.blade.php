@@ -353,6 +353,10 @@
                 <nav class="navigation">
                     @php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
+
+                        // Normalize any menu data provided by child views before using it below.
+                        $providedMenuItems = $menuItems ?? null;
+
                         $defaultMenuItems = [
                             [
                                 'label' => 'Beranda',
@@ -374,12 +378,9 @@
                             ],
                         ];
 
-                        if (!isset($menuItems) || !is_array($menuItems)) {
-                            $menuItems = $defaultMenuItems;
-                        }
-
-                        // Pastikan variabel yang digunakan saat render menu selalu tersedia
-                        $menuItemsToRender = $menuItems ?? $defaultMenuItems;
+                        $menuItems = is_array($providedMenuItems) && $providedMenuItems !== []
+                            ? $providedMenuItems
+                            : $defaultMenuItems;
                     @endphp
                     @foreach ($menuItems as $item)
                         @php
