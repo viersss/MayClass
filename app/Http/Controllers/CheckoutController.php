@@ -7,6 +7,7 @@ use App\Models\Package;
 use App\Support\PackagePresenter;
 use App\Support\ProfileAvatar;
 use App\Support\ProfileLinkResolver;
+use App\Support\StudentAccess;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,10 @@ class CheckoutController extends Controller
     {
         $package = Package::with(['cardFeatures', 'inclusions'])->where('slug', $slug)->firstOrFail();
         $user = $request->user();
+
+        if ($redirect = $this->redirectIfPurchaseLocked($user)) {
+            return $redirect;
+        }
 
         $packageDetail = $this->formatPackage($package);
         $existingOrder = $this->latestSubmittedOrder($user->id, $package->id);
@@ -54,6 +59,10 @@ class CheckoutController extends Controller
 
     public function store(Request $request, string $slug): RedirectResponse
     {
+        if ($redirect = $this->redirectIfPurchaseLocked($request->user())) {
+            return $redirect;
+        }
+
         $package = Package::where('slug', $slug)->firstOrFail();
 
         $data = $request->validate([
@@ -264,5 +273,32 @@ class CheckoutController extends Controller
             ->whereNotNull('payment_proof_path')
             ->latest('updated_at')
             ->first();
+    }
+
+    private function redirectIfPurchaseLocked($user): ?RedirectResponse
+    {
+        if (! $user || $user->role !== 'student') {
+            return null;
+        }
+
+        if (! StudentAccess::hasActivePackage($user)) {
+            return null;
+        }
+
+        $enrollment = StudentAccess::activeEnrollment($user);
+        $package = optional($enrollment)->package;
+
+        if (! $package) {
+            return null;
+        }
+
+        $packageName = $package->detail_title
+            ?? $package->title
+            ?? $package->name
+            ?? 'paket MayClass';
+
+        return redirect()
+            ->route('student.dashboard')
+            ->with('purchase_locked', 'Kamu sudah aktif di ' . $packageName . '. Paket baru dapat dibeli setelah paket ini selesai atau dinonaktifkan.');
     }
 }

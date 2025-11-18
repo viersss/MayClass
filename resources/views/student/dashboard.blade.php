@@ -464,7 +464,6 @@
                     <h2 class="dashboard-card__title">{{ $activePackage['title'] }}</h2>
                     <p class="dashboard-card__text">{{ $activePackage['period'] }}</p>
                     <p class="dashboard-card__text">Status: {{ $activePackage['status'] }}</p>
-                    <a class="student-button student-button--outline" href="{{ route('packages.index') }}">Lihat paket lainnya</a>
                 </article>
             </div>
 

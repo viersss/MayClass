@@ -321,6 +321,37 @@
                 border-top: 1px solid var(--border);
             }
 
+            .purchase-notice {
+                margin-bottom: 32px;
+                padding: 20px clamp(18px, 4vw, 32px);
+                border-radius: 16px;
+                border: 1px solid rgba(95, 106, 248, 0.25);
+                background: rgba(95, 106, 248, 0.08);
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                color: #2b2c55;
+                box-shadow: 0 16px 32px rgba(44, 72, 146, 0.08);
+            }
+
+            .purchase-notice strong {
+                font-size: 1rem;
+            }
+
+            .purchase-lock-chip {
+                flex: 1;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 10px 16px;
+                border-radius: 999px;
+                border: 1px dashed rgba(95, 106, 248, 0.4);
+                background: rgba(95, 106, 248, 0.08);
+                color: #3d3f7d;
+                font-weight: 600;
+                font-size: 0.85rem;
+            }
+
             .more-link {
                 flex: 1;
                 display: inline-flex;
@@ -432,6 +463,8 @@
     <body>
         @php($profileLink = $profileLink ?? null)
         @php($profileAvatar = $profileAvatar ?? asset('images/avatar-placeholder.svg'))
+        @php($studentHasActivePackage = $studentHasActivePackage ?? false)
+        @php($studentActivePackageName = $studentActivePackageName ?? null)
         <header>
             <div class="container">
                 <nav>
@@ -471,6 +504,17 @@
 
         <main class="container">
             @php($catalog = collect($catalog ?? []))
+            @php($isStudent = auth()->check() && auth()->user()->role === 'student')
+
+            @if ($isStudent && $studentHasActivePackage)
+                <div class="purchase-notice" role="status">
+                    <strong>Paket belajar aktif sedang berjalan</strong>
+                    <p style="margin: 0; font-size: 0.95rem; color: #3b4158;">
+                        Kamu masih terdaftar di paket {{ $studentActivePackageName ?? 'MayClass' }}. Paket baru dapat dibeli
+                        setelah paket tersebut berakhir atau dinonaktifkan oleh admin.
+                    </p>
+                </div>
+            @endif
 
             @if ($catalog->isNotEmpty())
                 @foreach ($catalog as $group)
@@ -513,6 +557,13 @@
                                     <div class="card-footer">
                                         <a class="more-link" href="{{ route('packages.show', $package['slug']) }}">Detail Paket</a>
                                         @auth
+                                            @if ($isStudent && $studentHasActivePackage)
+                                                <span class="purchase-lock-chip">Paket aktif berlangsung</span>
+                                            @else
+                                                <a class="checkout-link" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
+                                            @endif
+                                        @else
+                                            <a class="checkout-link" href="{{ route('register') }}">Daftar & Checkout</a>
                                         @endauth
                                     </div>
                                 </article>

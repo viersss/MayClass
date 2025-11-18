@@ -279,6 +279,11 @@
                 color: var(--student-primary);
             }
 
+            .student-alert--info {
+                background: rgba(95, 106, 248, 0.12);
+                color: var(--student-accent);
+            }
+
             .student-alert__actions {
                 display: inline-flex;
                 align-items: center;
@@ -357,6 +362,12 @@
                             </a>
                         </div>
                     @endif
+                </div>
+            @endif
+
+            @if (session('purchase_locked'))
+                <div class="student-alert student-alert--info">
+                    <span>{{ session('purchase_locked') }}</span>
                 </div>
             @endif
 

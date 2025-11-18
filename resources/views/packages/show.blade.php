@@ -425,6 +425,23 @@
                 box-shadow: 0 20px 40px rgba(36, 110, 107, 0.25);
             }
 
+            .buy-btn.is-disabled {
+                background: rgba(95, 106, 248, 0.12);
+                color: #3d3f7d;
+                box-shadow: none;
+                cursor: not-allowed;
+            }
+
+            .buy-btn__note {
+                margin: 12px 0 0;
+                font-size: 0.9rem;
+                color: #3b4158;
+                line-height: 1.5;
+                background: rgba(95, 106, 248, 0.08);
+                border-radius: 12px;
+                padding: 10px 14px;
+            }
+
             .chip-btn {
                 display: inline-flex;
                 align-items: center;
@@ -570,6 +587,9 @@
     <body>
         @php($profileLink = $profileLink ?? null)
         @php($profileAvatar = $profileAvatar ?? asset('images/avatar-placeholder.svg'))
+        @php($studentHasActivePackage = $studentHasActivePackage ?? false)
+        @php($studentActivePackageName = $studentActivePackageName ?? null)
+        @php($isStudent = auth()->check() && auth()->user()->role === 'student')
 
         <header>
             <nav>
@@ -632,11 +652,22 @@
                         <div class="price-box">
                             <p class="price">{{ $package['detail_price'] }}</p>
                             @auth
-                                <a class="buy-btn" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
+                                @php($purchaseLocked = $isStudent && $studentHasActivePackage)
+                                @if ($purchaseLocked)
+                                    <span class="buy-btn is-disabled">Paket aktif berlangsung</span>
+                                @else
+                                    <a class="buy-btn" href="{{ route('checkout.show', $package['slug']) }}">Checkout</a>
+                                @endif
                             @else
                                 <a class="buy-btn" href="{{ route('register') }}">Checkout</a>
                             @endauth
                         </div>
+                        @if ($isStudent && $studentHasActivePackage)
+                            <p class="buy-btn__note">
+                                Kamu sedang aktif di paket {{ $studentActivePackageName ?? 'MayClass' }}. Paket baru dapat
+                                dibeli setelah masa aktif saat ini selesai atau dinonaktifkan oleh admin.
+                            </p>
+                        @endif
                         <div class="package-meta" style="margin-top: -6px;">
                             <span>{{ $package['stage_label'] ?? $package['stage'] ?? 'Program' }}</span>
                             @if (! empty($package['grade_range']))
