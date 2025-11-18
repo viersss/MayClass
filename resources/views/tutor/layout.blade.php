@@ -375,7 +375,9 @@
                             ],
                         ];
 
-                        $menuItemsToRender = isset($menuItems) && is_array($menuItems) ? $menuItems : $defaultMenuItems;
+                        if (!isset($menuItems) || !is_array($menuItems)) {
+                            $menuItems = $defaultMenuItems;
+                        }
                     @endphp
                     @foreach ($menuItemsToRender as $item)
                         @php
