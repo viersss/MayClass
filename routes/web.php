@@ -57,6 +57,7 @@ Route::get('/packages/{slug}', [PackageController::class, 'show'])->name('packag
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::get('/lupa-password', [AuthController::class, 'showForgotPassword'])->name('password.forgot');
     Route::post('/register/details', [AuthController::class, 'storeRegisterDetails'])->name('register.details');
     Route::get('/register/password', [AuthController::class, 'showPasswordStep'])->name('register.password');
     Route::post('/login', [AuthController::class, 'login'])->name('login.perform');
@@ -124,6 +125,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/students', [AdminStudentController::class, 'index'])->name('students.index');
     Route::get('/students/{student}', [AdminStudentController::class, 'show'])->name('students.show');
+    Route::post('/students/{student}/reset-password', [AdminStudentController::class, 'resetPassword'])->name('students.reset-password');
 
     Route::get('/packages', [AdminPackageController::class, 'index'])->name('packages.index');
     Route::get('/packages/create', [AdminPackageController::class, 'create'])->name('packages.create');

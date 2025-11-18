@@ -350,6 +350,17 @@
                 font-weight: 600;
             }
 
+            .forgot-password {
+                margin-top: -8px;
+                margin-bottom: 16px;
+                text-align: right;
+            }
+
+            .forgot-password a {
+                color: var(--accent-dark);
+                font-weight: 600;
+            }
+
             .form-support {
                 display: flex;
                 align-items: center;
@@ -628,6 +639,11 @@
                     align-items: flex-start;
                 }
 
+                .forgot-password {
+                    text-align: left;
+                    width: 100%;
+                }
+
                 .tab-switcher {
                     width: 100%;
                     justify-content: space-between;
@@ -838,6 +854,10 @@
                             @error('password')
                                 <p class="input-error">{{ $message }}</p>
                             @enderror
+                        </div>
+
+                        <div class="forgot-password">
+                            <a href="{{ route('password.forgot') }}">Lupa Password?</a>
                         </div>
 
                         <button class="primary-action" type="submit">Masuk</button>

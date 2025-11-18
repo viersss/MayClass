@@ -41,10 +41,9 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
-    'recaptcha' => [
-    'key'    => env('GOOGLE_RECAPTCHA_SITE_KEY'),
-    'secret' => env('GOOGLE_RECAPTCHA_SECRET_KEY'),
-],
-
+    'whatsapp' => [
+        'support_admin' => env('WHATSAPP_SUPPORT_ADMIN', env('WHATSAPP_FINANCE_ADMIN', '6281234567890')),
+        'finance_admin' => env('WHATSAPP_FINANCE_ADMIN', env('WHATSAPP_SUPPORT_ADMIN', '6281234567890')),
+    ],
 
 ];

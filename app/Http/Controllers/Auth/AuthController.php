@@ -59,6 +59,21 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
+    public function showForgotPassword(Request $request)
+    {
+        if (Auth::check()) {
+            return redirect()->to($this->homeRouteFor(Auth::user()));
+        }
+
+        $supportNumber = config('services.whatsapp.support_admin', '6281234567890');
+        $message = __('Halo Admin MayClass, saya membutuhkan bantuan untuk mereset password akun siswa MayClass.');
+
+        return view('auth.forgot', [
+            'whatsappLink' => $this->buildWhatsappLink($supportNumber, $message),
+            'whatsappNumber' => $this->formatWhatsappNumber($supportNumber),
+        ]);
+    }
+
     public function storeRegisterDetails(Request $request): RedirectResponse
     {
         $this->ensureUsernameSupport();
@@ -260,6 +275,31 @@ class AuthController extends Controller
             'question' => sprintf('%d %s %d = ?', $first, $operator, $second),
             'hint' => __('Masukkan jawaban dalam bentuk angka.'),
         ];
+    }
+
+    private function buildWhatsappLink(string $number, string $message): string
+    {
+        $target = $this->normalizePhoneNumber($number);
+
+        return "https://wa.me/{$target}?text=" . rawurlencode($message);
+    }
+
+    private function formatWhatsappNumber(string $number): string
+    {
+        $target = $this->normalizePhoneNumber($number);
+
+        return '+' . $target;
+    }
+
+    private function normalizePhoneNumber(string $number): string
+    {
+        $digits = preg_replace('/[^0-9]/', '', (string) $number) ?: '6281234567890';
+
+        if (str_starts_with($digits, '0')) {
+            $digits = '62' . substr($digits, 1);
+        }
+
+        return ltrim($digits, '+');
     }
 
     private function isDatabaseConnectionIssue(Throwable $exception): bool
