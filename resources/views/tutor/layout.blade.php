@@ -349,14 +349,16 @@
     <body>
         <div class="dashboard-shell">
             <aside class="nav-panel">
-                @php($tutorSummaryAvatar = \App\Support\ProfileAvatar::forUser($tutor))
+                @php
+                    // Pastikan tutor ada untuk menghindari error pada method static
+                    $tutorSummaryAvatar = isset($tutor) ? \App\Support\ProfileAvatar::forUser($tutor) : asset('images/default-avatar.png');
+                @endphp
+                
                 <nav class="navigation">
                     @php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
 
-                        // Normalize any menu data provided by child views before using it below.
-                        $providedMenuItems = $menuItems ?? null;
-
+                        // 1. Definisi Menu Default
                         $defaultMenuItems = [
                             [
                                 'label' => 'Beranda',
@@ -378,19 +380,26 @@
                             ],
                         ];
 
-                        $layoutMenuItems = $menuItems ?? null;
-
-                        if (! is_array($layoutMenuItems) || $layoutMenuItems === []) {
+                        // 2. Logika Penentuan Menu (Perbaikan Utama)
+                        // Jika variabel $menuItems ada DAN berupa array, gunakan itu.
+                        // Jika tidak, gunakan $defaultMenuItems.
+                        if (isset($menuItems) && is_array($menuItems) && count($menuItems) > 0) {
+                            $layoutMenuItems = $menuItems;
+                        } else {
                             $layoutMenuItems = $defaultMenuItems;
                         }
 
-                        // Reindex to avoid issues if the provided array uses associative keys.
+                        // 3. Reindex array untuk keamanan loop
                         $layoutMenuItems = array_values($layoutMenuItems);
                     @endphp
+
                     @foreach ($layoutMenuItems as $item)
                         @php
                             $isActive = false;
-                            foreach ($item['patterns'] as $pattern) {
+                            // Pastikan patterns ada agar tidak error
+                            $patterns = $item['patterns'] ?? [];
+
+                            foreach ($patterns as $pattern) {
                                 if ($currentRoute && \Illuminate\Support\Str::is($pattern, $currentRoute)) {
                                     $isActive = true;
                                     break;
@@ -410,6 +419,7 @@
                             alt="Foto tutor"
                         />
                         <div>
+                            {{-- Gunakan optional chaining (?->) agar aman jika data kosong --}}
                             <strong>{{ $tutor?->name ?? 'Tutor MayClass' }}</strong>
                             <small>{{ $tutorProfile?->specializations ?? 'Mentor MayClass' }}</small>
                         </div>

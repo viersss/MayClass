@@ -4,688 +4,439 @@
 
 @push('styles')
     <style>
-        .account-shell {
+        :root {
+            --primary: #0f766e;       /* Teal 700 */
+            --primary-dark: #0f5132;  /* Teal 800 */
+            --primary-light: rgba(15, 118, 110, 0.08);
+            --surface: #ffffff;
+            --background: #f8fafc;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --radius: 16px;
+        }
+
+        .account-layout {
             display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 28px;
-            align-items: flex-start;
+            grid-template-columns: 350px 1fr;
+            gap: 32px;
+            align-items: start;
         }
 
-        /* SIDEBAR PROFIL */
-        .profile-pane {
-            background: #111c32;
-            border-radius: 20px;
-            padding: 24px 22px;
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.45);
-        }
-
-        .profile-pane-header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-        }
-
-        .profile-pill {
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: rgba(148, 163, 184, 0.16);
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: rgba(226, 232, 240, 0.92);
-        }
-
-        .profile-pane-content {
-            display: grid;
-            gap: 18px;
-            justify-items: center;
+        /* --- LEFT COLUMN: PROFILE CARD (CLEAN DESIGN) --- */
+        .profile-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-card);
+            position: sticky;
+            top: 32px;
+            padding: 48px 24px 32px; /* Padding atas lebih besar agar lega */
             text-align: center;
         }
 
-        .profile-avatar-wrapper {
+        .profile-content {
+            /* Container styling reset */
+            padding: 0;
+        }
+
+        .avatar-wrapper {
             position: relative;
             width: 120px;
             height: 120px;
+            margin: 0 auto 24px; /* Jarak ke nama */
         }
 
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
+        .avatar-img {
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.6);
+            /* Shadow lembut menggantikan border tebal */
+            box-shadow: 0 12px 24px -6px rgba(15, 118, 110, 0.15); 
+            background: #fff;
         }
 
-        .profile-status-dot {
+        .status-indicator {
             position: absolute;
+            bottom: 6px;
             right: 6px;
-            bottom: 8px;
-            width: 16px;
-            height: 16px;
-            border-radius: 999px;
+            width: 18px;
+            height: 18px;
             background: #22c55e;
-            border: 2px solid #0f172a;
+            border: 3px solid var(--surface);
+            border-radius: 50%;
         }
 
-        .profile-name {
-            margin: 8px 0 2px;
-            font-size: 1.4rem;
-            font-weight: 600;
+        .tutor-name {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 8px;
+            letter-spacing: -0.01em;
         }
 
-        .profile-role {
-            margin: 0;
-            color: rgba(255, 255, 255, 0.72);
-            font-size: 0.95rem;
-        }
-
-        .profile-subtext {
-            margin: 4px 0 0;
-            font-size: 0.8rem;
-            color: rgba(148, 163, 184, 0.9);
-        }
-
-        .profile-stats {
-            display: grid;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .profile-stat-item {
-            padding: 10px 12px;
-            border-radius: 14px;
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(148, 163, 184, 0.35);
-            text-align: left;
-        }
-
-        .profile-stats span {
-            font-size: 0.8rem;
-            color: rgba(148, 163, 184, 0.9);
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            display: block;
-            margin-bottom: 3px;
-        }
-
-        .profile-stats strong {
-            font-size: 0.95rem;
-        }
-
-        .profile-contact {
-            display: grid;
-            gap: 8px;
-            width: 100%;
-            text-align: left;
-            margin-top: 4px;
-            padding-top: 10px;
-            border-top: 1px dashed rgba(148, 163, 184, 0.5);
-        }
-
-        .profile-contact span {
-            font-size: 0.8rem;
-            color: rgba(148, 163, 184, 0.95);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-        }
-
-        .profile-contact a {
+        .tutor-role {
+            font-size: 0.85rem;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 6px 14px;
+            border-radius: 99px;
             display: inline-block;
-            color: #e5e7eb;
             font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: 0.02em;
+        }
+
+        .tutor-bio {
             font-size: 0.95rem;
-            text-decoration: none;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 32px;
+            padding: 0 8px;
         }
 
-        .profile-contact a:hover {
-            text-decoration: underline;
-        }
-
-        /* FORM KANAN */
-        .form-card {
-            background: var(--surface, #ffffff);
-            border-radius: 20px;
-            padding: 24px 24px 28px;
-            border: 1px solid var(--border-subtle, #e5e7eb);
-            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
-        }
-
-        .password-panel {
-            margin-top: 24px;
-            display: grid;
+        .info-list {
+            display: flex;
+            flex-direction: column;
             gap: 16px;
+            text-align: left;
+            padding-top: 28px;
+            border-top: 1px solid var(--border);
         }
 
-        .password-panel h2 {
-            margin: 0;
-            font-size: 1.3rem;
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            font-weight: 500;
         }
 
-        .password-panel p {
+        .info-icon {
+            color: #94a3b8;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* --- RIGHT COLUMN: FORMS --- */
+        .settings-container {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .form-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .section-header {
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 6px;
+        }
+
+        .section-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
             margin: 0;
+        }
+
+        /* Custom Upload Area */
+        .upload-area {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        .upload-preview {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e2e8f0;
+        }
+
+        .upload-btn {
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .upload-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            color: var(--text-main);
+            width: 100%;
+            background: #fff;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+        }
+
+        .helper-text {
+            font-size: 0.8rem;
             color: var(--text-muted);
         }
 
-        .password-form {
-            display: grid;
-            gap: 20px;
+        .error-msg {
+            font-size: 0.8rem;
+            color: #ef4444;
+            margin-top: 4px;
         }
 
-        .password-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px;
-        }
-
-        .password-input {
-            width: 100%;
-            border-radius: 14px;
-            border: 1px solid var(--border-subtle, #e5e7eb);
-            padding: 14px 16px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            background: var(--surface-muted, #f8fafc);
-        }
-
-        .password-error {
-            margin-top: 6px;
-            font-size: 0.85rem;
-            color: #dc2626;
-        }
-
-        .password-submit {
-            width: fit-content;
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
             border: none;
-            border-radius: 999px;
-            padding: 12px 26px;
-            background: #125e66;
-            color: #fff;
+            padding: 12px 28px;
+            border-radius: 99px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 12px 24px rgba(18, 94, 102, 0.2);
-        }
-
-        .password-alert {
-            padding: 12px 16px;
-            border-radius: 16px;
-            background: rgba(18, 94, 102, 0.08);
-            color: #125e66;
-            font-weight: 500;
-        }
-
-        .form-header {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            margin-bottom: 12px;
-        }
-
-        .form-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .form-card h1 {
-            margin: 0;
-            font-size: 1.6rem;
-            font-weight: 600;
-        }
-
-        .form-tag {
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: rgba(34, 197, 94, 0.08);
-            color: #16a34a;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .form-card p.description {
-            margin: 0;
-            color: var(--text-muted, #6b7280);
-            font-size: 0.9rem;
-        }
-
-        .last-updated {
-            font-size: 0.8rem;
-            color: var(--text-muted, #6b7280);
-            margin: 6px 0 12px;
-        }
-
-        .form-sections {
-            display: grid;
-            gap: 22px;
-        }
-
-        .form-section-title {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            color: var(--text-muted, #6b7280);
-            margin: 4px 0 6px;
-        }
-
-        .form-grid {
-            display: grid;
-            gap: 18px;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        }
-
-        label span {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 0.92rem;
-        }
-
-        input[type='text'],
-        input[type='email'],
-        input[type='number'],
-        textarea {
-            width: 100%;
-            padding: 11px 14px;
-            border-radius: 12px;
-            border: 1px solid var(--border-subtle, #e5e7eb);
-            font-family: inherit;
-            font-size: 0.95rem;
-            background: #fff;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
-        }
-
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: var(--accent, #3fa67e);
-            box-shadow: 0 0 0 2px rgba(63, 166, 126, 0.25);
-            transform: translateY(-1px);
-        }
-
-        .help-text {
-            font-size: 0.8rem;
-            color: var(--text-muted, #6b7280);
-            margin-top: 4px;
-        }
-
-        .error-text {
-            color: #dc2626;
-            font-size: 0.8rem;
-            margin-top: 4px;
-        }
-
-        /* UPLOAD AVATAR */
-        .avatar-upload {
-            background: var(--surface-muted, #f9fafb);
-            border-radius: 16px;
-            padding: 16px 16px 14px;
-            border: 1px dashed var(--border-subtle, #e5e7eb);
-            display: grid;
-            gap: 10px;
-            justify-items: center;
-            text-align: center;
-        }
-
-        .avatar-upload-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .avatar-upload-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-muted, #6b7280);
-            margin: 0;
-        }
-
-        .avatar-preview {
-            width: 88px;
-            height: 88px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid var(--border-subtle, #e5e7eb);
-        }
-
-        .avatar-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .avatar-input {
-            display: none;
-        }
-
-        .avatar-button {
+            transition: background 0.2s, transform 0.1s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 14px;
-            border-radius: 999px;
-            border: 1px solid var(--border-subtle, #e5e7eb);
-            background: #ffffff;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.86rem;
-            color: var(--text-main, #111827);
-            margin-top: 4px;
+            width: fit-content;
         }
 
-        .avatar-button:hover {
-            border-color: var(--accent, #3fa67e);
-        }
-
-        .avatar-hint {
-            margin: 0;
-            font-size: 0.78rem;
-            color: var(--text-muted, #6b7280);
-        }
-
-        .avatar-error {
-            margin: 0;
-            font-size: 0.78rem;
-            color: #b91c1c;
-        }
-
-        /* ACTIONS */
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
-        }
-
-        .form-actions button {
-            padding: 11px 22px;
-            border-radius: 999px;
-            border: none;
-            background: var(--accent, #3fa67e);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 14px 30px rgba(63, 166, 126, 0.35);
-            transition: transform 0.12s ease, box-shadow 0.12s ease;
-        }
-
-        .form-actions button:hover {
+        .btn-primary:hover {
+            background: var(--primary-dark);
             transform: translateY(-1px);
-            box-shadow: 0 18px 40px rgba(63, 166, 126, 0.45);
         }
 
-        .form-actions button:disabled {
-            opacity: 0.7;
-            cursor: default;
-            box-shadow: none;
-            transform: none;
+        .alert-box {
+            background: #ecfdf5;
+            border: 1px solid #d1fae5;
+            color: #065f46;
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         @media (max-width: 1024px) {
-            .account-shell {
+            .account-layout {
                 grid-template-columns: 1fr;
             }
-        }
-
-        @media (max-width: 640px) {
-            .form-card {
-                padding: 20px 16px 24px;
+            .profile-card {
+                position: relative;
+                top: 0;
+                margin-bottom: 20px;
             }
         }
     </style>
 @endpush
 
 @section('content')
-    <div class="account-shell">
-        {{-- PANEL KIRI: PROFIL SINGKAT TUTOR --}}
-        <aside class="profile-pane">
-            <div class="profile-pane-header">
-                <span class="profile-pill">Profil Tutor</span>
-            </div>
-
-            <div class="profile-pane-content">
+    <div class="account-layout">
+        
+        {{-- SIDEBAR: Preview Profil (CLEAN DESIGN) --}}
+        <aside class="profile-card">
+            <div class="profile-content">
                 @php($placeholderAvatar = asset('images/avatar-placeholder.svg'))
                 @php($profileAvatar = $avatarUrl ?: $placeholderAvatar)
-
-                <div class="profile-avatar-wrapper">
-                    <img src="{{ $profileAvatar }}" alt="Foto Tutor" class="profile-avatar" />
-                    <span class="profile-status-dot" title="Status aktif"></span>
+                
+                <div class="avatar-wrapper">
+                    <img src="{{ $profileAvatar }}" alt="Avatar" class="avatar-img" id="sidebar-avatar-preview">
+                    <div class="status-indicator" title="Online"></div>
                 </div>
 
-                <div>
-                    <h2 class="profile-name">{{ $tutor?->name ?? 'Tutor MayClass' }}</h2>
-                    <p class="profile-role">
-                        {{ $tutorProfile?->specializations ?: 'Pengajar MayClass' }}
-                    </p>
-                    <p class="profile-subtext">
-                        Sesuaikan profil agar siswa lebih mudah mengenal kredibilitas dan gaya mengajar Anda.
-                    </p>
-                </div>
+                <h2 class="tutor-name">{{ $tutor?->name ?? 'Nama Tutor' }}</h2>
+                <span class="tutor-role">{{ $tutorProfile?->specializations ?: 'Pengajar MayClass' }}</span>
+                
+                <p class="tutor-bio">
+                    {{ $tutorProfile?->bio ?? 'Profil ini akan dilihat oleh calon siswa. Pastikan data Anda lengkap agar terlihat profesional.' }}
+                </p>
 
-                <div class="profile-stats">
-                    <div class="profile-stat-item">
-                        <span>Pengalaman Mengajar</span>
-                        <strong>{{ $tutorProfile?->experience_years ?? 0 }} tahun</strong>
+                <div class="info-list">
+                    <div class="info-item">
+                        <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span>{{ $tutorProfile?->experience_years ?? 0 }} Tahun Pengalaman</span>
                     </div>
-                    @if ($tutorProfile?->education)
-                        <div class="profile-stat-item">
-                            <span>Pendidikan Terakhir</span>
-                            <strong>{{ $tutorProfile->education }}</strong>
-                        </div>
-                    @endif
-                </div>
-
-                <div class="profile-contact">
-                    <div>
-                        <span>Email utama</span>
-                        <a href="mailto:{{ $tutor?->email }}">{{ $tutor?->email }}</a>
+                    <div class="info-item">
+                        <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                        <span>{{ $tutorProfile?->education ?: 'Pendidikan belum diatur' }}</span>
                     </div>
-                    @if ($tutor?->phone)
-                        <div>
-                            <span>No. WhatsApp / Telepon</span>
-                            <a href="tel:{{ $tutor->phone }}">{{ $tutor->phone }}</a>
-                        </div>
-                    @endif
+                    <div class="info-item">
+                        <svg class="info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span>{{ $tutor?->email }}</span>
+                    </div>
                 </div>
             </div>
         </aside>
 
-        {{-- PANEL KANAN: FORM PENGATURAN --}}
-        <div class="form-card">
-            <header class="form-header">
-                <div class="form-title-row">
-                    <h1>Informasi Akun & Profil Mengajar</h1>
-                    <span class="form-tag">Hanya terlihat oleh siswa MayClass</span>
+        {{-- MAIN CONTENT: Forms --}}
+        <div class="settings-container">
+            
+            {{-- Form Profil --}}
+            <div class="form-card">
+                <div class="section-header">
+                    <h3 class="section-title">Edit Profil</h3>
+                    <p class="section-desc">Perbarui informasi pribadi dan detail profesional Anda.</p>
                 </div>
-                <p class="description">
-                    Lengkapi data di bawah ini agar profil Anda tampil profesional di halaman kelas dan mudah dipahami oleh siswa.
-                </p>
-                @if ($tutor?->updated_at)
-                    <div class="last-updated">
-                        Terakhir diperbarui {{ $tutor->updated_at->locale('id')->diffForHumans() }}
-                    </div>
-                @endif
-            </header>
 
-            <form method="POST" action="{{ route('tutor.account.update') }}" class="form-sections" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
+                <form method="POST" action="{{ route('tutor.account.update') }}" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
 
-                {{-- SECTION: FOTO PROFIL --}}
-                <section>
-                    <div class="form-section-title">Foto Profil</div>
-                    <div class="form-grid">
-                        <div class="avatar-upload">
-                            <div class="avatar-preview">
-                                <img
-                                    src="{{ $profileAvatar }}"
-                                    alt="Preview foto tutor"
-                                    id="tutor-avatar-preview"
-                                />
-                            </div>
-                            <div>
-                                <p class="avatar-upload-title">Foto profil tutor</p>
-                                <p class="avatar-upload-subtitle">
-                                    Gunakan foto yang jelas dan rapi untuk meningkatkan kepercayaan siswa.
-                                </p>
-                            </div>
-                            <label for="avatar" class="avatar-button">
-                                Ganti Foto Profil
-                            </label>
-                            <input type="file" id="avatar" name="avatar" class="avatar-input" accept="image/*" />
-                            <p class="avatar-hint">Format JPG/PNG, maksimal 5 MB.</p>
-                            @error('avatar')
-                                <p class="avatar-error">{{ $message }}</p>
-                            @enderror
+                    {{-- Upload Area --}}
+                    <div class="upload-area">
+                        <img src="{{ $profileAvatar }}" class="upload-preview" id="form-avatar-preview">
+                        <div>
+                            <label for="avatar" class="upload-btn">Ubah Foto</label>
+                            <input type="file" id="avatar" name="avatar" accept="image/*" hidden>
+                            <p class="helper-text" style="margin-top: 6px;">JPG, GIF, atau PNG. Maksimal 2MB.</p>
+                            @error('avatar') <p class="error-msg">{{ $message }}</p> @enderror
                         </div>
                     </div>
-                </section>
 
-                {{-- SECTION: DATA AKUN UTAMA --}}
-                <section>
-                    <div class="form-section-title">Data Akun</div>
                     <div class="form-grid">
-                        <label>
-                            <span>Nama Lengkap</span>
-                            <input
-                                type="text"
-                                name="name"
-                                value="{{ old('name', $tutor?->name) }}"
-                                required
-                            />
-                            @error('name')
-                                <div class="error-text">{{ $message }}</div>
-                            @enderror
-                        </label>
+                        {{-- Kolom Kiri --}}
+                        <div class="form-group">
+                            <label class="form-label">Nama Lengkap</label>
+                            <input type="text" name="name" class="form-input" value="{{ old('name', $tutor?->name) }}" required>
+                            @error('name') <p class="error-msg">{{ $message }}</p> @enderror
+                        </div>
 
-                        <label>
-                            <span>Email</span>
-                            <input
-                                type="email"
-                                name="email"
-                                value="{{ old('email', $tutor?->email) }}"
-                                required
-                            />
-                            <p class="help-text">Email ini digunakan untuk login dan komunikasi resmi dari MayClass.</p>
-                            @error('email')
-                                <div class="error-text">{{ $message }}</div>
-                            @enderror
-                        </label>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-input" value="{{ old('email', $tutor?->email) }}" required>
+                            @error('email') <p class="error-msg">{{ $message }}</p> @enderror
+                        </div>
 
-                        <label>
-                            <span>No. Telepon / WhatsApp</span>
-                            <input
-                                type="text"
-                                name="phone"
-                                value="{{ old('phone', $tutor?->phone) }}"
-                            />
-                            <p class="help-text">Cantumkan nomor aktif yang digunakan untuk koordinasi jadwal dan kelas.</p>
-                            @error('phone')
-                                <div class="error-text">{{ $message }}</div>
-                            @enderror
-                        </label>
+                        <div class="form-group">
+                            <label class="form-label">Nomor Telepon / WA</label>
+                            <input type="text" name="phone" class="form-input" value="{{ old('phone', $tutor?->phone) }}">
+                            @error('phone') <p class="error-msg">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Mata Pelajaran (Spesialisasi)</label>
+                            <input type="text" name="specializations" class="form-input" value="{{ old('specializations', $tutorProfile?->specializations) }}" placeholder="Contoh: Fisika, Matematika Dasar">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Pengalaman (Tahun)</label>
+                            <input type="number" name="experience_years" class="form-input" value="{{ old('experience_years', $tutorProfile?->experience_years) }}" min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Pendidikan Terakhir</label>
+                            <input type="text" name="education" class="form-input" value="{{ old('education', $tutorProfile?->education) }}" placeholder="Contoh: S1 Pendidikan Matematika">
+                        </div>
                     </div>
-                </section>
 
-                {{-- SECTION: PROFIL MENGAJAR --}}
-                <section>
-                    <div class="form-section-title">Profil Mengajar</div>
+                    <div style="margin-top: 32px; text-align: right;">
+                        <button type="submit" class="btn-primary">
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Form Password --}}
+            <div class="form-card">
+                <div class="section-header">
+                    <h3 class="section-title">Keamanan Akun</h3>
+                    <p class="section-desc">Perbarui kata sandi Anda secara berkala untuk menjaga keamanan.</p>
+                </div>
+
+                @if (session('password_status'))
+                    <div class="alert-box">
+                        {{ session('password_status') }}
+                    </div>
+                @endif
+
+                <form method="post" action="{{ route('tutor.account.password') }}">
+                    @csrf
+                    @method('PUT')
+                    
                     <div class="form-grid">
-                        <label>
-                            <span>Mata Pelajaran</span>
-                            <input
-                                type="text"
-                                name="specializations"
-                                value="{{ old('specializations', $tutorProfile?->specializations) }}"
-                                required
-                            />
-                            <p class="help-text">
-                                Contoh: Matematika SMA, Fisika, UTBK. Pisahkan dengan koma jika lebih dari satu.
-                            </p>
-                            @error('specializations')
-                                <div class="error-text">{{ $message }}</div>
-                            @enderror
-                        </label>
+                        <div class="form-group">
+                            <label class="form-label">Password Lama</label>
+                            <input type="password" name="current_password" class="form-input" required>
+                            @error('current_password', 'passwordUpdate') <p class="error-msg">{{ $message }}</p> @enderror
+                        </div>
 
-                        <label>
-                            <span>Pengalaman Mengajar (Tahun)</span>
-                            <input
-                                type="number"
-                                name="experience_years"
-                                value="{{ old('experience_years', $tutorProfile?->experience_years) }}"
-                                min="0"
-                                max="60"
-                                required
-                            />
-                            <p class="help-text">
-                                Isi dengan pengalaman total mengajar, baik di MayClass maupun di tempat lain.
-                            </p>
-                            @error('experience_years')
-                                <div class="error-text">{{ $message }}</div>
-                            @enderror
-                        </label>
+                        <div class="form-group">
+                            <label class="form-label">Password Baru</label>
+                            <input type="password" name="password" class="form-input" required>
+                            @error('password', 'passwordUpdate') <p class="error-msg">{{ $message }}</p> @enderror
+                        </div>
 
-                        <label>
-                            <span>Pendidikan Terakhir</span>
-                            <input
-                                type="text"
-                                name="education"
-                                value="{{ old('education', $tutorProfile?->education) }}"
-                            />
-                            <p class="help-text">
-                                Contoh: S1 Pendidikan Matematika - Universitas X, S2 Teknik Informatika - Institut Y.
-                            </p>
-                            @error('education')
-                                <div class="error-text">{{ $message }}</div>
-                            @enderror
-                        </label>
+                        <div class="form-group">
+                            <label class="form-label">Konfirmasi Password Baru</label>
+                            <input type="password" name="password_confirmation" class="form-input" required>
+                        </div>
                     </div>
-                </section>
 
-                <div class="form-actions">
-                    <button type="submit">
-                        Simpan Perubahan
-                    </button>
-                </div>
-            </form>
-        </div>
-        <div class="form-card password-panel">
-            <h2>Ubah Password</h2>
-            <p>Gunakan kombinasi huruf, angka, dan simbol untuk menjaga kerahasiaan akun.</p>
-            @if (session('password_status'))
-                <div class="password-alert">{{ session('password_status') }}</div>
-            @endif
-            <form class="password-form" method="post" action="{{ route('tutor.account.password') }}">
-                @csrf
-                @method('PUT')
-                <div class="password-grid">
-                    <label>
-                        <span>Password Lama</span>
-                        <input class="password-input" type="password" name="current_password" autocomplete="current-password" required />
-                        @error('current_password', 'passwordUpdate')
-                            <div class="password-error">{{ $message }}</div>
-                        @enderror
-                    </label>
-                    <label>
-                        <span>Password Baru</span>
-                        <input class="password-input" type="password" name="password" autocomplete="new-password" required />
-                        @error('password', 'passwordUpdate')
-                            <div class="password-error">{{ $message }}</div>
-                        @enderror
-                    </label>
-                    <label>
-                        <span>Konfirmasi Password Baru</span>
-                        <input class="password-input" type="password" name="password_confirmation" autocomplete="new-password" required />
-                    </label>
-                </div>
-                <button class="password-submit" type="submit">Perbarui Password</button>
-            </form>
+                    <div style="margin-top: 32px; text-align: right;">
+                        <button type="submit" class="btn-primary" style="background-color: #0f172a;">
+                            Perbarui Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
 @endsection
@@ -694,29 +445,22 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const input = document.getElementById('avatar');
-            const preview = document.getElementById('tutor-avatar-preview');
+            const formPreview = document.getElementById('form-avatar-preview');
+            const sidebarPreview = document.getElementById('sidebar-avatar-preview');
 
-            if (!input || !preview) {
-                return;
-            }
-
-            input.addEventListener('change', function () {
-                const file = input.files && input.files[0];
-
-                if (!file) {
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.addEventListener('load', function (event) {
-                    const result = event.target && event.target.result;
-                    if (typeof result === 'string') {
-                        preview.src = result;
+            if (input) {
+                input.addEventListener('change', function () {
+                    const file = input.files && input.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            if (formPreview) formPreview.src = e.target.result;
+                            if (sidebarPreview) sidebarPreview.src = e.target.result;
+                        }
+                        reader.readAsDataURL(file);
                     }
                 });
-
-                reader.readAsDataURL(file);
-            });
+            }
         });
     </script>
 @endpush

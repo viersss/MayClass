@@ -4,280 +4,324 @@
 
 @push('styles')
 <style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+        --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        --radius-lg: 24px;
+        --radius-md: 16px;
+    }
+
     .dashboard-content {
-        display: grid;
-        gap: 24px;
-    }
-
-    /* Hero Section */
-    .hero-panel {
-        display: grid;
-        grid-template-columns: 1fr 320px;
-        gap: 32px;
-        padding: 32px;
-        border-radius: 20px;
-        background: #67aba6ff;
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-    }
-
-    .hero-copy {
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        justify-content: center;
+        gap: 32px;
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    /* --- Hero Section --- */
+    .hero-panel {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        align-items: center;
+        gap: 48px;
+        padding: 48px;
+        border-radius: var(--radius-lg);
+        background: var(--primary-gradient);
+        color: #fff;
+        overflow: hidden;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Dekorasi background */
+    .hero-panel::before, .hero-panel::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06);
+        z-index: 1;
+    }
+    .hero-panel::before { width: 300px; height: 300px; top: -100px; right: -50px; }
+    .hero-panel::after { width: 200px; height: 200px; bottom: -50px; left: 10%; }
+
+    .hero-copy {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
     }
 
     .hero-panel h1 {
         margin: 0;
-        font-size: 2.2rem;
-        line-height: 1.3;
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
     }
 
     .hero-panel p {
         margin: 0;
-        font-size: 1.05rem;
+        font-size: 1.1rem;
         line-height: 1.6;
         color: rgba(255, 255, 255, 0.9);
+        max-width: 600px;
     }
 
     .hero-visual {
-        border-radius: 16px;
-        overflow: hidden;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        background: rgba(0, 0, 0, 0.1);
-        height: 200px;
+        position: relative;
+        z-index: 2;
+        border-radius: var(--radius-md);
+        margin: 0;
+        height: 220px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transform: rotate(2deg);
+        transition: transform 0.3s ease;
+    }
+
+    .hero-visual:hover {
+        transform: rotate(0deg) scale(1.02);
     }
 
     .hero-visual img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        border-radius: 12px;
         display: block;
     }
 
-    /* Stats Grid */
+    /* --- Stats Grid --- */
     .stat-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
     }
 
     .stat-card {
-        background: var(--surface);
-        border-radius: 18px;
-        padding: 22px;
-        border: 1px solid var(--border);
-        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-        display: grid;
-        gap: 12px;
+        background: #fff;
+        border-radius: var(--radius-md);
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
         position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
         overflow: hidden;
     }
 
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--card-shadow-hover);
+        border-color: #cbd5e1;
+    }
+
+    /* Aksen Warna Sidebar Kecil */
     .stat-card::before {
         content: '';
         position: absolute;
-        top: 0;
         left: 0;
-        right: 0;
-        height: 4px;
+        top: 0;
+        bottom: 0;
+        width: 4px;
         background: currentColor;
     }
 
-    .stat-card.accent-blue {
-        color: #2563eb;
-    }
-
-    .stat-card.accent-mint {
-        color: #10b981;
-    }
-
-    .stat-card.accent-orange {
-        color: #f97316;
-    }
-
-    .stat-card.accent-purple {
-        color: #7c3aed;
-    }
+    .stat-card.accent-blue { color: #2563eb; }
+    .stat-card.accent-mint { color: #10b981; }
+    .stat-card.accent-orange { color: #f97316; }
+    .stat-card.accent-purple { color: #8b5cf6; }
 
     .stat-card .label {
-        font-size: 0.9rem;
-        color: var(--text-muted);
+        font-size: 0.875rem;
+        color: #64748b;
         font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
 
     .stat-card .value-row {
         display: flex;
         align-items: baseline;
-        gap: 8px;
+        gap: 6px;
     }
 
     .stat-card .value-row strong {
-        font-size: 1.8rem;
-        color: var(--text-main);
+        font-size: 2.25rem;
+        color: #0f172a;
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.03em;
     }
 
     .stat-card .value-row .suffix {
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        font-size: 0.875rem;
+        color: #94a3b8;
         font-weight: 600;
+        text-transform: uppercase;
     }
 
     .stat-card p {
         margin: 0;
-        color: var(--text-muted);
+        color: #64748b;
+        font-size: 0.925rem;
         line-height: 1.5;
-        font-size: 0.9rem;
     }
 
-    /* Schedule Section */
+    /* --- Schedule Section --- */
     .schedule-card {
-        background: var(--surface);
-        border-radius: 20px;
-        padding: 28px;
-        border: 1px solid var(--border);
-        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-        display: grid;
-        gap: 24px;
+        background: #fff;
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        border: 1px solid #e2e8f0;
+        box-shadow: var(--card-shadow);
     }
 
     .schedule-header {
         display: flex;
-        align-items: flex-start;
         justify-content: space-between;
-        gap: 16px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid var(--border);
+        align-items: flex-end;
+        margin-bottom: 28px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #f1f5f9;
     }
 
     .schedule-header h2 {
         margin: 0;
-        font-size: 1.4rem;
+        font-size: 1.5rem;
+        color: #0f172a;
+        font-weight: 700;
     }
 
     .schedule-header span {
-        color: var(--text-muted);
-        font-size: 0.95rem;
+        margin-top: 8px;
         display: block;
-        margin-top: 4px;
-    }
-
-    .schedule-link {
-        color: var(--primary);
-        font-weight: 600;
+        color: #64748b;
         font-size: 0.95rem;
-        text-decoration: none;
     }
 
-    .schedule-link:hover {
-        text-decoration: underline;
-    }
-
-    /* Timeline */
     .timeline {
         list-style: none;
         margin: 0;
         padding: 0;
-        display: grid;
-        gap: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
     }
 
     .timeline-item {
         display: grid;
-        grid-template-columns: 120px 1fr;
-        gap: 20px;
-        padding: 18px 20px;
+        grid-template-columns: 140px 1fr;
+        gap: 24px;
+        padding: 20px;
         border-radius: 16px;
-        background: var(--surface-muted);
-        border: 1px solid var(--border);
-        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        transition: background 0.2s, transform 0.2s;
+        border-left: 4px solid transparent; /* Invisible border default */
     }
 
     .timeline-item:hover {
-        transform: translateX(4px);
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+        background: #f8fafc;
     }
 
+    /* Highlight Logic Styling */
     .timeline-item.is-highlight {
-        background: rgba(37, 99, 235, 0.04);
-        border-color: rgba(37, 99, 235, 0.3);
+        background: #eff6ff; /* Light Blue Background */
+        border-left-color: #2563eb; /* Blue accent line */
     }
 
     .timeline-item .time {
-        font-weight: 700;
-        color: var(--text-main);
-        font-size: 0.95rem;
+        font-family: 'Monaco', 'Consolas', monospace; /* Monospace for cleaner numbers */
+        font-weight: 600;
+        color: #334155;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
     }
 
     .timeline-item .details {
-        display: grid;
+        display: flex;
+        flex-direction: column;
         gap: 6px;
     }
 
     .timeline-item .details strong {
-        font-size: 1.05rem;
-        color: var(--text-main);
+        font-size: 1.125rem;
+        color: #0f172a;
+        font-weight: 600;
     }
 
     .timeline-item .details span {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        line-height: 1.4;
+        color: #64748b;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
+
+    /* Dot separator for span details */
+    .timeline-item .details span::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        background: #cbd5e1;
+        border-radius: 50%;
+    }
+    .timeline-item .details span:first-of-type::before { display: none; }
 
     .empty-timeline {
         text-align: center;
-        padding: 48px 24px;
-        border-radius: 16px;
-        border: 1px dashed var(--border);
-        background: var(--surface-muted);
-        color: var(--text-muted);
-        line-height: 1.6;
+        padding: 64px 24px;
+        border-radius: var(--radius-md);
+        background: #f8fafc;
+        border: 2px dashed #e2e8f0;
+        color: #94a3b8;
+        font-weight: 500;
     }
 
     /* Responsive */
-    @media (max-width: 1200px) {
-        .stat-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
     @media (max-width: 1024px) {
         .hero-panel {
             grid-template-columns: 1fr;
+            padding: 32px;
+            text-align: center;
         }
-
+        
+        .hero-copy { align-items: center; }
+        
         .hero-visual {
-            height: 180px;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .hero-panel {
-            padding: 24px;
-        }
-
-        .hero-panel h1 {
-            font-size: 1.8rem;
-        }
-
-        .stat-grid {
-            grid-template-columns: 1fr;
+            height: 200px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            transform: rotate(0);
         }
 
         .timeline-item {
-            grid-template-columns: 1fr;
-            gap: 12px;
+            grid-template-columns: 1fr; /* Stack time and details */
+            gap: 8px;
+            padding: 16px;
+            border: 1px solid #f1f5f9;
+            border-left-width: 4px;
         }
+        
+        .timeline-item .time {
+            color: #2563eb;
+            font-size: 0.9rem;
+        }
+    }
 
-        .schedule-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
+    @media (max-width: 640px) {
+        .dashboard-content { gap: 24px; }
+        .hero-panel h1 { font-size: 1.75rem; }
+        .stat-grid { grid-template-columns: 1fr; }
     }
 </style>
 @endpush
@@ -296,15 +340,12 @@
     {{-- Hero Section --}}
     <section class="hero-panel" aria-labelledby="hero-title">
         <div class="hero-copy">
-            <h1 id="hero-title">{{ $firstName }}, mari optimalkan sesi belajar hari ini.</h1>
+            <h1 id="hero-title">Halo {{ $firstName }},<br>Mari optimalkan sesi hari ini.</h1>
             <p>
                 Pantau jadwal, materi, dan perkembangan siswa secara real-time agar pengalaman belajar
                 tetap konsisten dan terarah.
             </p>
         </div>
-        <figure class="hero-visual">
-            <img src="{{ $heroImage }}" alt="Banner {{ $firstName }}">
-        </figure>
     </section>
 
     {{-- Highlight Stats --}}
@@ -324,13 +365,13 @@
                 }
             @endphp
             <article class="stat-card accent-{{ $accent }}">
-                <span class="label">{{ $stat['label'] }}</span>
                 <div class="value-row">
                     <strong>{{ $stat['display'] }}</strong>
                     @if (!empty($stat['suffix']))
                         <span class="suffix">{{ $stat['suffix'] }}</span>
                     @endif
                 </div>
+                <span class="label">{{ $stat['label'] }}</span>
                 @if (!empty($stat['description']))
                     <p>{{ $stat['description'] }}</p>
                 @endif
@@ -342,14 +383,15 @@
     <section class="schedule-card" aria-labelledby="agenda-title">
         <div class="schedule-header">
             <div>
-                <h2 id="agenda-title">Agenda Mengajar Hari Ini</h2>
+                <h2 id="agenda-title">Agenda Mengajar</h2>
                 <span>{{ $todayLabel }}</span>
             </div>
         </div>
 
         @if ($todaySessions->isEmpty())
             <div class="empty-timeline">
-                Belum ada sesi mengajar untuk hari ini. Tambahkan jadwal baru agar siswa tetap terarah.
+                Belum ada sesi mengajar untuk hari ini. <br>
+                Istirahat yang cukup atau persiapkan materi untuk esok hari.
             </div>
         @else
             <ul class="timeline">
@@ -358,11 +400,15 @@
                         <div class="time">{{ $session['time_range'] }}</div>
                         <div class="details">
                             <strong>{{ $session['title'] }}</strong>
-                            <span>{{ $session['subject'] }} • {{ $session['class_level'] }}</span>
-                            <span>{{ $session['location'] }}</span>
-                            <span>
-                                {{ $session['student_count'] ? $session['student_count'] . ' siswa' : 'Jumlah siswa belum ditentukan' }}
-                            </span>
+                            
+                            {{-- Sedikit perapihan HTML structure agar CSS pseudo-element jalan --}}
+                            <div style="display:flex; flex-direction:column; gap:4px;">
+                                <span>{{ $session['subject'] }} ({{ $session['class_level'] }})</span>
+                                <span>{{ $session['location'] }}</span>
+                                <span>
+                                    {{ $session['student_count'] ? $session['student_count'] . ' Siswa' : 'Jumlah siswa -' }}
+                                </span>
+                            </div>
                         </div>
                     </li>
                 @endforeach
