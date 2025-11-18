@@ -119,6 +119,15 @@
                 color: var(--primary-dark);
             }
 
+            .profile-chip__avatar {
+                width: 38px;
+                height: 38px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid rgba(61, 183, 173, 0.2);
+                background: rgba(255, 255, 255, 0.6);
+            }
+
             .logout-button {
                 padding: 10px 18px;
                 border-radius: 999px;
@@ -292,6 +301,74 @@
                 transform: translateY(-2px);
             }
 
+            .password-card {
+                margin-top: 32px;
+                background: var(--card);
+                border-radius: 28px;
+                padding: clamp(28px, 4vw, 40px);
+                box-shadow: 0 24px 48px rgba(32, 96, 92, 0.12);
+                display: grid;
+                gap: 16px;
+            }
+
+            .password-card h2 {
+                margin: 0;
+                font-size: 1.4rem;
+            }
+
+            .password-card p {
+                margin: 0;
+                color: var(--text-muted);
+                font-size: 0.95rem;
+            }
+
+            .password-form {
+                display: grid;
+                gap: 20px;
+            }
+
+            .password-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 20px;
+            }
+
+            .password-input {
+                width: 100%;
+                border-radius: 16px;
+                border: 1px solid rgba(61, 183, 173, 0.25);
+                padding: 14px 18px;
+                font-family: inherit;
+                font-size: 0.95rem;
+                background: rgba(61, 183, 173, 0.06);
+            }
+
+            .password-error {
+                margin-top: 6px;
+                font-size: 0.85rem;
+                color: #b91c1c;
+            }
+
+            .password-submit {
+                border: none;
+                border-radius: 999px;
+                padding: 14px 26px;
+                background: #125e66;
+                color: #fff;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 12px 24px rgba(18, 94, 102, 0.25);
+                width: fit-content;
+            }
+
+            .password-alert {
+                padding: 12px 16px;
+                border-radius: 16px;
+                background: rgba(18, 94, 102, 0.08);
+                color: #125e66;
+                font-weight: 500;
+            }
+
             footer {
                 padding: 32px var(--page-padding) 48px;
                 text-align: center;
@@ -312,6 +389,7 @@
     </head>
     <body>
         @php($hasActivePackage = $hasActivePackage ?? false)
+        @php($navProfileAvatar = \App\Support\ProfileAvatar::forUser(auth()->user()))
         <header>
             <div class="container">
                 <nav>
@@ -329,7 +407,8 @@
                     </div>
                     <div class="nav-actions">
                         <a class="profile-chip" href="{{ route('student.profile') }}" data-active="true">
-                            <span>Siswa</span>
+                            <img class="profile-chip__avatar" src="{{ $navProfileAvatar }}" alt="Foto profil {{ $profile['name'] }}" />
+                            <span>{{ $profile['name'] }}</span>
                         </a>
                         <form method="post" action="{{ route('logout') }}">
                             @csrf
@@ -451,6 +530,56 @@
                         <button class="btn btn-outline" type="reset">Batal</button>
                         <button class="btn btn-primary" type="submit">Simpan</button>
                     </div>
+                </form>
+            </section>
+            <section class="password-card">
+                <h2>Ubah Password</h2>
+                <p>Masukkan password lama lalu pilih password baru yang lebih kuat.</p>
+                @if (session('password_status'))
+                    <div class="password-alert">{{ session('password_status') }}</div>
+                @endif
+                <form class="password-form" method="post" action="{{ route('student.profile.password') }}">
+                    @csrf
+                    @method('PUT')
+                    <div class="password-grid">
+                        <label>
+                            <span>Password Lama</span>
+                            <input
+                                class="password-input"
+                                type="password"
+                                name="current_password"
+                                autocomplete="current-password"
+                                required
+                            />
+                            @error('current_password', 'passwordUpdate')
+                                <div class="password-error">{{ $message }}</div>
+                            @enderror
+                        </label>
+                        <label>
+                            <span>Password Baru</span>
+                            <input
+                                class="password-input"
+                                type="password"
+                                name="password"
+                                autocomplete="new-password"
+                                required
+                            />
+                            @error('password', 'passwordUpdate')
+                                <div class="password-error">{{ $message }}</div>
+                            @enderror
+                        </label>
+                        <label>
+                            <span>Konfirmasi Password Baru</span>
+                            <input
+                                class="password-input"
+                                type="password"
+                                name="password_confirmation"
+                                autocomplete="new-password"
+                                required
+                            />
+                        </label>
+                    </div>
+                    <button class="password-submit" type="submit">Perbarui Password</button>
                 </form>
             </section>
         </main>

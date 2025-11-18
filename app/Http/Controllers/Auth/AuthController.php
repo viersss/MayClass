@@ -47,6 +47,32 @@ class AuthController extends Controller
         ]);
     }
 
+    public function showForgotPassword()
+    {
+        if (Auth::check()) {
+            return redirect()->to($this->homeRouteFor(Auth::user()));
+        }
+
+        $whatsappConfig = config('mayclass.support.whatsapp', []);
+        $contactName = $whatsappConfig['contact_name'] ?? 'Admin MayClass';
+        $contactNumber = $whatsappConfig['number'] ?? null;
+        $availability = $whatsappConfig['availability'] ?? __('Setiap hari');
+        $prefilledMessage = $whatsappConfig['predefined_message'] ?? __('Halo Admin MayClass, saya lupa password akun MayClass.');
+
+        $sanitizedNumber = $contactNumber ? preg_replace('/\D+/', '', $contactNumber) : null;
+        $whatsappLink = $sanitizedNumber
+            ? sprintf('https://wa.me/%s?text=%s', $sanitizedNumber, rawurlencode($prefilledMessage))
+            : null;
+
+        return view('auth.forgot-password', [
+            'contactName' => $contactName,
+            'contactNumber' => $contactNumber,
+            'availability' => $availability,
+            'whatsappLink' => $whatsappLink,
+            'supportMessage' => $prefilledMessage,
+        ]);
+    }
+
     public function join(Request $request): RedirectResponse
     {
         if (Auth::check()) {

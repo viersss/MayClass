@@ -23,10 +23,13 @@ use App\Http\Controllers\Tutor\QuizController as TutorQuizController;
 use App\Http\Controllers\Tutor\ScheduleController as TutorScheduleController;
 use App\Http\Controllers\Tutor\ScheduleSessionController;
 use App\Http\Controllers\Tutor\ScheduleTemplateController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Package;
 use App\Support\PackagePresenter;
+use App\Support\ProfileAvatar;
+use App\Support\ProfileLinkResolver;
 
 Route::get('/', function () {
     $catalog = collect();
@@ -43,9 +46,13 @@ Route::get('/', function () {
         $catalog = PackagePresenter::groupByStage($packages);
     }
 
+    $user = Auth::user();
+
     return view('welcome', [
         'landingPackages' => $catalog,
         'stageDefinitions' => $stageDefinitions,
+        'profileLink' => ProfileLinkResolver::forUser($user),
+        'profileAvatar' => ProfileAvatar::forUser($user),
     ]);
 });
 
@@ -57,6 +64,7 @@ Route::get('/packages/{slug}', [PackageController::class, 'show'])->name('packag
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::get('/lupa-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
     Route::post('/register/details', [AuthController::class, 'storeRegisterDetails'])->name('register.details');
     Route::get('/register/password', [AuthController::class, 'showPasswordStep'])->name('register.password');
     Route::post('/login', [AuthController::class, 'login'])->name('login.perform');
@@ -87,6 +95,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     });
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
 Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->name('tutor.')->group(function () {
@@ -114,6 +123,7 @@ Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->name('tutor.')->grou
 
     Route::get('/pengaturan', [TutorAccountController::class, 'edit'])->name('account.edit');
     Route::put('/pengaturan', [TutorAccountController::class, 'update'])->name('account.update');
+    Route::put('/pengaturan/password', [TutorAccountController::class, 'updatePassword'])->name('account.password');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -121,9 +131,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/account', [AdminAccountController::class, 'edit'])->name('account.edit');
     Route::put('/account', [AdminAccountController::class, 'update'])->name('account.update');
+    Route::put('/account/password', [AdminAccountController::class, 'updatePassword'])->name('account.password');
 
     Route::get('/students', [AdminStudentController::class, 'index'])->name('students.index');
     Route::get('/students/{student}', [AdminStudentController::class, 'show'])->name('students.show');
+    Route::post('/students/{student}/reset-password', [AdminStudentController::class, 'resetPassword'])->name('students.reset-password');
 
     Route::get('/packages', [AdminPackageController::class, 'index'])->name('packages.index');
     Route::get('/packages/create', [AdminPackageController::class, 'create'])->name('packages.create');

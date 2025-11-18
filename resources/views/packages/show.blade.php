@@ -174,6 +174,37 @@
                 margin: 0;
             }
 
+            .nav-profile {
+                width: 46px;
+                height: 46px;
+                border-radius: 50%;
+                border: 2px solid rgba(20, 59, 46, 0.25);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                background: rgba(255, 255, 255, 0.65);
+                box-shadow: 0 8px 18px rgba(20, 59, 46, 0.18);
+            }
+
+            .nav-profile img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+
             @media (max-width: 768px) {
                 .nav-actions {
                     width: 100%;
@@ -537,6 +568,39 @@
         </style>
     </head>
     <body>
+        @php($profileLink = $profileLink ?? null)
+        @php($profileAvatar = $profileAvatar ?? asset('images/avatar-placeholder.svg'))
+
+        <header>
+            <nav>
+                <div class="nav-inner">
+                    <a class="brand" href="/">
+                        <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
+                    </a>
+                    <div class="nav-links">
+                        <a href="{{ route('packages.index') }}" class="is-active">Paket Belajar</a>
+                        <a href="{{ route('join') }}">Gabung</a>
+                        <a href="#included">Fasilitas</a>
+                    </div>
+                    <div class="nav-actions">
+                        <a class="btn btn-ghost" href="{{ route('packages.index') }}">Kembali</a>
+                        @auth
+                            <a class="nav-profile" href="{{ $profileLink ?? route('student.profile') }}" aria-label="Lihat profil">
+                                <img src="{{ $profileAvatar }}" alt="Foto profil MayClass" />
+                                <span class="sr-only">Profil</span>
+                            </a>
+                            <form method="post" action="{{ route('logout') }}">
+                                @csrf
+                                <button class="btn btn-outline" type="submit">Keluar</button>
+                            </form>
+                        @else
+                            <a class="btn btn-outline" href="{{ route('login') }}">Masuk</a>
+                            <a class="btn btn-primary" href="{{ route('register') }}">Daftar</a>
+                        @endauth
+                    </div>
+                </div>
+            </nav>
+        </header>
 
         <div class="container">
             <main>
@@ -581,7 +645,7 @@
                         </div>
                         <div>
                             <h3 style="margin: 0 0 12px">This course included</h3>
-                            <ul class="included">
+                              <ul class="included" id="included">
                                 @foreach ($package['included'] as $item)
                                     <li><span>✓</span>{{ $item }}</li>
                                 @endforeach

@@ -121,6 +121,15 @@
                 font-size: 0.92rem;
             }
 
+            .student-navbar__avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                background: rgba(255, 255, 255, 0.6);
+            }
+
             .student-navbar__logout {
                 border: none;
                 cursor: pointer;
@@ -302,6 +311,7 @@
     </head>
     <body>
         @php($user = auth()->user())
+        @php($navAvatar = \App\Support\ProfileAvatar::forUser($user))
         @php($hasActivePackage = $hasActivePackage ?? ($studentHasActivePackage ?? false))
         <div class="student-shell">
             <header class="student-navbar">
@@ -318,6 +328,7 @@
                 </nav>
                 <div class="student-navbar__actions">
                     <a class="student-navbar__profile" href="{{ route('student.profile') }}">
+                        <img class="student-navbar__avatar" src="{{ $navAvatar }}" alt="Foto profil {{ $user?->name ?? 'Siswa' }}" />
                         <span>{{ $user?->name ?? 'Siswa' }}</span>
                     </a>
                     <form method="post" action="{{ route('logout') }}">
