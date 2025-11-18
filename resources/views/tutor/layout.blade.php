@@ -381,7 +381,7 @@
                         // Pastikan variabel yang digunakan saat render menu selalu tersedia
                         $menuItemsToRender = $menuItems ?? $defaultMenuItems;
                     @endphp
-                    @foreach ($menuItemsToRender as $item)
+                    @foreach ($menuItems as $item)
                         @php
                             $isActive = false;
                             foreach ($item['patterns'] as $pattern) {
