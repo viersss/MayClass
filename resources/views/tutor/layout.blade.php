@@ -354,6 +354,9 @@
                     @php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
 
+                        // Normalize any menu data provided by child views before using it below.
+                        $providedMenuItems = $menuItems ?? null;
+
                         $defaultMenuItems = [
                             [
                                 'label' => 'Beranda',
@@ -375,11 +378,11 @@
                             ],
                         ];
 
-                        if (!isset($menuItems) || !is_array($menuItems)) {
-                            $menuItems = $defaultMenuItems;
-                        }
+                        $menuItems = is_array($providedMenuItems) && $providedMenuItems !== []
+                            ? $providedMenuItems
+                            : $defaultMenuItems;
                     @endphp
-                    @foreach ($menuItemsToRender as $item)
+                    @foreach ($menuItems as $item)
                         @php
                             $isActive = false;
                             foreach ($item['patterns'] as $pattern) {
