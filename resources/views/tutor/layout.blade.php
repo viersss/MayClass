@@ -351,7 +351,7 @@
             <aside class="nav-panel">
                 @php($tutorSummaryAvatar = \App\Support\ProfileAvatar::forUser($tutor))
                 <nav class="navigation">
-                    <?php
+                    @php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
 
                         $defaultMenuItems = [
@@ -377,8 +377,8 @@
 
                         $providedMenuItems = isset($menuItems) && is_array($menuItems) ? $menuItems : [];
                         $menuItemsToRender = count($providedMenuItems) ? $providedMenuItems : $defaultMenuItems;
-                    ?>
-                    @foreach (($menuItemsToRender ?? $defaultMenuItems) as $item)
+                    @endphp
+                    @foreach ($menuItemsToRender as $item)
                         @php
                             $isActive = false;
                             foreach ($item['patterns'] as $pattern) {
