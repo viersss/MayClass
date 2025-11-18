@@ -353,7 +353,6 @@
                 <nav class="navigation">
                     @php
                         $currentRoute = request()->route() ? request()->route()->getName() : null;
-
                         $defaultMenuItems = [
                             [
                                 'label' => 'Beranda',
