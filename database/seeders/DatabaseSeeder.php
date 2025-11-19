@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
             MaterialSeeder::class,
             QuizSeeder::class,
             DemoAdminSeeder::class,
-            DemoTutorSeeder::class,
             ScheduleSeeder::class,
             DemoStudentSeeder::class,
             DemoOrderSeeder::class,

@@ -321,6 +321,12 @@
                                 'patterns' => ['admin.students.*'],
                             ],
                             [
+                                'label' => 'Manajemen Tentor',
+                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 1 0-6 0 3 3 0 0 0 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 21a4.5 4.5 0 0 0-9 0Zm0 0H21a2 2 0 0 0 2-2v-1a8 8 0 0 0-8-8h-6a8 8 0 0 0-8 8v1a2 2 0 0 0 2 2h1.5" /></svg>',
+                                'route' => 'admin.tentors.index',
+                                'patterns' => ['admin.tentors.*'],
+                            ],
+                            [
                                 'label' => 'Manajemen Paket',
                                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7 12 3l9 4v10l-9 4-9-4z" /><path stroke-linecap="round" stroke-linejoin="round" d="m3 7 9 4 9-4" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 11v10" /></svg>',
                                 'route' => 'admin.packages.index',

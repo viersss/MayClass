@@ -152,7 +152,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $user = User::firstOrNew(['email' => $email]);
 
-        $payload = array_merge($attributes, [
+        $payload = array_merge([
+            'is_active' => true,
+        ], $attributes, [
             'email' => $email,
         ]);
 
