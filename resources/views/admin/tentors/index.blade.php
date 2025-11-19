@@ -4,318 +4,488 @@
 
 @push('styles')
     <style>
-        .tentor-page {
+        :root {
+            --primary: #0f766e;
+            --primary-hover: #115e59;
+            --bg-surface: #ffffff;
+            --bg-body: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
 
-        .tentor-header {
+        /* --- 1. HEADER CARD (Box Putih Rapi) --- */
+        .header-card {
+            background: var(--bg-surface);
+            padding: 24px 32px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            background: #fff;
-            border-radius: 20px;
-            padding: 28px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
-        .tentor-header h1 {
+        .header-content h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 4px;
+        }
+
+        .header-content p {
             margin: 0;
-            font-size: 1.7rem;
-            color: #0f172a;
-        }
-
-        .tentor-header p {
-            margin: 6px 0 0;
-            color: #64748b;
-        }
-
-        .tentor-header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .tentor-search {
-            position: relative;
-        }
-
-        .tentor-search input {
-            border-radius: 999px;
-            border: 1px solid #e2e8f0;
-            padding: 10px 18px;
-            padding-left: 42px;
-            min-width: 260px;
+            color: var(--text-muted);
             font-size: 0.95rem;
-            background: #f8fafc;
         }
 
-        .tentor-search svg {
-            position: absolute;
-            top: 50%;
-            left: 16px;
-            transform: translateY(-50%);
-            color: #94a3b8;
-        }
-
-        .btn-primary {
-            background: #0f766e;
-            color: #fff;
-            border: none;
-            border-radius: 999px;
-            padding: 12px 22px;
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
             font-weight: 600;
-            cursor: pointer;
+            font-size: 0.9rem;
             text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: var(--shadow-sm);
         }
 
-        .tentor-stats {
+        .btn-add:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* --- 2. STATS CARDS --- */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
+            gap: 20px;
         }
 
-        .tentor-stat-card {
-            background: #fff;
-            border-radius: 16px;
+        .stat-card {
+            background: var(--bg-surface);
             padding: 20px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .tentor-stat-card span {
-            font-size: 0.85rem;
-            color: #64748b;
-        }
-
-        .tentor-stat-card strong {
-            font-size: 1.8rem;
-            color: #0f172a;
-        }
-
-        .tentor-filter-form {
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
             display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 4px;
+            line-height: 1;
+        }
+
+        /* --- 3. FILTERS & SEARCH --- */
+        .filter-bar {
+            background: var(--bg-surface);
+            padding: 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
             gap: 16px;
             align-items: center;
-            background: #fff;
-            border-radius: 16px;
-            padding: 16px;
-            border: 1px solid #e2e8f0;
+            justify-content: space-between;
         }
 
-        .tentor-filter-form select {
-            border-radius: 10px;
-            padding: 10px 12px;
-            border: 1px solid #e2e8f0;
-            background: #f8fafc;
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
         }
 
-        .tentor-table-card {
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            background: var(--bg-body);
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
             background: #fff;
-            border-radius: 20px;
-            border: 1px solid #e2e8f0;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-select {
+            padding: 9px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-main);
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        /* --- 4. TABLE (Fixed Alignment) --- */
+        .table-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
             overflow: hidden;
         }
 
-        table {
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .tentor-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate; /* Penting untuk border-radius header */
+            border-spacing: 0;
+            font-size: 0.92rem;
+            min-width: 1000px;
         }
 
-        th {
-            text-align: left;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
-            color: #94a3b8;
+        .tentor-table th {
             background: #f8fafc;
-            padding: 16px 20px;
+            text-align: left;
+            padding: 16px 24px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        td {
-            padding: 18px 20px;
-            border-top: 1px solid #f1f5f9;
+        /* ALIGNMENT FIX: Header kolom terakhir rata kanan */
+        .tentor-table th:last-child {
+            text-align: right;
+            padding-right: 24px;
+        }
+
+        .tentor-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
             vertical-align: middle;
         }
 
-        .tentor-profile {
+        /* ALIGNMENT FIX: Isi kolom terakhir rata kanan */
+        .tentor-table td:last-child {
+            text-align: right;
+            padding-right: 24px;
+        }
+
+        .tentor-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tentor-table tbody tr {
+            transition: background 0.2s;
+        }
+
+        .tentor-table tbody tr:hover {
+            background: #fcfcfc;
+        }
+
+        /* Column Styles */
+        .profile-col {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
         }
 
-        .tentor-profile img {
+        .avatar {
             width: 48px;
             height: 48px;
-            border-radius: 999px;
+            border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #e2e8f0;
+            border: 1px solid var(--border-color);
+            background: #f1f5f9;
         }
 
-        .tentor-profile strong {
-            display: block;
-            color: #0f172a;
+        .user-info h4 {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
         }
 
-        .tentor-profile small {
-            color: #64748b;
+        .user-info span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 0.85rem;
+        }
+        .contact-info span { color: var(--text-main); }
+        .contact-info small { color: var(--text-muted); }
+
+        .spec-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
         }
 
         .status-pill {
             display: inline-flex;
             align-items: center;
-            padding: 6px 12px;
-            border-radius: 999px;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 99px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
-        .status-active {
-            background: #ecfdf5;
-            color: #047857;
-        }
+        .status-active { background: #dcfce7; color: #15803d; }
+        .status-inactive { background: #fee2e2; color: #b91c1c; }
 
-        .status-inactive {
-            background: #fef2f2;
-            color: #b91c1c;
-        }
-
-        .tentor-actions {
+        /* --- Action Buttons (Text Based & Aligned) --- */
+        .action-group {
             display: flex;
             gap: 8px;
+            justify-content: flex-end; /* Pastikan tombol menempel ke kanan */
+            align-items: center;
         }
 
-        .tentor-actions a,
-        .tentor-actions button {
-            border: 1px solid #cbd5e1;
-            border-radius: 999px;
-            padding: 8px 16px;
-            font-size: 0.85rem;
-            background: #fff;
-            cursor: pointer;
+        .btn-action {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
             text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-align: center;
         }
 
-        .tentor-actions button {
+        /* Tombol Edit */
+        .btn-edit {
+            background: #f0f9ff; 
+            color: #0369a1;
+            border-color: #bae6fd;
+        }
+        .btn-edit:hover {
+            background: #e0f2fe;
+            color: #0284c7;
+            transform: translateY(-1px);
+        }
+
+        /* Tombol Hapus */
+        .btn-delete {
+            background: #fef2f2;
             color: #b91c1c;
+            border-color: #fecaca;
+        }
+        .btn-delete:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            transform: translateY(-1px);
         }
 
         .empty-state {
-            padding: 60px 20px;
             text-align: center;
-            color: #64748b;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .header-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .btn-add {
+                width: 100%;
+                justify-content: center;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-box {
+                max-width: 100%;
+            }
         }
     </style>
 @endpush
 
 @section('content')
-    <div class="tentor-page">
-        <div class="tentor-header">
-            <div>
+    <div class="page-container">
+
+        {{-- 1. HEADER CARD --}}
+        <div class="header-card">
+            <div class="header-content">
                 <h1>Manajemen Tentor</h1>
-                <p>Kelola seluruh profil tentor, atur status aktif/nonaktif, dan ubah data profil kapan pun.</p>
+                <p>Kelola profil, spesialisasi, dan status aktif pengajar di MayClass.</p>
             </div>
-            <div class="tentor-header-actions">
-                <form method="GET" class="tentor-search" action="{{ route('admin.tentors.index') }}">
-                    <input type="text" name="q" value="{{ $filters['query'] }}" placeholder="Cari tentor berdasarkan nama atau email...">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35m1.85-5.4A7.5 7.5 0 1 1 5 5a7.5 7.5 0 0 1 13.5 6.25Z"/></svg>
-                    <input type="hidden" name="status" value="{{ $filters['status'] }}">
-                </form>
-                <a href="{{ route('admin.tentors.create') }}" class="btn-primary">Tambah Tentor</a>
+            <a href="{{ route('admin.tentors.create') }}" class="btn-add">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Tambah Tentor
+            </a>
+        </div>
+
+        {{-- 2. STATS --}}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Total Tentor</span>
+                <span class="stat-value">{{ number_format($stats['total']) }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Aktif</span>
+                <span class="stat-value" style="color: #0f766e;">{{ number_format($stats['active']) }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Nonaktif</span>
+                <span class="stat-value" style="color: #b91c1c;">{{ number_format($stats['inactive']) }}</span>
             </div>
         </div>
 
-        <div class="tentor-stats">
-            <div class="tentor-stat-card">
-                <span>Total Tentor</span>
-                <strong>{{ number_format($stats['total']) }}</strong>
-            </div>
-            <div class="tentor-stat-card">
-                <span>Aktif</span>
-                <strong style="color:#0f766e;">{{ number_format($stats['active']) }}</strong>
-            </div>
-            <div class="tentor-stat-card">
-                <span>Nonaktif</span>
-                <strong style="color:#b91c1c;">{{ number_format($stats['inactive']) }}</strong>
-            </div>
+        {{-- 3. FILTER & SEARCH --}}
+        <div class="filter-bar">
+            <form method="GET" action="{{ route('admin.tentors.index') }}" class="search-box">
+                <span class="search-icon">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+                <input type="text" name="q" value="{{ $filters['query'] }}" placeholder="Cari nama atau email tentor...">
+                <input type="hidden" name="status" value="{{ $filters['status'] }}">
+            </form>
+
+            <form method="GET" action="{{ route('admin.tentors.index') }}" class="filter-group">
+                <input type="hidden" name="q" value="{{ $filters['query'] }}">
+                <select name="status" onchange="this.form.submit()" class="filter-select">
+                    <option value="all" @selected($filters['status'] === 'all')>Semua Status</option>
+                    <option value="active" @selected($filters['status'] === 'active')>Aktif</option>
+                    <option value="inactive" @selected($filters['status'] === 'inactive')>Nonaktif</option>
+                </select>
+            </form>
         </div>
 
-        <form method="GET" action="{{ route('admin.tentors.index') }}" class="tentor-filter-form">
-            <label for="status">Filter status:</label>
-            <select name="status" id="status" onchange="this.form.submit()">
-                <option value="all" @selected($filters['status'] === 'all')>Semua Tentor</option>
-                <option value="active" @selected($filters['status'] === 'active')>Aktif</option>
-                <option value="inactive" @selected($filters['status'] === 'inactive')>Nonaktif</option>
-            </select>
-            <input type="hidden" name="q" value="{{ $filters['query'] }}">
-        </form>
-
-        <div class="tentor-table-card">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tentor</th>
-                        <th>Kontak</th>
-                        <th>Spesialisasi</th>
-                        <th>Pengalaman</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($tentors as $tentor)
+        {{-- 4. TABLE --}}
+        <div class="table-card">
+            <div class="table-responsive">
+                <table class="tentor-table">
+                    <thead>
                         <tr>
-                            <td>
-                                <div class="tentor-profile">
-                                    <img src="{{ $tentor['avatar'] }}" alt="Foto tentor">
-                                    <div>
-                                        <strong>{{ $tentor['name'] }}</strong>
-                                        <small>{{ $tentor['username'] }}</small>
+                            <th>Profil Tentor</th>
+                            <th>Kontak</th>
+                            <th>Spesialisasi & Pendidikan</th>
+                            <th>Pengalaman</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($tentors as $tentor)
+                            <tr>
+                                <td>
+                                    <div class="profile-col">
+                                        <img src="{{ $tentor['avatar'] }}" alt="Avatar" class="avatar">
+                                        <div class="user-info">
+                                            <h4>{{ $tentor['name'] }}</h4>
+                                            <span>{{ $tentor['username'] }}</span>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div style="display:flex; flex-direction:column; gap:4px;">
-                                    <span>{{ $tentor['email'] }}</span>
-                                    <small style="color:#64748b;">{{ $tentor['phone'] ?: 'Belum diatur' }}</small>
-                                </div>
-                            </td>
-                            <td>
-                                <div style="display:flex; flex-direction:column; gap:4px;">
-                                    <span>{{ $tentor['specializations'] ?? '-' }}</span>
-                                    <small style="color:#64748b;">{{ $tentor['education'] ?? 'Pendidikan belum diisi' }}</small>
-                                </div>
-                            </td>
-                            <td>{{ $tentor['experience_years'] }} Tahun</td>
-                            <td>
-                                <span class="status-pill {{ $tentor['is_active'] ? 'status-active' : 'status-inactive' }}">
-                                    {{ $tentor['is_active'] ? 'Aktif' : 'Nonaktif' }}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="tentor-actions">
-                                    <a href="{{ route('admin.tentors.edit', $tentor['id']) }}">Detail &amp; Edit</a>
-                                    <form method="POST" action="{{ route('admin.tentors.destroy', $tentor['id']) }}" onsubmit="return confirm('Hapus tentor ini secara permanen?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit">Hapus</button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6">
-                                <div class="empty-state">
-                                    Belum ada data tentor. Gunakan tombol "Tambah Tentor" untuk membuat data baru.
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                </td>
+                                <td>
+                                    <div class="contact-info">
+                                        <span>{{ $tentor['email'] }}</span>
+                                        <small>{{ $tentor['phone'] ?: '-' }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                                        <span class="spec-badge">{{ $tentor['specializations'] ?? 'Umum' }}</span>
+                                        <small style="color: var(--text-muted);">{{ $tentor['education'] ?? '-' }}</small>
+                                    </div>
+                                </td>
+                                <td>{{ $tentor['experience_years'] }} Tahun</td>
+                                <td>
+                                    <span class="status-pill {{ $tentor['is_active'] ? 'status-active' : 'status-inactive' }}">
+                                        {{ $tentor['is_active'] ? 'Aktif' : 'Nonaktif' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-group">
+                                        <a href="{{ route('admin.tentors.edit', $tentor['id']) }}" class="btn-action btn-edit">
+                                            Edit
+                                        </a>
+                                        <form method="POST" action="{{ route('admin.tentors.destroy', $tentor['id']) }}" onsubmit="return confirm('Hapus tentor ini secara permanen?');" style="display: inline-block; margin: 0;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-action btn-delete">
+                                                Hapus
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6">
+                                    <div class="empty-state">
+                                        <p>Belum ada data tentor yang sesuai dengan pencarian.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
+
     </div>
 @endsection
