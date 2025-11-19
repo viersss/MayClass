@@ -150,18 +150,20 @@ class AppServiceProvider extends ServiceProvider
 
     private function ensureDemoUser(string $username, string $email, string $plainPassword, array $attributes): ?User
     {
+        // Cek dulu apakah tabel users sudah ada (untuk menghindari error saat migrate fresh)
+        if (!Schema::hasTable('users')) {
+            return null;
+        }
+
         $user = User::firstOrNew(['email' => $email]);
 
-        $payload = array_merge([
-            'is_active' => true,
-        ], $attributes, [
+        // HAPUS 'is_active' => true DARI SINI
+        $payload = array_merge([], $attributes, [
             'email' => $email,
         ]);
 
-        if (
-            Schema::hasColumn('users', 'is_active')
-            && ! array_key_exists('is_active', $payload)
-        ) {
+        // BARU CEK DI SINI: Kalau kolom is_active ada, baru set true
+        if (Schema::hasColumn('users', 'is_active')) {
             $payload['is_active'] = true;
         }
 
@@ -179,7 +181,7 @@ class AppServiceProvider extends ServiceProvider
 
         return $user->fresh();
     }
-
+    
     private function shareStudentAccessState(): void
     {
         View::composer('student.*', function ($view): void {
