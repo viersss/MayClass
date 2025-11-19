@@ -7,226 +7,265 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
             rel="stylesheet"
         />
         <style>
             :root {
-                --primary: #1d8f73;
-                --primary-dark: #16624f;
+                --primary: #0f766e;
+                --primary-hover: #115e59;
+                --primary-light: #ccfbf1;
+                --text-main: #0f172a;
+                --text-muted: #64748b;
+                --bg-body: #f8fafc;
                 --surface: #ffffff;
-                --surface-muted: #f1f5f9;
-                --text: #0f172a;
-                --text-muted: #475569;
-                --border: rgba(15, 23, 42, 0.08);
+                --border: #e2e8f0;
+                --radius: 16px;
+                --shadow: 0 10px 30px -10px rgba(0,0,0,0.08);
             }
 
-            * {
-                box-sizing: border-box;
-            }
+            * { box-sizing: border-box; }
 
             body {
                 margin: 0;
-                font-family: 'Poppins', sans-serif;
-                background: linear-gradient(135deg, #e8f7f1, #f8fbff);
-                color: var(--text);
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                background-color: var(--bg-body);
+                color: var(--text-main);
                 min-height: 100vh;
                 display: flex;
                 flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
             }
 
-            a {
-                color: inherit;
-                text-decoration: none;
+            a { text-decoration: none; color: inherit; transition: all 0.2s; }
+
+            .container {
+                width: 100%;
+                max-width: 520px;
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            /* Header Nav */
+            .nav-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 12px;
             }
 
             .back-link {
-                position: fixed;
-                top: 24px;
-                left: 32px;
                 display: inline-flex;
-                gap: 8px;
                 align-items: center;
-                padding: 10px 18px;
-                border-radius: 999px;
-                background: rgba(15, 23, 42, 0.75);
-                color: #fff;
+                gap: 8px;
                 font-size: 0.9rem;
-                box-shadow: 0 18px 40px rgba(15, 23, 42, 0.25);
-            }
-
-            .page-grid {
-                flex: 1;
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-                gap: 24px;
-                padding: clamp(32px, 4vw, 56px);
-                align-items: stretch;
-            }
-
-            .info-card {
-                background: var(--surface);
-                border-radius: 32px;
-                padding: clamp(32px, 4vw, 52px);
-                box-shadow: 0 32px 70px rgba(15, 23, 42, 0.08);
-                border: 1px solid var(--border);
-                display: flex;
-                flex-direction: column;
-                gap: 28px;
-            }
-
-            .info-card header h1 {
-                margin: 8px 0 12px;
-                font-size: clamp(2rem, 3vw, 2.6rem);
-            }
-
-            .info-card header p {
+                font-weight: 600;
                 color: var(--text-muted);
-                font-size: 1rem;
-                line-height: 1.6;
+                padding: 8px 16px;
+                border-radius: 99px;
+                background: white;
+                border: 1px solid var(--border);
+                transition: all 0.2s;
+            }
+            .back-link:hover {
+                border-color: var(--text-muted);
+                color: var(--text-main);
             }
 
-            .steps {
-                display: grid;
-                gap: 16px;
+            /* Main Card */
+            .card {
+                background: var(--surface);
+                border-radius: var(--radius);
+                padding: 40px;
+                box-shadow: var(--shadow);
+                border: 1px solid var(--border);
+                text-align: center;
+            }
+
+            .icon-wrapper {
+                width: 64px;
+                height: 64px;
+                background: var(--primary-light);
+                color: var(--primary);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 24px;
+                font-size: 28px;
+            }
+
+            .card h1 {
+                font-size: 1.5rem;
+                font-weight: 700;
+                margin: 0 0 12px;
+                color: var(--text-main);
+            }
+
+            .card p {
+                font-size: 0.95rem;
+                color: var(--text-muted);
+                line-height: 1.6;
+                margin: 0 0 32px;
+            }
+
+            /* Steps List */
+            .steps-list {
+                text-align: left;
+                background: var(--bg-body);
+                border-radius: 12px;
+                padding: 20px;
+                border: 1px solid var(--border);
+                margin-bottom: 32px;
             }
 
             .step-item {
-                border-radius: 20px;
-                padding: 16px 18px;
-                background: var(--surface-muted);
-                border: 1px dashed rgba(15, 23, 42, 0.12);
+                display: flex;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+            .step-item:last-child { margin-bottom: 0; }
+
+            .step-num {
+                width: 24px;
+                height: 24px;
+                background: var(--primary);
+                color: white;
+                border-radius: 50%;
+                font-size: 0.8rem;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                margin-top: 2px;
             }
 
-            .step-item strong {
+            .step-content strong {
                 display: block;
-                font-size: 1rem;
-                margin-bottom: 6px;
+                font-size: 0.9rem;
+                color: var(--text-main);
+                margin-bottom: 2px;
             }
-
-            .contact-card {
-                border-radius: 24px;
-                background: linear-gradient(135deg, rgba(29, 143, 115, 0.08), rgba(29, 143, 115, 0.18));
-                padding: 24px;
-                display: grid;
-                gap: 10px;
-                border: 1px solid rgba(29, 143, 115, 0.2);
-            }
-
-            .contact-card h2 {
-                margin: 0;
-                font-size: 1.6rem;
-            }
-
-            .contact-card .phone {
-                font-size: 1.1rem;
-                font-weight: 600;
-            }
-
-            .contact-card small {
+            .step-content span {
+                font-size: 0.85rem;
                 color: var(--text-muted);
+                line-height: 1.4;
             }
 
+            /* Contact Button */
             .whatsapp-btn {
-                margin-top: 8px;
-                display: inline-flex;
+                display: flex;
                 align-items: center;
                 justify-content: center;
                 gap: 10px;
-                padding: 14px 18px;
-                border-radius: 18px;
-                background: #25d366;
-                color: #0f172a;
+                width: 100%;
+                background: #25D366;
+                color: white;
                 font-weight: 600;
-                box-shadow: 0 18px 32px rgba(37, 211, 102, 0.4);
+                padding: 14px;
+                border-radius: 12px;
+                font-size: 1rem;
+                transition: background 0.2s, transform 0.1s;
+                box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
             }
 
-            .illustration {
-                border-radius: 32px;
-                position: relative;
-                overflow: hidden;
-                min-height: 420px;
-                background: linear-gradient(120deg, rgba(13, 23, 48, 0.65), rgba(13, 23, 48, 0.35)),
-                    url('{{ config('mayclass.images.auth.fallback') }}') center/cover no-repeat;
-                color: #fff;
-                padding: clamp(32px, 4vw, 52px);
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
-                gap: 12px;
+            .whatsapp-btn:hover {
+                background: #1ebc57;
+                transform: translateY(-2px);
             }
 
-            .illustration strong {
-                font-size: clamp(1.6rem, 2.8vw, 2.3rem);
+            /* Footer Info */
+            .footer-info {
+                margin-top: 24px;
+                font-size: 0.85rem;
+                color: var(--text-muted);
+                text-align: center;
+                padding-top: 20px;
+                border-top: 1px solid var(--border);
             }
 
-            .illustration span {
-                color: rgba(255, 255, 255, 0.82);
-                line-height: 1.6;
+            .admin-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: #f1f5f9;
+                padding: 4px 10px;
+                border-radius: 6px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                color: var(--text-main);
+                margin-bottom: 8px;
             }
 
-            @media (max-width: 768px) {
-                .back-link {
-                    position: static;
-                    margin: 16px auto 0;
-                }
-
-                .page-grid {
-                    padding-top: 12px;
-                }
+            @media (max-width: 480px) {
+                .card { padding: 24px; }
             }
         </style>
     </head>
     <body>
-        <a class="back-link" href="{{ route('login') }}">Kembali ke halaman login</a>
-        <div class="page-grid">
-            <section class="info-card">
-                <header>
-                    <p style="text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem; color: var(--text-muted);">
-                        Keamanan Akun Siswa
-                    </p>
-                    <h1>Lupa Password MayClass?</h1>
-                    <p>
-                        Demi keamanan data, reset password dilakukan langsung oleh tim admin. Hubungi admin resmi
-                        MayClass menggunakan tombol WhatsApp di bawah agar kami dapat memverifikasi identitas Anda dan
-                        membuat kata sandi baru secara manual.
-                    </p>
-                </header>
 
-                <div class="steps">
+        <div class="container">
+            <div class="nav-header">
+                <a class="back-link" href="{{ route('login') }}">
+                    &larr; Kembali ke Login
+                </a>
+            </div>
+
+            <main class="card">
+                <div class="icon-wrapper">
+                    🛡️
+                </div>
+
+                <h1>Lupa Password?</h1>
+                <p>
+                    Demi keamanan data siswa, reset password hanya dapat dilakukan melalui verifikasi manual oleh <strong>Admin MayClass</strong>.
+                </p>
+
+                <div class="steps-list">
                     <div class="step-item">
-                        <strong>1. Kirim permintaan</strong>
-                        <p>Klik tombol WhatsApp untuk mengirim pesan otomatis ke admin MayClass.</p>
+                        <div class="step-num">1</div>
+                        <div class="step-content">
+                            <strong>Kirim Pesan</strong>
+                            <span>Klik tombol di bawah untuk chat admin.</span>
+                        </div>
                     </div>
                     <div class="step-item">
-                        <strong>2. Verifikasi cepat</strong>
-                        <p>Admin akan menanyakan data dasar (nama, kelas, username) untuk memastikan keamanan akun.</p>
+                        <div class="step-num">2</div>
+                        <div class="step-content">
+                            <strong>Verifikasi Data</strong>
+                            <span>Sebutkan Nama & Kelas untuk pengecekan.</span>
+                        </div>
                     </div>
                     <div class="step-item">
-                        <strong>3. Terima password baru</strong>
-                        <p>Setelah verifikasi, admin mengirimkan kata sandi baru yang bisa langsung Anda gunakan.</p>
+                        <div class="step-num">3</div>
+                        <div class="step-content">
+                            <strong>Terima Akses</strong>
+                            <span>Admin akan memberikan password baru.</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="contact-card">
-                    <span style="font-size: 0.9rem; text-transform: uppercase; color: var(--text-muted);">Kontak Resmi</span>
-                    <h2>{{ $contactName }}</h2>
-                    <span class="phone">{{ $contactNumber ?? 'Nomor WhatsApp belum tersedia' }}</span>
-                    <span style="font-size: 0.9rem;">Jam layanan: {{ $availability }}</span>
-                    @if ($whatsappLink)
-                        <a class="whatsapp-btn" href="{{ $whatsappLink }}" target="_blank" rel="noopener">
-                            Hubungi via WhatsApp
-                        </a>
-                    @else
-                        <small>Silakan hubungi admin melalui kanal resmi MayClass.</small>
-                    @endif
-                    <small>Pesan otomatis: “{{ $supportMessage }}”</small>
+                @if ($whatsappLink)
+                    <a class="whatsapp-btn" href="{{ $whatsappLink }}" target="_blank" rel="noopener">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                        Hubungi via WhatsApp
+                    </a>
+                @else
+                    <div class="steps-list" style="text-align: center;">
+                        Admin belum tersedia saat ini.
+                    </div>
+                @endif
+
+                <div class="footer-info">
+                    <div class="admin-badge">{{ $contactName }}</div>
+                    <div>{{ $contactNumber ?? '' }}</div>
+                    <div style="margin-top: 4px;">Jam Operasional: {{ $availability }}</div>
                 </div>
-            </section>
-            <aside class="illustration">
-                <strong>Akses bantuan resmi, aman, dan terlindungi.</strong>
-                <span>Admin hanya akan memberikan kata sandi baru dan tidak pernah meminta kode OTP atau data rahasia lainnya.</span>
-            </aside>
+            </main>
         </div>
+
     </body>
 </html>
