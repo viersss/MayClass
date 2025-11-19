@@ -171,6 +171,21 @@ Jika Anda melihat error di atas ketika menjalankan `php artisan serve`, lakukan 
 `sessions` belum ada atau pemeriksaan tabel gagal akibat kredensial database yang salah. Hal ini membuat aplikasi tetap
 dapat dijalankan, namun pastikan Anda tetap menjalankan migrasi agar session kembali tersimpan di database.
 
+### Error `Unknown column 'is_active' in 'field list'`
+
+Fitur **Manajemen Tentor** menambahkan kolom baru `is_active` di tabel `users`. Jika Anda menarik pembaruan terbaru tapi belum
+menjalankan migrasi, perintah provisioning akun demo pada saat `php artisan serve` akan gagal dengan error di atas. Solusinya:
+
+1. Pastikan koneksi database di `.env` sudah benar dan database yang dimaksud tersedia.
+2. Jalankan migrasi terbaru untuk membuat kolom tersebut:
+
+   ```bash
+   php artisan migrate
+   ```
+
+3. Setelah migrasi selesai, jalankan ulang `php artisan serve`. Aplikasi akan berjalan normal dan kolom `is_active` siap
+   digunakan untuk mengatur status aktif/nonaktif tentor dari panel admin.
+
 ## 👥 Tim Pengembang (Kelompok 1 - 3SD2)
 
 Proyek ini dikerjakan oleh:
