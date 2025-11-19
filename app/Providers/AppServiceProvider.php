@@ -156,6 +156,13 @@ class AppServiceProvider extends ServiceProvider
             'email' => $email,
         ]);
 
+        if (
+            Schema::hasColumn('users', 'is_active')
+            && ! array_key_exists('is_active', $payload)
+        ) {
+            $payload['is_active'] = true;
+        }
+
         if (Schema::hasColumn('users', 'username')) {
             $payload['username'] = $username;
         }
