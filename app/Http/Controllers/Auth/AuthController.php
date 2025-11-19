@@ -225,6 +225,21 @@ class AuthController extends Controller
                     'username' => __('auth.failed'),
                 ])->onlyInput('username');
             }
+
+            $user = Auth::user();
+
+            if (
+                $user &&
+                $user->role === 'tutor' &&
+                Schema::hasColumn('users', 'is_active') &&
+                ! $user->is_active
+            ) {
+                Auth::logout();
+
+                return back()->withErrors([
+                    'username' => __('Akun tentor ini sedang dinonaktifkan oleh admin.'),
+                ])->onlyInput('username');
+            }
         } catch (QueryException|PDOException $exception) {
             if ($this->isDatabaseConnectionIssue($exception)) {
                 return back()->withErrors([
