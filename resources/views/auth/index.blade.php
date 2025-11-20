@@ -23,42 +23,67 @@
             --danger: #ef4444;
             --success: #10b981;
             --radius-md: 12px;
-            --radius-lg: 20px;
+            --radius-lg: 24px;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
 
         body {
-            margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--neutral-50); color: var(--neutral-900);
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-            overflow-x: hidden; padding: 20px;
-        }
+                    margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;
+                    color: var(--neutral-900);
+                    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+                    overflow-x: hidden; padding: 20px;
+                    
+                    background-color: #0f172a;
+                    background-image: 
+                        linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.7)), 
+                        url("{{ asset('images/bg_kelas.jpg') }}"); 
+                    background-size: cover;
+                    background-position: center;
+                    background-attachment: fixed;
+                    background-repeat: no-repeat;
+                }
 
         a { text-decoration: none; color: inherit; transition: all 0.2s; }
 
+        /* --- GLASSMORPHISM CARD --- */
         .auth-container {
-            width: 100%; max-width: 480px; background: #fff;
+            width: 100%; max-width: 480px;
+            
+            /* Efek Kaca / Transparan */
+            background: rgba(255, 255, 255, 0.56); /* Sedikit lebih solid agar teks jelas */
+            backdrop-filter: blur(16px);           
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            
             border-radius: var(--radius-lg);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
-            padding: 40px; position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            padding: 40px; 
+            position: relative;
         }
+
+        body, body * {
+            color: #000 !important;
+        }
+
 
         .back-button {
             position: absolute; top: 24px; left: 24px;
-            display: inline-flex; align-items: center; gap: 8px;
+            display: inline-flex; align-items: center; justify-content: center;
             font-size: 0.9rem; font-weight: 600; color: var(--neutral-500);
-            padding: 8px 16px; border-radius: 99px; background: var(--neutral-100);
+            padding: 8px 16px; border-radius: 99px; 
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             transition: all 0.2s;
         }
-        .back-button:hover { background: var(--neutral-200); color: var(--neutral-900); }
+        .back-button:hover { background: #fff; color: var(--neutral-900); transform: translateY(-1px); }
 
         .header-text { text-align: center; margin-top: 24px; margin-bottom: 32px; }
-        .header-text h2 { font-size: 1.8rem; font-weight: 700; color: var(--neutral-900); margin: 0 0 8px 0; }
+        .header-text h2 { font-size: 1.8rem; font-weight: 800; color: var(--neutral-900); margin: 0 0 8px 0; letter-spacing: -0.02em; }
         .header-text p { color: var(--neutral-500); font-size: 0.95rem; margin: 0; line-height: 1.5; }
 
-        .auth-form { display: none; flex-direction: column; gap: 20px; animation: fade-in 0.3s ease-out; }
-        @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .auth-form { display: none; flex-direction: column; gap: 20px; animation: fade-in 0.4s ease-out; }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         html[data-mode="login"] form[data-mode="login"],
         html[data-mode="register"] form[data-mode="register"] { display: flex; }
@@ -70,12 +95,13 @@
         .input-field {
             width: 100%; padding: 12px 16px;
             border: 1px solid var(--neutral-200); border-radius: var(--radius-md);
-            background: var(--neutral-50); font-family: inherit; font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.6); /* Input semi transparan */
+            font-family: inherit; font-size: 0.95rem;
             color: var(--neutral-900); transition: all 0.2s;
         }
         .input-field:focus {
-            outline: none; background: #fff; border-color: var(--primary-600);
-            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+            outline: none; border-color: var(--primary-600); background: #fff;
+            box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.15);
         }
 
         .btn-primary {
@@ -83,8 +109,9 @@
             padding: 14px; border-radius: var(--radius-md);
             font-size: 1rem; font-weight: 600; cursor: pointer;
             transition: all 0.2s; margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
         }
-        .btn-primary:hover { background: var(--primary-700); }
+        .btn-primary:hover { background: var(--primary-700); transform: translateY(-1px); }
         .btn-primary:active { transform: scale(0.98); }
 
         .btn-primary:disabled {
@@ -95,39 +122,27 @@
             transform: none;
         }
 
-        /* --- STYLE BARU UNTUK TOMBOL GOOGLE --- */
-        .divider {
-            display: flex; align-items: center; gap: 10px; margin: 10px 0 0;
-        }
-        .divider::before, .divider::after {
-            content: ''; flex: 1; height: 1px; background: var(--neutral-200);
-        }
-        .divider span { color: var(--neutral-500); font-size: 0.85rem; }
+        /* Tombol Google */
+        .divider { display: flex; align-items: center; gap: 10px; margin: 10px 0 0; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--neutral-200); }
+        .divider span { color: var(--neutral-500); font-size: 0.85rem; font-weight: 500; }
 
         .btn-google {
             display: flex; justify-content: center; align-items: center; gap: 12px;
             width: 100%; padding: 12px; 
             border: 1px solid var(--neutral-200); border-radius: var(--radius-md);
-            background: #fff; color: var(--neutral-900); 
+            background: rgba(255,255,255,0.8); color: var(--neutral-900); 
             font-weight: 600; margin-top: 16px; transition: all 0.2s;
         }
-        .btn-google:hover { background: var(--neutral-50); border-color: var(--neutral-400); }
-        /* --------------------------------------- */
+        .btn-google:hover { background: #fff; border-color: var(--neutral-400); }
 
         .error-msg { color: var(--danger); font-size: 0.8rem; margin-top: 2px; }
         
-        /* ALERT BOXES */
-        .alert-success { 
-            background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; 
-            padding: 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; 
-        }
-        
-        /* TAMBAHAN: ALERT ERROR */
-        .alert-error {
-            background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;
-            padding: 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px;
-        }
+        /* Alerts */
+        .alert-success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; }
+        .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; }
 
+        /* Links */
         .forgot-pass-wrapper { display: flex; justify-content: flex-end; margin-top: -12px; }
         .forgot-link { font-size: 0.85rem; color: var(--neutral-500); font-weight: 500; }
         .forgot-link span { color: var(--primary-600); font-weight: 600; }
@@ -141,7 +156,9 @@
         .switch-link { color: var(--neutral-900); font-weight: 700; margin-left: 4px; }
         .switch-link:hover { color: var(--primary-600); text-decoration: underline; }
 
-        .terms-trigger-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+        /* Terms Checkbox */
+        .terms-trigger-wrapper { display: flex; align-items: flex-start; gap: 10px; margin-top: 4px; }
+        .terms-trigger-wrapper input { margin-top: 3px; accent-color: var(--primary-600); width: 18px; height: 18px; }
         .terms-btn { background: none; border: none; padding: 0; font: inherit; color: var(--primary-600); font-weight: 600; cursor: pointer; text-decoration: underline; }
 
         /* MODAL CSS */
@@ -186,7 +203,7 @@
         .terms-consent label small { font-size: 0.85rem; color: var(--neutral-500); font-weight: 400; }
         .terms-consent.is-approved { background: #dcfce7; border-color: #16a34a; }
 
-        @media (max-width: 600px) { .auth-container { padding: 30px 24px; } .input-row { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { .auth-container { padding: 32px 24px; } .input-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -205,6 +222,7 @@
     @endif
 
     <div class="auth-container">
+        {{-- Back Button (No Arrow) --}}
         <a href="{{ url('/') }}" class="back-button">Kembali</a>
 
         <div class="header-text">
@@ -217,7 +235,7 @@
         {{-- ALERT SUKSES (HIJAU) --}}
         @if (session('status')) <div class="alert-success">{{ session('status') }}</div> @endif
 
-        {{-- ALERT ERROR (MERAH) - INI YANG BARU --}}
+        {{-- ALERT ERROR (MERAH) --}}
         @if (session('error')) <div class="alert-error">{{ session('error') }}</div> @endif
 
         {{-- FORM REGISTER --}}
@@ -258,7 +276,7 @@
                 </select>
             </div>
 
-            {{-- Trigger Checkbox (Awalnya Unchecked) --}}
+            {{-- Trigger Checkbox --}}
             <div class="terms-trigger-wrapper">
                 <input type="checkbox" id="main-terms-check" required onclick="if(!this.checked) { toggleRegisterButton(); return; } event.preventDefault(); toggleTerms(true);">
                 <label for="main-terms-check" style="font-size: 0.9rem; color: var(--neutral-500);">
@@ -280,7 +298,7 @@
                 </svg>
                 Google
             </a>
-
+            
             <div class="auth-footer">
                 Sudah punya akun MayClass? 
                 <a href="#" onclick="switchMode('login'); return false;" class="switch-link">Masuk</a>
