@@ -115,7 +115,18 @@
         /* --------------------------------------- */
 
         .error-msg { color: var(--danger); font-size: 0.8rem; margin-top: 2px; }
-        .alert-success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; }
+        
+        /* ALERT BOXES */
+        .alert-success { 
+            background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; 
+            padding: 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; 
+        }
+        
+        /* TAMBAHAN: ALERT ERROR */
+        .alert-error {
+            background: #fef2f2; border: 1px solid #fecaca; color: #991b1b;
+            padding: 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px;
+        }
 
         .forgot-pass-wrapper { display: flex; justify-content: flex-end; margin-top: -12px; }
         .forgot-link { font-size: 0.85rem; color: var(--neutral-500); font-weight: 500; }
@@ -203,7 +214,11 @@
             <p data-copy-mode="login" style="display: none;">Masukan kredensial untuk melanjutkan belajar.</p>
         </div>
 
+        {{-- ALERT SUKSES (HIJAU) --}}
         @if (session('status')) <div class="alert-success">{{ session('status') }}</div> @endif
+
+        {{-- ALERT ERROR (MERAH) - INI YANG BARU --}}
+        @if (session('error')) <div class="alert-error">{{ session('error') }}</div> @endif
 
         {{-- FORM REGISTER --}}
         <form data-mode="register" method="post" action="{{ route('register.details') }}" class="auth-form" novalidate>
@@ -256,7 +271,7 @@
             
             {{-- GOOGLE REGISTER --}}
             <div class="divider"><span>atau daftar dengan</span></div>
-            <a href="{{ route('google.login') }}" class="btn-google">
+            <a href="{{ route('google.login', ['mode' => 'register']) }}" class="btn-google">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M23.52 12.29C23.52 11.46 23.45 10.66 23.32 9.9H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.1L19.94 21.1C22.2 19.01 23.52 15.92 23.52 12.29Z" fill="#4285F4"/>
                     <path d="M12 24C15.24 24 17.96 22.92 19.94 21.1L16.08 18.1C15 18.83 13.62 19.26 12 19.26C8.87 19.26 6.22 17.15 5.28 14.29L1.29 17.38C3.26 21.3 7.31 24 12 24Z" fill="#34A853"/>
@@ -295,7 +310,7 @@
 
             {{-- GOOGLE LOGIN --}}
             <div class="divider"><span>atau</span></div>
-            <a href="{{ route('google.login') }}" class="btn-google">
+            <a href="{{ route('google.login', ['mode' => 'login']) }}" class="btn-google">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M23.52 12.29C23.52 11.46 23.45 10.66 23.32 9.9H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.1L19.94 21.1C22.2 19.01 23.52 15.92 23.52 12.29Z" fill="#4285F4"/>
                     <path d="M12 24C15.24 24 17.96 22.92 19.94 21.1L16.08 18.1C15 18.83 13.62 19.26 12 19.26C8.87 19.26 6.22 17.15 5.28 14.29L1.29 17.38C3.26 21.3 7.31 24 12 24Z" fill="#34A853"/>
