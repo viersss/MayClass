@@ -87,7 +87,6 @@
         .btn-primary:hover { background: var(--primary-700); }
         .btn-primary:active { transform: scale(0.98); }
 
-        /* Style untuk tombol DISABLED */
         .btn-primary:disabled {
             background-color: var(--neutral-200);
             color: var(--neutral-500);
@@ -95,6 +94,25 @@
             box-shadow: none;
             transform: none;
         }
+
+        /* --- STYLE BARU UNTUK TOMBOL GOOGLE --- */
+        .divider {
+            display: flex; align-items: center; gap: 10px; margin: 10px 0 0;
+        }
+        .divider::before, .divider::after {
+            content: ''; flex: 1; height: 1px; background: var(--neutral-200);
+        }
+        .divider span { color: var(--neutral-500); font-size: 0.85rem; }
+
+        .btn-google {
+            display: flex; justify-content: center; align-items: center; gap: 12px;
+            width: 100%; padding: 12px; 
+            border: 1px solid var(--neutral-200); border-radius: var(--radius-md);
+            background: #fff; color: var(--neutral-900); 
+            font-weight: 600; margin-top: 16px; transition: all 0.2s;
+        }
+        .btn-google:hover { background: var(--neutral-50); border-color: var(--neutral-400); }
+        /* --------------------------------------- */
 
         .error-msg { color: var(--danger); font-size: 0.8rem; margin-top: 2px; }
         .alert-success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 20px; }
@@ -227,16 +245,27 @@
 
             {{-- Trigger Checkbox (Awalnya Unchecked) --}}
             <div class="terms-trigger-wrapper">
-                {{-- Event onclick: jika belum dicentang, buka modal. Jika sudah, biarkan (user bisa uncheck manual) --}}
                 <input type="checkbox" id="main-terms-check" required onclick="if(!this.checked) { toggleRegisterButton(); return; } event.preventDefault(); toggleTerms(true);">
                 <label for="main-terms-check" style="font-size: 0.9rem; color: var(--neutral-500);">
                     Saya menyetujui <button type="button" class="terms-btn" onclick="toggleTerms(true)">Ketentuan Layanan</button>.
                 </label>
             </div>
 
-            {{-- BUTTON REGISTER: DISABLED BY DEFAULT --}}
+            {{-- BUTTON REGISTER --}}
             <button class="btn-primary" type="submit" id="reg-submit-btn" disabled>Buat Akun</button>
             
+            {{-- GOOGLE REGISTER --}}
+            <div class="divider"><span>atau daftar dengan</span></div>
+            <a href="{{ route('google.login') }}" class="btn-google">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M23.52 12.29C23.52 11.46 23.45 10.66 23.32 9.9H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.1L19.94 21.1C22.2 19.01 23.52 15.92 23.52 12.29Z" fill="#4285F4"/>
+                    <path d="M12 24C15.24 24 17.96 22.92 19.94 21.1L16.08 18.1C15 18.83 13.62 19.26 12 19.26C8.87 19.26 6.22 17.15 5.28 14.29L1.29 17.38C3.26 21.3 7.31 24 12 24Z" fill="#34A853"/>
+                    <path d="M5.28 14.29C5.03 13.43 4.9 12.52 4.9 11.6C4.9 10.68 5.03 9.77 5.28 8.91L1.29 5.82C0.47 7.47 0 9.49 0 11.6C0 13.71 0.47 15.73 1.29 17.38L5.28 14.29Z" fill="#FBBC05"/>
+                    <path d="M12 3.93C13.76 3.93 15.34 4.54 16.58 5.73L19.99 2.33C17.95 0.43 15.24 0 12 0C7.31 0 3.26 2.7 1.29 5.82L5.28 8.91C6.22 6.05 8.87 3.93 12 3.93Z" fill="#EA4335"/>
+                </svg>
+                Google
+            </a>
+
             <div class="auth-footer">
                 Sudah punya akun MayClass? 
                 <a href="#" onclick="switchMode('login'); return false;" class="switch-link">Masuk</a>
@@ -263,6 +292,18 @@
             </div>
 
             <button class="btn-primary" type="submit">Masuk</button>
+
+            {{-- GOOGLE LOGIN --}}
+            <div class="divider"><span>atau</span></div>
+            <a href="{{ route('google.login') }}" class="btn-google">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M23.52 12.29C23.52 11.46 23.45 10.66 23.32 9.9H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.1L19.94 21.1C22.2 19.01 23.52 15.92 23.52 12.29Z" fill="#4285F4"/>
+                    <path d="M12 24C15.24 24 17.96 22.92 19.94 21.1L16.08 18.1C15 18.83 13.62 19.26 12 19.26C8.87 19.26 6.22 17.15 5.28 14.29L1.29 17.38C3.26 21.3 7.31 24 12 24Z" fill="#34A853"/>
+                    <path d="M5.28 14.29C5.03 13.43 4.9 12.52 4.9 11.6C4.9 10.68 5.03 9.77 5.28 8.91L1.29 5.82C0.47 7.47 0 9.49 0 11.6C0 13.71 0.47 15.73 1.29 17.38L5.28 14.29Z" fill="#FBBC05"/>
+                    <path d="M12 3.93C13.76 3.93 15.34 4.54 16.58 5.73L19.99 2.33C17.95 0.43 15.24 0 12 0C7.31 0 3.26 2.7 1.29 5.82L5.28 8.91C6.22 6.05 8.87 3.93 12 3.93Z" fill="#EA4335"/>
+                </svg>
+                Masuk dengan Google
+            </a>
             
             <div class="auth-footer">
                 Baru di MayClass? 

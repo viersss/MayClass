@@ -31,6 +31,7 @@ use App\Models\Package;
 use App\Support\PackagePresenter;
 use App\Support\ProfileAvatar;
 use App\Support\ProfileLinkResolver;
+use App\Http\Controllers\Auth\GoogleController;
 
 Route::get('/', function () {
     $catalog = collect();
@@ -70,7 +71,10 @@ Route::middleware('guest')->group(function () {
     Route::get('/register/password', [AuthController::class, 'showPasswordStep'])->name('register.password');
     Route::post('/login', [AuthController::class, 'login'])->name('login.perform');
     Route::post('/register', [AuthController::class, 'register'])->name('register.perform');
+    Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
+    Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
+    
 });
 
 Route::middleware('auth')->group(function () {
