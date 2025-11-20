@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Package;
+use App\Models\CheckoutSession;
 use App\Support\PackagePresenter;
 use App\Support\ProfileAvatar;
 use App\Support\ProfileLinkResolver;
@@ -12,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -30,6 +32,8 @@ class CheckoutController extends Controller
         $existingOrder = $this->latestSubmittedOrder($user->id, $package->id);
 
         if ($existingOrder) {
+            $this->syncSessionForOrder($existingOrder, $package);
+
             if ($existingOrder->status === 'paid') {
                 return $this->redirectToStudentDashboard($packageDetail);
             }
@@ -37,7 +41,7 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.success', ['slug' => $package->slug, 'order' => $existingOrder->id]);
         }
 
-        $order = $this->resolveDraftOrder($user->id, $package);
+        [$order] = $this->ensureCheckoutSession($user->id, $package);
 
         if (! $order->expires_at) {
             $order->forceFill(['expires_at' => now()->addMinutes(30)])->save();
@@ -87,6 +91,8 @@ class CheckoutController extends Controller
                 'cancelled_at' => now(),
             ])->save();
 
+            $this->updateSessionStatus($order, $package, 'expired');
+
             return redirect()
                 ->route('checkout.show', $package->slug)
                 ->with('checkout_expired', true);
@@ -107,6 +113,8 @@ class CheckoutController extends Controller
             'expires_at' => null,
             'cancelled_at' => null,
         ])->save();
+
+        $this->updateSessionStatus($order, $package, 'awaiting_verification');
 
         return redirect()->route('checkout.success', ['slug' => $package->slug, 'order' => $order->id]);
     }
@@ -135,6 +143,8 @@ class CheckoutController extends Controller
         }
 
         $activationRequest = $request->boolean('activated');
+
+        $this->syncSessionForOrder($order, $package);
 
         if ($order->status === 'paid' && ! $activationRequest) {
             return $this->redirectToStudentDashboard($packageDetail);
@@ -179,11 +189,15 @@ class CheckoutController extends Controller
         abort_unless($order->user_id === $request->user()->id, 403);
         abort_unless($order->package?->slug === $slug, 404);
 
+        $order->loadMissing('package');
+
         if ($order->status === 'initiated') {
             $order->forceFill([
                 'status' => 'failed',
                 'cancelled_at' => now(),
             ])->save();
+
+            $this->updateSessionStatus($order, $order->package, 'expired');
         }
 
         return response()->json(['status' => 'expired']);
@@ -221,18 +235,117 @@ class CheckoutController extends Controller
         return 'Pembayaran ' . $title . ' sudah diverifikasi. Kamu bisa langsung mengakses materi dari dashboard siswa.';
     }
 
-    private function resolveDraftOrder(int $userId, Package $package): Order
+    private function ensureCheckoutSession(int $userId, Package $package): array
+    {
+        return DB::transaction(function () use ($userId, $package) {
+            $activeSession = CheckoutSession::where('user_id', $userId)
+                ->where('package_id', $package->id)
+                ->whereIn('status', ['checkout_in_progress', 'awaiting_payment', 'awaiting_verification'])
+                ->latest('id')
+                ->lockForUpdate()
+                ->first();
+
+            $order = $this->resolveDraftOrder($userId, $package, lock: true);
+
+            if ($activeSession) {
+                if (! $activeSession->order_id) {
+                    $activeSession->forceFill(['order_id' => $order->id])->save();
+                }
+
+                return [$order->fresh(), $activeSession->fresh()];
+            }
+
+            $session = CheckoutSession::create([
+                'user_id' => $userId,
+                'package_id' => $package->id,
+                'order_id' => $order->id,
+                'status' => 'checkout_in_progress',
+                'context' => [
+                    'package_slug' => $package->slug,
+                    'package_title' => $package->detail_title ?? $package->title ?? $package->name,
+                ],
+            ]);
+
+            return [$order->fresh(), $session];
+        });
+    }
+
+    private function syncSessionForOrder(Order $order, Package $package): CheckoutSession
+    {
+        $session = CheckoutSession::firstOrNew(['order_id' => $order->id]);
+
+        if (! $session->exists) {
+            $session->forceFill([
+                'user_id' => $order->user_id,
+                'package_id' => $order->package_id,
+                'context' => [
+                    'package_slug' => $package->slug,
+                    'package_title' => $package->detail_title ?? $package->title ?? $package->name,
+                ],
+            ]);
+        }
+
+        $targetStatus = $order->status === 'paid' ? 'completed' : 'awaiting_verification';
+
+        if ($session->status !== $targetStatus) {
+            $session->status = $targetStatus;
+        }
+
+        if (! $session->order_id) {
+            $session->order_id = $order->id;
+        }
+
+        $session->save();
+
+        return $session;
+    }
+
+    private function updateSessionStatus(Order $order, Package $package, string $status): void
+    {
+        $session = CheckoutSession::where('order_id', $order->id)
+            ->latest('id')
+            ->first();
+
+        if (! $session) {
+            $session = CheckoutSession::create([
+                'user_id' => $order->user_id,
+                'package_id' => $package->id,
+                'order_id' => $order->id,
+                'status' => $status,
+                'context' => [
+                    'package_slug' => $package->slug,
+                    'package_title' => $package->detail_title ?? $package->title ?? $package->name,
+                ],
+            ]);
+
+            return;
+        }
+
+        if (! $session->order_id) {
+            $session->order_id = $order->id;
+        }
+
+        $session->status = $status;
+        $session->save();
+    }
+
+    private function resolveDraftOrder(int $userId, Package $package, bool $lock = false): Order
     {
         $subtotal = $package->price;
         $tax = round($subtotal * 0.11, 2);
         $total = $subtotal + $tax;
         $expiresAt = now()->addMinutes(30);
 
-        $draft = Order::where('user_id', $userId)
+        $draftQuery = Order::where('user_id', $userId)
             ->where('package_id', $package->id)
             ->where('status', 'initiated')
-            ->latest('id')
-            ->first();
+            ->latest('id');
+
+        if ($lock) {
+            $draftQuery->lockForUpdate();
+        }
+
+        $draft = $draftQuery->first();
 
         if ($draft && $draft->expires_at && $draft->expires_at->isPast()) {
             $draft->forceFill([
