@@ -29,7 +29,7 @@ class PackageController extends Controller
             ]);
         }
 
-        $query = Package::query()->orderBy('level')->orderBy('price');
+        $query = Package::query()->withQuotaUsage()->orderBy('level')->orderBy('price');
 
         if (Schema::hasTable('package_features')) {
             $query->with(['cardFeatures' => fn ($features) => $features->orderBy('position')]);
@@ -50,7 +50,7 @@ class PackageController extends Controller
 
     public function show(string $slug)
     {
-        $package = Package::with(['cardFeatures', 'inclusions'])->where('slug', $slug)->firstOrFail();
+        $package = Package::with(['cardFeatures', 'inclusions'])->withQuotaUsage()->where('slug', $slug)->firstOrFail();
         $user = Auth::user();
         $activeEnrollment = StudentAccess::activeEnrollment($user);
 

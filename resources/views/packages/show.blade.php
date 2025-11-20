@@ -301,8 +301,19 @@
         </header>
 
         <div class="container main-wrapper">
-            
+
             <div class="content-area">
+                @if (session('package_full'))
+                    <div style="background: #fef2f2; border: 1px solid #fecdd3; color: #b91c1c; padding: 14px 16px; border-radius: 12px; margin-bottom: 20px;">
+                        {{ session('package_full') }}
+                    </div>
+                @endif
+
+                @php($quotaLimit = $package['quota_limit'] ?? null)
+                @php($quotaRemaining = $package['quota_remaining'] ?? null)
+                @php($isFull = (bool) ($package['is_full'] ?? false))
+                @php($quotaLabel = $quotaLimit === null ? 'Kuota tersedia' : 'Tersisa ' . max(0, (int) $quotaRemaining) . ' dari ' . (int) $quotaLimit . ' kursi')
+
                 <a href="{{ route('packages.index') }}" class="back-link">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
                     Kembali ke Katalog
@@ -346,14 +357,25 @@
 
             <aside class="purchase-card">
                 <img src="{{ $package['image'] }}" alt="{{ $package['detail_title'] }}" class="card-image" />
-                
+
                 <div class="price-label">Harga Paket</div>
                 <div class="price-value">{{ $package['detail_price'] }}</div>
 
+                <div style="margin: 10px 0 16px; color: {{ $isFull ? '#b91c1c' : 'var(--text-muted)' }}; font-weight: 600; font-size: 0.95rem;">
+                    {{ $isFull ? 'Kuota Penuh' : $quotaLabel }}
+                </div>
+
                 @auth
                     @php($purchaseLocked = $isStudent && $studentHasActivePackage)
-                    
-                    @if ($purchaseLocked)
+
+                    @if ($isFull)
+                        <button class="btn btn-disabled" style="width: 100%;" disabled>
+                            Kuota Penuh
+                        </button>
+                        <div class="active-alert" style="background: #fef2f2; color: #b91c1c; border-color: #fecdd3;">
+                            Slot paket ini sedang penuh. Silakan pilih paket lain atau hubungi admin untuk informasi selanjutnya.
+                        </div>
+                    @elseif ($purchaseLocked)
                         <button class="btn btn-disabled" style="width: 100%;" disabled>
                             Paket Aktif Berlangsung
                         </button>
@@ -366,9 +388,15 @@
                         </a>
                     @endif
                 @else
-                    <a href="{{ route('register') }}" class="btn btn-primary" style="width: 100%;">
-                        Daftar & Checkout
-                    </a>
+                    @if ($isFull)
+                        <button class="btn btn-disabled" style="width: 100%;" disabled>
+                            Kuota Penuh
+                        </button>
+                    @else
+                        <a href="{{ route('register') }}" class="btn btn-primary" style="width: 100%;">
+                            Daftar & Checkout
+                        </a>
+                    @endif
                     <div style="text-align: center; margin-top: 12px; font-size: 0.9rem; color: var(--text-muted);">
                         Sudah punya akun? <a href="{{ route('login') }}" style="color: var(--primary); font-weight: 600;">Masuk</a>
                     </div>

@@ -37,7 +37,7 @@ Route::get('/', function () {
     $stageDefinitions = config('mayclass.package_stages', []);
 
     if (Schema::hasTable('packages')) {
-        $query = Package::query()->orderBy('level')->orderBy('price');
+        $query = Package::query()->withQuotaUsage()->orderBy('level')->orderBy('price');
 
         if (Schema::hasTable('package_features')) {
             $query->with(['cardFeatures' => fn ($features) => $features->orderBy('position')]);
