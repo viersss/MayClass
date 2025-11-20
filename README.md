@@ -11,10 +11,11 @@ Klien (Bimbel MayClass) saat ini mengelola seluruh operasional secara manual. In
 ## 💡 Solusi
 
 Website MayClass ini hadir sebagai platform terintegrasi yang berfungsi sebagai:
-1.  **Pusat Informasi:** Menyediakan informasi resmi mengenai profil, paket harga, jadwal, dan profil tentor.
-2.  **Manajemen Akademik:** Mengelola data siswa, tentor, materi pembelajaran, dan bank soal secara terstruktur.
-3.  **Platform E-Learning:** Memfasilitasi siswa untuk mengakses materi, mengerjakan kuis/tugas, dan melihat progres belajar.
-4.  **Alat Branding:** Menampilkan testimoni dan foto kegiatan untuk meningkatkan kepercayaan calon siswa.
+
+1. **Pusat Informasi:** Menyediakan informasi resmi mengenai profil, paket harga, jadwal, dan profil tentor.
+2. **Manajemen Akademik:** Mengelola data siswa, tentor, materi pembelajaran, dan bank soal secara terstruktur.
+3. **Platform E-Learning:** Memfasilitasi siswa untuk mengakses materi, mengerjakan kuis/tugas, dan melihat progres belajar.
+4. **Alat Branding:** Menampilkan testimoni dan foto kegiatan untuk meningkatkan kepercayaan calon siswa.
 
 ## ✨ Fitur Utama
 
@@ -119,7 +120,7 @@ Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
 ### Error `HY000/1045` saat login MySQL atau phpMyAdmin
 
-Pesan `Access denied for user 'root'@'localhost'` akan muncul apabila kredensial MySQL Anda tidak cocok dengan konfigurasi
+Pesan `Access denied for user 'root'@'localhost'` akan muncul jika kredensial MySQL Anda tidak cocok dengan konfigurasi
 server lokal. Terkadang phpMyAdmin menampilkan variasi pesan seperti `(using password: YES)` ataupun `(using password: NO)`.
 Ikuti panduan berikut supaya aplikasi dapat terhubung kembali:
 
