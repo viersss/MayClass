@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // 1. Tambah kolom google_id setelah email
-            $table->string('google_id')->nullable()->after('email');
+            //hanya menambahkan kolom jika kolom tersebut belum ada
+            if (!Schema::hasColumn('users', 'google_id')) {
+                $table->string('google_id')->nullable()->after('email');
+            }
 
             // 2. Ubah password jadi boleh kosong (nullable)
             // Penting: karena user login Google tidak input password
@@ -28,7 +31,9 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Hapus kolom google_id
-            $table->dropColumn('google_id');
+             if (Schema::hasColumn('users', 'google_id')) {
+                $table->dropColumn('google_id');
+            }
 
             // Kembalikan password jadi wajib diisi (tidak boleh null)
             $table->string('password')->nullable(false)->change();
