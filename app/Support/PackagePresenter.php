@@ -78,6 +78,10 @@ class PackagePresenter
 
     private static function base(Package $package): array
     {
+        $quota = method_exists($package, 'quotaSnapshot')
+            ? $package->quotaSnapshot()
+            : ['limit' => null, 'remaining' => null, 'used' => 0, 'active_enrollments' => 0, 'checkout_holds' => 0, 'is_full' => false];
+
         return [
             'id' => $package->id,
             'slug' => $package->slug,
@@ -93,6 +97,12 @@ class PackagePresenter
             'summary' => $package->summary,
             'image' => $package->image_asset,
             'price_numeric' => (int) round($package->price),
+            'quota_limit' => $quota['limit'],
+            'quota_remaining' => $quota['remaining'],
+            'quota_used' => $quota['used'],
+            'quota_active_enrollments' => $quota['active_enrollments'],
+            'quota_checkout_holds' => $quota['checkout_holds'],
+            'is_full' => $quota['is_full'],
         ];
     }
 

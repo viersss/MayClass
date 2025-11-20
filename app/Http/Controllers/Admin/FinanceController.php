@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Enrollment;
+use App\Models\CheckoutSession;
 use App\Models\Order;
 use App\Models\User;
 use App\Support\StudentIdGenerator;
@@ -41,6 +42,10 @@ class FinanceController extends BaseAdminController
             'paid_at' => CarbonImmutable::now(),
         ])->save();
 
+        CheckoutSession::where('order_id', $order->id)
+            ->latest('id')
+            ->first()?->forceFill(['status' => 'completed'])->save();
+
         $order->loadMissing(['package', 'user']);
 
         if (Schema::hasTable('enrollments')) {
@@ -75,6 +80,10 @@ class FinanceController extends BaseAdminController
             'status' => 'rejected',
             'paid_at' => null,
         ])->save();
+
+        CheckoutSession::where('order_id', $order->id)
+            ->latest('id')
+            ->first()?->forceFill(['status' => 'failed'])->save();
 
         if (Schema::hasTable('enrollments')) {
             Enrollment::where('order_id', $order->id)->update(['is_active' => false]);

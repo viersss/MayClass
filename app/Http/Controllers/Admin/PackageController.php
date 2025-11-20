@@ -14,7 +14,7 @@ class PackageController extends BaseAdminController
     public function index(): View
     {
         $packages = Schema::hasTable('packages')
-            ? Package::orderBy('level')->get()
+            ? Package::withQuotaUsage()->orderBy('level')->get()
             : collect();
 
         return $this->render('admin.packages.index', [
@@ -76,6 +76,7 @@ class PackageController extends BaseAdminController
             'detail_price_label' => ['required', 'string', 'max:50'],
             'image_url' => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
+            'max_students' => ['nullable', 'integer', 'min:1'],
             'summary' => ['required', 'string'],
         ]);
     }

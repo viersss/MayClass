@@ -36,6 +36,20 @@ class StudentProfileTest extends TestCase
             ->assertSee($studentId, false);
     }
 
+    public function test_authenticated_visitor_can_view_profile(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'visitor',
+            'student_id' => null,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('student.profile'))
+            ->assertOk()
+            ->assertSeeText('Edit Profil')
+            ->assertSee($user->email, false);
+    }
+
     public function test_student_can_update_profile(): void
     {
         $user = User::factory()->create([
