@@ -95,7 +95,7 @@
                 transform: translateY(0);
             }
 
-            /* ==== NAVBAR TRANSLUCENT + BLUR ==== */
+            /* ==== NAVBAR ==== */
             header {
                 overflow: visible;
                 padding-top: 0;
@@ -108,10 +108,11 @@
                 right: 0;
                 z-index: 1000;
                 width: 100%;
-                padding: 12px clamp(12px, 3vw, 24px);
+                /* Padding diperkecil sedikit agar navbar tidak terlalu tinggi saat logo membesar */
+                padding: 8px clamp(12px, 3vw, 24px);
                 
                 /* Glassmorphism putih */
-                background: rgba(255, 255, 255, 0.4); 
+                background: rgba(255, 254, 254, 0.52); 
                 backdrop-filter: blur(16px) saturate(180%);
                 -webkit-backdrop-filter: blur(16px) saturate(180%);
                 border-bottom: 1px solid rgba(255, 255, 255, 0.25);
@@ -131,7 +132,7 @@
 
             @media (max-width: 1024px) {
                 nav {
-                    padding: 24px clamp(8px, 4vw, 20px);
+                    padding: 16px clamp(8px, 4vw, 20px);
                 }
 
                 .nav-inner {
@@ -141,7 +142,7 @@
 
             @media (max-width: 768px) {
                 nav {
-                    padding: 20px clamp(8px, 6vw, 16px);
+                    padding: 16px clamp(8px, 6vw, 16px);
                     margin-bottom: 24px;
                 }
 
@@ -167,9 +168,10 @@
                 justify-self: start;
             }
 
+            /* REVISI LOGO: Diperbesar heightnya, width auto */
             .brand img {
-                width: 130px;
-                height: auto;
+                height: 90px; 
+                width: auto;
                 object-fit: contain;
             }
 
@@ -232,6 +234,9 @@
             }
 
             @media (max-width: 768px) {
+                .brand img {
+                    height: 42px; /* Ukuran mobile sedikit lebih kecil agar tidak overflow */
+                }
                 .nav-actions {
                     width: 100%;
                     justify-content: center;
@@ -928,7 +933,7 @@
 
             .footer-logo {
                 width: 160px;
-                height: auto;
+                height: 110px;
                 filter: brightness(0) invert(1); /* Membuat logo menjadi putih jika aslinya berwarna */
                 opacity: 0.9;
             }
@@ -1216,9 +1221,6 @@
                             <div class="pricing-grid">
                                 @foreach ($group['packages'] as $package)
                                     @php($features = collect($package['card_features'] ?? $package['features'] ?? [])->take(3))
-                                    @php($quotaLimit = $package['quota_limit'] ?? null)
-                                    @php($quotaRemaining = $package['quota_remaining'] ?? null)
-                                    @php($isFull = (bool) ($package['is_full'] ?? false))
                                     <article class="pricing-card" data-reveal data-reveal-delay="{{ $loop->index * 120 }}">
                                         <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">
                                             {{ $package['tag'] ?? ($group['stage_label'] ?? $group['stage']) }}
@@ -1230,9 +1232,6 @@
                                             @if (! empty($package['grade_range']))
                                                 <span>• {{ $package['grade_range'] }}</span>
                                             @endif
-                                            <span style="font-weight: 600; color: {{ $isFull ? '#b91c1c' : 'var(--ink-soft)' }};">
-                                                {{ $isFull ? 'Kuota Penuh' : ($quotaLimit === null ? 'Kuota tersedia' : 'Tersisa ' . max(0, (int) $quotaRemaining) . ' / ' . (int) $quotaLimit) }}
-                                            </span>
                                         </div>
                                         @if ($package['summary'] ?? false)
                                             <p style="margin: 0; color: var(--ink-soft); font-size: 0.95rem;">
