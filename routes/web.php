@@ -81,6 +81,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout/{slug}/success', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::post('/checkout/{slug}/orders/{order}/expire', [CheckoutController::class, 'expire'])->name('checkout.expire');
     Route::get('/checkout/{slug}/orders/{order}/status', [CheckoutController::class, 'status'])->name('checkout.status');
+
+    Route::get('/profile', [ProfileController::class, 'show'])->name('student.profile');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('student.profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('student.profile.password');
 });
 
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
@@ -94,9 +98,6 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
         Route::get('/quiz', [QuizController::class, 'index'])->name('quiz');
         Route::get('/quiz/{slug}', [QuizController::class, 'show'])->name('quiz.show');
     });
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
-    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
 Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->name('tutor.')->group(function () {
