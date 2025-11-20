@@ -78,7 +78,7 @@
                 font-size: 1.25rem;
                 color: var(--primary);
             }
-            .brand img { height: 32px; width: auto; }
+            .brand img { height: 110px; width: auto; }
 
             .nav-actions { display: flex; gap: 12px; align-items: center; }
 

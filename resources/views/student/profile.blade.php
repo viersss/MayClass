@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" data-page="profile">
+<html lang="id">
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,489 +7,397 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
             rel="stylesheet"
         />
         <style>
             :root {
-                --primary: #3db7ad;
-                --primary-dark: #2c938b;
-                --accent: #5f6af8;
-                --text-dark: #1f2a37;
-                --text-muted: #6b7280;
-                --card: #ffffff;
-                --page-padding: clamp(16px, 3vw, 40px);
+                /* Color Palette */
+                --primary: #0f766e;
+                --primary-hover: #115e59;
+                --primary-light: #ccfbf1;
+                --bg-body: #f8fafc;
+                --surface: #ffffff;
+                --text-main: #0f172a;
+                --text-muted: #64748b;
+                --border: #e2e8f0;
+                --danger: #ef4444;
+                --success: #10b981;
+                
+                /* Spacing & Radius */
+                --radius: 16px;
+                --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+                --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             }
 
-            * {
-                box-sizing: border-box;
-            }
+            * { box-sizing: border-box; }
 
             body {
                 margin: 0;
-                font-family: "Poppins", sans-serif;
-                background: linear-gradient(180deg, #eff9f8 0%, #ffffff 40%);
-                color: var(--text-dark);
-                min-height: 100vh;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                background-color: var(--bg-body);
+                color: var(--text-main);
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
             }
 
-            a {
-                color: inherit;
-                text-decoration: none;
-            }
+            a { text-decoration: none; color: inherit; transition: all 0.2s; }
+            img { display: block; max-width: 100%; }
 
+            /* --- Navbar --- */
             header {
-                padding: 28px 0 0;
+                background: var(--surface);
+                border-bottom: 1px solid var(--border);
+                position: sticky;
+                top: 0;
+                z-index: 50;
             }
-
-
-.container {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
 
             nav {
-                background: var(--card);
-                border-radius: 20px;
-                padding: 18px var(--page-padding);
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 24px;
+                height: 72px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                box-shadow: 0 24px 60px rgba(45, 133, 126, 0.12);
-                gap: 24px;
             }
 
-
-.brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--primary-dark);
-}
-
-.brand img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-}
-
-            .nav-links {
+            .brand {
                 display: flex;
-                gap: 28px;
                 align-items: center;
-                font-size: 0.95rem;
-                color: var(--text-muted);
+                gap: 10px;
+                font-weight: 800;
+                font-size: 1.25rem;
+                color: var(--primary);
             }
+            .brand img { height: 110px; width: auto; }
 
-            .nav-links a[data-active="true"] {
-                color: var(--primary-dark);
-                font-weight: 600;
-            }
+            .nav-actions { display: flex; gap: 12px; align-items: center; }
 
-            .nav-links a[data-active="true"]::after {
-                content: "";
-                display: block;
-                height: 4px;
-                border-radius: 999px;
-                margin-top: 8px;
-                background: linear-gradient(120deg, var(--primary), var(--accent));
-            }
-
-            .nav-actions {
-                display: inline-flex;
-                align-items: center;
-                gap: 16px;
-            }
-
-            .nav-actions form {
-                margin: 0;
-            }
-
-            .profile-chip {
-                display: inline-flex;
-                align-items: center;
-                gap: 12px;
-                padding: 10px 16px;
-                border-radius: 999px;
-                background: rgba(61, 183, 173, 0.12);
+            .btn-nav-back {
                 font-size: 0.9rem;
-                color: var(--primary-dark);
+                font-weight: 600;
+                color: var(--text-muted);
+                padding: 8px 16px;
+                border-radius: 8px;
+            }
+            .btn-nav-back:hover { background: var(--bg-body); color: var(--text-main); }
+
+            .btn-logout {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: var(--danger);
+                background: transparent;
+                border: 1px solid transparent;
+                padding: 8px 16px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .btn-logout:hover { background: #fef2f2; border-color: #fecaca; }
+
+            /* --- Main Layout --- */
+            .container {
+                max-width: 1100px;
+                margin: 40px auto;
+                padding: 0 24px;
+                display: grid;
+                grid-template-columns: 300px 1fr; /* Sidebar Fixed - Content Flexible */
+                gap: 32px;
+                align-items: start;
             }
 
-            .profile-chip__avatar {
-                width: 38px;
-                height: 38px;
+            /* --- Left Column: Avatar Card --- */
+            .profile-sidebar {
+                background: var(--surface);
+                border-radius: var(--radius);
+                border: 1px solid var(--border);
+                padding: 32px 24px;
+                text-align: center;
+                box-shadow: var(--shadow-sm);
+                position: sticky;
+                top: 100px;
+            }
+
+            .avatar-wrapper {
+                position: relative;
+                width: 120px;
+                height: 120px;
+                margin: 0 auto 20px;
+            }
+
+            .avatar-img {
+                width: 100%;
+                height: 100%;
                 border-radius: 50%;
                 object-fit: cover;
-                border: 2px solid rgba(61, 183, 173, 0.2);
-                background: rgba(255, 255, 255, 0.6);
+                border: 4px solid var(--bg-body);
             }
 
-            .logout-button {
-                padding: 10px 18px;
-                border-radius: 999px;
-                border: 1px solid rgba(61, 183, 173, 0.25);
-                background: rgba(61, 183, 173, 0.12);
-                color: var(--primary-dark);
+            .avatar-placeholder {
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                background: var(--primary-light);
+                color: var(--primary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 4px solid var(--bg-body);
+            }
+
+            .avatar-placeholder svg {
+                width: 48px;
+                height: 48px;
+            }
+
+            .avatar-label {
+                display: inline-block;
+                padding: 8px 16px;
+                background: var(--bg-body);
+                color: var(--text-main);
+                border: 1px solid var(--border);
+                border-radius: 99px;
+                font-size: 0.85rem;
                 font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .avatar-label:hover { border-color: var(--primary); color: var(--primary); }
+
+            .avatar-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; }
+            .avatar-error { color: var(--danger); font-size: 0.8rem; margin-top: 4px; }
+
+            .profile-name {
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: var(--text-main);
+                margin: 16px 0 4px;
+            }
+            .profile-id {
+                font-family: monospace;
+                font-size: 0.9rem;
+                color: var(--text-muted);
+                background: var(--bg-body);
+                padding: 4px 8px;
+                border-radius: 6px;
+                display: inline-block;
             }
 
-            .logout-button:hover {
-                background: rgba(44, 147, 139, 0.2);
-                border-color: rgba(44, 147, 139, 0.3);
-            }
-
-            main {
-                padding: 48px var(--page-padding) 80px;
-                display: grid;
+            /* --- Right Column: Forms --- */
+            .content-area {
+                display: flex;
+                flex-direction: column;
                 gap: 32px;
             }
 
-            .profile-card {
-                background: var(--card);
-                border-radius: 32px;
-                padding: clamp(32px, 5vw, 56px);
-                box-shadow: 0 32px 68px rgba(32, 96, 92, 0.12);
+            .card {
+                background: var(--surface);
+                border-radius: var(--radius);
+                border: 1px solid var(--border);
+                padding: 32px;
+                box-shadow: var(--shadow-sm);
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: var(--text-main);
+                margin: 0 0 24px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            /* Form Grid */
+            .form-grid {
                 display: grid;
-                gap: 24px;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
             }
 
-            .profile-card h1 {
-                margin: 0;
-                font-size: clamp(2rem, 3vw, 2.4rem);
-                text-align: center;
-            }
-
-            .avatar-upload {
-                display: grid;
-                gap: 12px;
-                justify-items: center;
-            }
-
-            .avatar-preview {
-                width: 112px;
-                height: 112px;
-                border-radius: 50%;
-                background: rgba(61, 183, 173, 0.12);
-                display: grid;
-                place-items: center;
-                overflow: hidden;
-                box-shadow: 0 18px 36px rgba(61, 183, 173, 0.18);
-                color: var(--primary-dark);
-                font-size: 2.4rem;
-            }
-
-            .avatar-preview img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-
-            .avatar-upload__button {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 10px 18px;
-                border-radius: 999px;
-                border: 1px solid rgba(61, 183, 173, 0.3);
-                background: rgba(61, 183, 173, 0.1);
-                color: var(--primary-dark);
-                font-weight: 500;
-                cursor: pointer;
-                transition: background 0.2s ease, transform 0.2s ease;
-            }
-
-            .avatar-upload__button:hover {
-                background: rgba(61, 183, 173, 0.18);
-                transform: translateY(-1px);
-            }
-
-            .avatar-upload__hint {
-                margin: 0;
-                font-size: 0.85rem;
-                color: var(--text-muted);
-                text-align: center;
-            }
-
-            .avatar-upload__filename {
-                margin: 4px 0 0;
-                font-size: 0.85rem;
-                color: var(--primary-dark);
-            }
-
-            .avatar-input {
-                display: none;
-            }
-
-            .avatar-upload__error {
-                margin: 4px 0 0;
-                font-size: 0.82rem;
-                color: #b91c1c;
-                text-align: center;
-            }
-
-            form {
-                display: grid;
-                gap: 24px;
-            }
-
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 24px;
-            }
+            .form-group { display: flex; flex-direction: column; gap: 8px; }
+            .form-group.full { grid-column: 1 / -1; }
 
             label {
-                display: block;
-                font-weight: 500;
-                margin-bottom: 6px;
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: var(--text-main);
             }
 
-            input,
-            select,
-            textarea {
+            input, select, textarea {
                 width: 100%;
-                border-radius: 16px;
-                border: 1px solid rgba(61, 183, 173, 0.25);
-                padding: 14px 18px;
-                font-family: inherit;
+                padding: 12px 16px;
+                border: 1px solid var(--border);
+                border-radius: 10px;
                 font-size: 0.95rem;
-                color: var(--text-dark);
-                background: rgba(61, 183, 173, 0.06);
+                font-family: inherit;
+                color: var(--text-main);
+                background: var(--surface);
+                transition: all 0.2s;
             }
 
-            textarea {
-                resize: vertical;
-                min-height: 120px;
+            input:focus, select:focus, textarea:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px var(--primary-light);
             }
 
+            input[readonly] {
+                background: var(--bg-body);
+                color: var(--text-muted);
+                cursor: not-allowed;
+            }
+
+            textarea { min-height: 100px; resize: vertical; }
+
+            /* Buttons */
             .btn-group {
                 display: flex;
-                gap: 16px;
                 justify-content: flex-end;
-                flex-wrap: wrap;
+                gap: 12px;
+                margin-top: 24px;
             }
 
             .btn {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                padding: 14px 28px;
-                border-radius: 999px;
-                font-weight: 500;
+                padding: 12px 24px;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 0.95rem;
                 border: 1px solid transparent;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
                 cursor: pointer;
+                transition: all 0.2s;
             }
 
             .btn-primary {
-                background: linear-gradient(120deg, var(--primary) 0%, #58d2c5 100%);
-                color: #ffffff;
-                box-shadow: 0 20px 40px rgba(61, 183, 173, 0.28);
+                background: var(--primary);
+                color: white;
             }
+            .btn-primary:hover { background: var(--primary-hover); }
 
-            .btn-outline {
-                background: rgba(61, 183, 173, 0.08);
-                border-color: rgba(61, 183, 173, 0.22);
-                color: var(--primary-dark);
-            }
-
-            .btn:hover {
-                transform: translateY(-2px);
-            }
-
-            .password-card {
-                margin-top: 32px;
-                background: var(--card);
-                border-radius: 28px;
-                padding: clamp(28px, 4vw, 40px);
-                box-shadow: 0 24px 48px rgba(32, 96, 92, 0.12);
-                display: grid;
-                gap: 16px;
-            }
-
-            .password-card h2 {
-                margin: 0;
-                font-size: 1.4rem;
-            }
-
-            .password-card p {
-                margin: 0;
+            .btn-secondary {
+                background: white;
+                border-color: var(--border);
                 color: var(--text-muted);
-                font-size: 0.95rem;
             }
+            .btn-secondary:hover { border-color: var(--text-muted); color: var(--text-main); }
 
-            .password-form {
-                display: grid;
-                gap: 20px;
-            }
-
-            .password-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                gap: 20px;
-            }
-
-            .password-input {
-                width: 100%;
-                border-radius: 16px;
-                border: 1px solid rgba(61, 183, 173, 0.25);
-                padding: 14px 18px;
-                font-family: inherit;
-                font-size: 0.95rem;
-                background: rgba(61, 183, 173, 0.06);
-            }
-
-            .password-error {
-                margin-top: 6px;
-                font-size: 0.85rem;
-                color: #b91c1c;
-            }
-
-            .password-submit {
-                border: none;
-                border-radius: 999px;
-                padding: 14px 26px;
-                background: #125e66;
-                color: #fff;
-                font-weight: 600;
-                cursor: pointer;
-                box-shadow: 0 12px 24px rgba(18, 94, 102, 0.25);
-                width: fit-content;
-            }
-
-            .password-alert {
-                padding: 12px 16px;
-                border-radius: 16px;
-                background: rgba(18, 94, 102, 0.08);
-                color: #125e66;
-                font-weight: 500;
-            }
-
-            footer {
-                padding: 32px var(--page-padding) 48px;
+            /* Alerts */
+            .alert {
+                padding: 14px;
+                border-radius: 10px;
+                margin-bottom: 24px;
+                font-size: 0.9rem;
                 text-align: center;
-                color: var(--text-muted);
-                font-size: 0.85rem;
+            }
+            .alert-success { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+            .alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+            .input-error-msg { color: var(--danger); font-size: 0.85rem; margin-top: 4px; }
+
+            @media (max-width: 900px) {
+                .container { grid-template-columns: 1fr; }
+                .profile-sidebar { position: static; display: flex; align-items: center; gap: 24px; text-align: left; }
+                .avatar-wrapper { margin: 0; }
+                .form-grid { grid-template-columns: 1fr; }
             }
 
-            @media (max-width: 768px) {
-                .grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .btn-group {
-                    justify-content: center;
-                }
+            @media (max-width: 600px) {
+                .profile-sidebar { flex-direction: column; text-align: center; }
+                .avatar-wrapper { margin: 0 auto 16px; }
+                .nav-actions { display: none; } /* Sembunyikan aksi di mobile jika perlu atau buat hamburger */
             }
         </style>
     </head>
     <body>
-        @php($hasActivePackage = $hasActivePackage ?? false)
-        @php($navProfileAvatar = \App\Support\ProfileAvatar::forUser(auth()->user()))
+        
         <header>
-            <div class="container">
-                <nav>
-                    <a href="{{ route('student.dashboard') }}" class="brand">
-                        <img src="{{ \App\Support\ImageRepository::url('logo') }}" alt="Logo MayClass" />
-                    </a>
-                    @php($routeName = request()->route()?->getName())
-                    <div class="nav-links">
-                        <a href="{{ route('student.dashboard') }}" data-active="{{ $routeName === 'student.dashboard' ? 'true' : 'false' }}">Beranda</a>
-                        @if ($hasActivePackage)
-                            <a href="{{ route('student.materials') }}" data-active="{{ str_starts_with($routeName, 'student.materials') ? 'true' : 'false' }}">Materi</a>
-                            <a href="{{ route('student.quiz') }}" data-active="{{ str_starts_with($routeName, 'student.quiz') ? 'true' : 'false' }}">Quiz</a>
-                            <a href="{{ route('student.schedule') }}" data-active="{{ $routeName === 'student.schedule' ? 'true' : 'false' }}">Jadwal</a>
-                        @endif
-                    </div>
-                    <div class="nav-actions">
-                        <a class="profile-chip" href="{{ route('student.profile') }}" data-active="true">
-                            <img class="profile-chip__avatar" src="{{ $navProfileAvatar }}" alt="Foto profil {{ $profile['name'] }}" />
-                            <span>{{ $profile['name'] }}</span>
-                        </a>
-                        <form method="post" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="logout-button">Keluar</button>
-                        </form>
-                    </div>
-                </nav>
-            </div>
+            <nav>
+                <a href="/" class="brand">
+                    <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo MayClass" />
+                </a>
+                <div class="nav-actions">
+                    <a href="{{ route('student.dashboard') }}" class="btn-nav-back">Kembali ke Dashboard</a>
+                    <form method="post" action="{{ route('logout') }}" style="margin:0">
+                        @csrf
+                        <button type="submit" class="btn-logout">Keluar</button>
+                    </form>
+                </div>
+            </nav>
         </header>
+
         <main class="container">
-            <section class="profile-card">
-                <h1>Edit Profil</h1>
-                @php($avatarUrl = $avatarUrl ?? null)
-                <div class="avatar-upload">
-                    <div class="avatar-preview" data-avatar-preview>
+            
+            @php($avatarUrl = $avatarUrl ?? null)
+
+            <aside class="profile-sidebar">
+                <div class="avatar-wrapper">
+                    <div data-avatar-preview style="width: 100%; height: 100%;">
                         <img
                             src="{{ $avatarUrl ?? '' }}"
-                            alt="Foto profil {{ $profile['name'] }}"
+                            alt="Foto profil"
+                            class="avatar-img"
                             data-avatar-image
                             data-original="{{ $avatarUrl ?? '' }}"
                             @if (! $avatarUrl) style="display: none;" @endif
                         />
-                        <span data-avatar-placeholder @if($avatarUrl) style="display: none;" @endif>🧑</span>
+                        <div class="avatar-placeholder" data-avatar-placeholder @if($avatarUrl) style="display: none;" @endif>
+                            {{-- SVG USER ICON --}}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                            </svg>
+                        </div>
                     </div>
-                    <label class="avatar-upload__button" for="avatar">Pilih foto</label>
-                    <p class="avatar-upload__hint">Format JPG/PNG, maksimal 5 MB</p>
-                    <p class="avatar-upload__filename" data-avatar-filename></p>
-                    @error('avatar')
-                        <p class="avatar-upload__error">{{ $message }}</p>
-                    @enderror
                 </div>
-                @if ($errors->any())
-                    <div
-                        style="padding: 14px 18px; border-radius: 16px; background: rgba(220, 38, 38, 0.12); color: #b91c1c; text-align: center;"
-                    >
-                        {{ $errors->first() }}
+                
+                <div class="profile-info">
+                    <h2 class="profile-name">{{ $profile['name'] }}</h2>
+                    <span class="profile-id">ID: {{ $profile['studentId'] }}</span>
+                    
+                    <div style="margin-top: 20px;">
+                        <label for="avatar" class="avatar-label">Ubah Foto</label>
+                        <p class="avatar-hint">JPG/PNG, Maks. 5MB</p>
+                        @error('avatar')
+                            <p class="avatar-error">{{ $message }}</p>
+                        @enderror
                     </div>
-                @endif
+                </div>
+            </aside>
+
+            <div class="content-area">
+                
                 @if (session('status'))
-                    <div
-                        style="padding: 14px 18px; border-radius: 16px; background: rgba(61, 183, 173, 0.12); color: var(--primary-dark); text-align: center;"
-                    >
+                    <div class="alert alert-success">
                         {{ session('status') }}
                     </div>
                 @endif
-                <form action="{{ route('student.profile.update') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-                    <input id="avatar" name="avatar" type="file" accept="image/*" class="avatar-input" />
-                    <div class="grid">
-                        <div>
-                            <label for="name">Nama Lengkap</label>
-                            <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                value="{{ old('name', $profile['name']) }}"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label for="email">Email</label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                value="{{ old('email', $profile['email']) }}"
-                                required
-                            />
-                        </div>
+
+                @if ($errors->any())
+                    <div class="alert alert-error">
+                        Terjadi kesalahan. Silakan periksa input Anda.
                     </div>
-                    <div class="grid">
-                        <div>
-                            <label for="student-id">No. Tlp/WA</label>
-                            <input
-                                id="student-id"
-                                name="phone"
-                                type="text"
-                                value="{{ old('phone', $profile['phone']) }}"
-                            />
+                @endif
+
+                <form action="{{ route('student.profile.update') }}" method="post" enctype="multipart/form-data" class="card">
+                    @csrf
+                    <h3 class="card-title">Informasi Pribadi</h3>
+                    
+                    <input id="avatar" name="avatar" type="file" accept="image/*" style="display: none;" />
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">Nama Lengkap</label>
+                            <input id="name" name="name" type="text" value="{{ old('name', $profile['name']) }}" required />
                         </div>
-                        <div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input id="email" name="email" type="email" value="{{ old('email', $profile['email']) }}" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">No. Telepon / WA</label>
+                            <input id="phone" name="phone" type="text" value="{{ old('phone', $profile['phone']) }}" />
+                        </div>
+                        <div class="form-group">
                             <label for="gender">Jenis Kelamin</label>
                             <select id="gender" name="gender">
                                 <option value="">Pilih jenis kelamin</option>
@@ -500,140 +408,94 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
-                    <div class="grid">
-                        <div>
+                        <div class="form-group">
                             <label for="parent">Nama Orang Tua</label>
-                            <input
-                                id="parent"
-                                name="parent_name"
-                                type="text"
-                                value="{{ old('parent_name', $profile['parentName']) }}"
-                            />
+                            <input id="parent" name="parent_name" type="text" value="{{ old('parent_name', $profile['parentName']) }}" />
                         </div>
-                        <div>
+                        <div class="form-group">
                             <label for="student-code">ID Siswa</label>
-                            <input
-                                id="student-code"
-                                type="text"
-                                value="{{ $profile['studentId'] }}"
-                                readonly
-                                style="background: rgba(61, 183, 173, 0.06);"
-                            />
+                            <input id="student-code" type="text" value="{{ $profile['studentId'] }}" readonly />
+                        </div>
+                        <div class="form-group full">
+                            <label for="address">Alamat Lengkap</label>
+                            <textarea id="address" name="address">{{ old('address', $profile['address']) }}</textarea>
                         </div>
                     </div>
-                    <div>
-                        <label for="address">Alamat</label>
-                        <textarea id="address" name="address">{{ old('address', $profile['address']) }}</textarea>
-                    </div>
+
                     <div class="btn-group">
-                        <button class="btn btn-outline" type="reset">Batal</button>
-                        <button class="btn btn-primary" type="submit">Simpan</button>
+                        <button class="btn btn-secondary" type="reset">Reset</button>
+                        <button class="btn btn-primary" type="submit">Simpan Perubahan</button>
                     </div>
                 </form>
-            </section>
-            <section class="password-card">
-                <h2>Ubah Password</h2>
-                <p>Masukkan password lama lalu pilih password baru yang lebih kuat.</p>
-                @if (session('password_status'))
-                    <div class="password-alert">{{ session('password_status') }}</div>
-                @endif
-                <form class="password-form" method="post" action="{{ route('student.profile.password') }}">
+
+                <form action="{{ route('student.profile.password') }}" method="post" class="card">
                     @csrf
                     @method('PUT')
-                    <div class="password-grid">
-                        <label>
-                            <span>Password Lama</span>
-                            <input
-                                class="password-input"
-                                type="password"
-                                name="current_password"
-                                autocomplete="current-password"
-                                required
-                            />
-                            @error('current_password', 'passwordUpdate')
-                                <div class="password-error">{{ $message }}</div>
-                            @enderror
-                        </label>
-                        <label>
-                            <span>Password Baru</span>
-                            <input
-                                class="password-input"
-                                type="password"
-                                name="password"
-                                autocomplete="new-password"
-                                required
-                            />
-                            @error('password', 'passwordUpdate')
-                                <div class="password-error">{{ $message }}</div>
-                            @enderror
-                        </label>
-                        <label>
-                            <span>Konfirmasi Password Baru</span>
-                            <input
-                                class="password-input"
-                                type="password"
-                                name="password_confirmation"
-                                autocomplete="new-password"
-                                required
-                            />
-                        </label>
+                    <h3 class="card-title">Keamanan Akun</h3>
+
+                    @if (session('password_status'))
+                        <div class="alert alert-success" style="margin-bottom: 20px;">{{ session('password_status') }}</div>
+                    @endif
+
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label>Password Lama</label>
+                            <input type="password" name="current_password" required />
+                            @error('current_password', 'passwordUpdate') <div class="input-error-msg">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="form-group">
+                            <label>Password Baru</label>
+                            <input type="password" name="password" required />
+                            @error('password', 'passwordUpdate') <div class="input-error-msg">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="form-group">
+                            <label>Konfirmasi Password Baru</label>
+                            <input type="password" name="password_confirmation" required />
+                        </div>
                     </div>
-                    <button class="password-submit" type="submit">Perbarui Password</button>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" type="submit">Perbarui Password</button>
+                    </div>
                 </form>
-            </section>
+
+            </div>
         </main>
-        <footer>© {{ now()->year }} MayClass. Data pribadi dijaga sesuai kebijakan privasi.</footer>
+
+        {{-- Script Preview Avatar --}}
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const input = document.getElementById('avatar');
                 const imagePreview = document.querySelector('[data-avatar-image]');
                 const placeholder = document.querySelector('[data-avatar-placeholder]');
-                const filename = document.querySelector('[data-avatar-filename]');
+                const filename = document.querySelector('.avatar-upload__filename');
 
-                if (!input || (!imagePreview && !placeholder)) {
-                    return;
-                }
+                if (!input) return;
 
                 input.addEventListener('change', function () {
                     const file = input.files && input.files[0];
 
-                    if (!file) {
+                    if (file) {
+                        // Tampilkan Preview
+                        if (imagePreview) {
+                            imagePreview.style.display = 'block';
+                            imagePreview.src = URL.createObjectURL(file);
+                        }
+                        // Sembunyikan Placeholder
+                        if (placeholder) {
+                            placeholder.style.display = 'none';
+                        }
+                    } else {
+                        // Reset jika batal pilih file
                         if (imagePreview) {
                             const original = imagePreview.getAttribute('data-original');
-                            const hasOriginal = Boolean(original);
-                            imagePreview.style.display = hasOriginal ? 'block' : 'none';
-
-                            if (hasOriginal) {
+                            if (original) {
                                 imagePreview.src = original;
                             } else {
-                                imagePreview.removeAttribute('src');
+                                imagePreview.style.display = 'none';
+                                if (placeholder) placeholder.style.display = 'flex';
                             }
                         }
-
-                        if (placeholder) {
-                            const shouldShowPlaceholder = !imagePreview || imagePreview.style.display === 'none';
-                            placeholder.style.display = shouldShowPlaceholder ? 'grid' : 'none';
-                        }
-
-                        if (filename) {
-                            filename.textContent = '';
-                        }
-
-                        return;
-                    }
-
-                    if (imagePreview) {
-                        imagePreview.style.display = 'block';
-                        imagePreview.src = URL.createObjectURL(file);
-                    }
-
-                    if (placeholder) {
-                        placeholder.style.display = 'none';
-                    }
-
-                    if (filename) {
-                        filename.textContent = file.name;
                     }
                 });
             });
