@@ -10,12 +10,11 @@ Klien (Bimbel MayClass) saat ini mengelola seluruh operasional secara manual. In
 
 ## 💡 Solusi
 
-Website MayClass hadir sebagai platform terintegrasi yang berfungsi sebagai:
-
-1. **Pusat Informasi:** Menyediakan informasi resmi mengenai profil, paket harga, jadwal, dan profil tentor.
-2. **Manajemen Akademik:** Mengelola data siswa, tentor, materi pembelajaran, dan bank soal secara terstruktur.
-3. **Platform E-Learning:** Memfasilitasi siswa untuk mengakses materi, mengerjakan kuis/tugas, dan melihat progres belajar.
-4. **Alat Branding:** Menampilkan testimoni dan foto kegiatan untuk meningkatkan kepercayaan calon siswa.
+Website MayClass ini hadir sebagai platform terintegrasi yang berfungsi sebagai:
+1.  **Pusat Informasi:** Menyediakan informasi resmi mengenai profil, paket harga, jadwal, dan profil tentor.
+2.  **Manajemen Akademik:** Mengelola data siswa, tentor, materi pembelajaran, dan bank soal secara terstruktur.
+3.  **Platform E-Learning:** Memfasilitasi siswa untuk mengakses materi, mengerjakan kuis/tugas, dan melihat progres belajar.
+4.  **Alat Branding:** Menampilkan testimoni dan foto kegiatan untuk meningkatkan kepercayaan calon siswa.
 
 ## ✨ Fitur Utama
 
