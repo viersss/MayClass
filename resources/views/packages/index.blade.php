@@ -379,6 +379,10 @@
                         <div class="grid">
                             @foreach ($group['packages'] as $package)
                                 @php($features = collect($package['card_features'] ?? $package['features'] ?? [])->take(5))
+                                @php($quotaLimit = $package['quota_limit'] ?? null)
+                                @php($quotaRemaining = $package['quota_remaining'] ?? null)
+                                @php($isFull = (bool) ($package['is_full'] ?? false))
+                                @php($quotaLabel = $quotaLimit === null ? 'Kuota tersedia' : 'Tersisa ' . max(0, (int) $quotaRemaining) . ' dari ' . (int) $quotaLimit . ' kursi')
                                 @php($isBestValue = ($package['tag'] ?? '') === 'Best Value' || ($package['tag'] ?? '') === 'Terlaris')
                                 
                                 <article class="card" data-highlight="{{ $isBestValue ? 'true' : 'false' }}">
@@ -403,6 +407,9 @@
                                         @if (!empty($package['detail_price']))
                                             <div class="pkg-period">{{ $package['detail_price'] }}</div>
                                         @endif
+                                        <div style="margin-top: 10px; font-size: 0.9rem; color: {{ $isFull ? '#b91c1c' : 'var(--text-muted)' }}; font-weight: 600;">
+                                            {{ $isFull ? 'Kuota Penuh' : $quotaLabel }}
+                                        </div>
                                         @if ($package['summary'] ?? false)
                                             <div style="margin-top: 12px; font-size: 0.9rem; color: var(--text-muted);">
                                                 {{ $package['summary'] }}
@@ -421,7 +428,9 @@
 
                                     <div class="card-actions">
                                         @auth
-                                            @if (auth()->user()->role === 'student' && $studentHasActivePackage)
+                                            @if ($isFull)
+                                                <button class="btn btn-block btn-disabled" disabled>Kuota Penuh</button>
+                                            @elseif (auth()->user()->role === 'student' && $studentHasActivePackage)
                                                 <button class="btn btn-block btn-disabled" disabled>Sedang Aktif</button>
                                             @else
                                                 <a href="{{ route('packages.show', $package['slug']) }}" class="btn btn-block btn-primary">
@@ -429,9 +438,13 @@
                                                 </a>
                                             @endif
                                         @else
-                                            <a href="{{ route('register') }}" class="btn btn-block btn-primary">
-                                                Daftar &amp; Pilih
-                                            </a>
+                                            @if ($isFull)
+                                                <button class="btn btn-block btn-disabled" disabled>Kuota Penuh</button>
+                                            @else
+                                                <a href="{{ route('register') }}" class="btn btn-block btn-primary">
+                                                    Daftar &amp; Pilih
+                                                </a>
+                                            @endif
                                         @endauth
                                         
                                         @if(auth()->check() && !(auth()->user()->role === 'student' && $studentHasActivePackage))

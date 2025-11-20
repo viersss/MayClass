@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\PackageFullException;
 use App\Models\Order;
 use App\Models\Package;
 use App\Models\CheckoutSession;
@@ -21,7 +22,7 @@ class CheckoutController extends Controller
 {
     public function show(Request $request, string $slug)
     {
-        $package = Package::with(['cardFeatures', 'inclusions'])->where('slug', $slug)->firstOrFail();
+        $package = Package::with(['cardFeatures', 'inclusions'])->withQuotaUsage()->where('slug', $slug)->firstOrFail();
         $user = $request->user();
 
         if ($redirect = $this->redirectIfPurchaseLocked($user)) {
@@ -41,7 +42,13 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.success', ['slug' => $package->slug, 'order' => $existingOrder->id]);
         }
 
-        [$order] = $this->ensureCheckoutSession($user->id, $package);
+        try {
+            [$order] = $this->ensureCheckoutSession($user->id, $package);
+        } catch (PackageFullException $exception) {
+            return redirect()
+                ->route('packages.show', $package->slug)
+                ->with('package_full', $exception->getMessage());
+        }
 
         if (! $order->expires_at) {
             $order->forceFill(['expires_at' => now()->addMinutes(30)])->save();
@@ -67,7 +74,7 @@ class CheckoutController extends Controller
             return $redirect;
         }
 
-        $package = Package::where('slug', $slug)->firstOrFail();
+        $package = Package::withQuotaUsage()->where('slug', $slug)->firstOrFail();
 
         $data = $request->validate([
             'payment_method' => ['required', Rule::in(['american_express', 'visa', 'transfer_bank'])],
@@ -238,16 +245,18 @@ class CheckoutController extends Controller
     private function ensureCheckoutSession(int $userId, Package $package): array
     {
         return DB::transaction(function () use ($userId, $package) {
+            $lockedPackage = Package::withQuotaUsage()->whereKey($package->id)->lockForUpdate()->firstOrFail();
+
             $activeSession = CheckoutSession::where('user_id', $userId)
-                ->where('package_id', $package->id)
+                ->where('package_id', $lockedPackage->id)
                 ->whereIn('status', ['checkout_in_progress', 'awaiting_payment', 'awaiting_verification'])
                 ->latest('id')
                 ->lockForUpdate()
                 ->first();
 
-            $order = $this->resolveDraftOrder($userId, $package, lock: true);
-
             if ($activeSession) {
+                $order = $this->resolveDraftOrder($userId, $lockedPackage, lock: true);
+
                 if (! $activeSession->order_id) {
                     $activeSession->forceFill(['order_id' => $order->id])->save();
                 }
@@ -255,14 +264,18 @@ class CheckoutController extends Controller
                 return [$order->fresh(), $activeSession->fresh()];
             }
 
+            $this->assertPackageSlot($lockedPackage);
+
+            $order = $this->resolveDraftOrder($userId, $lockedPackage, lock: true);
+
             $session = CheckoutSession::create([
                 'user_id' => $userId,
-                'package_id' => $package->id,
+                'package_id' => $lockedPackage->id,
                 'order_id' => $order->id,
                 'status' => 'checkout_in_progress',
                 'context' => [
-                    'package_slug' => $package->slug,
-                    'package_title' => $package->detail_title ?? $package->title ?? $package->name,
+                    'package_slug' => $lockedPackage->slug,
+                    'package_title' => $lockedPackage->detail_title ?? $lockedPackage->title ?? $lockedPackage->name,
                 ],
             ]);
 
@@ -376,6 +389,19 @@ class CheckoutController extends Controller
             'payment_method' => 'transfer_bank',
             'expires_at' => $expiresAt,
         ]);
+    }
+
+    private function assertPackageSlot(Package $package): void
+    {
+        if (! $package->hasQuota()) {
+            return;
+        }
+
+        $snapshot = $package->quotaSnapshot(lock: true);
+
+        if ($snapshot['remaining'] !== null && $snapshot['remaining'] <= 0) {
+            throw new PackageFullException('Kuota paket ini sudah habis. Silakan pilih paket lain atau hubungi admin.');
+        }
     }
 
     private function latestSubmittedOrder(int $userId, int $packageId): ?Order

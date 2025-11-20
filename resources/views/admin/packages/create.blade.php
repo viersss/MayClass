@@ -136,6 +136,22 @@
                 @enderror
             </div>
             <div>
+                <label for="max_students">Kuota Maksimum (opsional)</label>
+                <input
+                    type="number"
+                    id="max_students"
+                    name="max_students"
+                    value="{{ old('max_students') }}"
+                    min="1"
+                    step="1"
+                    placeholder="Contoh: 25"
+                />
+                <p style="margin: 6px 0 0; color: var(--text-muted); font-size: 0.85rem;">Biarkan kosong jika kuota tidak dibatasi.</p>
+                @error('max_students')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+            <div>
                 <label for="card_price_label">Label Harga Kartu</label>
                 <input type="text" id="card_price_label" name="card_price_label" value="{{ old('card_price_label') }}" required />
                 @error('card_price_label')

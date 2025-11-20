@@ -1216,6 +1216,9 @@
                             <div class="pricing-grid">
                                 @foreach ($group['packages'] as $package)
                                     @php($features = collect($package['card_features'] ?? $package['features'] ?? [])->take(3))
+                                    @php($quotaLimit = $package['quota_limit'] ?? null)
+                                    @php($quotaRemaining = $package['quota_remaining'] ?? null)
+                                    @php($isFull = (bool) ($package['is_full'] ?? false))
                                     <article class="pricing-card" data-reveal data-reveal-delay="{{ $loop->index * 120 }}">
                                         <span class="badge" style="background: rgba(63, 166, 126, 0.12); color: var(--primary-main);">
                                             {{ $package['tag'] ?? ($group['stage_label'] ?? $group['stage']) }}
@@ -1227,6 +1230,9 @@
                                             @if (! empty($package['grade_range']))
                                                 <span>• {{ $package['grade_range'] }}</span>
                                             @endif
+                                            <span style="font-weight: 600; color: {{ $isFull ? '#b91c1c' : 'var(--ink-soft)' }};">
+                                                {{ $isFull ? 'Kuota Penuh' : ($quotaLimit === null ? 'Kuota tersedia' : 'Tersisa ' . max(0, (int) $quotaRemaining) . ' / ' . (int) $quotaLimit) }}
+                                            </span>
                                         </div>
                                         @if ($package['summary'] ?? false)
                                             <p style="margin: 0; color: var(--ink-soft); font-size: 0.95rem;">
