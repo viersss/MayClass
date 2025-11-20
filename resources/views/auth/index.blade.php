@@ -181,7 +181,7 @@
         <div class="header-text">
             <h2 data-copy-mode="register">Buat Akun Baru</h2>
             <h2 data-copy-mode="login" style="display: none;">Selamat Datang</h2>
-            <p data-copy-mode="register">Lengkapi data diri untuk memulai akses premium.</p>
+            <p data-copy-mode="register">Lengkapi data diri untuk memulai akses MayClass.</p>
             <p data-copy-mode="login" style="display: none;">Masukan kredensial untuk melanjutkan belajar.</p>
         </div>
 
