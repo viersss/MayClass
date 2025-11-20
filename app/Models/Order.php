@@ -50,4 +50,9 @@ class Order extends Model
     {
         return $this->hasMany(Enrollment::class);
     }
+
+    public function checkoutSessions(): HasMany
+    {
+        return $this->hasMany(CheckoutSession::class);
+    }
 }
