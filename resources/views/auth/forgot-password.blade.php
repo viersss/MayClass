@@ -210,7 +210,7 @@
         <div class="container">
             <div class="nav-header">
                 <a class="back-link" href="{{ route('login') }}">
-                    &larr; Kembali ke Login
+                    Kembali ke Login
                 </a>
             </div>
 

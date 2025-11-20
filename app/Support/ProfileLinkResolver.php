@@ -16,7 +16,7 @@ class ProfileLinkResolver
             'student' => route('student.profile'),
             'tutor' => route('tutor.account.edit'),
             'admin' => route('admin.account.edit'),
-            default => null,
+            default => route('student.profile'),
         };
     }
 }

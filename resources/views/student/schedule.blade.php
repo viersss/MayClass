@@ -518,7 +518,7 @@
 
                 <div class="nav-group">
                     <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['prevDate']]) }}" class="nav-btn">
-                        &larr; Sebelumnya
+                        Sebelumnya
                     </a>
                     <span class="current-date">{{ $calendar['label'] }}</span>
                     <a href="{{ route('student.schedule', ['view' => $viewMode, 'date' => $calendar['nextDate']]) }}" class="nav-btn">

@@ -21,26 +21,27 @@ Website MayClass ini hadir sebagai platform terintegrasi yang berfungsi sebagai:
 Sistem ini memiliki 5 peran pengguna utama:
 
 * **Pengunjung (Publik):**
-    * Melihat halaman informasi: profil bimbel, paket belajar, dan profil tentor.
-    * Melihat kontak dan testimoni.
-    * Melakukan registrasi untuk menjadi siswa.
 
+  * Melihat halaman informasi: profil bimbel, paket belajar, dan profil tentor.
+  * Melihat kontak dan testimoni.
+  * Melakukan registrasi untuk menjadi siswa.
 * **Siswa:**
-    * Login ke sistem.
-    * Mengakses materi pembelajaran dan bank soal.
-    * Mengerjakan tugas atau kuis.
-    * Melihat progres belajar.
 
+  * Login ke sistem.
+  * Mengakses materi pembelajaran dan bank soal.
+  * Mengerjakan tugas atau kuis.
+  * Melihat progres belajar.
 * **Tentor:**
-    * Login ke sistem.
-    * Mengelola (mengunggah, update, hapus) materi dan bank soal.
 
+  * Login ke sistem.
+  * Mengelola (mengunggah, update, hapus) materi dan bank soal.
 * **Admin Utama:**
-    * Mengelola seluruh data pengguna (siswa, tentor, admin lainnya).
 
+  * Mengelola seluruh data pengguna (siswa, tentor, admin lainnya).
 * **Admin Keuangan:**
-    * Mengelola tagihan siswa.
-    * Memverifikasi pembayaran yang masuk.
+
+  * Mengelola tagihan siswa.
+  * Memverifikasi pembayaran yang masuk.
 
 ## 🛠️ Tumpukan Teknologi (Technology Stack)
 
@@ -61,57 +62,58 @@ Rancangan antarmuka (UI/UX) dan prototipe interaktif untuk proyek ini dibuat men
 
 Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
-1.  **Clone repositori:**
-    ```bash
-    git clone [https://github.com/viersss/MayClass.git](https://github.com/viersss/MayClass.git)
-    cd MayClass
-    ```
+1. **Clone repositori:**
 
-2.  **Install dependensi Backend (Composer):**
-    ```bash
-    composer install
-    ```
+   ```bash
+   git clone [https://github.com/viersss/MayClass.git](https://github.com/viersss/MayClass.git)
+   cd MayClass
+   ```
+2. **Install dependensi Backend (Composer):**
 
-3.  **Install dependensi Frontend (NPM):**
-    ```bash
-    npm install
-    ```
+   ```bash
+   composer install
+   ```
+3. **Install dependensi Frontend (NPM):**
 
-4.  **Setup file `.env`:**
-    * Salin file `.env.example` menjadi `.env`.
-    * ```bash
-        cp .env.example .env
-        ```
-    * Buka file `.env` dan konfigurasikan koneksi database Anda (DB_DATABASE, DB_USERNAME, DB_PASSWORD). Untuk Laragon,
-      gunakan username `root` dengan password **kosong** kecuali Anda sudah menentukannya secara manual.
+   ```bash
+   npm install
+   ```
+4. **Setup file `.env`:**
 
-5.  **Generate Kunci Aplikasi Laravel:**
-    ```bash
-    php artisan key:generate
-    ```
+   * Salin file `.env.example` menjadi `.env`.
+   * ```bash
+       cp .env.example .env
+     ```
+   * Buka file `.env` dan konfigurasikan koneksi database Anda (DB_DATABASE, DB_USERNAME, DB_PASSWORD). Untuk Laragon,
+     gunakan username `root` dengan password **kosong** kecuali Anda sudah menentukannya secara manual.
+5. **Generate Kunci Aplikasi Laravel:**
 
-6.  **Jalankan Migrasi Database:**
-    * (Pastikan Anda sudah membuat database di MySQL sesuai nama di file `.env`)
-    ```bash
-    php artisan migrate
-    ```
+   ```bash
+   php artisan key:generate
+   ```
+6. **Jalankan Migrasi Database:**
 
-7.  **(Opsional) Jalankan Database Seeder (jika ada):**
-    ```bash
-    php artisan db:seed
-    ```
+   * (Pastikan Anda sudah membuat database di MySQL sesuai nama di file `.env`)
 
-8.  **Jalankan server pengembangan:**
-    * Terminal 1 (Vite/NPM):
-        ```bash
-        npm run dev
-        ```
-    * Terminal 2 (Laravel/PHP):
-        ```bash
-        php artisan serve
-        ```
+   ```bash
+   php artisan migrate
+   ```
+7. **(Opsional) Jalankan Database Seeder (jika ada):**
 
-9.  Buka aplikasi di `http://localhost:8000`.
+   ```bash
+   php artisan db:seed
+   ```
+8. **Jalankan server pengembangan:**
+
+   * Terminal 1 (Vite/NPM):
+     ```bash
+     npm run dev
+     ```
+   * Terminal 2 (Laravel/PHP):
+     ```bash
+     php artisan serve
+     ```
+9. Buka aplikasi di `http://localhost:8000`.
 
 ## 🔧 Troubleshooting
 
@@ -121,27 +123,26 @@ Pesan `Access denied for user 'root'@'localhost'` akan muncul apabila kredensial
 server lokal. Terkadang phpMyAdmin menampilkan variasi pesan seperti `(using password: YES)` ataupun `(using password: NO)`.
 Ikuti panduan berikut supaya aplikasi dapat terhubung kembali:
 
-1.  Coba login di phpMyAdmin menggunakan **username `root`** dan **password kosong** terlebih dahulu. Laragon secara bawaan
-    tidak memberikan password pada akun `root`. Pastikan opsi "Remember me" dinonaktifkan ketika mencoba.
-2.  Jika login masih gagal, buka **Laragon → Menu → Database → mysql → Reset/Change password** kemudian atur password baru
-    untuk akun `root`.
-3.  Perbarui file `.env` agar menggunakan kredensial terbaru:
+1. Coba login di phpMyAdmin menggunakan **username `root`** dan **password kosong** terlebih dahulu. Laragon secara bawaan
+   tidak memberikan password pada akun `root`. Pastikan opsi "Remember me" dinonaktifkan ketika mencoba.
+2. Jika login masih gagal, buka **Laragon → Menu → Database → mysql → Reset/Change password** kemudian atur password baru
+   untuk akun `root`.
+3. Perbarui file `.env` agar menggunakan kredensial terbaru:
 
-    ```ini
-    DB_USERNAME=root
-    DB_PASSWORD=kata_sandi_baru_anda
-    ```
+   ```ini
+   DB_USERNAME=root
+   DB_PASSWORD=kata_sandi_baru_anda
+   ```
+4. Restart layanan MySQL melalui Laragon agar pengaturan baru aktif.
+5. Uji kembali login via phpMyAdmin dengan username dan password yang sama seperti di `.env`.
+6. Jika Anda hanya ingin menjalankan proyek secara cepat, biarkan password di `.env` tetap kosong. Aplikasi kini akan
+   secara otomatis mencoba ulang koneksi MySQL tanpa password ketika mendeteksi Anda menggunakan akun `root` di lingkungan
+   lokal.
+7. Jalankan kembali migrasi aplikasi apabila sebelumnya gagal:
 
-4.  Restart layanan MySQL melalui Laragon agar pengaturan baru aktif.
-5.  Uji kembali login via phpMyAdmin dengan username dan password yang sama seperti di `.env`.
-6.  Jika Anda hanya ingin menjalankan proyek secara cepat, biarkan password di `.env` tetap kosong. Aplikasi kini akan
-    secara otomatis mencoba ulang koneksi MySQL tanpa password ketika mendeteksi Anda menggunakan akun `root` di lingkungan
-    lokal.
-7.  Jalankan kembali migrasi aplikasi apabila sebelumnya gagal:
-
-    ```bash
-    php artisan migrate
-    ```
+   ```bash
+   php artisan migrate
+   ```
 
 Apabila Anda tidak ingin menggunakan akun `root`, buat pengguna baru di MySQL dengan hak akses yang dibutuhkan dan masukkan
 credential tersebut ke dalam file `.env`.
@@ -157,14 +158,12 @@ Jika Anda melihat error di atas ketika menjalankan `php artisan serve`, lakukan 
    ```bash
    php artisan migrate
    ```
-
 3. Apabila Anda mengimpor `database/schema.sql` secara manual, pastikan skrip tersebut berhasil membuat tabel `sessions`.
    Anda dapat mengeceknya melalui phpMyAdmin atau menjalankan query berikut di MySQL:
 
    ```sql
    SHOW TABLES LIKE 'sessions';
    ```
-
 4. Setelah tabel tersedia, restart server dengan perintah `php artisan serve` dan muat ulang halaman aplikasi.
 
 **Catatan:** Mulai sekarang MayClass akan secara otomatis menggunakan _file session driver_ sementara apabila tabel
@@ -182,20 +181,19 @@ menjalankan migrasi, perintah provisioning akun demo pada saat `php artisan serv
    ```bash
    php artisan migrate
    ```
-
 3. Setelah migrasi selesai, jalankan ulang `php artisan serve`. Aplikasi akan berjalan normal dan kolom `is_active` siap
    digunakan untuk mengatur status aktif/nonaktif tentor dari panel admin.
 
-## 👥 Tim Pengembang (Kelompok 1 - 3SD2)
+## 👥 Tim Developer (Kelompok 1 - 3SD2)
 
 Proyek ini dikerjakan oleh:
 
-| Nama | NIM |
-| :--- | :--- |
-| Ahmad Husein Nasution | 222312952 |
-| Henny Merry Astutik | 222313120 |
+| Nama                         | NIM       |
+| :--------------------------- | :-------- |
+| Ahmad Husein Nasution        | 222312952 |
+| Henny Merry Astutik          | 222313120 |
 | Johana Putri Natasya Sitorus | 222313150 |
-| Lisa Fajrianti | 222313174 |
-| Triangga Hafid Rifa'i | 222313408 |
-| Xavier Yubin Raditio | 222313427 |
-| Yudha Putra Tiara | 222313433 |
+| Lisa Fajrianti               | 222313174 |
+| Triangga Hafid Rifa'i        | 222313408 |
+| Xavier Yubin Raditio         | 222313427 |
+| Yudha Putra Tiara            | 222313433 |

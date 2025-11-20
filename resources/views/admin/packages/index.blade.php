@@ -250,6 +250,7 @@
                             <th>Nama Paket</th>
                             <th>Jenjang & Kelas</th>
                             <th>Harga</th>
+                            <th>Kuota</th>
                             <th>Tag / Label</th>
                             <th style="text-align: right;">Aksi</th>
                         </tr>
@@ -269,6 +270,19 @@
                                 </td>
                                 <td>
                                     <span class="pkg-price">Rp {{ number_format($package->price, 0, ',', '.') }}</span>
+                                </td>
+                                <td>
+                                    @php($quota = $package->quotaSnapshot())
+                                    @if ($quota['limit'] === null)
+                                        <span class="tag-pill tag-default">Tak terbatas</span>
+                                    @else
+                                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                                            <strong>{{ $quota['remaining'] }} / {{ $quota['limit'] }} kursi tersisa</strong>
+                                            <small style="color: var(--text-muted);">
+                                                Aktif: {{ $quota['active_enrollments'] }}, Checkout terkunci: {{ $quota['checkout_holds'] }}
+                                            </small>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td>
                                     @if($package->tag)
@@ -295,7 +309,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5">
+                                <td colspan="6">
                                     <div class="empty-state">
                                         <svg style="width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                                         <p>Belum ada paket belajar yang tersedia.</p>
