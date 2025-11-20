@@ -143,7 +143,7 @@
     <div class="auth-container">
         {{-- Tombol Kembali --}}
         <a class="back-button" href="{{ route('register') }}">
-            &larr; Kembali
+            Kembali
         </a>
 
         {{-- Header --}}
