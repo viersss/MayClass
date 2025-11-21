@@ -32,6 +32,7 @@ class ScheduleSession extends Model
         'is_highlight' => 'boolean',
         'student_count' => 'integer',
         'duration_minutes' => 'integer',
+        'is_online' => 'boolean',
     ];
 
     public function template(): BelongsTo

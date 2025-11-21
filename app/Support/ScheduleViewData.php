@@ -6,6 +6,8 @@ use App\Models\ScheduleSession;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class ScheduleViewData
 {
@@ -80,6 +82,10 @@ class ScheduleViewData
                 'date' => self::formatFullDate($reference),
                 'time' => '-',
                 'mentor' => '-',
+                'is_online' => false,
+                'has_zoom_link' => false,
+                'zoom_link' => null,
+                'zoom_message' => null,
             ];
 
         $upcoming = $validSessions
@@ -131,6 +137,18 @@ class ScheduleViewData
     {
         $startAt = self::parseDate($session->start_at ?? null);
 
+        $zoomLink = optional($session->package)->zoom_link;
+        $hasZoomLink = filled($zoomLink);
+        $isOnline = self::isOnlineSession($session);
+
+        $zoomMessage = null;
+
+        if ($isOnline && ! $hasZoomLink) {
+            $zoomMessage = 'Link Zoom belum tersedia, silakan hubungi admin.';
+        } elseif (! $isOnline && $hasZoomLink) {
+            $zoomMessage = 'Sesi ini berlangsung offline, tidak menggunakan Zoom.';
+        }
+
         if (! $startAt) {
             return [
                 'title' => $session->title,
@@ -140,6 +158,10 @@ class ScheduleViewData
                 'mentor' => $session->mentor_name,
                 'start_time' => null,
                 'start_at_iso' => null,
+                'is_online' => $isOnline,
+                'has_zoom_link' => $hasZoomLink,
+                'zoom_link' => $zoomLink,
+                'zoom_message' => $zoomMessage,
             ];
         }
 
@@ -155,7 +177,26 @@ class ScheduleViewData
             'mentor' => $session->mentor_name,
             'start_time' => $startAt->format('H.i'),
             'start_at_iso' => $startAt->toIso8601String(),
+            'is_online' => $isOnline,
+            'has_zoom_link' => $hasZoomLink,
+            'zoom_link' => $zoomLink,
+            'zoom_message' => $zoomMessage,
         ];
+    }
+
+    private static function isOnlineSession(ScheduleSession $session): bool
+    {
+        if (Schema::hasColumn('schedule_sessions', 'is_online')) {
+            return (bool) $session->is_online;
+        }
+
+        if (Schema::hasColumn('schedule_sessions', 'mode') && filled($session->mode)) {
+            return Str::lower((string) $session->mode) === 'online';
+        }
+
+        $location = Str::lower($session->location ?? '');
+
+        return Str::contains($location, 'online') || Str::contains($location, 'zoom');
     }
 
     private static function buildCalendarGrid(string $view, CarbonImmutable $referenceDate, Collection $sessionGroups, Collection $sessions): array

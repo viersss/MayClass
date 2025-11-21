@@ -7,6 +7,7 @@ use App\Models\ScheduleTemplate;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ScheduleController extends BaseTutorController
@@ -26,7 +27,7 @@ class ScheduleController extends BaseTutorController
 
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
-                ->with(['package:id,title,detail_title'])
+                ->with(['package:id,title,detail_title,zoom_link'])
                 ->when($tutor, fn ($query) => $query->where('user_id', $tutor->id))
                 ->when(
                     $assignedPackageIds->isNotEmpty(),
@@ -80,6 +81,8 @@ class ScheduleController extends BaseTutorController
             ? $session->student_count . ' siswa terdaftar'
             : 'Peserta belum diatur';
 
+        [$isOnline, $hasZoomLink, $zoomLink, $zoomMessage] = $this->resolveSessionMode($session);
+
         return [
             'id' => $session->id,
             'title' => $session->title,
@@ -96,6 +99,10 @@ class ScheduleController extends BaseTutorController
             'date_label' => $start ? $start->locale('id')->translatedFormat('dddd, D MMMM YYYY') : '-',
             'time_range' => $start && $end ? $start->format('H.i') . ' - ' . $end->format('H.i') . ' WIB' : '-',
             'is_upcoming' => $isUpcoming,
+            'is_online' => $isOnline,
+            'has_zoom_link' => $hasZoomLink,
+            'zoom_link' => $zoomLink,
+            'zoom_message' => $zoomMessage,
         ];
     }
 
@@ -119,5 +126,37 @@ class ScheduleController extends BaseTutorController
             'cancelled', 'canceled' => 'cancelled',
             default => 'scheduled',
         };
+    }
+
+    private function resolveSessionMode(ScheduleSession $session): array
+    {
+        $zoomLink = optional($session->package)->zoom_link;
+        $hasZoomLink = filled($zoomLink);
+        $isOnline = $this->isOnlineSession($session);
+
+        $zoomMessage = null;
+
+        if ($isOnline && ! $hasZoomLink) {
+            $zoomMessage = 'Link Zoom belum tersedia, silakan hubungi admin.';
+        } elseif (! $isOnline && $hasZoomLink) {
+            $zoomMessage = 'Sesi ini berlangsung offline, tidak menggunakan Zoom.';
+        }
+
+        return [$isOnline, $hasZoomLink, $zoomLink, $zoomMessage];
+    }
+
+    private function isOnlineSession(ScheduleSession $session): bool
+    {
+        if (Schema::hasColumn('schedule_sessions', 'is_online')) {
+            return (bool) $session->is_online;
+        }
+
+        if (Schema::hasColumn('schedule_sessions', 'mode') && filled($session->mode)) {
+            return Str::lower((string) $session->mode) === 'online';
+        }
+
+        $location = Str::lower($session->location ?? '');
+
+        return Str::contains($location, 'online') || Str::contains($location, 'zoom');
     }
 }

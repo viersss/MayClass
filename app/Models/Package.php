@@ -22,6 +22,7 @@ class Package extends Model
         'image_url',
         'price',
         'max_students',
+        'zoom_link',
         'summary',
     ];
 
