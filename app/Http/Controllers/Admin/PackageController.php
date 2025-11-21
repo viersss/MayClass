@@ -78,6 +78,7 @@ class PackageController extends BaseAdminController
             'price' => ['required', 'numeric', 'min:0'],
             'max_students' => ['nullable', 'integer', 'min:1'],
             'summary' => ['required', 'string'],
+            'zoom_link' => ['nullable', 'string', 'max:2048', 'regex:/^https?:\/\//i'],
         ]);
     }
 

@@ -26,7 +26,7 @@ class ScheduleController extends BaseTutorController
 
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
-                ->with(['package:id,title,detail_title'])
+                ->with(['package:id,title,detail_title,zoom_link'])
                 ->when($tutor, fn ($query) => $query->where('user_id', $tutor->id))
                 ->when(
                     $assignedPackageIds->isNotEmpty(),
@@ -61,6 +61,9 @@ class ScheduleController extends BaseTutorController
         $status = $this->normalizeStatus($session->status ?? null);
         $isCancelled = $status === 'cancelled';
         $isCompleted = $status === 'completed';
+        $isOnline = $this->isOnlineSession($session);
+        $zoomLink = optional($session->package)->zoom_link;
+        $hasZoomLink = filled($zoomLink);
 
         $isUpcoming = ! $isCancelled && ! $isCompleted && $end && $end->greaterThanOrEqualTo($now);
 
@@ -93,6 +96,9 @@ class ScheduleController extends BaseTutorController
             'status_variant' => $statusVariant,
             'start_at' => $start,
             'end_at' => $end,
+            'is_online' => $isOnline,
+            'zoom_link' => $zoomLink,
+            'has_zoom_link' => $hasZoomLink,
             'date_label' => $start ? $start->locale('id')->translatedFormat('dddd, D MMMM YYYY') : '-',
             'time_range' => $start && $end ? $start->format('H.i') . ' - ' . $end->format('H.i') . ' WIB' : '-',
             'is_upcoming' => $isUpcoming,
@@ -119,5 +125,18 @@ class ScheduleController extends BaseTutorController
             'cancelled', 'canceled' => 'cancelled',
             default => 'scheduled',
         };
+    }
+
+    private function isOnlineSession(ScheduleSession $session): bool
+    {
+        $mode = is_string($session->mode ?? null) ? strtolower($session->mode) : null;
+        $explicitFlag = $session->is_online ?? null;
+        $location = is_string($session->location ?? null) ? strtolower($session->location) : '';
+
+        $onlineFromFlag = filter_var($explicitFlag, FILTER_VALIDATE_BOOLEAN);
+        $onlineFromMode = in_array($mode, ['online', 'virtual', 'daring'], true);
+        $onlineFromLocation = str_contains($location, 'online') || str_contains($location, 'virtual');
+
+        return $onlineFromFlag || $onlineFromMode || $onlineFromLocation;
     }
 }

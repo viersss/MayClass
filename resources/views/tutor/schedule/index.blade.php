@@ -62,6 +62,28 @@
             color: #0f172a;
         }
 
+        .zoom-button {
+            background: #2563eb;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            width: fit-content;
+            margin-top: 10px;
+        }
+
+        .zoom-button:hover {
+            background: #1d4ed8;
+        }
+
+        .zoom-note {
+            margin-top: 8px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
         .schedule-section {
             background: #fff;
             border: 1px solid var(--border-subtle);
@@ -263,6 +285,20 @@
                                     <div class="session-meta">
                                         <span>{{ $session['participant_summary'] }}</span>
                                     </div>
+                                    @if (($session['is_online'] ?? false) && ! empty($session['zoom_link']))
+                                        <a
+                                            href="{{ $session['zoom_link'] }}"
+                                            class="zoom-button"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Gabung Zoom
+                                        </a>
+                                    @elseif (($session['is_online'] ?? false))
+                                        <div class="zoom-note">Link Zoom belum tersedia, silakan hubungi admin.</div>
+                                    @elseif (! empty($session['zoom_link']))
+                                        <div class="zoom-note">Sesi ini berlangsung offline, tidak menggunakan Zoom.</div>
+                                    @endif
                                 </div>
                             </article>
                         @endforeach
@@ -299,6 +335,20 @@
                                     <div class="session-meta">
                                         <span>{{ $session['participant_summary'] }}</span>
                                     </div>
+                                    @if (($session['is_online'] ?? false) && ! empty($session['zoom_link']))
+                                        <a
+                                            href="{{ $session['zoom_link'] }}"
+                                            class="zoom-button"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Gabung Zoom
+                                        </a>
+                                    @elseif (($session['is_online'] ?? false))
+                                        <div class="zoom-note">Link Zoom belum tersedia, silakan hubungi admin.</div>
+                                    @elseif (! empty($session['zoom_link']))
+                                        <div class="zoom-note">Sesi ini berlangsung offline, tidak menggunakan Zoom.</div>
+                                    @endif
                                 </div>
                             </article>
                         @endforeach
