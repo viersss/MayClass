@@ -28,12 +28,7 @@ class DashboardController extends BaseTutorController
 
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
-                ->when($tutor, function ($query) use ($tutor) {
-                    $query->where('user_id', $tutor->id)
-                        ->orWhere(function ($inner) use ($tutor) {
-                            $inner->whereNull('user_id')->where('mentor_name', $tutor->name);
-                        });
-                })
+                ->when($tutor, fn ($query) => $query->where('user_id', $tutor->id))
                 ->orderBy('start_at')
                 ->get()
             : collect();
@@ -149,8 +144,8 @@ class DashboardController extends BaseTutorController
                 'href' => route('tutor.materials.create'),
             ],
             [
-                'label' => 'Jadwalkan Sesi',
-                'description' => 'Tambahkan pertemuan ke kalender belajar.',
+                'label' => 'Lihat Jadwal Mengajar',
+                'description' => 'Pantau agenda yang sudah ditetapkan admin.',
                 'href' => route('tutor.schedule.index'),
             ],
             [
