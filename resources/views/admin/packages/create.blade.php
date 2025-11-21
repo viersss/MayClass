@@ -186,21 +186,6 @@
                     <div class="error-message">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="full">
-                <label for="zoom_link">Link Zoom (opsional)</label>
-                <input
-                    type="url"
-                    id="zoom_link"
-                    name="zoom_link"
-                    value="{{ old('zoom_link') }}"
-                    placeholder="https://zoom.us/j/meeting-id"
-                    pattern="https?://.*"
-                />
-                <p style="margin: 6px 0 0; color: var(--text-muted); font-size: 0.85rem;">Isi jika paket menyediakan sesi online.</p>
-                @error('zoom_link')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
         </div>
 
         <div class="form-actions">

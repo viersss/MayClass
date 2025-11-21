@@ -62,7 +62,7 @@
             gap: 12px;
             background: var(--bg-body);
             padding: 8px 16px;
-            border-radius: 99px;
+            border-radius: 999px;
             border: 1px solid var(--border-color);
         }
 
@@ -194,6 +194,9 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
         }
+
+        /* Utility class to hide elements via JS */
+        .hidden { display: none; }
 
         .btn-primary {
             width: 100%;
@@ -508,19 +511,40 @@
                                 <input type="text" name="class_level" class="form-control" placeholder="Contoh: 12 SMA">
                             </div>
                             <div class="form-group">
-                                <label>Lokasi</label>
-                                <input type="text" name="location" class="form-control" placeholder="Contoh: Google Meet / Rumah">
+                                <label>Durasi (Menit)</label>
+                                <input type="number" name="duration_minutes" class="form-control" value="90" min="30" step="15" required>
                             </div>
                         </div>
 
+                        {{-- DROPDOWN TIPE SESI --}}
                         <div class="form-group">
-                            <label>Link Zoom (opsional)</label>
+                            <label>Tipe Sesi</label>
+                            <select id="sessionType" class="form-control">
+                                <option value="online">Sesi Online (Zoom/Google Meet)</option>
+                                <option value="offline">Sesi Offline (Tatap Muka)</option>
+                            </select>
+                        </div>
+
+                        {{-- INPUTAN DINAMIS --}}
+                        <div class="form-group" id="zoomInputGroup">
+                            <label>Link Zoom / Meeting</label>
                             <input
                                 type="url"
                                 name="zoom_link"
                                 class="form-control"
                                 placeholder="https://zoom.us/j/meeting-id"
                                 pattern="https?://.+"
+                            >
+                        </div>
+
+                        <div class="form-group hidden" id="locationInputGroup">
+                            <label>Lokasi Pertemuan</label>
+                            <input
+                                type="text"
+                                name="location"
+                                id="locationInput"
+                                class="form-control"
+                                placeholder="Alamat lengkap / Nama tempat"
                             >
                         </div>
 
@@ -535,15 +559,9 @@
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                            <div class="form-group">
-                                <label>Durasi (Menit)</label>
-                                <input type="number" name="duration_minutes" class="form-control" value="90" min="30" step="15" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Jml. Siswa</label>
-                                <input type="number" name="student_count" class="form-control" value="1" min="1">
-                            </div>
+                        <div class="form-group">
+                            <label>Jml. Siswa</label>
+                            <input type="number" name="student_count" class="form-control" value="1" min="1">
                         </div>
 
                         <button type="submit" class="btn-primary">Simpan Jadwal</button>
@@ -588,8 +606,13 @@
                                         </td>
                                         <td style="min-width: 140px;">
                                             <input type="text" name="category" value="{{ $template['category'] }}" class="table-input" placeholder="Mapel" style="margin-bottom: 4px;">
-                                            <input type="text" name="location" value="{{ $template['location'] }}" class="table-input" placeholder="Lokasi">
-                                            <input type="url" name="zoom_link" value="{{ $template['zoom_link'] }}" class="table-input" placeholder="https://zoom.us/j/meeting-id" pattern="https?://.+">
+                                            
+                                            {{-- Tampilkan input sesuai data yang ada --}}
+                                            @if($template['zoom_link'])
+                                                <input type="text" name="zoom_link" value="{{ $template['zoom_link'] }}" class="table-input" placeholder="Link Zoom">
+                                            @else
+                                                <input type="text" name="location" value="{{ $template['location'] }}" class="table-input" placeholder="Lokasi">
+                                            @endif
                                         </td>
                                         <td style="min-width: 160px;">
                                             <div style="display: flex; gap: 4px; margin-bottom: 4px;">
@@ -652,7 +675,14 @@
                                                 <span class="dot-sep"></span>
                                                 <span>{{ $session['tutor'] }}</span>
                                                 <span class="dot-sep"></span>
-                                                <span>{{ $session['location'] }}</span>
+                                                
+                                                {{-- Cek apakah lokasi adalah Link atau Teks --}}
+                                                @if (filter_var($session['location'], FILTER_VALIDATE_URL))
+                                                    <a href="{{ $session['location'] }}" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Link Zoom</a>
+                                                @else
+                                                    <span>{{ $session['location'] }}</span>
+                                                @endif
+
                                             </div>
                                         </div>
                                         <div class="session-time">
@@ -752,4 +782,32 @@
     </div>
 
 </div>
+
+{{-- SCRIPT UNTUK LOGIKA SHOW/HIDE FORM --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sessionType = document.getElementById('sessionType');
+        const zoomGroup = document.getElementById('zoomInputGroup');
+        const locationGroup = document.getElementById('locationInputGroup');
+        const locationInput = document.getElementById('locationInput');
+
+        if (sessionType && zoomGroup && locationGroup) {
+            sessionType.addEventListener('change', function () {
+                if (this.value === 'online') {
+                    zoomGroup.classList.remove('hidden');
+                    locationGroup.classList.add('hidden');
+                    // Set default value untuk lokasi agar tidak kosong di database
+                    locationInput.value = 'Online Meeting';
+                } else {
+                    zoomGroup.classList.add('hidden');
+                    locationGroup.classList.remove('hidden');
+                    // Kosongkan agar admin bisa isi manual
+                    if (locationInput.value === 'Online Meeting') {
+                        locationInput.value = '';
+                    }
+                }
+            });
+        }
+    });
+</script>
 @endsection
