@@ -26,7 +26,7 @@ class ScheduleController extends BaseTutorController
 
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
-                ->with(['package:id,title,detail_title'])
+                ->with(['package:id,title,detail_title,zoom_link'])
                 ->when($tutor, fn ($query) => $query->where('user_id', $tutor->id))
                 ->when(
                     $assignedPackageIds->isNotEmpty(),
