@@ -142,6 +142,7 @@ class ScheduleController extends BaseAdminController
                         'category' => $template->category,
                         'class_level' => $template->class_level,
                         'location' => $template->location,
+                        'zoom_link' => $template->zoom_link,
                         'start_time' => $template->start_time,
                         'duration_minutes' => $template->duration_minutes,
                         'student_count' => $template->student_count,

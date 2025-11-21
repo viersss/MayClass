@@ -18,6 +18,7 @@ class ScheduleTemplate extends Model
         'category',
         'class_level',
         'location',
+        'zoom_link',
         'day_of_week',
         'start_time',
         'duration_minutes',
