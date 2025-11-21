@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tutor;
 
 use App\Models\ScheduleSession;
+use App\Models\ScheduleTemplate;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -15,10 +16,22 @@ class ScheduleController extends BaseTutorController
         $tutor = Auth::user();
         $now = CarbonImmutable::now();
 
+        $assignedPackageIds = Schema::hasTable('schedule_templates') && $tutor
+            ? ScheduleTemplate::query()
+                ->where('user_id', $tutor->id)
+                ->pluck('package_id')
+                ->filter()
+                ->unique()
+            : collect();
+
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
                 ->with(['package:id,title,detail_title'])
                 ->when($tutor, fn ($query) => $query->where('user_id', $tutor->id))
+                ->when(
+                    $assignedPackageIds->isNotEmpty(),
+                    fn ($query) => $query->whereIn('package_id', $assignedPackageIds)
+                )
                 ->orderBy('start_at')
                 ->get()
             : collect();

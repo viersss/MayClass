@@ -29,6 +29,7 @@ class DashboardController extends Controller
         $user = Auth::user();
         $materialsLink = (string) config('mayclass.links.materials_drive');
         $quizLink = (string) config('mayclass.links.quiz_platform');
+        $hasEnrollmentsTable = Schema::hasTable('enrollments');
 
         $activeEnrollment = StudentAccess::activeEnrollment($user);
         $hasActivePackage = StudentAccess::hasActivePackage($user);
@@ -48,7 +49,32 @@ class DashboardController extends Controller
 
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
+                ->with(['package:id,title,detail_title'])
                 ->where('package_id', $packageId)
+                ->when(
+                    $hasEnrollmentsTable,
+                    function ($query) use ($user) {
+                        $query->whereHas('package.enrollments', function ($enrollments) use ($user) {
+                            $enrollments->where('user_id', optional($user)->id);
+
+                            if (Schema::hasColumn('enrollments', 'is_active')) {
+                                $enrollments->where('is_active', true);
+                            }
+
+                            if (Schema::hasColumn('enrollments', 'ends_at')) {
+                                $enrollments->where(function ($dateQuery) {
+                                    $dateQuery
+                                        ->whereNull('ends_at')
+                                        ->orWhere('ends_at', '>=', now());
+                                });
+                            }
+                        });
+                    }
+                )
+                ->when(
+                    Schema::hasColumn('schedule_sessions', 'status'),
+                    fn ($query) => $query->whereNotIn('status', ['cancelled'])
+                )
                 ->orderBy('start_at')
                 ->get()
             : collect();

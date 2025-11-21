@@ -21,7 +21,9 @@ class ScheduleController extends Controller
     public function index(Request $request): View
     {
         $student = Auth::user();
-        $enrollments = (! $student || ! Schema::hasTable('enrollments'))
+        $hasEnrollmentsTable = Schema::hasTable('enrollments');
+
+        $enrollments = (! $student || ! $hasEnrollmentsTable)
             ? collect()
             : $student->enrollments()
                 ->with('package')
@@ -47,7 +49,28 @@ class ScheduleController extends Controller
         $sessions = ($packageIds->isEmpty() || ! Schema::hasTable('schedule_sessions'))
             ? collect()
             : ScheduleSession::query()
+                ->with(['package:id,title,detail_title'])
                 ->whereIn('package_id', $packageIds)
+                ->when(
+                    $hasEnrollmentsTable,
+                    function ($query) use ($student) {
+                        $query->whereHas('package.enrollments', function ($enrollments) use ($student) {
+                            $enrollments->where('user_id', optional($student)->id);
+
+                            if (Schema::hasColumn('enrollments', 'is_active')) {
+                                $enrollments->where('is_active', true);
+                            }
+
+                            if (Schema::hasColumn('enrollments', 'ends_at')) {
+                                $enrollments->where(function ($dateQuery) {
+                                    $dateQuery
+                                        ->whereNull('ends_at')
+                                        ->orWhere('ends_at', '>=', now());
+                                });
+                            }
+                        });
+                    }
+                )
                 ->when(
                     Schema::hasColumn('schedule_sessions', 'status'),
                     fn ($query) => $query->whereNotIn('status', ['cancelled'])
