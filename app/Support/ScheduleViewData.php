@@ -80,6 +80,10 @@ class ScheduleViewData
                 'date' => self::formatFullDate($reference),
                 'time' => '-',
                 'mentor' => '-',
+                'location' => null,
+                'is_online' => false,
+                'zoom_link' => null,
+                'has_zoom_link' => false,
             ];
 
         $upcoming = $validSessions
@@ -130,6 +134,9 @@ class ScheduleViewData
     public static function formatSession(ScheduleSession $session): array
     {
         $startAt = self::parseDate($session->start_at ?? null);
+        $isOnline = self::isOnlineSession($session);
+        $zoomLink = $session->zoom_link;
+        $hasZoomLink = filled($zoomLink);
 
         if (! $startAt) {
             return [
@@ -140,6 +147,10 @@ class ScheduleViewData
                 'mentor' => $session->mentor_name,
                 'start_time' => null,
                 'start_at_iso' => null,
+                'location' => $session->location,
+                'is_online' => $isOnline,
+                'zoom_link' => $zoomLink,
+                'has_zoom_link' => $hasZoomLink,
             ];
         }
 
@@ -155,7 +166,24 @@ class ScheduleViewData
             'mentor' => $session->mentor_name,
             'start_time' => $startAt->format('H.i'),
             'start_at_iso' => $startAt->toIso8601String(),
+            'location' => $session->location,
+            'is_online' => $isOnline,
+            'zoom_link' => $zoomLink,
+            'has_zoom_link' => $hasZoomLink,
         ];
+    }
+
+    private static function isOnlineSession(ScheduleSession $session): bool
+    {
+        $mode = is_string($session->mode ?? null) ? strtolower($session->mode) : null;
+        $explicitFlag = $session->is_online ?? null;
+        $location = is_string($session->location ?? null) ? strtolower($session->location) : '';
+
+        $onlineFromFlag = filter_var($explicitFlag, FILTER_VALIDATE_BOOLEAN);
+        $onlineFromMode = in_array($mode, ['online', 'virtual', 'daring'], true);
+        $onlineFromLocation = str_contains($location, 'online') || str_contains($location, 'virtual');
+
+        return $onlineFromFlag || $onlineFromMode || $onlineFromLocation;
     }
 
     private static function buildCalendarGrid(string $view, CarbonImmutable $referenceDate, Collection $sessionGroups, Collection $sessions): array

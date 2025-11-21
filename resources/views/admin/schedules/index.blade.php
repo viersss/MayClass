@@ -513,6 +513,17 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label>Link Zoom (opsional)</label>
+                            <input
+                                type="url"
+                                name="zoom_link"
+                                class="form-control"
+                                placeholder="https://zoom.us/j/meeting-id"
+                                pattern="https?://.+"
+                            >
+                        </div>
+
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div class="form-group">
                                 <label>Tanggal Mulai</label>
@@ -578,6 +589,7 @@
                                         <td style="min-width: 140px;">
                                             <input type="text" name="category" value="{{ $template['category'] }}" class="table-input" placeholder="Mapel" style="margin-bottom: 4px;">
                                             <input type="text" name="location" value="{{ $template['location'] }}" class="table-input" placeholder="Lokasi">
+                                            <input type="url" name="zoom_link" value="{{ $template['zoom_link'] }}" class="table-input" placeholder="https://zoom.us/j/meeting-id" pattern="https?://.+">
                                         </td>
                                         <td style="min-width: 160px;">
                                             <div style="display: flex; gap: 4px; margin-bottom: 4px;">
