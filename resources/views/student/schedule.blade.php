@@ -427,10 +427,14 @@
             <div class="hero-content">
                 <h1 class="hero-title">Jadwal Bimbel</h1>
                 <p class="hero-desc">
-                    @if (! empty($activePackage))
-                        Agenda eksklusif untuk paket <strong>{{ $activePackage->detail_title ?? $activePackage->title }}</strong>.
+                    @if ($enrolledPackages->isNotEmpty())
+                        @if ($enrolledPackages->count() === 1)
+                            Agenda eksklusif untuk paket <strong>{{ optional($enrolledPackages->first())->detail_title ?? optional($enrolledPackages->first())->title }}</strong>.
+                        @else
+                            Agenda eksklusif untuk paket yang Anda ikuti: <strong>{{ $enrolledPackages->map(fn ($package) => $package->detail_title ?? $package->title)->join(', ') }}</strong>.
+                        @endif
                     @endif
-                    Total <strong>{{ number_format($stats['total']) }}</strong> sesi tercatat, dengan 
+                    Total <strong>{{ number_format($stats['total']) }}</strong> sesi tercatat, dengan
                     <strong>{{ number_format($stats['upcoming']) }}</strong> agenda mendatang.
                 </p>
                 

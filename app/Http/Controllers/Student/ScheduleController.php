@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Models\ScheduleSession;
-use App\Support\ScheduleTemplateGenerator;
 use App\Support\ScheduleViewData;
-use App\Support\StudentAccess;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,19 +20,60 @@ class ScheduleController extends Controller
 
     public function index(Request $request): View
     {
-        $package = $this->currentPackage();
+        $student = Auth::user();
+        $hasEnrollmentsTable = Schema::hasTable('enrollments');
 
-        if ($package && Schema::hasTable('schedule_templates')) {
-            ScheduleTemplateGenerator::ensureForPackage($package->id);
-        }
+        $enrollments = (! $student || ! $hasEnrollmentsTable)
+            ? collect()
+            : $student->enrollments()
+                ->with('package')
+                ->when(
+                    Schema::hasColumn('enrollments', 'is_active'),
+                    fn ($query) => $query->where('is_active', true)
+                )
+                ->when(
+                    Schema::hasColumn('enrollments', 'ends_at'),
+                    fn ($query) => $query->where(function ($subQuery) {
+                        $subQuery
+                            ->whereNull('ends_at')
+                            ->orWhere('ends_at', '>=', now());
+                    })
+                )
+                ->orderByDesc('ends_at')
+                ->get();
 
-        $sessions = (! $package || ! Schema::hasTable('schedule_sessions'))
+        $packageIds = $enrollments->pluck('package_id')->filter()->unique();
+        $packages = $enrollments->pluck('package')->filter();
+        $primaryPackage = $packages->count() === 1 ? $packages->first() : null;
+
+        $sessions = ($packageIds->isEmpty() || ! Schema::hasTable('schedule_sessions'))
             ? collect()
             : ScheduleSession::query()
-                ->where('package_id', $package->id)
+                ->with(['package:id,title,detail_title'])
+                ->whereIn('package_id', $packageIds)
+                ->when(
+                    $hasEnrollmentsTable,
+                    function ($query) use ($student) {
+                        $query->whereHas('package.enrollments', function ($enrollments) use ($student) {
+                            $enrollments->where('user_id', optional($student)->id);
+
+                            if (Schema::hasColumn('enrollments', 'is_active')) {
+                                $enrollments->where('is_active', true);
+                            }
+
+                            if (Schema::hasColumn('enrollments', 'ends_at')) {
+                                $enrollments->where(function ($dateQuery) {
+                                    $dateQuery
+                                        ->whereNull('ends_at')
+                                        ->orWhere('ends_at', '>=', now());
+                                });
+                            }
+                        });
+                    }
+                )
                 ->when(
                     Schema::hasColumn('schedule_sessions', 'status'),
-                    fn ($query) => $query->where('status', 'scheduled')
+                    fn ($query) => $query->whereNotIn('status', ['cancelled'])
                 )
                 ->orderBy('start_at')
                 ->get();
@@ -59,7 +98,8 @@ class ScheduleController extends Controller
         return view('student.schedule', [
             'page' => 'schedule',
             'title' => 'Jadwal Belajar',
-            'activePackage' => $package,
+            'activePackage' => $primaryPackage,
+            'enrolledPackages' => $packages,
             'schedule' => $schedule,
             'stats' => $stats,
         ]);
@@ -85,12 +125,5 @@ class ScheduleController extends Controller
         } catch (\Throwable $exception) {
             return null;
         }
-    }
-
-    private function currentPackage()
-    {
-        $enrollment = StudentAccess::activeEnrollment(Auth::user());
-
-        return $enrollment?->package;
     }
 }

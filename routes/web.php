@@ -121,11 +121,6 @@ Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->name('tutor.')->grou
     Route::put('/quiz/{quiz:slug}', [TutorQuizController::class, 'update'])->name('quizzes.update');
 
     Route::get('/jadwal', [TutorScheduleController::class, 'index'])->name('schedule.index');
-    Route::post('/jadwal/template', [ScheduleTemplateController::class, 'store'])->name('schedule.templates.store');
-    Route::put('/jadwal/template/{template}', [ScheduleTemplateController::class, 'update'])->name('schedule.templates.update');
-    Route::delete('/jadwal/template/{template}', [ScheduleTemplateController::class, 'destroy'])->name('schedule.templates.destroy');
-    Route::post('/jadwal/{session}/cancel', [ScheduleSessionController::class, 'cancel'])->name('schedule.sessions.cancel');
-    Route::post('/jadwal/{session}/restore', [ScheduleSessionController::class, 'restore'])->name('schedule.sessions.restore');
 
     Route::get('/pengaturan', [TutorAccountController::class, 'edit'])->name('account.edit');
     Route::put('/pengaturan', [TutorAccountController::class, 'update'])->name('account.update');
