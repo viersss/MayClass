@@ -62,7 +62,7 @@ class ScheduleController extends BaseTutorController
         $isCancelled = $status === 'cancelled';
         $isCompleted = $status === 'completed';
         $isOnline = $this->isOnlineSession($session);
-        $zoomLink = optional($session->package)->zoom_link;
+        $zoomLink = $session->zoom_link;
         $hasZoomLink = filled($zoomLink);
 
         $isUpcoming = ! $isCancelled && ! $isCompleted && $end && $end->greaterThanOrEqualTo($now);

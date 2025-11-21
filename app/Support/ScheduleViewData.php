@@ -135,7 +135,7 @@ class ScheduleViewData
     {
         $startAt = self::parseDate($session->start_at ?? null);
         $isOnline = self::isOnlineSession($session);
-        $zoomLink = optional($session->package)->zoom_link;
+        $zoomLink = $session->zoom_link;
         $hasZoomLink = filled($zoomLink);
 
         if (! $startAt) {

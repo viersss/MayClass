@@ -74,6 +74,7 @@ class ScheduleTemplateController extends BaseAdminController
             'category' => ['nullable', 'string', 'max:120'],
             'class_level' => ['nullable', 'string', 'max:120'],
             'location' => ['nullable', 'string', 'max:255'],
+            'zoom_link' => ['nullable', 'string', 'max:2048', 'regex:/^https?:\/\//i'],
             'reference_date' => ['required', 'date'],
             'start_time' => ['required', 'date_format:H:i'],
             'duration_minutes' => ['required', 'integer', 'min:30', 'max:240'],
