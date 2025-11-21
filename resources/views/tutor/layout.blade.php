@@ -373,12 +373,6 @@
                                 'patterns' => ['tutor.materials.*'],
                             ],
                             [
-                                'label' => 'Jadwal Tentor',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path stroke-linecap="round" stroke-linejoin="round" d="M5 9h14v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 13h6" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 17h4" /></svg>',
-                                'route' => 'tutor.schedule.index',
-                                'patterns' => ['tutor.schedule.*'],
-                            ],
-                            [
                                 'label' => 'Quiz',
                                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6a4 4 0 0 1 4 4c0 1.5-.8 2.3-2 3.2-.7.5-1 1-.9 1.8m-.1 3h.01" /><path stroke-linecap="round" stroke-linejoin="round" d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" /></svg>',
                                 'route' => 'tutor.quizzes.index',
