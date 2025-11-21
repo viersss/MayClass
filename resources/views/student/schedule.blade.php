@@ -406,6 +406,33 @@
         }
         .btn-primary:hover { background: var(--primary-hover); }
 
+        .zoom-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0f766e;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 8px 16px rgba(15, 118, 110, 0.22);
+        }
+
+        .zoom-btn:hover {
+            background: #115e59;
+        }
+
+        .zoom-note {
+            margin-top: 8px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+            color: #0f172a;
+            font-size: 0.95rem;
+        }
+
         @media (max-width: 768px) {
             .schedule-container { padding: 0 20px; }
             .calendar-controls { flex-direction: column; align-items: stretch; }
@@ -461,6 +488,15 @@
                     <span> {{ $schedule['highlight']['mentor'] }}</span>
                     <span> {{ $schedule['highlight']['category'] }}</span>
                 </div>
+                @if ($schedule['highlight']['is_online'] && $schedule['highlight']['has_zoom_link'])
+                    <div class="hero-actions">
+                        <a href="{{ $schedule['highlight']['zoom_link'] }}" class="zoom-btn" target="_blank" rel="noopener noreferrer">Gabung Zoom</a>
+                    </div>
+                @elseif ($schedule['highlight']['is_online'])
+                    <div class="zoom-note">Link Zoom belum tersedia, silakan hubungi admin.</div>
+                @elseif ($schedule['highlight']['has_zoom_link'])
+                    <div class="zoom-note">Sesi ini berlangsung offline, tidak menggunakan Zoom.</div>
+                @endif
                 <div style="margin-top: 8px;">
                     <a href="{{ route('student.dashboard') }}" class="btn-primary">
                         Buka Dashboard
@@ -488,6 +524,13 @@
                             <div class="session-time">
                                 {{ $session['date'] }} • {{ $session['time'] }}
                             </div>
+                            @if ($session['is_online'] && $session['has_zoom_link'])
+                                <a href="{{ $session['zoom_link'] }}" class="zoom-btn" target="_blank" rel="noopener noreferrer">Gabung Zoom</a>
+                            @elseif ($session['is_online'])
+                                <div class="zoom-note">Link Zoom belum tersedia, silakan hubungi admin.</div>
+                            @elseif ($session['has_zoom_link'])
+                                <div class="zoom-note">Sesi ini berlangsung offline, tidak menggunakan Zoom.</div>
+                            @endif
                         </article>
                     @endforeach
                 </div>
@@ -578,6 +621,13 @@
                                         <div class="rs-meta">
                                             {{ $session['time'] }} • Mentor {{ $session['mentor'] }} • {{ $session['category'] }}
                                         </div>
+                                        @if ($session['is_online'] && $session['has_zoom_link'])
+                                            <a href="{{ $session['zoom_link'] }}" class="zoom-btn" target="_blank" rel="noopener noreferrer">Gabung Zoom</a>
+                                        @elseif ($session['is_online'])
+                                            <div class="zoom-note">Link Zoom belum tersedia, silakan hubungi admin.</div>
+                                        @elseif ($session['has_zoom_link'])
+                                            <div class="zoom-note">Sesi ini berlangsung offline, tidak menggunakan Zoom.</div>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>

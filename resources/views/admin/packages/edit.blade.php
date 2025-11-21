@@ -153,6 +153,20 @@
                 @enderror
             </div>
             <div>
+                <label for="zoom_link">Link Zoom (opsional)</label>
+                <input
+                    type="url"
+                    id="zoom_link"
+                    name="zoom_link"
+                    value="{{ old('zoom_link', $package->zoom_link) }}"
+                    placeholder="https://us02web.zoom.us/..."
+                />
+                <p style="margin: 6px 0 0; color: var(--text-muted); font-size: 0.85rem;">Isi jika sesi daring memakai Zoom. Kosongkan bila seluruh sesi luring.</p>
+                @error('zoom_link')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+            <div>
                 <label for="card_price_label">Label Harga Kartu</label>
                 <input type="text" id="card_price_label" name="card_price_label" value="{{ old('card_price_label', $package->card_price_label) }}" required />
                 @error('card_price_label')
