@@ -395,7 +395,7 @@
             color: var(--text-muted);
         }
         
-        .btn-primary {
+        .btn-primary { 
             background: var(--primary);
             color: white;
             padding: 10px 24px;
@@ -405,6 +405,28 @@
             display: inline-block;
         }
         .btn-primary:hover { background: var(--primary-hover); }
+
+        .btn-zoom {
+            background: #2563eb;
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .btn-zoom:hover {
+            background: #1d4ed8;
+        }
+
+        .zoom-note {
+            margin-top: 10px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
 
         @media (max-width: 768px) {
             .schedule-container { padding: 0 20px; }
@@ -452,19 +474,37 @@
 
         {{-- 2. Sesi Terdekat --}}
         <section>
+            @php($highlight = $schedule['highlight'])
             <div class="highlight-card">
                 <span class="highlight-label">Sesi Berikutnya</span>
-                <h2 class="highlight-title">{{ $schedule['highlight']['title'] }}</h2>
+                <h2 class="highlight-title">{{ $highlight['title'] }}</h2>
                 <div class="highlight-meta">
-                    <span> {{ $schedule['highlight']['date'] }}</span>
-                    <span> {{ $schedule['highlight']['time'] }}</span>
-                    <span> {{ $schedule['highlight']['mentor'] }}</span>
-                    <span> {{ $schedule['highlight']['category'] }}</span>
+                    <span> {{ $highlight['date'] }}</span>
+                    <span> {{ $highlight['time'] }}</span>
+                    <span> {{ $highlight['mentor'] }}</span>
+                    <span> {{ $highlight['category'] }}</span>
                 </div>
+                @if (! empty($highlight['location']))
+                    <div class="zoom-note">Lokasi: {{ $highlight['location'] }}</div>
+                @endif
                 <div style="margin-top: 8px;">
                     <a href="{{ route('student.dashboard') }}" class="btn-primary">
                         Buka Dashboard
                     </a>
+                    @if (($highlight['is_online'] ?? false) && ! empty($highlight['zoom_link']))
+                        <a
+                            href="{{ $highlight['zoom_link'] }}"
+                            class="btn-zoom"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Gabung Zoom
+                        </a>
+                    @elseif (($highlight['is_online'] ?? false))
+                        <div class="zoom-note">Link Zoom belum tersedia, silakan hubungi admin.</div>
+                    @elseif (! empty($highlight['zoom_link']))
+                        <div class="zoom-note">Sesi ini berlangsung offline, tidak menggunakan Zoom.</div>
+                    @endif
                 </div>
             </div>
         </section>
@@ -488,6 +528,23 @@
                             <div class="session-time">
                                 {{ $session['date'] }} • {{ $session['time'] }}
                             </div>
+                            @if (! empty($session['location']))
+                                <div class="zoom-note">Lokasi: {{ $session['location'] }}</div>
+                            @endif
+                            @if (($session['is_online'] ?? false) && ! empty($session['zoom_link']))
+                                <a
+                                    href="{{ $session['zoom_link'] }}"
+                                    class="btn-zoom"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Gabung Zoom
+                                </a>
+                            @elseif (($session['is_online'] ?? false))
+                                <div class="zoom-note">Link Zoom belum tersedia, silakan hubungi admin.</div>
+                            @elseif (! empty($session['zoom_link']))
+                                <div class="zoom-note">Sesi ini berlangsung offline, tidak menggunakan Zoom.</div>
+                            @endif
                         </article>
                     @endforeach
                 </div>
@@ -578,6 +635,23 @@
                                         <div class="rs-meta">
                                             {{ $session['time'] }} • Mentor {{ $session['mentor'] }} • {{ $session['category'] }}
                                         </div>
+                                        @if (! empty($session['location']))
+                                            <div class="zoom-note">Lokasi: {{ $session['location'] }}</div>
+                                        @endif
+                                        @if (($session['is_online'] ?? false) && ! empty($session['zoom_link']))
+                                            <a
+                                                href="{{ $session['zoom_link'] }}"
+                                                class="btn-zoom"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                Gabung Zoom
+                                            </a>
+                                        @elseif (($session['is_online'] ?? false))
+                                            <div class="zoom-note">Link Zoom belum tersedia, silakan hubungi admin.</div>
+                                        @elseif (! empty($session['zoom_link']))
+                                            <div class="zoom-note">Sesi ini berlangsung offline, tidak menggunakan Zoom.</div>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>

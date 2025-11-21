@@ -23,6 +23,7 @@ class Package extends Model
         'price',
         'max_students',
         'summary',
+        'zoom_link',
     ];
 
     protected $casts = [
