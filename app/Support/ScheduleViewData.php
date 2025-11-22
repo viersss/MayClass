@@ -336,10 +336,10 @@ class ScheduleViewData
     private static function normalizeStatus(?string $value): string
     {
         return match (strtolower((string) $value)) {
-            'completed', 'done' => 'completed',
-            'cancelled', 'canceled' => 'cancelled',
-            'active', 'ongoing' => 'active',
-            'pending' => 'pending',
+            'completed', 'done', 'selesai' => 'completed',
+            'cancelled', 'canceled', 'batal', 'dibatalkan' => 'cancelled',
+            'active', 'ongoing', 'aktif', 'berlangsung' => 'active',
+            'pending', 'menunggu', 'tertunda' => 'pending',
             default => 'scheduled',
         };
     }

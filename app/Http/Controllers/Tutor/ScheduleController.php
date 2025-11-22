@@ -118,9 +118,11 @@ class ScheduleController extends BaseTutorController
 
     private function normalizeStatus(?string $value): string
     {
-        return match ($value) {
-            'completed', 'done' => 'completed',
-            'cancelled', 'canceled' => 'cancelled',
+        return match (strtolower((string) $value)) {
+            'completed', 'done', 'selesai' => 'completed',
+            'cancelled', 'canceled', 'batal', 'dibatalkan' => 'cancelled',
+            'active', 'ongoing', 'aktif', 'berlangsung' => 'active',
+            'pending', 'menunggu', 'tertunda' => 'pending',
             default => 'scheduled',
         };
     }

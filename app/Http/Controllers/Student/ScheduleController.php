@@ -73,7 +73,13 @@ class ScheduleController extends Controller
                 )
                 ->when(
                     Schema::hasColumn('schedule_sessions', 'status'),
-                    fn ($query) => $query->whereNotIn('status', ['cancelled'])
+                    function ($query) {
+                        $query->where(function ($statusQuery) {
+                            $statusQuery
+                                ->whereNull('status')
+                                ->orWhereIn('status', ['scheduled', 'active', 'pending', 'ongoing', 'aktif', 'berlangsung', 'menunggu']);
+                        });
+                    }
                 )
                 ->orderBy('start_at')
                 ->get();
@@ -135,10 +141,10 @@ class ScheduleController extends Controller
     private function normalizeStatus(?string $value): string
     {
         return match (strtolower((string) $value)) {
-            'completed', 'done' => 'completed',
-            'cancelled', 'canceled' => 'cancelled',
-            'active', 'ongoing' => 'active',
-            'pending' => 'pending',
+            'completed', 'done', 'selesai' => 'completed',
+            'cancelled', 'canceled', 'batal', 'dibatalkan' => 'cancelled',
+            'active', 'ongoing', 'aktif', 'berlangsung' => 'active',
+            'pending', 'menunggu', 'tertunda' => 'pending',
             default => 'scheduled',
         };
     }
