@@ -207,6 +207,39 @@
             border-color: #fecaca;
         }
 
+        .subject-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .subject-pill {
+            display: inline-flex;
+            padding: 3px 10px;
+            border-radius: 99px;
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid #bae6fd;
+        }
+
+        .subject-pill-more {
+            display: inline-flex;
+            padding: 3px 10px;
+            border-radius: 99px;
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -251,6 +284,8 @@
                             <th>Jenjang & Kelas</th>
                             <th>Harga</th>
                             <th>Kuota</th>
+                            <th>Mata Pelajaran</th>
+                            <th>Tutor</th>
                             <th>Tag / Label</th>
                             <th style="text-align: right;">Aksi</th>
                         </tr>
@@ -282,6 +317,34 @@
                                                 Aktif: {{ $quota['active_enrollments'] }}, Checkout terkunci: {{ $quota['checkout_holds'] }}
                                             </small>
                                         </div>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($package->subjects->isNotEmpty())
+                                        <div class="subject-pills">
+                                            @foreach($package->subjects->take(3) as $subject)
+                                                <span class="subject-pill">{{ $subject->name }}</span>
+                                            @endforeach
+                                            @if($package->subjects->count() > 3)
+                                                <span class="subject-pill-more">+{{ $package->subjects->count() - 3 }} lainnya</span>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-muted">Belum ada</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($package->tutors->isNotEmpty())
+                                        <div class="subject-pills">
+                                            @foreach($package->tutors->take(3) as $tutor)
+                                                <span class="subject-pill" style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd;">{{ $tutor->name }}</span>
+                                            @endforeach
+                                            @if($package->tutors->count() > 3)
+                                                <span class="subject-pill-more" style="background: #f1f5f9; color: #64748b;">+{{ $package->tutors->count() - 3 }}</span>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-muted">Belum ada</span>
                                     @endif
                                 </td>
                                 <td>

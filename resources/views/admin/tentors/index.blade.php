@@ -343,6 +343,39 @@
             color: var(--text-muted);
         }
 
+        .subject-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .subject-pill {
+            display: inline-flex;
+            padding: 3px 10px;
+            border-radius: 99px;
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid #bae6fd;
+        }
+
+        .subject-pill-more {
+            display: inline-flex;
+            padding: 3px 10px;
+            border-radius: 99px;
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
         @media (max-width: 768px) {
             .header-card {
                 flex-direction: column;
@@ -422,6 +455,7 @@
                         <tr>
                             <th>Profil Tentor</th>
                             <th>Kontak</th>
+                            <th>Keahlian Mengajar</th>
                             <th>Spesialisasi & Pendidikan</th>
                             <th>Pengalaman</th>
                             <th>Status</th>
@@ -445,6 +479,20 @@
                                         <span>{{ $tentor['email'] }}</span>
                                         <small>{{ $tentor['phone'] ?: '-' }}</small>
                                     </div>
+                                </td>
+                                <td>
+                                    @if($tentor['subjects']->isNotEmpty())
+                                        <div class="subject-pills">
+                                            @foreach($tentor['subjects']->take(3) as $subject)
+                                                <span class="subject-pill">{{ $subject->name }}</span>
+                                            @endforeach
+                                            @if($tentor['subjects']->count() > 3)
+                                                <span class="subject-pill-more">+{{ $tentor['subjects']->count() - 3 }} lainnya</span>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-muted">Belum ada</span>
+                                    @endif
                                 </td>
                                 <td>
                                     <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -475,7 +523,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6">
+                                <td colspan="7">
                                     <div class="empty-state">
                                         <p>Belum ada data tentor yang sesuai dengan pencarian.</p>
                                     </div>

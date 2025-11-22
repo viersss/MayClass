@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Subject;
 use App\Models\TutorProfile;
 use App\Models\User;
 use App\Support\AvatarUploader;
@@ -31,7 +32,7 @@ class TentorController extends BaseAdminController
         $queryTerm = trim((string) $request->input('q', ''));
 
         $query = User::query()
-            ->with('tutorProfile')
+            ->with(['tutorProfile', 'subjects'])
             ->where('role', 'tutor');
 
         if ($queryTerm !== '') {
@@ -65,6 +66,7 @@ class TentorController extends BaseAdminController
                 'education' => optional($tentor->tutorProfile)->education,
                 'experience_years' => optional($tentor->tutorProfile)->experience_years ?? 0,
                 'is_active' => (bool) $tentor->is_active,
+                'subjects' => $tentor->subjects,
             ]);
 
         $stats = $this->tentorStats();
@@ -85,6 +87,7 @@ class TentorController extends BaseAdminController
             'tentor' => null,
             'tentorProfile' => null,
             'avatarPreview' => asset('images/avatar-placeholder.svg'),
+            'subjectsByLevel' => $this->getSubjectsByLevel(),
         ]);
     }
 
@@ -111,6 +114,11 @@ class TentorController extends BaseAdminController
 
         $this->syncTutorProfile($user, $data, $avatarPath);
 
+        // Sync subjects
+        if ($request->has('subjects')) {
+            $user->subjects()->sync($request->subjects);
+        }
+
         return redirect()
             ->route('admin.tentors.index')
             ->with('status', __('Tentor baru berhasil ditambahkan.'));
@@ -119,12 +127,13 @@ class TentorController extends BaseAdminController
     public function edit(User $tentor): View
     {
         $this->ensureTutor($tentor);
-        $tentor->loadMissing('tutorProfile');
+        $tentor->loadMissing(['tutorProfile', 'subjects']);
 
         return $this->render('admin.tentors.edit', [
             'tentor' => $tentor,
             'tentorProfile' => $tentor->tutorProfile,
             'avatarPreview' => ProfileAvatar::forUser($tentor),
+            'subjectsByLevel' => $this->getSubjectsByLevel(),
         ]);
     }
 
@@ -161,6 +170,11 @@ class TentorController extends BaseAdminController
 
         $this->syncTutorProfile($tentor, $data, $avatarPath);
 
+        // Sync subjects
+        if ($request->has('subjects')) {
+            $tentor->subjects()->sync($request->subjects);
+        }
+
         return redirect()
             ->route('admin.tentors.edit', $tentor)
             ->with('status', __('Profil tentor berhasil diperbarui.'));
@@ -191,6 +205,8 @@ class TentorController extends BaseAdminController
             'education' => ['nullable', 'string', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
             'avatar' => ['nullable', 'image', 'max:5000'],
+            'subjects' => ['required', 'array', 'min:1'],
+            'subjects.*' => ['exists:subjects,id'],
         ];
 
         $rules['password'] = $isCreate
@@ -261,6 +277,29 @@ class TentorController extends BaseAdminController
             'total' => (clone $base)->count(),
             'active' => (clone $base)->where('is_active', true)->count(),
             'inactive' => (clone $base)->where('is_active', false)->count(),
+        ];
+    }
+
+    private function getSubjectsByLevel(): array
+    {
+        if (! Schema::hasTable('subjects')) {
+            return [
+                'SD' => collect(),
+                'SMP' => collect(),
+                'SMA' => collect(),
+            ];
+        }
+
+        $subjects = Subject::where('is_active', true)
+            ->orderBy('level')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('level');
+
+        return [
+            'SD' => $subjects->get('SD', collect()),
+            'SMP' => $subjects->get('SMP', collect()),
+            'SMA' => $subjects->get('SMA', collect()),
         ];
     }
 }

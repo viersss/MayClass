@@ -206,8 +206,10 @@
 
             <label>
                 <span>Mata Pelajaran</span>
-                <input type="text" name="subject" value="{{ old('subject') }}" placeholder="Contoh: Matematika" required />
-                @error('subject')
+                <select name="subject_id" id="subject-select" required style="width: 100%; padding: 14px 18px; border: 1px solid #d9e0ea; border-radius: 16px; font-family: inherit; font-size: 1rem;">
+                    <option value="">Pilih paket terlebih dahulu</option>
+                </select>
+                @error('subject_id')
                     <div class="error-text">{{ $message }}</div>
                 @enderror
             </label>
@@ -376,6 +378,45 @@
                     chapterContainer.dataset.nextIndex = String(nextChapterIndex);
                 }
             });
+
+            // AJAX Subject Dropdown
+            const packageSelect = document.querySelector('select[name="package_id"]');
+            const subjectSelect = document.getElementById('subject-select');
+
+            if (packageSelect && subjectSelect) {
+                packageSelect.addEventListener('change', function() {
+                    const packageId = this.value;
+                    subjectSelect.innerHTML = '<option value="">Memuat...</option>';
+                    subjectSelect.disabled = true;
+
+                    if (packageId) {
+                        fetch(`/tutor/packages/${packageId}/subjects`)
+                            .then(response => response.json())
+                            .then(data => {
+                                subjectSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
+                                data.forEach(subject => {
+                                    const option = document.createElement('option');
+                                    option.value = subject.id;
+                                    option.textContent = subject.name + ' (' + subject.level + ')';
+                                    subjectSelect.appendChild(option);
+                                });
+                                subjectSelect.disabled = false;
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                subjectSelect.innerHTML = '<option value="">Gagal memuat mata pelajaran</option>';
+                            });
+                    } else {
+                        subjectSelect.innerHTML = '<option value="">Pilih paket terlebih dahulu</option>';
+                        subjectSelect.disabled = true;
+                    }
+                });
+
+                // Trigger change if package is already selected (e.g. validation error)
+                if (packageSelect.value) {
+                    packageSelect.dispatchEvent(new Event('change'));
+                }
+            }
         });
     </script>
 @endpush

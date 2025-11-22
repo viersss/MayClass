@@ -77,4 +77,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Subject::class)->withTimestamps();
     }
+
+    public function packages(): BelongsToMany
+    {
+        return $this->belongsToMany(Package::class)->withTimestamps();
+    }
 }

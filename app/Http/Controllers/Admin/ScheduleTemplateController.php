@@ -148,6 +148,15 @@ class ScheduleTemplateController extends BaseAdminController
         $package = Package::find($packageId);
         $subject = Subject::find($subjectId);
 
+        // Check if tutor is assigned to this package
+        if (!$user->packages()->where('package_id', $packageId)->exists()) {
+            throw new ValidationException(
+                validator([], [], [], [], [
+                    'package_id' => "Tutor {$user->name} tidak ditugaskan untuk mengajar paket {$package->detail_title}"
+                ])
+            );
+        }
+
         // Check if tutor can teach this subject
         if (!$user->subjects()->where('subject_id', $subjectId)->exists()) {
             throw new ValidationException(
