@@ -50,12 +50,13 @@ class PackageController extends Controller
 
     public function show(string $slug)
     {
-        $package = Package::with(['cardFeatures', 'inclusions'])->withQuotaUsage()->where('slug', $slug)->firstOrFail();
+        $package = Package::with(['cardFeatures', 'inclusions', 'subjects'])->withQuotaUsage()->where('slug', $slug)->firstOrFail();
         $user = Auth::user();
         $activeEnrollment = StudentAccess::activeEnrollment($user);
 
         return view('packages.show', [
             'package' => $this->formatPackage($package),
+            'subjects' => $package->subjects,
             'profileLink' => ProfileLinkResolver::forUser($user),
             'profileAvatar' => ProfileAvatar::forUser($user),
             'studentHasActivePackage' => StudentAccess::hasActivePackage($user),

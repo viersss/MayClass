@@ -29,7 +29,7 @@ class ScheduleController extends BaseAdminController
         $selectedTutorId = $this->resolveTutorFilter($requestedTutor, $tutors);
 
         $packages = Schema::hasTable('packages')
-            ? Package::orderBy('level')->orderBy('price')->get(['id', 'detail_title'])
+            ? Package::orderBy('level')->orderBy('price')->get(['id', 'detail_title', 'level'])
             : collect();
 
         $sessionsReady = Schema::hasTable('schedule_sessions');
@@ -208,18 +208,21 @@ class ScheduleController extends BaseAdminController
         }
     }
 
-    private function nextDateForDay(?int $dayOfWeek): ?CarbonImmutable
+    private function nextDateForDay(?int $isoDayOfWeek): ?CarbonImmutable
     {
-        if ($dayOfWeek === null) {
+        if ($isoDayOfWeek === null) {
             return null;
         }
 
+        // Convert ISO (1-7) to Carbon (0-6)
+        $carbonDayOfWeek = $isoDayOfWeek === 7 ? 0 : $isoDayOfWeek;
+
         $now = CarbonImmutable::now();
 
-        if ($now->dayOfWeek === $dayOfWeek) {
+        if ($now->dayOfWeek === $carbonDayOfWeek) {
             return $now;
         }
 
-        return $now->next($dayOfWeek);
+        return $now->next($carbonDayOfWeek);
     }
 }

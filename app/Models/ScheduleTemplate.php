@@ -14,6 +14,7 @@ class ScheduleTemplate extends Model
     protected $fillable = [
         'user_id',
         'package_id',
+        'subject_id',
         'title',
         'category',
         'class_level',
@@ -40,6 +41,11 @@ class ScheduleTemplate extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(Package::class);
+    }
+
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(Subject::class);
     }
 
     public function sessions(): HasMany

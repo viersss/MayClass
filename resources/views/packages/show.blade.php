@@ -353,6 +353,20 @@
                         @endforeach
                     </ul>
                 </div>
+
+                @if($subjects && $subjects->count() > 0)
+                <div class="features-section">
+                    <h3>Mata Pelajaran yang Dipelajari:</h3>
+                    <ul class="features-list">
+                        @foreach ($subjects as $subject)
+                            <li class="feature-item">
+                                <span class="check-icon">📚</span>
+                                <span>{{ $subject->name }} <small style="color: var(--text-muted); font-weight: 500;">({{ $subject->level }})</small></span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
             </div>
 
             <aside class="purchase-card">

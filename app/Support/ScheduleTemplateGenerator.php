@@ -127,17 +127,20 @@ class ScheduleTemplateGenerator
         });
     }
 
-    private static function nextOrSameDay(CarbonImmutable $date, int $dayOfWeek): ?CarbonImmutable
+    private static function nextOrSameDay(CarbonImmutable $date, int $isoDayOfWeek): ?CarbonImmutable
     {
-        if ($dayOfWeek < 0 || $dayOfWeek > 6) {
+        if ($isoDayOfWeek < 1 || $isoDayOfWeek > 7) {
             return null;
         }
 
-        if ($date->dayOfWeek === $dayOfWeek) {
+        // Convert ISO (1-7) to Carbon (0-6)
+        $carbonDayOfWeek = $isoDayOfWeek === 7 ? 0 : $isoDayOfWeek;
+
+        if ($date->dayOfWeek === $carbonDayOfWeek) {
             return $date;
         }
 
-        return $date->next($dayOfWeek);
+        return $date->next($carbonDayOfWeek);
     }
 
     private static function ready(): bool
