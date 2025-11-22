@@ -9,7 +9,6 @@ use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Validation\Rule;
 
 class ScheduleTemplateController extends BaseAdminController
 {
@@ -30,12 +29,14 @@ class ScheduleTemplateController extends BaseAdminController
 
         $data['user_id'] = $package->tutor_id;
 
+        // Create Template
         $template = ScheduleTemplate::create($data);
 
-        ScheduleTemplateGenerator::refreshTemplate($template);
+        // GENERATE SESI (FIXED: Memasukkan reference_date)
+        ScheduleTemplateGenerator::refreshTemplate($template, 8, $request->reference_date);
 
         return redirect()->route('admin.schedules.index', ['tutor_id' => $data['user_id']])
-            ->with('status', __('Jadwal baru berhasil disimpan ke sistem.'));
+            ->with('status', __('Jadwal baru berhasil disimpan dan sesi telah dibuat.'));
     }
 
     public function update(Request $request, ScheduleTemplate $template): RedirectResponse
@@ -50,12 +51,14 @@ class ScheduleTemplateController extends BaseAdminController
 
         $data['user_id'] = $package->tutor_id;
 
+        // Update Template
         $template->update($data);
 
-        ScheduleTemplateGenerator::refreshTemplate($template);
+        // RE-GENERATE SESI (FIXED: Memasukkan reference_date)
+        ScheduleTemplateGenerator::refreshTemplate($template, 8, $request->reference_date);
 
         return redirect()->route('admin.schedules.index', ['tutor_id' => $data['user_id']])
-            ->with('status', __('Pola jadwal berhasil diperbarui.'));
+            ->with('status', __('Pola jadwal berhasil diperbarui dan sesi disesuaikan.'));
     }
 
     public function destroy(Request $request, ScheduleTemplate $template): RedirectResponse
@@ -98,6 +101,8 @@ class ScheduleTemplateController extends BaseAdminController
         $payload['day_of_week'] = $reference->dayOfWeek;
         $payload['is_active'] = true;
 
+        // Kita butuh reference_date untuk generator, tapi tidak disimpan di tabel template
+        // maka kita unset dari payload array yg akan masuk ke DB
         unset($payload['reference_date']);
 
         return $payload;

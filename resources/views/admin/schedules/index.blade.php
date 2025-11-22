@@ -616,7 +616,6 @@
                                         <td style="min-width: 140px;">
                                             <input type="text" name="category" value="{{ $template['category'] }}" class="table-input" placeholder="Mapel" style="margin-bottom: 4px;">
                                             
-                                            {{-- Tampilkan input sesuai data yang ada --}}
                                             @if($template['zoom_link'])
                                                 <input type="text" name="zoom_link" value="{{ $template['zoom_link'] }}" class="table-input" placeholder="Link Zoom">
                                             @else
@@ -625,6 +624,7 @@
                                         </td>
                                         <td style="min-width: 160px;">
                                             <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                                                {{-- Input ini hanya untuk trigger generate --}}
                                                 <input type="date" name="reference_date" value="{{ $template['reference_date_value'] ?? $schedule['referenceDate'] }}" class="table-input">
                                             </div>
                                             <div style="display: flex; gap: 4px;">
@@ -680,18 +680,22 @@
                                         <div class="session-info">
                                             <h5>{{ $session['title'] }}</h5>
                                             <div class="session-details">
+                                                {{-- UPDATE: MENAMPILKAN PAKET --}}
+                                                <span style="color: var(--primary); font-weight: 700;">
+                                                    {{ $session['package'] }}
+                                                </span>
+                                                <span class="dot-sep"></span>
+                                                
                                                 <span>{{ $session['subject'] }}</span>
                                                 <span class="dot-sep"></span>
                                                 <span>{{ $session['tutor'] }}</span>
                                                 <span class="dot-sep"></span>
                                                 
-                                                {{-- Cek apakah lokasi adalah Link atau Teks --}}
                                                 @if (filter_var($session['location'], FILTER_VALIDATE_URL))
                                                     <a href="{{ $session['location'] }}" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Link Zoom</a>
                                                 @else
                                                     <span>{{ $session['location'] }}</span>
                                                 @endif
-
                                             </div>
                                         </div>
                                         <div class="session-time">
@@ -713,7 +717,7 @@
         </div>
     </div>
 
-    {{-- 5. History & Cancelled (Side by Side) --}}
+    {{-- 5. Footer Grids --}}
     <div class="footer-grid">
         {{-- History --}}
         <div class="content-card">
@@ -792,7 +796,6 @@
 
 </div>
 
-{{-- SCRIPT UNTUK LOGIKA SHOW/HIDE FORM --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const sessionType = document.getElementById('sessionType');
@@ -805,12 +808,10 @@
                 if (this.value === 'online') {
                     zoomGroup.classList.remove('hidden');
                     locationGroup.classList.add('hidden');
-                    // Set default value untuk lokasi agar tidak kosong di database
                     locationInput.value = 'Online Meeting';
                 } else {
                     zoomGroup.classList.add('hidden');
                     locationGroup.classList.remove('hidden');
-                    // Kosongkan agar admin bisa isi manual
                     if (locationInput.value === 'Online Meeting') {
                         locationInput.value = '';
                     }

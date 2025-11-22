@@ -22,6 +22,7 @@ class ScheduleController extends BaseAdminController
 
     private function buildScheduleOverview($requestedTutor): array
     {
+        // 1. Ambil Data Tutor
         $tutors = (Schema::hasTable('users') && Schema::hasTable('packages'))
             ? User::query()
                 ->where('role', 'tutor')
@@ -32,6 +33,7 @@ class ScheduleController extends BaseAdminController
 
         $selectedTutorId = $this->resolveTutorFilter($requestedTutor, $tutors);
 
+        // 2. Ambil Data Paket
         $packages = Schema::hasTable('packages')
             ? Package::with('tutor:id,name')
                 ->when($selectedTutorId, fn ($query) => $query->where('tutor_id', $selectedTutorId))
@@ -40,6 +42,7 @@ class ScheduleController extends BaseAdminController
                 ->get(['id', 'detail_title', 'tutor_id'])
             : collect();
 
+        // 3. Ambil Data Sesi (Sessions)
         $sessionsReady = Schema::hasTable('schedule_sessions');
 
         $sessions = $sessionsReady
@@ -60,6 +63,7 @@ class ScheduleController extends BaseAdminController
 
         $now = CarbonImmutable::now();
 
+        // 4. Map Data Sesi
         $sessionPayload = $sessions->map(function (ScheduleSession $session) use ($now) {
             $start = $this->parseScheduleDate($session->start_at);
             $duration = (int) ($session->duration_minutes ?? 90);
@@ -74,8 +78,6 @@ class ScheduleController extends BaseAdminController
 
             $dateKey = $start ? $start->format('Y-m-d') : (string) $session->id;
 
-            // Logika penentuan status Upcoming diperbaiki disini
-            // Menggunakan endOfDay() agar sesi hari ini tetap dianggap upcoming meskipun jam mulainya sudah lewat
             $isUpcoming = $start
                 ? ($start->endOfDay()->greaterThanOrEqualTo($now) && in_array($status, ['scheduled', 'active', 'pending'], true))
                 : false;
@@ -83,9 +85,10 @@ class ScheduleController extends BaseAdminController
             return [
                 'id' => $session->id,
                 'date_key' => $dateKey,
-                'weekday' => $start ? $start->locale('id')->translatedFormat('dddd') : __('Tanggal belum ditetapkan'),
-                'full_date' => $start ? $start->translatedFormat('d MMMM Y') : '-',
-                'label' => $start ? $start->locale('id')->translatedFormat('dddd, D MMMM YYYY') : '-',
+                // PERBAIKAN FORMAT TANGGAL DISINI: Gunakan 'l' untuk Hari, 'd F Y' untuk Tanggal Lengkap
+                'weekday' => $start ? $start->locale('id')->translatedFormat('l') : __('Tanggal belum ditetapkan'),
+                'full_date' => $start ? $start->translatedFormat('d F Y') : '-',
+                'label' => $start ? $start->locale('id')->translatedFormat('l, d F Y') : '-',
                 'time_range' => $timeRange,
                 'subject' => $session->category ?? '-',
                 'title' => $session->title,
@@ -101,27 +104,30 @@ class ScheduleController extends BaseAdminController
             ];
         });
 
+        // 5. Filter Upcoming
         $upcomingSessions = $sessionPayload
             ->filter(fn ($session) => $session['is_upcoming'])
             ->values();
 
-        // Filter history diperketat: hanya yang lampau DAN tidak masuk kategori upcoming (untuk menghindari duplikasi hari ini)
+        // 6. Filter History
         $historySessions = $sessionPayload
             ->filter(fn ($session) => 
                 $session['status'] !== 'cancelled' && 
                 $session['is_past'] && 
-                !$session['is_upcoming'] // Tambahan agar tidak duplikat
+                !$session['is_upcoming']
             )
             ->sortByDesc('start_iso')
             ->take(6)
             ->values();
 
+        // 7. Filter Cancelled
         $cancelledSessions = $sessionPayload
             ->filter(fn ($session) => $session['status'] === 'cancelled')
             ->sortByDesc('start_iso')
             ->take(6)
             ->values();
 
+        // 8. Grouping Upcoming per Hari
         $upcomingDays = $upcomingSessions
             ->groupBy('date_key')
             ->map(function (Collection $items) {
@@ -150,6 +156,7 @@ class ScheduleController extends BaseAdminController
             ->sortKeys()
             ->values();
 
+        // 9. Ambil Data Template
         $templatesReady = Schema::hasTable('schedule_templates') && Schema::hasTable('packages');
 
         $templates = $templatesReady
@@ -180,7 +187,7 @@ class ScheduleController extends BaseAdminController
                         'user_id' => optional($template->package?->tutor)->id,
                         'package_label' => optional($template->package)->detail_title ?? __('Paket MayClass'),
                         'reference_date_value' => $nextDate?->toDateString(),
-                        'reference_date_label' => $nextDate ? $nextDate->locale('id')->translatedFormat('dddd, D MMMM YYYY') : null,
+                        'reference_date_label' => $nextDate ? $nextDate->locale('id')->translatedFormat('l, d F Y') : null,
                     ];
                 })
             : collect();
