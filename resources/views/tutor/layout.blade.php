@@ -367,12 +367,6 @@
                                 'patterns' => ['tutor.dashboard'],
                             ],
                             [
-                                'label' => 'Jadwal Tentor',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8M8 11h8M9 15h6" /><rect width="16" height="16" x="4" y="4" rx="3" /></svg>',
-                                'route' => 'tutor.schedule.index',
-                                'patterns' => ['tutor.schedule.*'],
-                            ],
-                            [
                                 'label' => 'Materi',
                                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5h9l5 5v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" /><path stroke-linecap="round" stroke-linejoin="round" d="M14 5v5h5" /></svg>',
                                 'route' => 'tutor.materials.index',

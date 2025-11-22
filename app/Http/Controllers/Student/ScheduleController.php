@@ -23,6 +23,7 @@ class ScheduleController extends Controller
         $student = Auth::user();
         $hasEnrollmentsTable = Schema::hasTable('enrollments');
 
+        // 1. Ambil Data Enrollment Siswa
         $enrollments = (! $student || ! $hasEnrollmentsTable)
             ? collect()
             : $student->enrollments()
@@ -46,10 +47,14 @@ class ScheduleController extends Controller
         $packages = $enrollments->pluck('package')->filter();
         $primaryPackage = $packages->count() === 1 ? $packages->first() : null;
 
+        // 2. Ambil Sesi Jadwal
         $sessions = ($packageIds->isEmpty() || ! Schema::hasTable('schedule_sessions'))
             ? collect()
             : ScheduleSession::query()
-                ->with(['package:id,title,detail_title,zoom_link'])
+                // PERBAIKAN FINAL DISINI:
+                // Hapus 'title' (tidak ada di tabel package)
+                // Hapus 'zoom_link' (karena milik schedule_sessions, bukan package)
+                ->with(['package:id,detail_title'])
                 ->whereIn('package_id', $packageIds)
                 ->when(
                     $hasEnrollmentsTable,
@@ -84,6 +89,7 @@ class ScheduleController extends Controller
                 ->orderBy('start_at')
                 ->get();
 
+        // 3. Format Data untuk Tampilan (View)
         $viewMode = $this->resolveViewMode($request->query('view'));
         $referenceDate = $this->parseDate($request->query('date'));
 

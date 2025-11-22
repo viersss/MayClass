@@ -466,8 +466,7 @@
                 </div>
 
                 <div class="hero-actions">
-                    <a class="btn-hero" href="#calendar-section">Lihat Kalender</a>
-                    <a class="btn-hero-outline" href="{{ route('student.dashboard') }}">Kembali ke Beranda</a>
+                    <a class="btn-hero" href="{{ route('student.dashboard') }}">Kembali ke Beranda</a>
                 </div>
             </div>
         </div>
