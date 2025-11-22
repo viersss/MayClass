@@ -489,7 +489,7 @@
                     @if ($recentMaterials->isNotEmpty())
                         <div class="cards-grid">
                             @foreach ($recentMaterials as $material)
-                                <a href="{{ route('student.materials.show', $material['slug']) }}" class="content-card">
+                                <a href="{{ route('student.materials') }}" class="content-card">
                                     <span class="card-tag">{{ $material['subject'] }}</span>
                                     <h3 class="card-title">{{ $material['title'] }}</h3>
                                     <p class="card-desc">{{ $material['summary'] }}</p>
@@ -514,7 +514,7 @@
                     @if ($recentQuizzes->isNotEmpty())
                         <div class="cards-grid">
                             @foreach ($recentQuizzes as $quiz)
-                                <a href="{{ route('student.quiz.show', $quiz['slug']) }}" class="content-card">
+                                <a href="{{ route('student.quiz') }}" class="content-card">
                                     <span class="card-tag" style="background:#fff7ed; color:#c2410c;">{{ $quiz['questions'] }} Soal</span>
                                     <h3 class="card-title">{{ $quiz['title'] }}</h3>
                                     <p class="card-desc">{{ $quiz['summary'] }}</p>

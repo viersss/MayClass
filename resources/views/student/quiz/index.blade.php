@@ -309,10 +309,7 @@
                                     </div>
 
                                     <div class="quiz-actions">
-                                        <a href="{{ route('student.quiz.show', $quiz['slug']) }}" class="btn-sm btn-primary-sm">
-                                            Detail Kuis
-                                        </a>
-                                        <a href="{{ $quiz['link'] }}" target="_blank" rel="noopener" class="btn-sm btn-outline-sm">
+                                        <a href="{{ $quiz['link'] }}" target="_blank" rel="noopener" class="btn-sm btn-primary-sm">
                                             Mulai Latihan
                                         </a>
                                     </div>
