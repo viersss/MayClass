@@ -634,7 +634,6 @@
                                         </td>
                                         <td style="text-align: right;">
                                             <div class="action-btn-group" style="justify-content: flex-end;">
-                                                <button type="submit" class="btn-sm btn-save">Simpan</button>
                                     </form>
                                                 <form method="POST" action="{{ route('admin.schedule.templates.destroy', $template['id']) }}" onsubmit="return confirm('Hapus pola ini?');">
                                                     @csrf @method('DELETE')
