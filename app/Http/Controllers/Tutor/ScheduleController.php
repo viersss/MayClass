@@ -16,22 +16,10 @@ class ScheduleController extends BaseTutorController
         $tutor = Auth::user();
         $now = CarbonImmutable::now();
 
-        $assignedPackageIds = Schema::hasTable('schedule_templates') && $tutor
-            ? ScheduleTemplate::query()
-                ->where('user_id', $tutor->id)
-                ->pluck('package_id')
-                ->filter()
-                ->unique()
-            : collect();
-
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
-                ->with(['package:id,title,detail_title'])
+                ->with(['package:id,detail_title'])
                 ->when($tutor, fn ($query) => $query->where('user_id', $tutor->id))
-                ->when(
-                    $assignedPackageIds->isNotEmpty(),
-                    fn ($query) => $query->whereIn('package_id', $assignedPackageIds)
-                )
                 ->orderBy('start_at')
                 ->get()
             : collect();
@@ -40,13 +28,18 @@ class ScheduleController extends BaseTutorController
 
         [$upcoming, $history] = $formattedSessions->partition(fn ($session) => $session['is_upcoming']);
 
+        [$todaySessions, $futureSessions] = $upcoming->partition(function ($session) use ($now) {
+            return $session['start_at'] && $session['start_at']->isSameDay($now);
+        });
+
         return $this->render('tutor.schedule.index', [
             'metrics' => [
                 'upcoming' => $upcoming->count(),
                 'history' => $history->count(),
                 'total' => $formattedSessions->count(),
             ],
-            'upcomingSessions' => $upcoming->values(),
+            'todaySessions' => $todaySessions->values(),
+            'futureSessions' => $futureSessions->values(),
             'historySessions' => $history->sortByDesc('start_at')->values(),
         ]);
     }

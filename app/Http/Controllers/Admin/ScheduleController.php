@@ -29,7 +29,7 @@ class ScheduleController extends BaseAdminController
         $selectedTutorId = $this->resolveTutorFilter($requestedTutor, $tutors);
 
         $packages = Schema::hasTable('packages')
-            ? Package::orderBy('level')->orderBy('price')->get(['id', 'detail_title'])
+            ? Package::orderBy('level')->orderBy('price')->get(['id', 'detail_title', 'level'])
             : collect();
 
         $sessionsReady = Schema::hasTable('schedule_sessions');
@@ -66,9 +66,9 @@ class ScheduleController extends BaseAdminController
             return [
                 'id' => $session->id,
                 'date_key' => $dateKey,
-                'weekday' => $start ? $start->locale('id')->translatedFormat('dddd') : __('Tanggal belum ditetapkan'),
-                'full_date' => $start ? $start->translatedFormat('d MMMM Y') : '-',
-                'label' => $start ? $start->locale('id')->translatedFormat('dddd, D MMMM YYYY') : '-',
+                'weekday' => $start ? $start->locale('id')->isoFormat('dddd') : __('Tanggal belum ditetapkan'),
+                'full_date' => $start ? $start->locale('id')->isoFormat('D MMMM Y') : '-',
+                'label' => $start ? $start->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-',
                 'time_range' => $timeRange,
                 'subject' => $session->category ?? '-',
                 'title' => $session->title,
@@ -79,7 +79,7 @@ class ScheduleController extends BaseAdminController
                 'status' => $session->status ?? 'scheduled',
                 'tutor' => optional($session->user)->name ?? __('Tutor belum ditetapkan'),
                 'start_iso' => $start?->toIso8601String(),
-                'is_past' => $start ? $start->lt($now) : false,
+                'is_past' => $end ? $end->lt($now) : false,
             ];
         });
 
@@ -132,6 +132,11 @@ class ScheduleController extends BaseAdminController
                 ->orderBy('start_time')
                 ->with(['package:id,detail_title', 'user:id,name'])
                 ->get()
+                ->sortBy([
+                    ['day_of_week', 'asc'],
+                    ['start_time', 'asc']
+                ])
+                ->values()
                 ->map(function (ScheduleTemplate $template) {
                     $nextDate = $this->nextDateForDay($template->day_of_week);
 
@@ -208,18 +213,21 @@ class ScheduleController extends BaseAdminController
         }
     }
 
-    private function nextDateForDay(?int $dayOfWeek): ?CarbonImmutable
+    private function nextDateForDay(?int $isoDayOfWeek): ?CarbonImmutable
     {
-        if ($dayOfWeek === null) {
+        if ($isoDayOfWeek === null) {
             return null;
         }
 
+        // Convert ISO (1-7) to Carbon (0-6)
+        $carbonDayOfWeek = $isoDayOfWeek === 7 ? 0 : $isoDayOfWeek;
+
         $now = CarbonImmutable::now();
 
-        if ($now->dayOfWeek === $dayOfWeek) {
+        if ($now->dayOfWeek === $carbonDayOfWeek) {
             return $now;
         }
 
-        return $now->next($dayOfWeek);
+        return $now->next($carbonDayOfWeek);
     }
 }

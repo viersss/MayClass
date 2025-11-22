@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Support\ImageRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Package extends Model
@@ -65,6 +66,11 @@ class Package extends Model
     public function checkoutSessions(): HasMany
     {
         return $this->hasMany(CheckoutSession::class);
+    }
+
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class)->withTimestamps();
     }
 
     public function scopeWithQuotaUsage($query)

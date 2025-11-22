@@ -251,13 +251,16 @@ class DashboardController extends BaseAdminController
             return null;
         }
 
+        // Convert ISO day (1=Mon, 7=Sun) to Carbon day (0=Sun, 1=Mon, 6=Sat)
+        $carbonDay = $dayOfWeek === 7 ? 0 : $dayOfWeek;
+
         $now = CarbonImmutable::now();
 
-        if ($now->dayOfWeek === $dayOfWeek) {
+        if ($now->dayOfWeek === $carbonDay) {
             return $now;
         }
 
-        return $now->next($dayOfWeek);
+        return $now->next($carbonDay);
     }
 
     private function sumPaidOrders(?int $year = null): float

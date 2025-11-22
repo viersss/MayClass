@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
@@ -70,5 +71,10 @@ class User extends Authenticatable
     public function tutorProfile(): HasOne
     {
         return $this->hasOne(TutorProfile::class);
+    }
+
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class)->withTimestamps();
     }
 }

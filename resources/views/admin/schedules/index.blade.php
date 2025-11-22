@@ -484,9 +484,10 @@
                         
                         <div class="form-group">
                             <label>Paket Belajar</label>
-                            <select name="package_id" class="form-control" required>
+                            <select name="package_id" id="package-select" class="form-control" required>
+                                <option value="">Pilih Paket</option>
                                 @foreach ($schedule['packages'] as $package)
-                                    <option value="{{ $package->id }}">{{ $package->detail_title }}</option>
+                                    <option value="{{ $package->id }}" data-level="{{ $package->level }}" data-subjects="{{ $package->subjects->map(function($s) { return $s->id . ':' . $s->name . ':' . $s->level; })->join('|') }}">{{ $package->detail_title }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -498,18 +499,26 @@
                             </div>
                             <div class="form-group">
                                 <label>Mata Pelajaran</label>
-                                <input type="text" name="category" class="form-control" placeholder="Contoh: Matematika">
+                                <select name="subject_id" id="subject-select" class="form-control" required disabled>
+                                    <option value="">Pilih Mata Pelajaran</option>
+                                </select>
                             </div>
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div class="form-group">
                                 <label>Tingkat Kelas</label>
-                                <input type="text" name="class_level" class="form-control" placeholder="Contoh: 12 SMA">
+                                <select name="class_level" id="class-level-select" class="form-control" required disabled>
+                                    <option value="">Pilih Tingkat Kelas</option>
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label>Lokasi</label>
-                                <input type="text" name="location" class="form-control" placeholder="Contoh: Google Meet / Rumah">
+                                <select name="location" id="location-select" class="form-control" required>
+                                    <option value="">Pilih Lokasi</option>
+                                    <option value="Ruangan Kelas Offline">Ruangan Kelas Offline</option>
+                                    <option value="Online (Ruang Virtual)">Online (Ruang Virtual)</option>
+                                </select>
                             </div>
                         </div>
 
@@ -623,9 +632,9 @@
             @elseif ($schedule['upcomingDays']->isEmpty())
                 <div class="empty-state">Belum ada sesi mendatang yang dijadwalkan.</div>
             @else
-                <div class="timeline-container">
-                    @foreach ($schedule['upcomingDays'] as $day)
-                        <div class="timeline-day">
+                <div class="timeline-container" id="timeline-container">
+                    @foreach ($schedule['upcomingDays'] as $index => $day)
+                        <div class="timeline-day" data-day-index="{{ $index }}" style="{{ $index >= 7 ? 'display: none;' : '' }}">
                             <div class="day-header">
                                 <span class="day-name">{{ $day['weekday'] }}</span>
                                 <span class="day-date">{{ $day['full_date'] }}</span>
@@ -658,6 +667,14 @@
                         </div>
                     @endforeach
                 </div>
+                
+                @if ($schedule['upcomingDays']->count() > 7)
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button id="toggle-more-btn" class="btn-primary" style="width: auto; padding: 10px 24px;" onclick="toggleMoreDays()">
+                            Tampilkan Lebih Banyak ({{ $schedule['upcomingDays']->count() - 7 }} hari lagi)
+                        </button>
+                    </div>
+                @endif
             @endif
         </div>
     </div>
@@ -740,4 +757,106 @@
     </div>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const packageSelect = document.getElementById('package-select');
+    const subjectSelect = document.getElementById('subject-select');
+    const classLevelSelect = document.getElementById('class-level-select');
+
+    // Function to populate class level options based on package level
+    function populateClassLevels(packageLevel) {
+        classLevelSelect.innerHTML = '<option value="">Pilih Tingkat Kelas</option>';
+
+        let classOptions = [];
+
+        switch(packageLevel) {
+            case 'SD':
+                classOptions = [
+                    {value: '1', label: 'Kelas 1'},
+                    {value: '2', label: 'Kelas 2'},
+                    {value: '3', label: 'Kelas 3'},
+                    {value: '4', label: 'Kelas 4'},
+                    {value: '5', label: 'Kelas 5'},
+                    {value: '6', label: 'Kelas 6'}
+                ];
+                break;
+            case 'SMP':
+                classOptions = [
+                    {value: '7', label: 'Kelas 7'},
+                    {value: '8', label: 'Kelas 8'},
+                    {value: '9', label: 'Kelas 9'}
+                ];
+                break;
+            case 'SMA':
+                classOptions = [
+                    {value: '10', label: 'Kelas 10'},
+                    {value: '11', label: 'Kelas 11'},
+                    {value: '12', label: 'Kelas 12'}
+                ];
+                break;
+            default:
+                classOptions = [];
+        }
+
+        classOptions.forEach(function(optionData) {
+            const option = document.createElement('option');
+            option.value = optionData.value;
+            option.textContent = optionData.label;
+            classLevelSelect.appendChild(option);
+        });
+
+        classLevelSelect.disabled = classOptions.length === 0;
+    }
+
+    packageSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const packageLevel = selectedOption.getAttribute('data-level') || '';
+        const subjectsData = selectedOption.getAttribute('data-subjects') || '';
+
+        // Populate class levels
+        populateClassLevels(packageLevel);
+
+        // Populate subjects
+        subjectSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
+
+        if (subjectsData) {
+            const subjects = subjectsData.split('|');
+            subjects.forEach(function(subjectStr) {
+                const [id, name, level] = subjectStr.split(':');
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = name + ' (' + level + ')';
+                subjectSelect.appendChild(option);
+            });
+            subjectSelect.disabled = false;
+        } else {
+            subjectSelect.disabled = true;
+        }
+    });
+});
+
+// Toggle show more/less days
+let showingAll = false;
+function toggleMoreDays() {
+    const days = document.querySelectorAll('.timeline-day');
+    const btn = document.getElementById('toggle-more-btn');
+    
+    showingAll = !showingAll;
+    
+    days.forEach((day, index) => {
+        if (index >= 7) {
+            day.style.display = showingAll ? 'block' : 'none';
+        }
+    });
+    
+    if (showingAll) {
+        btn.textContent = 'Tampilkan Lebih Sedikit';
+    } else {
+        const hiddenCount = days.length - 7;
+        btn.textContent = `Tampilkan Lebih Banyak (${hiddenCount} hari lagi)`;
+    }
+}
+
+</script>
 @endsection

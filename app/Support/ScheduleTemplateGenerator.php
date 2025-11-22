@@ -81,14 +81,14 @@ class ScheduleTemplateGenerator
         $windowStart = $now->startOfWeek(CarbonImmutable::MONDAY);
         $windowEnd = $windowStart->addWeeks($weeks)->endOfWeek(CarbonImmutable::SUNDAY);
 
-        $templates->each(function (ScheduleTemplate $template) use ($windowStart, $windowEnd) {
+        $templates->each(function (ScheduleTemplate $template) use ($windowStart, $windowEnd, $weeks) {
             $tutor = $template->relationLoaded('user') ? $template->user : $template->user()->first();
 
             if (! $tutor) {
                 return;
             }
 
-            for ($week = 0; $week <=  $windowEnd->diffInWeeks($windowStart); $week++) {
+            for ($week = 0; $week <= $weeks; $week++) {
                 $weekStart = $windowStart->addWeeks($week);
                 $candidateDate = self::nextOrSameDay($weekStart, $template->day_of_week);
 
@@ -127,17 +127,20 @@ class ScheduleTemplateGenerator
         });
     }
 
-    private static function nextOrSameDay(CarbonImmutable $date, int $dayOfWeek): ?CarbonImmutable
+    private static function nextOrSameDay(CarbonImmutable $date, int $isoDayOfWeek): ?CarbonImmutable
     {
-        if ($dayOfWeek < 0 || $dayOfWeek > 6) {
+        if ($isoDayOfWeek < 1 || $isoDayOfWeek > 7) {
             return null;
         }
 
-        if ($date->dayOfWeek === $dayOfWeek) {
+        // Convert ISO (1-7) to Carbon (0-6)
+        $carbonDayOfWeek = $isoDayOfWeek === 7 ? 0 : $isoDayOfWeek;
+
+        if ($date->dayOfWeek === $carbonDayOfWeek) {
             return $date;
         }
 
-        return $date->next($dayOfWeek);
+        return $date->next($carbonDayOfWeek);
     }
 
     private static function ready(): bool
