@@ -276,6 +276,13 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
 
                 <label>
+                    <span>Durasi Pengerjaan</span>
+                    <input type="text" name="duration_label" value="{{ old('duration_label', '30 menit') }}" placeholder="Cth: 30 menit" required />
+                    <div style="margin-top: 6px; font-size: 0.85rem; color: var(--text-muted);">Tuliskan estimasi waktu agar siswa bisa mempersiapkan diri.</div>
+                    @error('duration_label') <div class="error-message">{{ $message }}</div> @enderror
+                </label>
+
+                <label>
                     <span>Jumlah Soal</span>
                     <input type="number" min="1" max="200" name="question_count" value="{{ old('question_count', 20) }}" placeholder="Cth: 20" required />
                     @error('question_count') <div class="error-message">{{ $message }}</div> @enderror
