@@ -451,10 +451,10 @@
                                 Akses materi, kerjakan kuis, atau cek jadwalmu sekarang.
                             </p>
                             <div class="hero-actions">
-                                <a href="{{ $materialsLink }}" target="_blank" class="btn-hero">
+                                <a href="{{ route('student.materials') }}" class="btn-hero">
                                      Buka Materi
                                 </a>
-                                <a href="{{ $quizLink }}" target="_blank" class="btn-hero">
+                                <a href="{{ route('student.quiz') }}" class="btn-hero">
                                      Mulai Kuis
                                 </a>
                                 <a href="{{ route('student.schedule') }}" class="btn-hero">

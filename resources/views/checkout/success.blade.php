@@ -243,7 +243,7 @@
             </div>
 
             <a href="{{ route('student.dashboard') }}" class="btn-primary">
-                Kembali ke Dashboard
+                Kembali ke Beranda
             </a>
 
         </main>

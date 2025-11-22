@@ -64,6 +64,12 @@ class QuizController extends BaseTutorController
                 ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
         }
 
+        if (! Schema::hasColumn('quizzes', 'package_id')) {
+            return redirect()
+                ->route('tutor.quizzes.index')
+                ->with('alert', __('Kolom relasi paket untuk quiz belum tersedia. Jalankan migrasi database terlebih dahulu.'));
+        }
+        
         $data = $request->validate([
             'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],

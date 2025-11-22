@@ -462,7 +462,6 @@
                 
                 <div class="hero-stats">
                     <span class="hero-badge">{{ $calendar['label'] }}</span>
-                    <span class="hero-badge">Hari Aktif: {{ number_format(count($rangeSessions)) }}</span>
                 </div>
 
                 <div class="hero-actions">
@@ -487,9 +486,6 @@
                     <div class="zoom-note">Lokasi: {{ $highlight['location'] }}</div>
                 @endif
                 <div style="margin-top: 8px;">
-                    <a href="{{ route('student.dashboard') }}" class="btn-primary">
-                        Buka Dashboard
-                    </a>
                     @if (($highlight['is_online'] ?? false) && ! empty($highlight['zoom_link']))
                         <a
                             href="{{ $highlight['zoom_link'] }}"
@@ -611,57 +607,6 @@
                     @endforeach
                 @endforeach
             </div>
-        </section>
-
-        {{-- 5. Rincian Range List --}}
-        <section>
-            <div class="section-header">
-                <div class="section-title">
-                    <h2>Rincian Jadwal</h2>
-                    <p>Detail sesi pada periode ini.</p>
-                </div>
-            </div>
-
-            @if (! empty($rangeSessions))
-                <div class="range-list">
-                    @foreach ($rangeSessions as $day)
-                        <div class="range-day">
-                            <div class="range-header">{{ $day['label'] }}</div>
-                            <div>
-                                @foreach ($day['sessions'] as $session)
-                                    <div class="range-session">
-                                        <span class="rs-title">{{ $session['title'] }}</span>
-                                        <div class="rs-meta">
-                                            {{ $session['time'] }} • Mentor {{ $session['mentor'] }} • {{ $session['category'] }}
-                                        </div>
-                                        @if (! empty($session['location']))
-                                            <div class="zoom-note">Lokasi: {{ $session['location'] }}</div>
-                                        @endif
-                                        @if (($session['is_online'] ?? false) && ! empty($session['zoom_link']))
-                                            <a
-                                                href="{{ $session['zoom_link'] }}"
-                                                class="btn-zoom"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            >
-                                                Gabung Zoom
-                                            </a>
-                                        @elseif (($session['is_online'] ?? false))
-                                            <div class="zoom-note">Link Zoom belum tersedia, silakan hubungi admin.</div>
-                                        @elseif (! empty($session['zoom_link']))
-                                            <div class="zoom-note">Sesi ini berlangsung offline, tidak menggunakan Zoom.</div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="empty-box">
-                    Tidak ada sesi pada rentang tanggal ini.
-                </div>
-            @endif
         </section>
 
     </div>

@@ -269,11 +269,8 @@
                     dukungan {{ number_format(count($stats['levels'])) }} jenjang belajar.
                 </p>
                 <div class="hero-actions">
-                    <a href="{{ $quizLink }}" target="_blank" rel="noopener" class="btn-hero">
-                        Mulai Latihan
-                    </a>
                     <a href="{{ route('student.dashboard') }}" class="btn-hero">
-                        Kembali ke Dashboard
+                        Kembali ke Beranda
                     </a>
                 </div>
             </div>
