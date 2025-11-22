@@ -66,9 +66,9 @@ class ScheduleController extends BaseAdminController
             return [
                 'id' => $session->id,
                 'date_key' => $dateKey,
-                'weekday' => $start ? $start->locale('id')->translatedFormat('dddd') : __('Tanggal belum ditetapkan'),
-                'full_date' => $start ? $start->translatedFormat('d MMMM Y') : '-',
-                'label' => $start ? $start->locale('id')->translatedFormat('dddd, D MMMM YYYY') : '-',
+                'weekday' => $start ? $start->locale('id')->isoFormat('dddd') : __('Tanggal belum ditetapkan'),
+                'full_date' => $start ? $start->locale('id')->isoFormat('D MMMM Y') : '-',
+                'label' => $start ? $start->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-',
                 'time_range' => $timeRange,
                 'subject' => $session->category ?? '-',
                 'title' => $session->title,
@@ -79,7 +79,7 @@ class ScheduleController extends BaseAdminController
                 'status' => $session->status ?? 'scheduled',
                 'tutor' => optional($session->user)->name ?? __('Tutor belum ditetapkan'),
                 'start_iso' => $start?->toIso8601String(),
-                'is_past' => $start ? $start->lt($now) : false,
+                'is_past' => $end ? $end->lt($now) : false,
             ];
         });
 
@@ -132,6 +132,11 @@ class ScheduleController extends BaseAdminController
                 ->orderBy('start_time')
                 ->with(['package:id,detail_title', 'user:id,name'])
                 ->get()
+                ->sortBy([
+                    ['day_of_week', 'asc'],
+                    ['start_time', 'asc']
+                ])
+                ->values()
                 ->map(function (ScheduleTemplate $template) {
                     $nextDate = $this->nextDateForDay($template->day_of_week);
 

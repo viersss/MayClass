@@ -81,14 +81,14 @@ class ScheduleTemplateGenerator
         $windowStart = $now->startOfWeek(CarbonImmutable::MONDAY);
         $windowEnd = $windowStart->addWeeks($weeks)->endOfWeek(CarbonImmutable::SUNDAY);
 
-        $templates->each(function (ScheduleTemplate $template) use ($windowStart, $windowEnd) {
+        $templates->each(function (ScheduleTemplate $template) use ($windowStart, $windowEnd, $weeks) {
             $tutor = $template->relationLoaded('user') ? $template->user : $template->user()->first();
 
             if (! $tutor) {
                 return;
             }
 
-            for ($week = 0; $week <=  $windowEnd->diffInWeeks($windowStart); $week++) {
+            for ($week = 0; $week <= $weeks; $week++) {
                 $weekStart = $windowStart->addWeeks($week);
                 $candidateDate = self::nextOrSameDay($weekStart, $template->day_of_week);
 

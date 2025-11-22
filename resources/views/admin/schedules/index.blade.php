@@ -632,9 +632,9 @@
             @elseif ($schedule['upcomingDays']->isEmpty())
                 <div class="empty-state">Belum ada sesi mendatang yang dijadwalkan.</div>
             @else
-                <div class="timeline-container">
-                    @foreach ($schedule['upcomingDays'] as $day)
-                        <div class="timeline-day">
+                <div class="timeline-container" id="timeline-container">
+                    @foreach ($schedule['upcomingDays'] as $index => $day)
+                        <div class="timeline-day" data-day-index="{{ $index }}" style="{{ $index >= 7 ? 'display: none;' : '' }}">
                             <div class="day-header">
                                 <span class="day-name">{{ $day['weekday'] }}</span>
                                 <span class="day-date">{{ $day['full_date'] }}</span>
@@ -667,6 +667,14 @@
                         </div>
                     @endforeach
                 </div>
+                
+                @if ($schedule['upcomingDays']->count() > 7)
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button id="toggle-more-btn" class="btn-primary" style="width: auto; padding: 10px 24px;" onclick="toggleMoreDays()">
+                            Tampilkan Lebih Banyak ({{ $schedule['upcomingDays']->count() - 7 }} hari lagi)
+                        </button>
+                    </div>
+                @endif
             @endif
         </div>
     </div>
@@ -827,5 +835,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Toggle show more/less days
+let showingAll = false;
+function toggleMoreDays() {
+    const days = document.querySelectorAll('.timeline-day');
+    const btn = document.getElementById('toggle-more-btn');
+    
+    showingAll = !showingAll;
+    
+    days.forEach((day, index) => {
+        if (index >= 7) {
+            day.style.display = showingAll ? 'block' : 'none';
+        }
+    });
+    
+    if (showingAll) {
+        btn.textContent = 'Tampilkan Lebih Sedikit';
+    } else {
+        const hiddenCount = days.length - 7;
+        btn.textContent = `Tampilkan Lebih Banyak (${hiddenCount} hari lagi)`;
+    }
+}
+
 </script>
 @endsection
