@@ -99,6 +99,8 @@ class DashboardController extends BaseAdminController
             $duration = $duration > 0 ? $duration : 90;
             $end = $start ? $start->addMinutes($duration) : null;
 
+            $status = $this->normalizeStatus($session->status ?? null);
+
             $timeRange = $start && $end
                 ? $start->format('H.i') . ' - ' . $end->format('H.i') . ' WIB'
                 : __('Waktu belum ditetapkan');
@@ -118,14 +120,19 @@ class DashboardController extends BaseAdminController
                 'location' => $session->location ?? __('Ruang Virtual'),
                 'class_level' => $session->class_level ?? '-',
                 'student_count' => $session->student_count,
-                'status' => $session->status ?? 'scheduled',
+                'status' => $status,
                 'tutor' => optional($session->package?->tutor)->name ?? __('Tutor belum ditetapkan'),
                 'start_iso' => $start?->toIso8601String(),
                 'is_past' => $start ? $start->lt($now) : false,
+                'is_upcoming' => $start
+                    ? ($start->greaterThanOrEqualTo($now) && in_array($status, ['scheduled', 'active', 'pending'], true))
+                    : false,
             ];
         });
 
-        $upcomingSessions = $sessionPayload->filter(fn ($session) => $session['status'] !== 'cancelled' && ! $session['is_past']);
+        $upcomingSessions = $sessionPayload
+            ->filter(fn ($session) => $session['is_upcoming'])
+            ->values();
         $historySessions = $sessionPayload
             ->filter(fn ($session) => $session['status'] !== 'cancelled' && $session['is_past'])
             ->sortByDesc('start_iso')
@@ -252,6 +259,17 @@ class DashboardController extends BaseAdminController
         } catch (\Throwable $exception) {
             return null;
         }
+    }
+
+    private function normalizeStatus(?string $value): string
+    {
+        return match (strtolower((string) $value)) {
+            'completed', 'done' => 'completed',
+            'cancelled', 'canceled' => 'cancelled',
+            'active', 'ongoing' => 'active',
+            'pending' => 'pending',
+            default => 'scheduled',
+        };
     }
 
     private function nextDateForDay(?int $dayOfWeek): ?CarbonImmutable

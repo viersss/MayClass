@@ -35,7 +35,7 @@ class ScheduleTemplateController extends BaseAdminController
         ScheduleTemplateGenerator::refreshTemplate($template);
 
         return redirect()->route('admin.schedules.index', ['tutor_id' => $data['user_id']])
-            ->with('status', __('Jadwal berhasil ditambahkan.'));
+            ->with('status', __('Jadwal baru berhasil disimpan ke sistem.'));
     }
 
     public function update(Request $request, ScheduleTemplate $template): RedirectResponse

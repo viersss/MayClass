@@ -60,7 +60,10 @@ class ScheduleController extends BaseTutorController
         $zoomLink = $session->zoom_link;
         $hasZoomLink = filled($zoomLink);
 
-        $isUpcoming = ! $isCancelled && ! $isCompleted && $end && $end->greaterThanOrEqualTo($now);
+        $isUpcoming = ! $isCancelled
+            && ! $isCompleted
+            && $start
+            && $start->greaterThanOrEqualTo($now);
 
         $statusLabel = match ($status) {
             'completed' => 'Selesai',
