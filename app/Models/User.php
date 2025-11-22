@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -70,5 +71,10 @@ class User extends Authenticatable
     public function tutorProfile(): HasOne
     {
         return $this->hasOne(TutorProfile::class);
+    }
+
+    public function packagesTaught(): HasMany
+    {
+        return $this->hasMany(Package::class, 'tutor_id');
     }
 }

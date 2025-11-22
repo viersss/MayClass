@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\ScheduleTemplate;
+use App\Models\Package;
 use App\Support\ScheduleTemplateGenerator;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
@@ -20,18 +21,34 @@ class ScheduleTemplateController extends BaseAdminController
         }
 
         $data = $this->validatedData($request);
+        $package = Package::with('tutor')->find($data['package_id']);
+
+        if (! $package || ! $package->tutor_id) {
+            return redirect()->route('admin.schedules.index')
+                ->with('alert', __('Paket harus memiliki tentor terlebih dahulu sebelum membuat jadwal.'));
+        }
+
+        $data['user_id'] = $package->tutor_id;
 
         $template = ScheduleTemplate::create($data);
 
         ScheduleTemplateGenerator::refreshTemplate($template);
 
         return redirect()->route('admin.schedules.index', ['tutor_id' => $data['user_id']])
-            ->with('status', __('Jadwal berhasil ditambahkan.'));
+            ->with('status', __('Jadwal baru berhasil disimpan ke sistem.'));
     }
 
     public function update(Request $request, ScheduleTemplate $template): RedirectResponse
     {
         $data = $this->validatedData($request);
+        $package = Package::with('tutor')->find($data['package_id']);
+
+        if (! $package || ! $package->tutor_id) {
+            return redirect()->route('admin.schedules.index')
+                ->with('alert', __('Paket harus memiliki tentor terlebih dahulu sebelum membuat jadwal.'));
+        }
+
+        $data['user_id'] = $package->tutor_id;
 
         $template->update($data);
 
@@ -65,10 +82,6 @@ class ScheduleTemplateController extends BaseAdminController
     private function validatedData(Request $request): array
     {
         $payload = $request->validate([
-            'user_id' => [
-                'required',
-                Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'tutor')),
-            ],
             'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:120'],

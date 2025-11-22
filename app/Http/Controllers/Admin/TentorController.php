@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Package;
+use App\Models\ScheduleSession;
+use App\Models\ScheduleTemplate;
 use App\Models\TutorProfile;
 use App\Models\User;
 use App\Support\AvatarUploader;
@@ -85,6 +88,8 @@ class TentorController extends BaseAdminController
             'tentor' => null,
             'tentorProfile' => null,
             'avatarPreview' => asset('images/avatar-placeholder.svg'),
+            'packages' => $this->packageOptions(),
+            'selectedPackages' => collect(),
         ]);
     }
 
@@ -110,6 +115,7 @@ class TentorController extends BaseAdminController
         ]);
 
         $this->syncTutorProfile($user, $data, $avatarPath);
+        $this->syncTutorPackages($user, $data['packages'] ?? []);
 
         return redirect()
             ->route('admin.tentors.index')
@@ -125,6 +131,8 @@ class TentorController extends BaseAdminController
             'tentor' => $tentor,
             'tentorProfile' => $tentor->tutorProfile,
             'avatarPreview' => ProfileAvatar::forUser($tentor),
+            'packages' => $this->packageOptions(),
+            'selectedPackages' => $tentor->packagesTaught()->pluck('id'),
         ]);
     }
 
@@ -160,6 +168,7 @@ class TentorController extends BaseAdminController
         $tentor->update($updatePayload);
 
         $this->syncTutorProfile($tentor, $data, $avatarPath);
+        $this->syncTutorPackages($tentor, $data['packages'] ?? []);
 
         return redirect()
             ->route('admin.tentors.edit', $tentor)
@@ -191,6 +200,8 @@ class TentorController extends BaseAdminController
             'education' => ['nullable', 'string', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
             'avatar' => ['nullable', 'image', 'max:5000'],
+            'packages' => ['nullable', 'array'],
+            'packages.*' => ['integer', 'exists:packages,id'],
         ];
 
         $rules['password'] = $isCreate
@@ -225,6 +236,46 @@ class TentorController extends BaseAdminController
                 'avatar_path' => $avatarPath,
             ]
         );
+    }
+
+    private function syncTutorPackages(User $tentor, array $packageIds): void
+    {
+        $packageIds = collect($packageIds)->filter()->unique();
+
+        $existingIds = $tentor->packagesTaught()->pluck('id');
+        $removeIds = $existingIds->diff($packageIds);
+
+        if ($removeIds->isNotEmpty()) {
+            Package::whereIn('id', $removeIds)->update(['tutor_id' => null]);
+            $this->updateScheduleOwnership($removeIds, null);
+        }
+
+        if ($packageIds->isNotEmpty()) {
+            Package::whereIn('id', $packageIds)->update(['tutor_id' => $tentor->id]);
+            $this->updateScheduleOwnership($packageIds, $tentor);
+        }
+    }
+
+    private function updateScheduleOwnership($packageIds, ?User $tentor): void
+    {
+        $packageIds = collect($packageIds)->filter();
+
+        if ($packageIds->isEmpty()) {
+            return;
+        }
+
+        $tutorId = $tentor?->id;
+        $mentorName = $tentor?->name;
+
+        ScheduleTemplate::whereIn('package_id', $packageIds)->update(['user_id' => $tutorId]);
+
+        $sessionUpdate = ['user_id' => $tutorId];
+
+        if ($mentorName !== null) {
+            $sessionUpdate['mentor_name'] = $mentorName;
+        }
+
+        ScheduleSession::whereIn('package_id', $packageIds)->update($sessionUpdate);
     }
 
     private function generateUniqueSlug(string $name, ?int $ignoreProfileId = null): string
@@ -262,5 +313,13 @@ class TentorController extends BaseAdminController
             'active' => (clone $base)->where('is_active', true)->count(),
             'inactive' => (clone $base)->where('is_active', false)->count(),
         ];
+    }
+
+    private function packageOptions()
+    {
+        return Package::query()
+            ->with('tutor:id,name')
+            ->orderBy('detail_title')
+            ->get(['id', 'detail_title', 'tutor_id']);
     }
 }

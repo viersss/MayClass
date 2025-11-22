@@ -48,7 +48,12 @@ class ScheduleViewData
     {
         $normalizedView = in_array($view, ['day', 'week'], true) ? $view : 'month';
 
-        $validSessions = $sessions->filter(fn ($session) => self::parseDate($session->start_at ?? null));
+        $validSessions = $sessions->filter(function ($session) {
+            $start = self::parseDate($session->start_at ?? null);
+            $status = self::normalizeStatus($session->status ?? null);
+
+            return $start && $status !== 'cancelled';
+        });
 
         $defaultReference = $validSessions
             ->map(fn ($session) => self::parseDate($session->start_at ?? null))
@@ -67,8 +72,12 @@ class ScheduleViewData
         $highlightSession = $validSessions->firstWhere('is_highlight', true)
             ?? $validSessions->firstWhere(function ($session) {
                 $start = self::parseDate($session->start_at ?? null);
+                $status = self::normalizeStatus($session->status ?? null);
 
-                return $start ? $start->isFuture() : false;
+                return $start
+                    ? ($start->greaterThanOrEqualTo(CarbonImmutable::now())
+                        && in_array($status, ['scheduled', 'active', 'pending'], true))
+                    : false;
             })
             ?? $validSessions->first();
 
@@ -89,8 +98,12 @@ class ScheduleViewData
         $upcoming = $validSessions
             ->filter(function ($session) {
                 $start = self::parseDate($session->start_at ?? null);
+                $status = self::normalizeStatus($session->status ?? null);
 
-                return $start ? $start->isFuture() : false;
+                return $start
+                    ? ($start->greaterThanOrEqualTo(CarbonImmutable::now())
+                        && in_array($status, ['scheduled', 'active', 'pending'], true))
+                    : false;
             })
             ->sortBy('start_at')
             ->map(fn ($session) => self::formatSession($session))
@@ -318,6 +331,17 @@ class ScheduleViewData
             self::MONTH_NAMES[$end->month],
             $end->year
         );
+    }
+
+    private static function normalizeStatus(?string $value): string
+    {
+        return match (strtolower((string) $value)) {
+            'completed', 'done' => 'completed',
+            'cancelled', 'canceled' => 'cancelled',
+            'active', 'ongoing' => 'active',
+            'pending' => 'pending',
+            default => 'scheduled',
+        };
     }
 
     private static function parseDate($value): ?CarbonImmutable

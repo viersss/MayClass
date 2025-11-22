@@ -59,8 +59,12 @@ class DashboardController extends BaseAdminController
 
     private function scheduleOverview($requestedTutor): array
     {
-        $tutors = Schema::hasTable('users')
-            ? User::query()->where('role', 'tutor')->orderBy('name')->get(['id', 'name'])
+        $tutors = (Schema::hasTable('users') && Schema::hasTable('packages'))
+            ? User::query()
+                ->where('role', 'tutor')
+                ->whereHas('packagesTaught')
+                ->orderBy('name')
+                ->get(['id', 'name'])
             : collect();
 
         $selectedTutorId = $this->resolveTutorFilter($requestedTutor, $tutors);
@@ -73,17 +77,18 @@ class DashboardController extends BaseAdminController
 
         $sessions = $sessionsReady
             ? ScheduleSession::query()
-                ->when($selectedTutorId, fn ($query) => $query->where('user_id', $selectedTutorId))
+                ->when($selectedTutorId, function ($query) use ($selectedTutorId) {
+                    $query->whereHas('package', function ($packageQuery) use ($selectedTutorId) {
+                        $packageQuery->where('tutor_id', $selectedTutorId);
+                    });
+                })
                 ->orderBy('start_at')
+                ->with(['package.tutor:id,name'])
                 ->get()
             : collect();
 
-        if ($sessionsReady && Schema::hasTable('users') && $sessions->isNotEmpty()) {
-            $sessions->load('user:id,name');
-        }
-
         if ($sessionsReady && Schema::hasTable('packages') && $sessions->isNotEmpty()) {
-            $sessions->load('package:id,detail_title');
+            $sessions->load('package:id,detail_title,tutor_id');
         }
 
         $now = CarbonImmutable::now();
@@ -93,6 +98,8 @@ class DashboardController extends BaseAdminController
             $duration = (int) ($session->duration_minutes ?? 90);
             $duration = $duration > 0 ? $duration : 90;
             $end = $start ? $start->addMinutes($duration) : null;
+
+            $status = $this->normalizeStatus($session->status ?? null);
 
             $timeRange = $start && $end
                 ? $start->format('H.i') . ' - ' . $end->format('H.i') . ' WIB'
@@ -113,14 +120,19 @@ class DashboardController extends BaseAdminController
                 'location' => $session->location ?? __('Ruang Virtual'),
                 'class_level' => $session->class_level ?? '-',
                 'student_count' => $session->student_count,
-                'status' => $session->status ?? 'scheduled',
-                'tutor' => optional($session->user)->name ?? __('Tutor belum ditetapkan'),
+                'status' => $status,
+                'tutor' => optional($session->package?->tutor)->name ?? __('Tutor belum ditetapkan'),
                 'start_iso' => $start?->toIso8601String(),
                 'is_past' => $start ? $start->lt($now) : false,
+                'is_upcoming' => $start
+                    ? ($start->greaterThanOrEqualTo($now) && in_array($status, ['scheduled', 'active', 'pending'], true))
+                    : false,
             ];
         });
 
-        $upcomingSessions = $sessionPayload->filter(fn ($session) => $session['status'] !== 'cancelled' && ! $session['is_past']);
+        $upcomingSessions = $sessionPayload
+            ->filter(fn ($session) => $session['is_upcoming'])
+            ->values();
         $historySessions = $sessionPayload
             ->filter(fn ($session) => $session['status'] !== 'cancelled' && $session['is_past'])
             ->sortByDesc('start_iso')
@@ -160,14 +172,18 @@ class DashboardController extends BaseAdminController
             ->sortKeys()
             ->values();
 
-        $templatesReady = Schema::hasTable('schedule_templates') && $selectedTutorId;
+        $templatesReady = Schema::hasTable('schedule_templates') && Schema::hasTable('packages');
 
         $templates = $templatesReady
             ? ScheduleTemplate::query()
-                ->where('user_id', $selectedTutorId)
+                ->whereHas('package', function ($packageQuery) use ($selectedTutorId) {
+                    if ($selectedTutorId) {
+                        $packageQuery->where('tutor_id', $selectedTutorId);
+                    }
+                })
                 ->orderBy('day_of_week')
                 ->orderBy('start_time')
-                ->with(['package:id,detail_title', 'user:id,name'])
+                ->with(['package:id,detail_title,tutor_id', 'package.tutor:id,name'])
                 ->get()
                 ->map(function (ScheduleTemplate $template) {
                     $nextDate = $this->nextDateForDay($template->day_of_week);
@@ -182,7 +198,7 @@ class DashboardController extends BaseAdminController
                         'start_time' => $template->start_time,
                         'duration_minutes' => $template->duration_minutes,
                         'student_count' => $template->student_count,
-                        'user_id' => $template->user_id,
+                        'user_id' => optional($template->package?->tutor)->id,
                         'package_label' => optional($template->package)->detail_title ?? __('Paket MayClass'),
                         'reference_date_value' => $nextDate?->toDateString(),
                         'reference_date_label' => $nextDate ? $nextDate->locale('id')->translatedFormat('dddd, D MMMM YYYY') : null,
@@ -243,6 +259,17 @@ class DashboardController extends BaseAdminController
         } catch (\Throwable $exception) {
             return null;
         }
+    }
+
+    private function normalizeStatus(?string $value): string
+    {
+        return match (strtolower((string) $value)) {
+            'completed', 'done' => 'completed',
+            'cancelled', 'canceled' => 'cancelled',
+            'active', 'ongoing' => 'active',
+            'pending' => 'pending',
+            default => 'scheduled',
+        };
     }
 
     private function nextDateForDay(?int $dayOfWeek): ?CarbonImmutable
