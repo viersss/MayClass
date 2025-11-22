@@ -49,7 +49,7 @@ class ScheduleController extends Controller
         $sessions = ($packageIds->isEmpty() || ! Schema::hasTable('schedule_sessions'))
             ? collect()
             : ScheduleSession::query()
-                ->with(['package:id,title,detail_title'])
+                ->with(['package:id,detail_title'])
                 ->whereIn('package_id', $packageIds)
                 ->when(
                     $hasEnrollmentsTable,

@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             DemoAdminSeeder::class,
             ScheduleSeeder::class,
             DemoStudentSeeder::class,
+            StudentSeeder::class,
             DemoOrderSeeder::class,
         ]);
     }

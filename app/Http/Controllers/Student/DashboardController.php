@@ -49,7 +49,7 @@ class DashboardController extends Controller
 
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
-                ->with(['package:id,title,detail_title'])
+                ->with(['package:id,detail_title'])
                 ->where('package_id', $packageId)
                 ->when(
                     $hasEnrollmentsTable,
