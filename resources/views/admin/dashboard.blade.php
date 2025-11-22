@@ -545,7 +545,7 @@
         <div class="section-card">
             <div class="card-title">
                 <h3>Transaksi Terbaru</h3>
-                <a href="#" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">Lihat Semua &rarr;</a>
+                <a href="#" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">Lihat Semua</a>
             </div>
 
             @if ($recentPayments->isEmpty())

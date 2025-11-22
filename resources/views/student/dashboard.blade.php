@@ -483,7 +483,7 @@
                     {{-- 3. Materials Section --}}
                     <div class="section-header">
                         <h2 class="section-title">Materi Terbaru</h2>
-                        <a href="{{ $materialsLink }}" target="_blank" class="link-more">Lihat Semua &rarr;</a>
+                        <a href="{{ $materialsLink }}" target="_blank" class="link-more">Lihat Semua</a>
                     </div>
 
                     @if ($recentMaterials->isNotEmpty())
@@ -508,7 +508,7 @@
                     {{-- 4. Quizzes Section --}}
                     <div class="section-header">
                         <h2 class="section-title">Kuis Latihan</h2>
-                        <a href="{{ $quizLink }}" target="_blank" class="link-more">Buka Platform &rarr;</a>
+                        <a href="{{ $quizLink }}" target="_blank" class="link-more">Buka Platform</a>
                     </div>
 
                     @if ($recentQuizzes->isNotEmpty())
