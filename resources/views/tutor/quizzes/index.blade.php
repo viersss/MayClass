@@ -345,9 +345,7 @@
     @else
         <div class="quiz-grid">
             @foreach ($quizzes as $quiz)
-                <article class="quiz-card">
-                    <img src="{{ $quiz->thumbnail_asset }}" alt="{{ $quiz->title }}" class="quiz-thumbnail" />
-                    
+                <article class="quiz-card">                    
                     <div class="card-content">
                         <h3 class="card-title" title="{{ $quiz->title }}">{{ $quiz->title }}</h3>
                         
