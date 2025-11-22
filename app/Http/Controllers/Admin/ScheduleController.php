@@ -74,6 +74,12 @@ class ScheduleController extends BaseAdminController
 
             $dateKey = $start ? $start->format('Y-m-d') : (string) $session->id;
 
+            // Logika penentuan status Upcoming diperbaiki disini
+            // Menggunakan endOfDay() agar sesi hari ini tetap dianggap upcoming meskipun jam mulainya sudah lewat
+            $isUpcoming = $start
+                ? ($start->endOfDay()->greaterThanOrEqualTo($now) && in_array($status, ['scheduled', 'active', 'pending'], true))
+                : false;
+
             return [
                 'id' => $session->id,
                 'date_key' => $dateKey,
@@ -91,20 +97,25 @@ class ScheduleController extends BaseAdminController
                 'tutor' => optional($session->package?->tutor)->name ?? __('Tutor belum ditetapkan'),
                 'start_iso' => $start?->toIso8601String(),
                 'is_past' => $start ? $start->lt($now) : false,
-                'is_upcoming' => $start
-                    ? ($start->greaterThanOrEqualTo($now) && in_array($status, ['scheduled', 'active', 'pending'], true))
-                    : false,
+                'is_upcoming' => $isUpcoming,
             ];
         });
 
         $upcomingSessions = $sessionPayload
             ->filter(fn ($session) => $session['is_upcoming'])
             ->values();
+
+        // Filter history diperketat: hanya yang lampau DAN tidak masuk kategori upcoming (untuk menghindari duplikasi hari ini)
         $historySessions = $sessionPayload
-            ->filter(fn ($session) => $session['status'] !== 'cancelled' && $session['is_past'])
+            ->filter(fn ($session) => 
+                $session['status'] !== 'cancelled' && 
+                $session['is_past'] && 
+                !$session['is_upcoming'] // Tambahan agar tidak duplikat
+            )
             ->sortByDesc('start_iso')
             ->take(6)
             ->values();
+
         $cancelledSessions = $sessionPayload
             ->filter(fn ($session) => $session['status'] === 'cancelled')
             ->sortByDesc('start_iso')
