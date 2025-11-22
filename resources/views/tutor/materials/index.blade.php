@@ -343,7 +343,7 @@
                         <h3 class="card-title" title="{{ $material->title }}">{{ $material->title }}</h3>
                         
                         <div class="tags-row">
-                            <span class="tag tag-subject">{{ $material->subject }}</span>
+                            <span class="tag tag-subject">{{ $material->subject->name ?? 'Tanpa Mapel' }}</span>
                             <span class="tag tag-level">{{ $material->level }}</span>
                         </div>
 

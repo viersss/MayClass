@@ -9,6 +9,29 @@ use Illuminate\Support\Facades\Schema;
 
 class ScheduleSessionController extends BaseAdminController
 {
+    public function update(Request $request, ScheduleSession $session): RedirectResponse
+    {
+        $data = $request->validate([
+            'start_date' => ['required', 'date'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'user_id' => ['nullable', 'exists:users,id'],
+        ]);
+
+        $startAt = \Carbon\Carbon::parse($data['start_date'] . ' ' . $data['start_time']);
+
+        $payload = [
+            'start_at' => $startAt,
+        ];
+
+        if (isset($data['user_id']) && $data['user_id']) {
+            $payload['user_id'] = $data['user_id'];
+        }
+
+        $session->update($payload);
+
+        return $this->redirectToDashboard($request, $session->user_id, __('Jadwal berhasil diperbarui.'));
+    }
+
     public function cancel(Request $request, ScheduleSession $session): RedirectResponse
     {
         if (Schema::hasColumn('schedule_sessions', 'status')) {

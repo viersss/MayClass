@@ -44,13 +44,14 @@ class QuizController extends Controller
 
         $quizzes = Quiz::query()
             ->where('package_id', optional($package)->id)
+            ->with('subject')
             ->when($quizLevelsReady, fn ($query) => $query->with(['levels' => fn ($levels) => $levels->orderBy('position')]))
-            ->orderBy('subject')
+            ->orderBy('subject_id')
             ->orderBy('title')
             ->get();
 
         $collections = $quizzes
-            ->groupBy('subject')
+            ->groupBy(fn($quiz) => $quiz->subject->name ?? 'Tanpa Mapel')
             ->map(function ($items, $subject) use ($quizLink, $quizLevelsReady) {
                 return [
                     'label' => $subject,
@@ -105,6 +106,7 @@ class QuizController extends Controller
         $quiz = Quiz::query()
             ->where('slug', $slug)
             ->where('package_id', optional($package)->id)
+            ->with('subject')
             ->when($levelsReady, fn ($query) => $query->with('levels'))
             ->when($takeawaysReady, fn ($query) => $query->with('takeaways'))
             ->firstOrFail();
@@ -115,7 +117,7 @@ class QuizController extends Controller
             'page' => 'quiz',
             'title' => $quiz->title,
             'quiz' => [
-                'subject' => $quiz->subject,
+                'subject' => $quiz->subject->name ?? 'Tanpa Mapel',
                 'level' => $quiz->class_level,
                 'title' => $quiz->title,
                 'summary' => $quiz->summary,

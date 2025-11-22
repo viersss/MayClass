@@ -352,7 +352,7 @@
                         <h3 class="card-title" title="{{ $quiz->title }}">{{ $quiz->title }}</h3>
                         
                         <div class="tags-row">
-                            <span class="tag tag-subject">{{ $quiz->subject }}</span>
+                            <span class="tag tag-subject">{{ $quiz->subject->name ?? 'Tanpa Mapel' }}</span>
                             <span class="tag tag-level">{{ $quiz->class_level ?? 'Semua Kelas' }}</span>
                         </div>
 

@@ -29,7 +29,13 @@ class ScheduleController extends BaseAdminController
         $selectedTutorId = $this->resolveTutorFilter($requestedTutor, $tutors);
 
         $packages = Schema::hasTable('packages')
-            ? Package::orderBy('level')->orderBy('price')->get(['id', 'detail_title', 'level'])
+            ? Package::orderBy('level')->orderBy('price')
+                ->when($selectedTutorId, function ($query) use ($selectedTutorId) {
+                    $query->whereHas('tutors', function ($q) use ($selectedTutorId) {
+                        $q->where('user_id', $selectedTutorId);
+                    });
+                })
+                ->get(['id', 'detail_title', 'level'])
             : collect();
 
         $sessionsReady = Schema::hasTable('schedule_sessions');
