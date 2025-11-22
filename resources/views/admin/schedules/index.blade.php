@@ -452,7 +452,6 @@
                 <span style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:999px; background:#0f766e; color:white;">✓</span>
                 <div>
                     <div style="font-size:1rem;">{{ session('status') }}</div>
-                    <div style="color:#047857; font-weight:500;">Jadwal baru tersimpan dan langsung disinkronkan ke agenda terkait.</div>
                 </div>
             </div>
         </div>
