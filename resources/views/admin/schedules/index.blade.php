@@ -446,6 +446,18 @@
         @endif
     </div>
 
+    @if (session('status'))
+        <div class="content-card" style="border-color: #0f766e; background: #ecfdf3;">
+            <div class="card-body" style="display:flex; align-items:center; gap:12px; color:#065f46; font-weight:600;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:999px; background:#0f766e; color:white;">✓</span>
+                <div>
+                    <div style="font-size:1rem;">{{ session('status') }}</div>
+                    <div style="color:#047857; font-weight:500;">Jadwal baru tersimpan dan langsung disinkronkan ke agenda terkait.</div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- 2. Metrics --}}
     <div class="metrics-grid">
         <div class="metric-card">
@@ -483,7 +495,6 @@
                 @else
                     <form method="POST" action="{{ route('admin.schedule.templates.store') }}" class="form-stack">
                         @csrf
-                        <input type="hidden" name="user_id" value="{{ $schedule['selectedTutorId'] }}">
                         
                         <div class="form-group">
                             <label>Paket Belajar</label>
@@ -592,7 +603,6 @@
                                 <tr>
                                     <form method="POST" action="{{ route('admin.schedule.templates.update', $template['id']) }}">
                                         @csrf @method('PUT')
-                                        <input type="hidden" name="user_id" value="{{ $template['user_id'] }}">
                                         
                                         <td style="min-width: 200px;">
                                             <input type="text" name="title" value="{{ $template['title'] }}" class="table-input" style="font-weight: 600; margin-bottom: 4px;">

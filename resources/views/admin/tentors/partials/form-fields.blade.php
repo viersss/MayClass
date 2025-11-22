@@ -80,6 +80,29 @@
     </div>
 
     <div class="tentor-form-card">
+        <h2>Penugasan Paket Belajar</h2>
+        <p>Pilih paket yang menjadi tanggung jawab tentor ini. Setiap paket hanya memiliki satu tentor utama.</p>
+
+        @if ($packages->isEmpty())
+            <p class="helper-text">Belum ada paket yang dapat ditugaskan.</p>
+        @else
+            <div class="tentor-form-grid" style="margin-top: 12px;">
+                @foreach ($packages as $package)
+                    <label class="tentor-form-group" style="border:1px solid #e5e7eb; padding:12px; border-radius:12px;">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <input type="checkbox" name="packages[]" value="{{ $package->id }}" style="width:18px; height:18px;" @checked(in_array($package->id, old('packages', $selectedPackages?->toArray() ?? [])))>
+                            <div>
+                                <div style="font-weight:700;">{{ $package->detail_title }}</div>
+                                <div class="helper-text" style="margin-top:4px;">{{ optional($package->tutor)->name ? 'Ditugaskan ke ' . $package->tutor->name : 'Belum ada tentor' }}</div>
+                            </div>
+                        </div>
+                    </label>
+                @endforeach
+            </div>
+        @endif
+    </div>
+
+    <div class="tentor-form-card">
         <h2>Keamanan Akun Tentor</h2>
         <p>Atur kata sandi awal atau reset password tentor.</p>
 

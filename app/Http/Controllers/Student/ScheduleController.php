@@ -73,7 +73,13 @@ class ScheduleController extends Controller
                 )
                 ->when(
                     Schema::hasColumn('schedule_sessions', 'status'),
-                    fn ($query) => $query->whereNotIn('status', ['cancelled'])
+                    function ($query) {
+                        $query->where(function ($statusQuery) {
+                            $statusQuery
+                                ->whereNull('status')
+                                ->orWhereIn('status', ['scheduled', 'active', 'pending', 'ongoing', 'aktif', 'berlangsung', 'menunggu']);
+                        });
+                    }
                 )
                 ->orderBy('start_at')
                 ->get();
@@ -83,10 +89,15 @@ class ScheduleController extends Controller
 
         $schedule = ScheduleViewData::compose($sessions, $viewMode, $referenceDate);
 
-        $upcomingSessions = $sessions->filter(function ($session) {
-            $start = $this->parseDate($session->start_at ?? null);
+        $now = CarbonImmutable::now();
 
-            return $start ? $start->isFuture() : false;
+        $upcomingSessions = $sessions->filter(function ($session) use ($now) {
+            $start = $this->parseDate($session->start_at ?? null);
+            $status = $this->normalizeStatus($session->status ?? null);
+
+            return $start
+                && $start->greaterThanOrEqualTo($now)
+                && in_array($status, ['scheduled', 'active', 'pending'], true);
         });
 
         $stats = [
@@ -125,5 +136,16 @@ class ScheduleController extends Controller
         } catch (\Throwable $exception) {
             return null;
         }
+    }
+
+    private function normalizeStatus(?string $value): string
+    {
+        return match (strtolower((string) $value)) {
+            'completed', 'done', 'selesai' => 'completed',
+            'cancelled', 'canceled', 'batal', 'dibatalkan' => 'cancelled',
+            'active', 'ongoing', 'aktif', 'berlangsung' => 'active',
+            'pending', 'menunggu', 'tertunda' => 'pending',
+            default => 'scheduled',
+        };
     }
 }
