@@ -6,6 +6,7 @@ use App\Support\ImageRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Package extends Model
@@ -45,9 +46,29 @@ class Package extends Model
         return $this->hasMany(PackageFeature::class);
     }
 
+    /**
+     * Relasi Tunggal ke Tutor (Legacy/Utama)
+     */
     public function tutor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'tutor_id');
+    }
+
+    /**
+     * Relasi Banyak ke Tutor (Multiple Tutors per Package)
+     * Memperbaiki error RelationNotFoundException [tutors]
+     */
+    public function tutors(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    /**
+     * Relasi ke Subjects (Mata Pelajaran)
+     */
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class);
     }
 
     public function cardFeatures(): HasMany

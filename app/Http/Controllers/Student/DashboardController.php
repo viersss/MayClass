@@ -99,6 +99,7 @@ class DashboardController extends Controller
         // Ambil Materi Terbaru
         $recentMaterials = $materialsAvailable
             ? Material::query()
+                ->with('subject') // PERBAIKAN: Eager load relation subject
                 ->where('package_id', $packageId)
                 ->when($materialChaptersReady, fn ($query) => $query->withCount('chapters'))
                 ->when($materialObjectivesReady, fn ($query) => $query->withCount('objectives'))
@@ -106,16 +107,19 @@ class DashboardController extends Controller
                 ->take(4)
                 ->get()
                 ->map(function (Material $material) use ($materialsLink, $materialChaptersReady, $materialObjectivesReady) {
+                    // PERBAIKAN: Ambil nama dari relasi, bukan kolom string
+                    $subjectName = $material->subject->name ?? 'Umum';
+                    
                     return [
                         'slug' => $material->slug,
-                        'subject' => $material->subject,
+                        'subject' => $subjectName,
                         'title' => $material->title,
                         'summary' => $material->summary,
                         'level' => $material->level,
                         'chapter_count' => $materialChaptersReady ? (int) $material->chapters_count : 0,
                         'objective_count' => $materialObjectivesReady ? (int) $material->objectives_count : 0,
                         'resource' => $material->resource_url ?? $materialsLink,
-                        'accent' => SubjectPalette::accent($material->subject),
+                        'accent' => SubjectPalette::accent($subjectName),
                     ];
                 })
             : collect();
@@ -123,12 +127,16 @@ class DashboardController extends Controller
         // Ambil Kuis Terbaru
         $recentQuizzes = $quizzesAvailable
             ? Quiz::query()
+                ->with('subject') // PERBAIKAN: Eager load relation subject
                 ->where('package_id', $packageId)
                 ->when($quizLevelsReady, fn ($query) => $query->with(['levels' => fn ($levels) => $levels->orderBy('position')]))
                 ->orderByDesc('created_at')
                 ->take(4)
                 ->get()
                 ->map(function (Quiz $quiz) use ($quizLink, $quizLevelsReady) {
+                    // PERBAIKAN: Ambil nama dari relasi
+                    $subjectName = $quiz->subject->name ?? 'Umum';
+
                     return [
                         'slug' => $quiz->slug,
                         'title' => $quiz->title,
@@ -137,7 +145,7 @@ class DashboardController extends Controller
                         'questions' => $quiz->question_count,
                         'levels' => $quizLevelsReady ? $quiz->levels->pluck('label')->all() : [],
                         'link' => $quiz->link ?? $quizLink,
-                        'accent' => SubjectPalette::accent($quiz->subject),
+                        'accent' => SubjectPalette::accent($subjectName),
                     ];
                 })
             : collect();
@@ -151,9 +159,12 @@ class DashboardController extends Controller
                 ->where('created_at', '>=', now()->subDays(14))
                 ->count()
             : 0;
+        
+        // PERBAIKAN: Hitung distinct subject_id, bukan subject string
         $subjectsTotal = $materialsAvailable
-            ? Material::where('package_id', $packageId)->distinct('subject')->count('subject')
+            ? Material::where('package_id', $packageId)->distinct('subject_id')->count('subject_id')
             : 0;
+            
         $materialLevels = $materialsAvailable
             ? Material::where('package_id', $packageId)->select('level')->distinct()->pluck('level')->filter()->values()->all()
             : [];

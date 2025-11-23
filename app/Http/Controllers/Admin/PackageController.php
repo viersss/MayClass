@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Package;
 use App\Models\Subject;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -96,7 +97,18 @@ class PackageController extends BaseAdminController
 
     public function destroy(Package $package): RedirectResponse
     {
-        $package->delete();
+        try {
+            $package->delete();
+        } catch (QueryException $exception) {
+            // Cek error constraint violation (Foreign Key) - Kode 23000
+            if ($exception->getCode() == 23000) {
+                return redirect()
+                    ->route('admin.packages.index')
+                    ->with('error', 'Gagal menghapus: Paket ini sudah memiliki riwayat Pesanan (Orders) atau Siswa aktif.');
+            }
+            
+            throw $exception;
+        }
 
         return redirect()->route('admin.packages.index')->with('status', __('Paket berhasil dihapus.'));
     }
