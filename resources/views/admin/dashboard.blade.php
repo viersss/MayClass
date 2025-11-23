@@ -483,7 +483,7 @@
         {{-- Chart --}}
         <div class="section-card">
             <div class="card-title">
-                <h3>Grafik Pendapatan</h3>
+                <h3>Diagram Pendapatan</h3>
                 <span>{{ now()->year }}</span>
             </div>
 
@@ -545,7 +545,7 @@
         <div class="section-card">
             <div class="card-title">
                 <h3>Transaksi Terbaru</h3>
-                <a href="#" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">Lihat Semua &rarr;</a>
+                <a href="#" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">Lihat Semua</a>
             </div>
 
             @if ($recentPayments->isEmpty())

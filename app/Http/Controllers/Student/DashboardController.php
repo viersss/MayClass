@@ -31,9 +31,11 @@ class DashboardController extends Controller
         $quizLink = (string) config('mayclass.links.quiz_platform');
         $hasEnrollmentsTable = Schema::hasTable('enrollments');
 
+        // Cek akses siswa
         $activeEnrollment = StudentAccess::activeEnrollment($user);
         $hasActivePackage = StudentAccess::hasActivePackage($user);
 
+        // Jika tidak ada paket aktif, tampilkan dashboard kosong/terbatas
         if (! $hasActivePackage) {
             return view('student.dashboard', [
                 'page' => 'dashboard',
@@ -47,9 +49,14 @@ class DashboardController extends Controller
 
         $packageId = optional($activeEnrollment)->package_id;
 
+        // AMBIL JADWAL SESI (Termasuk Link Zoom didalamnya)
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
-                ->with(['package:id,detail_title'])
+                // PERBAIKAN FINAL: 
+                // Kita hanya mengambil 'id' dan 'detail_title' dari tabel packages.
+                // Kolom 'zoom_link' sudah otomatis ada di tabel schedule_sessions (tabel utama query ini),
+                // jadi tidak perlu dipanggil di dalam relation 'package'.
+                ->with(['package:id,detail_title']) 
                 ->where('package_id', $packageId)
                 ->when(
                     $hasEnrollmentsTable,
@@ -78,14 +85,18 @@ class DashboardController extends Controller
                 ->orderBy('start_at')
                 ->get()
             : collect();
+            
+        // Format data jadwal untuk View
         $schedule = ScheduleViewData::fromCollection($sessions);
 
+        // Cek ketersediaan tabel fitur lain (Materi/Kuis)
         $materialsAvailable = Schema::hasTable('materials');
         $materialChaptersReady = Schema::hasTable('material_chapters');
         $materialObjectivesReady = Schema::hasTable('material_objectives');
         $quizzesAvailable = Schema::hasTable('quizzes');
         $quizLevelsReady = Schema::hasTable('quiz_levels');
 
+        // Ambil Materi Terbaru
         $recentMaterials = $materialsAvailable
             ? Material::query()
                 ->where('package_id', $packageId)
@@ -109,6 +120,7 @@ class DashboardController extends Controller
                 })
             : collect();
 
+        // Ambil Kuis Terbaru
         $recentQuizzes = $quizzesAvailable
             ? Quiz::query()
                 ->where('package_id', $packageId)
@@ -130,6 +142,7 @@ class DashboardController extends Controller
                 })
             : collect();
 
+        // Hitung Statistik (Metrics)
         $materialsTotal = $materialsAvailable
             ? Material::where('package_id', $packageId)->count()
             : 0;
@@ -171,10 +184,10 @@ class DashboardController extends Controller
 
         $levelSet = $levelSet->filter()->unique()->values();
 
+        // Hitung Statistik Jadwal
         $upcomingTotal = $sessions
             ->filter(function ($session) {
                 $start = $this->parseDate($session->start_at ?? null);
-
                 return $start ? $start->isFuture() : false;
             })
             ->count();
@@ -182,11 +195,11 @@ class DashboardController extends Controller
         $weekSessions = $sessions
             ->filter(function ($session) {
                 $start = $this->parseDate($session->start_at ?? null);
-
                 return $start ? $start->isSameWeek(CarbonImmutable::now()) : false;
             })
             ->count();
 
+        // Return View
         return view('student.dashboard', [
             'page' => 'dashboard',
             'title' => 'Dashboard Siswa',

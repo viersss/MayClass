@@ -62,7 +62,7 @@
             gap: 12px;
             background: var(--bg-body);
             padding: 8px 16px;
-            border-radius: 99px;
+            border-radius: 999px;
             border: 1px solid var(--border-color);
         }
 
@@ -195,6 +195,9 @@
             box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
         }
 
+        /* Utility class to hide elements via JS */
+        .hidden { display: none; }
+
         .btn-primary {
             width: 100%;
             padding: 12px;
@@ -271,64 +274,6 @@
         .btn-delete { background: #fee2e2; color: #b91c1c; }
         .btn-cancel { background: #f1f5f9; color: #64748b; }
         .btn-restore { background: #dcfce7; color: #15803d; }
-
-        /* Modal Styles */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
-            margin-bottom: 24px;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            font-size: 1.5rem;
-            color: var(--text-main);
-        }
-
-        .modal-body {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-
-        .modal-footer button {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-        }
 
         /* --- 4. AGENDA TIMELINE --- */
         .timeline-container {
@@ -501,6 +446,17 @@
         @endif
     </div>
 
+    @if (session('status'))
+        <div class="content-card" style="border-color: #0f766e; background: #ecfdf3;">
+            <div class="card-body" style="display:flex; align-items:center; gap:12px; color:#065f46; font-weight:600;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:999px; background:#0f766e; color:white;">✓</span>
+                <div>
+                    <div style="font-size:1rem;">{{ session('status') }}</div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- 2. Metrics --}}
     <div class="metrics-grid">
         <div class="metric-card">
@@ -538,14 +494,12 @@
                 @else
                     <form method="POST" action="{{ route('admin.schedule.templates.store') }}" class="form-stack">
                         @csrf
-                        <input type="hidden" name="user_id" value="{{ $schedule['selectedTutorId'] }}">
                         
                         <div class="form-group">
                             <label>Paket Belajar</label>
-                            <select name="package_id" id="package-select" class="form-control" required>
-                                <option value="">Pilih Paket</option>
+                            <select name="package_id" class="form-control" required>
                                 @foreach ($schedule['packages'] as $package)
-                                    <option value="{{ $package->id }}" data-level="{{ $package->level }}" data-subjects="{{ $package->subjects->map(function($s) { return $s->id . ':' . $s->name . ':' . $s->level; })->join('|') }}">{{ $package->detail_title }}</option>
+                                    <option value="{{ $package->id }}">{{ $package->detail_title }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -557,27 +511,51 @@
                             </div>
                             <div class="form-group">
                                 <label>Mata Pelajaran</label>
-                                <select name="subject_id" id="subject-select" class="form-control" required disabled>
-                                    <option value="">Pilih Mata Pelajaran</option>
-                                </select>
+                                <input type="text" name="category" class="form-control" placeholder="Contoh: Matematika">
                             </div>
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div class="form-group">
                                 <label>Tingkat Kelas</label>
-                                <select name="class_level" id="class-level-select" class="form-control" required disabled>
-                                    <option value="">Pilih Tingkat Kelas</option>
-                                </select>
+                                <input type="text" name="class_level" class="form-control" placeholder="Contoh: 12 SMA">
                             </div>
                             <div class="form-group">
-                                <label>Lokasi</label>
-                                <select name="location" id="location-select" class="form-control" required>
-                                    <option value="">Pilih Lokasi</option>
-                                    <option value="Ruangan Kelas Offline">Ruangan Kelas Offline</option>
-                                    <option value="Online (Ruang Virtual)">Online (Ruang Virtual)</option>
-                                </select>
+                                <label>Durasi (Menit)</label>
+                                <input type="number" name="duration_minutes" class="form-control" value="90" min="30" step="15" required>
                             </div>
+                        </div>
+
+                        {{-- DROPDOWN TIPE SESI --}}
+                        <div class="form-group">
+                            <label>Tipe Sesi</label>
+                            <select id="sessionType" class="form-control">
+                                <option value="online">Sesi Online (Zoom/Google Meet)</option>
+                                <option value="offline">Sesi Offline (Tatap Muka)</option>
+                            </select>
+                        </div>
+
+                        {{-- INPUTAN DINAMIS --}}
+                        <div class="form-group" id="zoomInputGroup">
+                            <label>Link Zoom / Meeting</label>
+                            <input
+                                type="url"
+                                name="zoom_link"
+                                class="form-control"
+                                placeholder="https://zoom.us/j/meeting-id"
+                                pattern="https?://.+"
+                            >
+                        </div>
+
+                        <div class="form-group hidden" id="locationInputGroup">
+                            <label>Lokasi Pertemuan</label>
+                            <input
+                                type="text"
+                                name="location"
+                                id="locationInput"
+                                class="form-control"
+                                placeholder="Alamat lengkap / Nama tempat"
+                            >
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
@@ -591,15 +569,9 @@
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                            <div class="form-group">
-                                <label>Durasi (Menit)</label>
-                                <input type="number" name="duration_minutes" class="form-control" value="90" min="30" step="15" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Jml. Siswa</label>
-                                <input type="number" name="student_count" class="form-control" value="1" min="1">
-                            </div>
+                        <div class="form-group">
+                            <label>Jml. Siswa</label>
+                            <input type="number" name="student_count" class="form-control" value="1" min="1">
                         </div>
 
                         <button type="submit" class="btn-primary">Simpan Jadwal</button>
@@ -630,7 +602,6 @@
                                 <tr>
                                     <form method="POST" action="{{ route('admin.schedule.templates.update', $template['id']) }}">
                                         @csrf @method('PUT')
-                                        <input type="hidden" name="user_id" value="{{ $template['user_id'] }}">
                                         
                                         <td style="min-width: 200px;">
                                             <input type="text" name="title" value="{{ $template['title'] }}" class="table-input" style="font-weight: 600; margin-bottom: 4px;">
@@ -644,10 +615,16 @@
                                         </td>
                                         <td style="min-width: 140px;">
                                             <input type="text" name="category" value="{{ $template['category'] }}" class="table-input" placeholder="Mapel" style="margin-bottom: 4px;">
-                                            <input type="text" name="location" value="{{ $template['location'] }}" class="table-input" placeholder="Lokasi">
+                                            
+                                            @if($template['zoom_link'])
+                                                <input type="text" name="zoom_link" value="{{ $template['zoom_link'] }}" class="table-input" placeholder="Link Zoom">
+                                            @else
+                                                <input type="text" name="location" value="{{ $template['location'] }}" class="table-input" placeholder="Lokasi">
+                                            @endif
                                         </td>
                                         <td style="min-width: 160px;">
                                             <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                                                {{-- Input ini hanya untuk trigger generate --}}
                                                 <input type="date" name="reference_date" value="{{ $template['reference_date_value'] ?? $schedule['referenceDate'] }}" class="table-input">
                                             </div>
                                             <div style="display: flex; gap: 4px;">
@@ -657,7 +634,6 @@
                                         </td>
                                         <td style="text-align: right;">
                                             <div class="action-btn-group" style="justify-content: flex-end;">
-                                                <button type="submit" class="btn-sm btn-save">Simpan</button>
                                     </form>
                                                 <form method="POST" action="{{ route('admin.schedule.templates.destroy', $template['id']) }}" onsubmit="return confirm('Hapus pola ini?');">
                                                     @csrf @method('DELETE')
@@ -690,9 +666,9 @@
             @elseif ($schedule['upcomingDays']->isEmpty())
                 <div class="empty-state">Belum ada sesi mendatang yang dijadwalkan.</div>
             @else
-                <div class="timeline-container" id="timeline-container">
-                    @foreach ($schedule['upcomingDays'] as $index => $day)
-                        <div class="timeline-day" data-day-index="{{ $index }}" style="{{ $index >= 7 ? 'display: none;' : '' }}">
+                <div class="timeline-container">
+                    @foreach ($schedule['upcomingDays'] as $day)
+                        <div class="timeline-day">
                             <div class="day-header">
                                 <span class="day-name">{{ $day['weekday'] }}</span>
                                 <span class="day-date">{{ $day['full_date'] }}</span>
@@ -703,24 +679,32 @@
                                         <div class="session-info">
                                             <h5>{{ $session['title'] }}</h5>
                                             <div class="session-details">
+                                                {{-- UPDATE: MENAMPILKAN PAKET --}}
+                                                <span style="color: var(--primary); font-weight: 700;">
+                                                    {{ $session['package'] }}
+                                                </span>
+                                                <span class="dot-sep"></span>
+                                                
                                                 <span>{{ $session['subject'] }}</span>
                                                 <span class="dot-sep"></span>
                                                 <span>{{ $session['tutor'] }}</span>
                                                 <span class="dot-sep"></span>
-                                                <span>{{ $session['location'] }}</span>
+                                                
+                                                @if (filter_var($session['location'], FILTER_VALIDATE_URL))
+                                                    <a href="{{ $session['location'] }}" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Link Zoom</a>
+                                                @else
+                                                    <span>{{ $session['location'] }}</span>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="session-time">
                                             <span class="time-label">Waktu Belajar</span>
                                             <span class="time-range">{{ $session['time_range'] }}</span>
-                                            <div style="display: flex; gap: 4px; margin-top: 6px;">
-                                                <button type="button" class="btn-sm btn-save" style="flex: 1;" onclick="openEditModal({{ json_encode($session) }})">Edit</button>
-                                                <form method="POST" action="{{ route('admin.schedule.sessions.cancel', $session['id']) }}" onsubmit="return confirm('Batalkan sesi ini?');" style="flex: 1;">
-                                                    @csrf
-                                                    <input type="hidden" name="redirect_tutor_id" value="{{ $schedule['activeFilter'] }}">
-                                                    <button type="submit" class="btn-sm btn-cancel" style="width: 100%;">Batalkan</button>
-                                                </form>
-                                            </div>
+                                            <form method="POST" action="{{ route('admin.schedule.sessions.cancel', $session['id']) }}" onsubmit="return confirm('Batalkan sesi ini?');" style="margin-top: 6px;">
+                                                @csrf
+                                                <input type="hidden" name="redirect_tutor_id" value="{{ $schedule['activeFilter'] }}">
+                                                <button type="submit" class="btn-sm btn-cancel" style="width: 100%;">Batalkan</button>
+                                            </form>
                                         </div>
                                     </div>
                                 @endforeach
@@ -728,19 +712,11 @@
                         </div>
                     @endforeach
                 </div>
-                
-                @if ($schedule['upcomingDays']->count() > 7)
-                    <div style="text-align: center; margin-top: 20px;">
-                        <button id="toggle-more-btn" class="btn-primary" style="width: auto; padding: 10px 24px;" onclick="toggleMoreDays()">
-                            Tampilkan Lebih Banyak ({{ $schedule['upcomingDays']->count() - 7 }} hari lagi)
-                        </button>
-                    </div>
-                @endif
             @endif
         </div>
     </div>
 
-    {{-- 5. History & Cancelled (Side by Side) --}}
+    {{-- 5. Footer Grids --}}
     <div class="footer-grid">
         {{-- History --}}
         <div class="content-card">
@@ -819,183 +795,28 @@
 
 </div>
 
-{{-- Edit Session Modal --}}
-<div id="editModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Edit Jadwal Sesi</h3>
-        </div>
-        <form id="editSessionForm" method="POST">
-            @csrf
-            @method('PUT')
-            <input type="hidden" name="redirect_tutor_id" value="{{ $schedule['activeFilter'] }}">
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Tanggal</label>
-                    <input type="date" name="start_date" id="edit_start_date" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>Jam Mulai</label>
-                    <input type="time" name="start_time" id="edit_start_time" class="form-control" required>
-                </div>
-                @if ($schedule['tutors']->count() > 1)
-                    <div class="form-group">
-                        <label>Tutor (Opsional - kosongkan jika tidak ingin mengubah)</label>
-                        <select name="user_id" id="edit_user_id" class="form-control">
-                            <option value="">Tidak diubah</option>
-                            @foreach ($schedule['tutors'] as $tutor)
-                                <option value="{{ $tutor->id }}">{{ $tutor->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                @endif
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeEditModal()">Batal</button>
-                <button type="submit" class="btn-save">Simpan Perubahan</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const packageSelect = document.getElementById('package-select');
-    const subjectSelect = document.getElementById('subject-select');
-    const classLevelSelect = document.getElementById('class-level-select');
+    document.addEventListener('DOMContentLoaded', function () {
+        const sessionType = document.getElementById('sessionType');
+        const zoomGroup = document.getElementById('zoomInputGroup');
+        const locationGroup = document.getElementById('locationInputGroup');
+        const locationInput = document.getElementById('locationInput');
 
-    // Function to populate class level options based on package level
-    function populateClassLevels(packageLevel) {
-        classLevelSelect.innerHTML = '<option value="">Pilih Tingkat Kelas</option>';
-
-        let classOptions = [];
-
-        switch(packageLevel) {
-            case 'SD':
-                classOptions = [
-                    {value: '1', label: 'Kelas 1'},
-                    {value: '2', label: 'Kelas 2'},
-                    {value: '3', label: 'Kelas 3'},
-                    {value: '4', label: 'Kelas 4'},
-                    {value: '5', label: 'Kelas 5'},
-                    {value: '6', label: 'Kelas 6'}
-                ];
-                break;
-            case 'SMP':
-                classOptions = [
-                    {value: '7', label: 'Kelas 7'},
-                    {value: '8', label: 'Kelas 8'},
-                    {value: '9', label: 'Kelas 9'}
-                ];
-                break;
-            case 'SMA':
-                classOptions = [
-                    {value: '10', label: 'Kelas 10'},
-                    {value: '11', label: 'Kelas 11'},
-                    {value: '12', label: 'Kelas 12'}
-                ];
-                break;
-            default:
-                classOptions = [];
-        }
-
-        classOptions.forEach(function(optionData) {
-            const option = document.createElement('option');
-            option.value = optionData.value;
-            option.textContent = optionData.label;
-            classLevelSelect.appendChild(option);
-        });
-
-        classLevelSelect.disabled = classOptions.length === 0;
-    }
-
-    packageSelect.addEventListener('change', function() {
-        const selectedOption = this.options[this.selectedIndex];
-        const packageLevel = selectedOption.getAttribute('data-level') || '';
-        const subjectsData = selectedOption.getAttribute('data-subjects') || '';
-
-        // Populate class levels
-        populateClassLevels(packageLevel);
-
-        // Populate subjects
-        subjectSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-
-        if (subjectsData) {
-            const subjects = subjectsData.split('|');
-            subjects.forEach(function(subjectStr) {
-                const [id, name, level] = subjectStr.split(':');
-                const option = document.createElement('option');
-                option.value = id;
-                option.textContent = name + ' (' + level + ')';
-                subjectSelect.appendChild(option);
+        if (sessionType && zoomGroup && locationGroup) {
+            sessionType.addEventListener('change', function () {
+                if (this.value === 'online') {
+                    zoomGroup.classList.remove('hidden');
+                    locationGroup.classList.add('hidden');
+                    locationInput.value = 'Online Meeting';
+                } else {
+                    zoomGroup.classList.add('hidden');
+                    locationGroup.classList.remove('hidden');
+                    if (locationInput.value === 'Online Meeting') {
+                        locationInput.value = '';
+                    }
+                }
             });
-            subjectSelect.disabled = false;
-        } else {
-            subjectSelect.disabled = true;
         }
     });
-});
-
-// Edit Modal Functions
-function openEditModal(session) {
-    const modal = document.getElementById('editModal');
-    const form = document.getElementById('editSessionForm');
-    
-    // Set form action
-    form.action = `/admin/schedule/${session.id}`;
-    
-    // Parse the start_iso to get date and time
-    if (session.start_iso) {
-        const startDate = new Date(session.start_iso);
-        const dateStr = startDate.toISOString().split('T')[0];
-        const timeStr = startDate.toTimeString().split(' ')[0].substring(0, 5);
-        
-        document.getElementById('edit_start_date').value = dateStr;
-        document.getElementById('edit_start_time').value = timeStr;
-    }
-    
-    // Reset tutor selection if exists
-    const tutorSelect = document.getElementById('edit_user_id');
-    if (tutorSelect) {
-        tutorSelect.value = '';
-    }
-    
-    modal.classList.add('active');
-}
-
-function closeEditModal() {
-    const modal = document.getElementById('editModal');
-    modal.classList.remove('active');
-}
-
-// Close modal when clicking outside
-document.getElementById('editModal')?.addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeEditModal();
-    }
-});
-
-// Toggle show more/less days
-let showingAll = false;
-function toggleMoreDays() {
-    const days = document.querySelectorAll('.timeline-day');
-    const btn = document.getElementById('toggle-more-btn');
-    
-    showingAll = !showingAll;
-    
-    days.forEach((day, index) => {
-        if (index >= 7) {
-            day.style.display = showingAll ? 'block' : 'none';
-        }
-    });
-    
-    if (showingAll) {
-        btn.textContent = 'Tampilkan Lebih Sedikit';
-    } else {
-        const hiddenCount = days.length - 7;
-        btn.textContent = `Tampilkan Lebih Banyak (${hiddenCount} hari lagi)`;
-    }
-}
-
 </script>
 @endsection

@@ -413,7 +413,7 @@
         {{-- 4. Chart --}}
         <div class="chart-card">
             <div class="chart-header">
-                <h3>Grafik Pendapatan Bulanan {{ now()->year }}</h3>
+                <h3>Diagram Pendapatan Bulanan {{ now()->year }}</h3>
             </div>
             @php $maxValue = max($monthlyRevenue->pluck('value')->all() ?: [1]); @endphp
             <div class="chart-canvas">

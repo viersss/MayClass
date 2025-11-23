@@ -451,10 +451,10 @@
                                 Akses materi, kerjakan kuis, atau cek jadwalmu sekarang.
                             </p>
                             <div class="hero-actions">
-                                <a href="{{ $materialsLink }}" target="_blank" class="btn-hero">
+                                <a href="{{ route('student.materials') }}" class="btn-hero">
                                      Buka Materi
                                 </a>
-                                <a href="{{ $quizLink }}" target="_blank" class="btn-hero">
+                                <a href="{{ route('student.quiz') }}" class="btn-hero">
                                      Mulai Kuis
                                 </a>
                                 <a href="{{ route('student.schedule') }}" class="btn-hero">
@@ -483,13 +483,13 @@
                     {{-- 3. Materials Section --}}
                     <div class="section-header">
                         <h2 class="section-title">Materi Terbaru</h2>
-                        <a href="{{ $materialsLink }}" target="_blank" class="link-more">Lihat Semua &rarr;</a>
+                        <a href="{{ $materialsLink }}" target="_blank" class="link-more">Lihat Semua</a>
                     </div>
 
                     @if ($recentMaterials->isNotEmpty())
                         <div class="cards-grid">
                             @foreach ($recentMaterials as $material)
-                                <a href="{{ route('student.materials.show', $material['slug']) }}" class="content-card">
+                                <a href="{{ route('student.materials') }}" class="content-card">
                                     <span class="card-tag">{{ $material['subject'] }}</span>
                                     <h3 class="card-title">{{ $material['title'] }}</h3>
                                     <p class="card-desc">{{ $material['summary'] }}</p>
@@ -508,13 +508,13 @@
                     {{-- 4. Quizzes Section --}}
                     <div class="section-header">
                         <h2 class="section-title">Kuis Latihan</h2>
-                        <a href="{{ $quizLink }}" target="_blank" class="link-more">Buka Platform &rarr;</a>
+                        <a href="{{ $quizLink }}" target="_blank" class="link-more">Buka Platform</a>
                     </div>
 
                     @if ($recentQuizzes->isNotEmpty())
                         <div class="cards-grid">
                             @foreach ($recentQuizzes as $quiz)
-                                <a href="{{ route('student.quiz.show', $quiz['slug']) }}" class="content-card">
+                                <a href="{{ route('student.quiz') }}" class="content-card">
                                     <span class="card-tag" style="background:#fff7ed; color:#c2410c;">{{ $quiz['questions'] }} Soal</span>
                                     <h3 class="card-title">{{ $quiz['title'] }}</h3>
                                     <p class="card-desc">{{ $quiz['summary'] }}</p>

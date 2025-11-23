@@ -387,51 +387,238 @@
                 color: var(--ink-muted);
             }
 
-            /* Articles grid in full-width container */
-            .articles-grid {
-                display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 28px;
-                width: 100%;
-            }
-
-            .article-card {
-                background: var(--surface);
-                border-radius: var(--radius-xl);
-                box-shadow: var(--shadow-md);
+            /* =========================================
+               MODERN ARTICLES SECTION STYLES (REDESIGNED)
+               ========================================= */
+            .articles-section {
+                background: #f8fafc; /* Slightly off-white background for modern feel */
+                position: relative;
                 overflow: hidden;
-                display: grid;
-                grid-template-rows: 220px 1fr;
             }
 
-            .article-card img {
+            /* Decorative background shape */
+            .articles-section::before {
+                content: '';
+                position: absolute;
+                top: -150px;
+                right: -150px;
+                width: 400px;
+                height: 400px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, rgba(63, 166, 126, 0.08), rgba(132, 217, 134, 0.05));
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            .articles-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 32px;
+                align-items: start;
+                position: relative;
+                z-index: 1;
+            }
+
+            /* Featured Article (Left Side) */
+            .featured-article-card {
+                position: relative;
+                border-radius: 24px;
+                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                height: 100%;
+                min-height: 400px; /* Ensure height aligns with right column */
+            }
+
+            .featured-article-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            }
+
+            .featured-article-image-wrapper {
+                position: relative;
+                height: 100%;
+            }
+
+            .featured-article-image-wrapper img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
+                transition: transform 0.5s ease;
             }
 
-            .article-content {
-                padding: 24px 26px 32px;
+            .featured-article-card:hover .featured-article-image-wrapper img {
+                transform: scale(1.05);
+            }
+
+            .featured-article-overlay {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+                padding: 32px;
+                color: #ffffff;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+            }
+
+            .featured-article-overlay h3 {
+                margin: 0 0 12px;
+                font-size: 1.8rem;
+                font-weight: 700;
+                line-height: 1.3;
+            }
+
+            .featured-article-overlay p {
+                margin: 0 0 20px;
+                font-size: 1rem;
+                opacity: 0.9;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            /* Standard Articles (Right Side) */
+            .standard-articles-list {
                 display: grid;
-                gap: 10px;
+                grid-template-columns: 1fr;
+                gap: 28px;
             }
 
-            .article-content h3 {
-                margin: 0;
-                font-size: 1.15rem;
+            .standard-article-card {
+                display: flex;
+                background: #ffffff;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                border: 1px solid rgba(0, 0, 0, 0.03);
+            }
+
+            .standard-article-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            }
+
+            .standard-article-image {
+                width: 180px;
+                flex-shrink: 0;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .standard-article-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+            }
+
+            .standard-article-card:hover .standard-article-image img {
+                transform: scale(1.05);
+            }
+
+            .standard-article-content {
+                padding: 24px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .standard-article-content h3 {
+                margin: 0 0 10px;
+                font-size: 1.25rem;
+                font-weight: 600;
                 color: var(--ink-strong);
+                line-height: 1.4;
             }
 
-            .article-content p {
-                margin: 0;
-                color: var(--ink-soft);
+            .standard-article-content p {
+                margin: 0 0 16px;
                 font-size: 0.95rem;
+                color: var(--ink-soft);
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
             }
 
-            .link-muted {
+            .link-muted-modern {
                 color: var(--primary-main);
                 font-weight: 600;
+                font-size: 0.95rem;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                transition: color 0.2s ease, gap 0.2s ease;
             }
+
+            .link-muted-modern svg {
+                width: 18px;
+                height: 18px;
+                transition: transform 0.2s ease;
+            }
+
+            .standard-article-card:hover .link-muted-modern,
+            .featured-article-card:hover .link-muted-modern {
+                color: var(--primary-dark);
+                gap: 8px;
+            }
+            
+            .standard-article-card:hover .link-muted-modern svg,
+            .featured-article-card:hover .link-muted-modern svg {
+                transform: translateX(3px);
+            }
+
+            /* Featured article link specific style */
+            .featured-article-overlay .link-muted-modern {
+                color: #ffffff;
+            }
+            .featured-article-card:hover .featured-article-overlay .link-muted-modern {
+                color: var(--primary-accent);
+            }
+
+            /* Responsive Adjustments for Modern Articles */
+            @media (max-width: 960px) {
+                .articles-container {
+                    grid-template-columns: 1fr;
+                    gap: 40px;
+                }
+
+                .featured-article-card {
+                    height: auto;
+                    aspect-ratio: 16 / 9; /* Maintain a good aspect ratio on mobile */
+                    min-height: auto;
+                }
+            }
+
+            @media (max-width: 640px) {
+                .featured-article-card {
+                    aspect-ratio: 4 / 3;
+                }
+                .featured-article-overlay h3 {
+                    font-size: 1.5rem;
+                }
+
+                .standard-article-card {
+                    flex-direction: column;
+                }
+
+                .standard-article-image {
+                    width: 100%;
+                    height: 200px;
+                }
+                
+                .standard-article-content {
+                    padding: 20px;
+                }
+            }
+            /* =========================================
+               END MODERN ARTICLES SECTION STYLES
+               ========================================= */
 
             /* Full-width pricing section */
             .pricing-section {
@@ -604,7 +791,6 @@
                 display: grid;
                 grid-template-columns: repeat(4, minmax(0, 1fr));
                 gap: 24px;
-                width: 100%;
             }
 
             .highlight-card {
@@ -1061,7 +1247,6 @@
 
             /* General Media Queries */
             @media (max-width: 1080px) {
-                .articles-grid,
                 .pricing-grid,
                 .highlight-grid,
                 .faq-grid,
@@ -1078,7 +1263,6 @@
                 .pricing-card {
                     padding: 18px 16px 16px;
                 }
-                .articles-grid,
                 .pricing-grid,
                 .highlight-grid,
                 .faq-grid,
@@ -1144,7 +1328,7 @@
             </div>
         </header>
 
-        <section class="section" id="artikel">
+        <section class="section articles-section" id="artikel">
             <div class="container">
                 <div class="section-header" data-reveal>
                     <h2 class="section-title">Wawasan Terbaru untuk Dukung Persiapanmu</h2>
@@ -1153,50 +1337,71 @@
                         selalu selangkah di depan.
                     </p>
                 </div>
-                <div class="articles-grid">
-                    <article class="article-card" data-reveal>
-                        <img
-                            src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=800&q=80"
-                            alt="Artikel UTBK"
-                        />
-                        <div class="article-content">
-                            <h3>Kenali 7 Subtes UTBK yang Harus Kamu Taklukkan</h3>
-                            <p>
-                                Panduan lengkap memahami struktur TPS dan Literasi dengan latihan intensif dari mentor MayClass.
-                            </p>
-                            <a class="link-muted" href="{{ route('packages.index') }}">Selengkapnya</a>
+                <div class="articles-container">
+                    <a href="{{ route('packages.index') }}" class="featured-article-card" data-reveal>
+                        <div class="featured-article-image-wrapper">
+                            <img
+                                src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1200&q=80"
+                                alt="Artikel UTBK"
+                            />
+                            <div class="featured-article-overlay">
+                                <span class="badge" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(4px); margin-bottom: 12px; align-self: flex-start;">Topik Hangat</span>
+                                <h3>Kenali 7 Subtes UTBK yang Harus Kamu Taklukkan Tahun Ini</h3>
+                                <p>
+                                    Panduan lengkap memahami struktur TPS dan Literasi dengan strategi pengerjaan dan latihan intensif dari mentor MayClass untuk skor maksimal.
+                                </p>
+                                <span class="link-muted-modern">
+                                    Baca Selengkapnya
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                </span>
+                            </div>
                         </div>
-                    </article>
-                    <article class="article-card" data-reveal data-reveal-delay="120">
-                        <img
-                            src="https://images.unsplash.com/photo-1460518451285-97b6aa326961?auto=format&fit=crop&w=800&q=80"
-                            alt="Artikel SKD"
-                        />
-                        <div class="article-content">
-                            <h3>Strategi Lulus SKD ASN &amp; PPPK Bersama Mentor Ahli</h3>
-                            <p>
-                                Kisi-kisi terbaru, tips manajemen waktu, dan latihan soal real untuk skor maksimal di seleksi CPNS.
-                            </p>
-                            <a class="link-muted" href="{{ route('packages.index') }}">Selengkapnya</a>
-                        </div>
-                    </article>
-                    <article class="article-card" data-reveal data-reveal-delay="200">
-                        <img
-                            src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80"
-                            alt="Artikel motivasi"
-                        />
-                        <div class="article-content">
-                            <h3>Cerita Alumni: Raih Kampus Impian dari Nol</h3>
-                            <p>
-                                Belajar dari pengalaman siswa MayClass yang berhasil masuk kampus favorit berkat program intensif.
-                            </p>
-                            <a class="link-muted" href="{{ route('packages.index') }}">Selengkapnya</a>
-                        </div>
-                    </article>
+                    </a>
+
+                    <div class="standard-articles-list">
+                        <a href="{{ route('packages.index') }}" class="standard-article-card" data-reveal data-reveal-delay="150">
+                            <div class="standard-article-image">
+                                <img
+                                    src="https://images.unsplash.com/photo-1460518451285-97b6aa326961?auto=format&fit=crop&w=800&q=80"
+                                    alt="Artikel SKD"
+                                />
+                            </div>
+                            <div class="standard-article-content">
+                                <span style="font-size: 0.85rem; color: var(--primary-main); font-weight: 600; margin-bottom: 8px; display: block;">Tips & Trik</span>
+                                <h3>Strategi Jitu Lulus SKD ASN &amp; PPPK Bersama Mentor Ahli</h3>
+                                <p>
+                                    Kisi-kisi terbaru, teknik manajemen waktu, dan pembahasan soal real untuk skor tinggi di seleksi CPNS.
+                                </p>
+                                <span class="link-muted-modern">
+                                    Selengkapnya
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                </span>
+                            </div>
+                        </a>
+
+                        <a href="{{ route('packages.index') }}" class="standard-article-card" data-reveal data-reveal-delay="300">
+                            <div class="standard-article-image">
+                                <img
+                                    src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80"
+                                    alt="Artikel motivasi"
+                                />
+                            </div>
+                            <div class="standard-article-content">
+                                <span style="font-size: 0.85rem; color: var(--primary-main); font-weight: 600; margin-bottom: 8px; display: block;">Inspirasi Alumni</span>
+                                <h3>Cerita Alumni: Perjuangan Raih Kampus Impian dari Nol</h3>
+                                <p>
+                                    Belajar dari kisah inspiratif siswa MayClass yang berhasil menembus PTN favorit berkat ketekunan dan program intensif.
+                                </p>
+                                <span class="link-muted-modern">
+                                    Selengkapnya
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                </span>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
-
         <section class="pricing-section" id="paket">
             <div class="container">
                 <div class="section-header" data-reveal>

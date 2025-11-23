@@ -385,9 +385,7 @@
                 <main>
                     <div class="page-wrapper">
                         <div class="page-content">
-                            @if (session('status'))
-                                <div class="flash-message">{{ session('status') }}</div>
-                            @endif
+    
                             @yield('content')
                         </div>
                     </div>

@@ -64,11 +64,7 @@
     <section class="student-section">
         <div class="student-quiz-detail__layout">
             <div class="student-quiz-detail__header">
-                <div class="student-breadcrumbs">
-                    <a href="{{ route('student.quiz') }}">Quiz</a>
-                    <span>/</span>
-                    <span>{{ $quiz['title'] }}</span>
-                </div>
+
                 <div class="student-chip">{{ $quiz['subject'] }} • Level {{ $quiz['level'] }}</div>
                 <h1 style="margin: 0; font-size: clamp(2rem, 4vw, 2.8rem);">{{ $quiz['title'] }}</h1>
                 <p style="margin: 0; color: var(--student-text-muted); font-size: 1rem;">{{ $quiz['summary'] }}</p>
@@ -88,7 +84,6 @@
                     <a class="student-button student-button--outline" href="{{ $quizLink }}" target="_blank" rel="noopener">Lihat semua quiz</a>
                 </div>
             </div>
-            <img class="student-quiz-detail__thumbnail" src="{{ $quiz['thumbnail'] }}" alt="Ilustrasi quiz {{ $quiz['title'] }}">
         </div>
     </section>
 

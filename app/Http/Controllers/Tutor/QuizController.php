@@ -67,6 +67,12 @@ class QuizController extends BaseTutorController
                 ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
         }
 
+        if (! Schema::hasColumn('quizzes', 'package_id')) {
+            return redirect()
+                ->route('tutor.quizzes.index')
+                ->with('alert', __('Kolom relasi paket untuk quiz belum tersedia. Jalankan migrasi database terlebih dahulu.'));
+        }
+        
         $data = $request->validate([
             'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
@@ -109,7 +115,7 @@ class QuizController extends BaseTutorController
 
         return redirect()
             ->route('tutor.quizzes.index')
-            ->with('status', __('Quiz baru berhasil dibuat.'));
+            ->with('status', __('Quiz berhasil dibuat dan siap digunakan.'));
     }
 
     public function edit(Quiz $quiz)

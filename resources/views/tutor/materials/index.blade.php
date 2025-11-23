@@ -336,9 +336,7 @@
     @else
         <div class="material-grid">
             @foreach ($materials as $material)
-                <article class="material-card">
-                    <img src="{{ $material->thumbnail_asset }}" alt="{{ $material->title }}" class="material-thumbnail" />
-                    
+                <article class="material-card">                    
                     <div class="card-content">
                         <h3 class="card-title" title="{{ $material->title }}">{{ $material->title }}</h3>
                         

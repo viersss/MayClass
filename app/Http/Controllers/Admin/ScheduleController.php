@@ -22,59 +22,73 @@ class ScheduleController extends BaseAdminController
 
     private function buildScheduleOverview($requestedTutor): array
     {
-        $tutors = Schema::hasTable('users')
-            ? User::query()->where('role', 'tutor')->orderBy('name')->get(['id', 'name'])
+        // 1. Ambil Data Tutor
+        $tutors = (Schema::hasTable('users') && Schema::hasTable('packages'))
+            ? User::query()
+                ->where('role', 'tutor')
+                ->whereHas('packagesTaught')
+                ->orderBy('name')
+                ->get(['id', 'name'])
             : collect();
 
         $selectedTutorId = $this->resolveTutorFilter($requestedTutor, $tutors);
 
+        // 2. Ambil Data Paket
         $packages = Schema::hasTable('packages')
-            ? Package::orderBy('level')->orderBy('price')
-                ->when($selectedTutorId, function ($query) use ($selectedTutorId) {
-                    $query->whereHas('tutors', function ($q) use ($selectedTutorId) {
-                        $q->where('user_id', $selectedTutorId);
-                    });
-                })
-                ->get(['id', 'detail_title', 'level'])
+            ? Package::with('tutor:id,name')
+                ->when($selectedTutorId, fn ($query) => $query->where('tutor_id', $selectedTutorId))
+                ->orderBy('level')
+                ->orderBy('price')
+                ->get(['id', 'detail_title', 'tutor_id'])
             : collect();
 
+        // 3. Ambil Data Sesi (Sessions)
         $sessionsReady = Schema::hasTable('schedule_sessions');
 
         $sessions = $sessionsReady
             ? ScheduleSession::query()
-                ->when($selectedTutorId, fn ($query) => $query->where('user_id', $selectedTutorId))
+                ->when($selectedTutorId, function ($query) use ($selectedTutorId) {
+                    $query->whereHas('package', function ($packageQuery) use ($selectedTutorId) {
+                        $packageQuery->where('tutor_id', $selectedTutorId);
+                    });
+                })
                 ->orderBy('start_at')
+                ->with(['package.tutor:id,name'])
                 ->get()
             : collect();
 
-        if ($sessionsReady && Schema::hasTable('users') && $sessions->isNotEmpty()) {
-            $sessions->load('user:id,name');
-        }
-
         if ($sessionsReady && Schema::hasTable('packages') && $sessions->isNotEmpty()) {
-            $sessions->load('package:id,detail_title');
+            $sessions->load('package:id,detail_title,tutor_id');
         }
 
         $now = CarbonImmutable::now();
 
+        // 4. Map Data Sesi
         $sessionPayload = $sessions->map(function (ScheduleSession $session) use ($now) {
             $start = $this->parseScheduleDate($session->start_at);
             $duration = (int) ($session->duration_minutes ?? 90);
             $duration = $duration > 0 ? $duration : 90;
             $end = $start ? $start->addMinutes($duration) : null;
 
+            $status = $this->normalizeStatus($session->status ?? null);
+            
             $timeRange = $start && $end
                 ? $start->format('H.i') . ' - ' . $end->format('H.i') . ' WIB'
                 : __('Waktu belum ditetapkan');
 
             $dateKey = $start ? $start->format('Y-m-d') : (string) $session->id;
 
+            $isUpcoming = $start
+                ? ($start->endOfDay()->greaterThanOrEqualTo($now) && in_array($status, ['scheduled', 'active', 'pending'], true))
+                : false;
+
             return [
                 'id' => $session->id,
                 'date_key' => $dateKey,
-                'weekday' => $start ? $start->locale('id')->isoFormat('dddd') : __('Tanggal belum ditetapkan'),
-                'full_date' => $start ? $start->locale('id')->isoFormat('D MMMM Y') : '-',
-                'label' => $start ? $start->locale('id')->isoFormat('dddd, D MMMM YYYY') : '-',
+                // PERBAIKAN FORMAT TANGGAL DISINI: Gunakan 'l' untuk Hari, 'd F Y' untuk Tanggal Lengkap
+                'weekday' => $start ? $start->locale('id')->translatedFormat('l') : __('Tanggal belum ditetapkan'),
+                'full_date' => $start ? $start->translatedFormat('d F Y') : '-',
+                'label' => $start ? $start->locale('id')->translatedFormat('l, d F Y') : '-',
                 'time_range' => $timeRange,
                 'subject' => $session->category ?? '-',
                 'title' => $session->title,
@@ -82,25 +96,38 @@ class ScheduleController extends BaseAdminController
                 'location' => $session->location ?? __('Ruang Virtual'),
                 'class_level' => $session->class_level ?? '-',
                 'student_count' => $session->student_count,
-                'status' => $session->status ?? 'scheduled',
-                'tutor' => optional($session->user)->name ?? __('Tutor belum ditetapkan'),
+                'status' => $status,
+                'tutor' => optional($session->package?->tutor)->name ?? __('Tutor belum ditetapkan'),
                 'start_iso' => $start?->toIso8601String(),
-                'is_past' => $end ? $end->lt($now) : false,
+                'is_past' => $start ? $start->lt($now) : false,
+                'is_upcoming' => $isUpcoming,
             ];
         });
 
-        $upcomingSessions = $sessionPayload->filter(fn ($session) => $session['status'] !== 'cancelled' && ! $session['is_past']);
+        // 5. Filter Upcoming
+        $upcomingSessions = $sessionPayload
+            ->filter(fn ($session) => $session['is_upcoming'])
+            ->values();
+
+        // 6. Filter History
         $historySessions = $sessionPayload
-            ->filter(fn ($session) => $session['status'] !== 'cancelled' && $session['is_past'])
+            ->filter(fn ($session) => 
+                $session['status'] !== 'cancelled' && 
+                $session['is_past'] && 
+                !$session['is_upcoming']
+            )
             ->sortByDesc('start_iso')
             ->take(6)
             ->values();
+
+        // 7. Filter Cancelled
         $cancelledSessions = $sessionPayload
             ->filter(fn ($session) => $session['status'] === 'cancelled')
             ->sortByDesc('start_iso')
             ->take(6)
             ->values();
 
+        // 8. Grouping Upcoming per Hari
         $upcomingDays = $upcomingSessions
             ->groupBy('date_key')
             ->map(function (Collection $items) {
@@ -129,20 +156,20 @@ class ScheduleController extends BaseAdminController
             ->sortKeys()
             ->values();
 
-        $templatesReady = Schema::hasTable('schedule_templates') && $selectedTutorId;
+        // 9. Ambil Data Template
+        $templatesReady = Schema::hasTable('schedule_templates') && Schema::hasTable('packages');
 
         $templates = $templatesReady
             ? ScheduleTemplate::query()
-                ->where('user_id', $selectedTutorId)
+                ->whereHas('package', function ($packageQuery) use ($selectedTutorId) {
+                    if ($selectedTutorId) {
+                        $packageQuery->where('tutor_id', $selectedTutorId);
+                    }
+                })
                 ->orderBy('day_of_week')
                 ->orderBy('start_time')
-                ->with(['package:id,detail_title', 'user:id,name'])
+                ->with(['package:id,detail_title,tutor_id', 'package.tutor:id,name'])
                 ->get()
-                ->sortBy([
-                    ['day_of_week', 'asc'],
-                    ['start_time', 'asc']
-                ])
-                ->values()
                 ->map(function (ScheduleTemplate $template) {
                     $nextDate = $this->nextDateForDay($template->day_of_week);
 
@@ -153,13 +180,14 @@ class ScheduleController extends BaseAdminController
                         'category' => $template->category,
                         'class_level' => $template->class_level,
                         'location' => $template->location,
+                        'zoom_link' => $template->zoom_link,
                         'start_time' => $template->start_time,
                         'duration_minutes' => $template->duration_minutes,
                         'student_count' => $template->student_count,
-                        'user_id' => $template->user_id,
+                        'user_id' => optional($template->package?->tutor)->id,
                         'package_label' => optional($template->package)->detail_title ?? __('Paket MayClass'),
                         'reference_date_value' => $nextDate?->toDateString(),
-                        'reference_date_label' => $nextDate ? $nextDate->locale('id')->translatedFormat('dddd, D MMMM YYYY') : null,
+                        'reference_date_label' => $nextDate ? $nextDate->locale('id')->translatedFormat('l, d F Y') : null,
                     ];
                 })
             : collect();
@@ -219,21 +247,29 @@ class ScheduleController extends BaseAdminController
         }
     }
 
-    private function nextDateForDay(?int $isoDayOfWeek): ?CarbonImmutable
+    private function normalizeStatus(?string $value): string
     {
-        if ($isoDayOfWeek === null) {
+        return match (strtolower((string) $value)) {
+            'completed', 'done', 'selesai' => 'completed',
+            'cancelled', 'canceled', 'batal', 'dibatalkan' => 'cancelled',
+            'active', 'ongoing', 'aktif', 'berlangsung' => 'active',
+            'pending', 'menunggu', 'tertunda' => 'pending',
+            default => 'scheduled',
+        };
+    }
+
+    private function nextDateForDay(?int $dayOfWeek): ?CarbonImmutable
+    {
+        if ($dayOfWeek === null) {
             return null;
         }
 
-        // Convert ISO (1-7) to Carbon (0-6)
-        $carbonDayOfWeek = $isoDayOfWeek === 7 ? 0 : $isoDayOfWeek;
-
         $now = CarbonImmutable::now();
 
-        if ($now->dayOfWeek === $carbonDayOfWeek) {
+        if ($now->dayOfWeek === $dayOfWeek) {
             return $now;
         }
 
-        return $now->next($carbonDayOfWeek);
+        return $now->next($dayOfWeek);
     }
 }

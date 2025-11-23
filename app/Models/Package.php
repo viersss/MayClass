@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Support\ImageRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Package extends Model
@@ -24,6 +24,8 @@ class Package extends Model
         'price',
         'max_students',
         'summary',
+        'tutor_id',
+        'zoom_link',
     ];
 
     protected $casts = [
@@ -43,14 +45,14 @@ class Package extends Model
         return $this->hasMany(PackageFeature::class);
     }
 
+    public function tutor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'tutor_id');
+    }
+
     public function cardFeatures(): HasMany
     {
         return $this->features()->where('type', 'card')->orderBy('position');
-    }
-
-    public function tutors(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class)->where('role', 'tutor')->withTimestamps();
     }
 
     public function inclusions(): HasMany
@@ -73,9 +75,14 @@ class Package extends Model
         return $this->hasMany(CheckoutSession::class);
     }
 
-    public function subjects(): BelongsToMany
+    public function scheduleTemplates(): HasMany
     {
-        return $this->belongsToMany(Subject::class)->withTimestamps();
+        return $this->hasMany(ScheduleTemplate::class);
+    }
+
+    public function scheduleSessions(): HasMany
+    {
+        return $this->hasMany(ScheduleSession::class);
     }
 
     public function scopeWithQuotaUsage($query)

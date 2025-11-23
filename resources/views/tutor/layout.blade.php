@@ -271,22 +271,27 @@
                 margin-bottom: 24px;
                 padding: 16px 20px;
                 border-radius: 14px;
-                font-weight: 500;
+                font-weight: 600;
                 border: 1px solid var(--border-subtle);
                 background: var(--surface);
                 display: flex;
                 align-items: center;
                 gap: 12px;
+                box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+                letter-spacing: -0.01em;
+                font-size: 0.95rem;
             }
 
             .flash-message[data-variant='success'] {
-                border-color: rgba(21, 128, 61, 0.2);
-                color: var(--success);
+                border-color: #bbf7d0;
+                color: #166534;
+                background: #ecfdf3;
             }
 
             .flash-message[data-variant='error'] {
-                border-color: rgba(220, 38, 38, 0.25);
+                border-color: #fecdd3;
                 color: #b91c1c;
+                background: #fef2f2;
             }
 
             @media (max-width: 1240px) {
@@ -365,12 +370,6 @@
                                 'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></svg>',
                                 'route' => 'tutor.dashboard',
                                 'patterns' => ['tutor.dashboard'],
-                            ],
-                            [
-                                'label' => 'Jadwal Tentor',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h8M8 11h8M9 15h6" /><rect width="16" height="16" x="4" y="4" rx="3" /></svg>',
-                                'route' => 'tutor.schedule.index',
-                                'patterns' => ['tutor.schedule.*'],
                             ],
                             [
                                 'label' => 'Materi',

@@ -243,6 +243,46 @@ class TentorController extends BaseAdminController
         );
     }
 
+    private function syncTutorPackages(User $tentor, array $packageIds): void
+    {
+        $packageIds = collect($packageIds)->filter()->unique();
+
+        $existingIds = $tentor->packagesTaught()->pluck('id');
+        $removeIds = $existingIds->diff($packageIds);
+
+        if ($removeIds->isNotEmpty()) {
+            Package::whereIn('id', $removeIds)->update(['tutor_id' => null]);
+            $this->updateScheduleOwnership($removeIds, null);
+        }
+
+        if ($packageIds->isNotEmpty()) {
+            Package::whereIn('id', $packageIds)->update(['tutor_id' => $tentor->id]);
+            $this->updateScheduleOwnership($packageIds, $tentor);
+        }
+    }
+
+    private function updateScheduleOwnership($packageIds, ?User $tentor): void
+    {
+        $packageIds = collect($packageIds)->filter();
+
+        if ($packageIds->isEmpty()) {
+            return;
+        }
+
+        $tutorId = $tentor?->id;
+        $mentorName = $tentor?->name;
+
+        ScheduleTemplate::whereIn('package_id', $packageIds)->update(['user_id' => $tutorId]);
+
+        $sessionUpdate = ['user_id' => $tutorId];
+
+        if ($mentorName !== null) {
+            $sessionUpdate['mentor_name'] = $mentorName;
+        }
+
+        ScheduleSession::whereIn('package_id', $packageIds)->update($sessionUpdate);
+    }
+
     private function generateUniqueSlug(string $name, ?int $ignoreProfileId = null): string
     {
         $base = Str::slug($name) ?: 'tentor';

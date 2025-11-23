@@ -110,6 +110,7 @@
             font-size: 1rem; font-weight: 600; cursor: pointer;
             transition: all 0.2s; margin-top: 8px;
             box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+            color: white !important;
         }
         .btn-primary:hover { background: var(--primary-700); transform: translateY(-1px); }
         .btn-primary:active { transform: scale(0.98); }

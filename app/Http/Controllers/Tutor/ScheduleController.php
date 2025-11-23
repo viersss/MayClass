@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Tutor;
 
 use App\Models\ScheduleSession;
-use App\Models\ScheduleTemplate;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -16,10 +15,18 @@ class ScheduleController extends BaseTutorController
         $tutor = Auth::user();
         $now = CarbonImmutable::now();
 
+        $assignedPackageIds = Schema::hasTable('packages') && $tutor
+            ? $tutor->packagesTaught()->pluck('id')
+            : collect();
+
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
-                ->with(['package:id,detail_title'])
-                ->when($tutor, fn ($query) => $query->where('user_id', $tutor->id))
+                ->with(['package:id,title,detail_title,zoom_link,tutor_id'])
+                ->when($tutor, function ($query) use ($tutor) {
+                    $query->whereHas('package', function ($packageQuery) use ($tutor) {
+                        $packageQuery->where('tutor_id', $tutor->id);
+                    });
+                })
                 ->orderBy('start_at')
                 ->get()
             : collect();
@@ -28,18 +35,13 @@ class ScheduleController extends BaseTutorController
 
         [$upcoming, $history] = $formattedSessions->partition(fn ($session) => $session['is_upcoming']);
 
-        [$todaySessions, $futureSessions] = $upcoming->partition(function ($session) use ($now) {
-            return $session['start_at'] && $session['start_at']->isSameDay($now);
-        });
-
         return $this->render('tutor.schedule.index', [
             'metrics' => [
                 'upcoming' => $upcoming->count(),
                 'history' => $history->count(),
                 'total' => $formattedSessions->count(),
             ],
-            'todaySessions' => $todaySessions->values(),
-            'futureSessions' => $futureSessions->values(),
+            'upcomingSessions' => $upcoming->values(),
             'historySessions' => $history->sortByDesc('start_at')->values(),
         ]);
     }
@@ -54,8 +56,14 @@ class ScheduleController extends BaseTutorController
         $status = $this->normalizeStatus($session->status ?? null);
         $isCancelled = $status === 'cancelled';
         $isCompleted = $status === 'completed';
+        $isOnline = $this->isOnlineSession($session);
+        $zoomLink = $session->zoom_link;
+        $hasZoomLink = filled($zoomLink);
 
-        $isUpcoming = ! $isCancelled && ! $isCompleted && $end && $end->greaterThanOrEqualTo($now);
+        $isUpcoming = ! $isCancelled
+            && ! $isCompleted
+            && $start
+            && $start->greaterThanOrEqualTo($now);
 
         $statusLabel = match ($status) {
             'completed' => 'Selesai',
@@ -86,6 +94,9 @@ class ScheduleController extends BaseTutorController
             'status_variant' => $statusVariant,
             'start_at' => $start,
             'end_at' => $end,
+            'is_online' => $isOnline,
+            'zoom_link' => $zoomLink,
+            'has_zoom_link' => $hasZoomLink,
             'date_label' => $start ? $start->locale('id')->translatedFormat('dddd, D MMMM YYYY') : '-',
             'time_range' => $start && $end ? $start->format('H.i') . ' - ' . $end->format('H.i') . ' WIB' : '-',
             'is_upcoming' => $isUpcoming,
@@ -107,10 +118,25 @@ class ScheduleController extends BaseTutorController
 
     private function normalizeStatus(?string $value): string
     {
-        return match ($value) {
-            'completed', 'done' => 'completed',
-            'cancelled', 'canceled' => 'cancelled',
+        return match (strtolower((string) $value)) {
+            'completed', 'done', 'selesai' => 'completed',
+            'cancelled', 'canceled', 'batal', 'dibatalkan' => 'cancelled',
+            'active', 'ongoing', 'aktif', 'berlangsung' => 'active',
+            'pending', 'menunggu', 'tertunda' => 'pending',
             default => 'scheduled',
         };
+    }
+
+    private function isOnlineSession(ScheduleSession $session): bool
+    {
+        $mode = is_string($session->mode ?? null) ? strtolower($session->mode) : null;
+        $explicitFlag = $session->is_online ?? null;
+        $location = is_string($session->location ?? null) ? strtolower($session->location) : '';
+
+        $onlineFromFlag = filter_var($explicitFlag, FILTER_VALIDATE_BOOLEAN);
+        $onlineFromMode = in_array($mode, ['online', 'virtual', 'daring'], true);
+        $onlineFromLocation = str_contains($location, 'online') || str_contains($location, 'virtual');
+
+        return $onlineFromFlag || $onlineFromMode || $onlineFromLocation;
     }
 }

@@ -24,13 +24,23 @@ class ScheduleTemplateController extends BaseAdminController
         }
 
         $data = $this->validatedData($request);
+        $package = Package::with('tutor')->find($data['package_id']);
 
+        if (! $package || ! $package->tutor_id) {
+            return redirect()->route('admin.schedules.index')
+                ->with('alert', __('Paket harus memiliki tentor terlebih dahulu sebelum membuat jadwal.'));
+        }
+
+        $data['user_id'] = $package->tutor_id;
+
+        // Create Template
         $template = ScheduleTemplate::create($data);
 
-        ScheduleTemplateGenerator::refreshTemplate($template);
+        // GENERATE SESI (FIXED: Memasukkan reference_date)
+        ScheduleTemplateGenerator::refreshTemplate($template, 8, $request->reference_date);
 
         return redirect()->route('admin.schedules.index', ['tutor_id' => $data['user_id']])
-            ->with('status', __('Jadwal berhasil ditambahkan.'));
+            ->with('status', __('Jadwal baru berhasil disimpan dan sesi telah dibuat.'));
     }
 
     public function update(Request $request, ScheduleTemplate $template): RedirectResponse
@@ -39,10 +49,11 @@ class ScheduleTemplateController extends BaseAdminController
 
         $template->update($data);
 
-        ScheduleTemplateGenerator::refreshTemplate($template);
+        // RE-GENERATE SESI (FIXED: Memasukkan reference_date)
+        ScheduleTemplateGenerator::refreshTemplate($template, 8, $request->reference_date);
 
         return redirect()->route('admin.schedules.index', ['tutor_id' => $data['user_id']])
-            ->with('status', __('Pola jadwal berhasil diperbarui.'));
+            ->with('status', __('Pola jadwal berhasil diperbarui dan sesi disesuaikan.'));
     }
 
     public function destroy(Request $request, ScheduleTemplate $template): RedirectResponse
@@ -69,16 +80,13 @@ class ScheduleTemplateController extends BaseAdminController
     private function validatedData(Request $request, ?ScheduleTemplate $existing = null): array
     {
         $payload = $request->validate([
-            'user_id' => [
-                'required',
-                Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'tutor')),
-            ],
             'package_id' => ['required', 'exists:packages,id'],
             'subject_id' => ['required', 'exists:subjects,id'],
             'title' => ['required', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:120'],
             'class_level' => ['nullable', 'string', 'max:120'],
             'location' => ['nullable', 'string', 'max:255'],
+            'zoom_link' => ['nullable', 'string', 'max:2048', 'regex:/^https?:\/\//i'],
             'reference_date' => ['required', 'date'],
             'start_time' => ['required', 'date_format:H:i'],
             'duration_minutes' => ['required', 'integer', 'min:30', 'max:240'],
@@ -107,6 +115,8 @@ class ScheduleTemplateController extends BaseAdminController
         $payload['day_of_week'] = $dayOfWeek;
         $payload['is_active'] = true;
 
+        // Kita butuh reference_date untuk generator, tapi tidak disimpan di tabel template
+        // maka kita unset dari payload array yg akan masuk ke DB
         unset($payload['reference_date']);
 
         return $payload;
