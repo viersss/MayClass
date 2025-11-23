@@ -14,9 +14,9 @@ class DemoAdminSeeder extends Seeder
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Admin Utama MayClass',
-                'username' => 'admin_utama',
+                'username' => 'admin',
                 'email' => 'admin@gmail.com',
-                'password' => Hash::make('gatau123'),
+                'password' => Hash::make('admin1234'),
                 'role' => 'admin',
                 'phone' => '0812-7777-1234',
                 'gender' => 'other',

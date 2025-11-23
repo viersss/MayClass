@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Package;
+use App\Models\ScheduleSession;
+use App\Models\ScheduleTemplate;
 use App\Models\Subject;
 use App\Models\TutorProfile;
 use App\Models\User;
@@ -88,6 +91,9 @@ class TentorController extends BaseAdminController
             'tentorProfile' => null,
             'avatarPreview' => asset('images/avatar-placeholder.svg'),
             'subjectsByLevel' => $this->getSubjectsByLevel(),
+            // [PERBAIKAN 1] Mengirim data packages agar tidak error undefined variable
+            'packages' => Package::with('tutor')->orderBy('level')->get(),
+            'selectedPackages' => collect(),
         ]);
     }
 
@@ -114,9 +120,14 @@ class TentorController extends BaseAdminController
 
         $this->syncTutorProfile($user, $data, $avatarPath);
 
-        // Sync subjects
+        // [PERBAIKAN 2] Menyimpan relasi Mata Pelajaran
         if ($request->has('subjects')) {
             $user->subjects()->sync($request->subjects);
+        }
+
+        // [PERBAIKAN 3] Menyimpan relasi Paket Belajar
+        if ($request->has('packages')) {
+            $this->syncTutorPackages($user, $request->packages);
         }
 
         return redirect()
@@ -127,13 +138,17 @@ class TentorController extends BaseAdminController
     public function edit(User $tentor): View
     {
         $this->ensureTutor($tentor);
-        $tentor->loadMissing(['tutorProfile', 'subjects']);
+        // Load relasi agar data terpilih muncul (checked)
+        $tentor->loadMissing(['tutorProfile', 'subjects', 'packagesTaught']);
 
         return $this->render('admin.tentors.edit', [
             'tentor' => $tentor,
             'tentorProfile' => $tentor->tutorProfile,
             'avatarPreview' => ProfileAvatar::forUser($tentor),
             'subjectsByLevel' => $this->getSubjectsByLevel(),
+            // [PERBAIKAN 1] Mengirim data packages ke form edit juga
+            'packages' => Package::with('tutor')->orderBy('level')->get(),
+            'selectedPackages' => $tentor->packagesTaught->pluck('id'),
         ]);
     }
 
@@ -170,10 +185,14 @@ class TentorController extends BaseAdminController
 
         $this->syncTutorProfile($tentor, $data, $avatarPath);
 
-        // Sync subjects
+        // [PERBAIKAN 2] Update relasi Mata Pelajaran
         if ($request->has('subjects')) {
             $tentor->subjects()->sync($request->subjects);
         }
+
+        // [PERBAIKAN 3] Update relasi Paket Belajar
+        // Gunakan input('packages', []) agar jika semua di-uncheck (array kosong), data lama terhapus
+        $this->syncTutorPackages($tentor, $request->input('packages', []));
 
         return redirect()
             ->route('admin.tentors.edit', $tentor)
@@ -207,6 +226,8 @@ class TentorController extends BaseAdminController
             'avatar' => ['nullable', 'image', 'max:5000'],
             'subjects' => ['required', 'array', 'min:1'],
             'subjects.*' => ['exists:subjects,id'],
+            'packages' => ['nullable', 'array'], // Validasi array paket
+            'packages.*' => ['exists:packages,id'],
         ];
 
         $rules['password'] = $isCreate
@@ -247,14 +268,19 @@ class TentorController extends BaseAdminController
     {
         $packageIds = collect($packageIds)->filter()->unique();
 
+        // Ambil ID paket yang saat ini dipegang (jika ada)
         $existingIds = $tentor->packagesTaught()->pluck('id');
+        
+        // Hitung paket yang dilepas (unchecked)
         $removeIds = $existingIds->diff($packageIds);
 
+        // 1. Lepaskan paket yang tidak dicentang lagi
         if ($removeIds->isNotEmpty()) {
             Package::whereIn('id', $removeIds)->update(['tutor_id' => null]);
             $this->updateScheduleOwnership($removeIds, null);
         }
 
+        // 2. Assign paket yang dicentang ke tentor ini
         if ($packageIds->isNotEmpty()) {
             Package::whereIn('id', $packageIds)->update(['tutor_id' => $tentor->id]);
             $this->updateScheduleOwnership($packageIds, $tentor);
@@ -272,7 +298,9 @@ class TentorController extends BaseAdminController
         $tutorId = $tentor?->id;
         $mentorName = $tentor?->name;
 
-        ScheduleTemplate::whereIn('package_id', $packageIds)->update(['user_id' => $tutorId]);
+        if (Schema::hasTable('schedule_templates')) {
+            ScheduleTemplate::whereIn('package_id', $packageIds)->update(['user_id' => $tutorId]);
+        }
 
         $sessionUpdate = ['user_id' => $tutorId];
 
@@ -280,7 +308,9 @@ class TentorController extends BaseAdminController
             $sessionUpdate['mentor_name'] = $mentorName;
         }
 
-        ScheduleSession::whereIn('package_id', $packageIds)->update($sessionUpdate);
+        if (Schema::hasTable('schedule_sessions')) {
+            ScheduleSession::whereIn('package_id', $packageIds)->update($sessionUpdate);
+        }
     }
 
     private function generateUniqueSlug(string $name, ?int $ignoreProfileId = null): string

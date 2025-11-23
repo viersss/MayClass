@@ -61,7 +61,7 @@ class User extends Authenticatable
 
     /**
      * Relasi Mata Pelajaran (Khusus Tutor)
-     * Memperbaiki error RelationNotFoundException
+     * Wajib ada agar sync subjects berhasil.
      */
     public function subjects(): BelongsToMany
     {
@@ -83,6 +83,9 @@ class User extends Authenticatable
         return $this->hasOne(TutorProfile::class);
     }
 
+    /**
+     * Relasi Paket yang diajar oleh Tutor ini.
+     */
     public function packagesTaught(): HasMany
     {
         return $this->hasMany(Package::class, 'tutor_id');
