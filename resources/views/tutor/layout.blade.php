@@ -774,14 +774,14 @@
 
             @php
                 $currentRoute = request()->route() ? request()->route()->getName() : null;
-                $menuItems = [
+                $mobileMenuItems = [
                     ['label' => 'Beranda', 'route' => 'tutor.dashboard', 'patterns' => ['tutor.dashboard'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" />'],
                     ['label' => 'Materi', 'route' => 'tutor.materials.index', 'patterns' => ['tutor.materials.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M5 5h9l5 5v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" /><path stroke-linecap="round" stroke-linejoin="round" d="M14 5v5h5" />'],
                     ['label' => 'Quiz', 'route' => 'tutor.quizzes.index', 'patterns' => ['tutor.quizzes.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6a4 4 0 0 1 4 4c0 1.5-.8 2.3-2 3.2-.7.5-1 1-.9 1.8m-.1 3h.01" /><path stroke-linecap="round" stroke-linejoin="round" d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />'],
                 ];
              @endphp
 
-            @foreach ($menuItems as $item)
+            @foreach ($mobileMenuItems as $item)
                 @php
                     $isActive = false;
                     foreach ($item['patterns'] as $pattern) {
