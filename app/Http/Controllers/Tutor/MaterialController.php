@@ -40,10 +40,16 @@ class MaterialController extends BaseTutorController
                 ->get()
             : collect();
 
+        // Add packages for modal form
+        $packages = Schema::hasTable('packages')
+            ? Package::orderBy('level')->orderBy('price')->get()
+            : collect();
+
         return $this->render('tutor.materials.index', [
             'materials' => $materials,
             'search' => $search,
             'tableReady' => $tableReady,
+            'packages' => $packages,
         ]);
     }
 
@@ -60,13 +66,13 @@ class MaterialController extends BaseTutorController
 
     public function store(Request $request): RedirectResponse
     {
-        if (! Schema::hasTable('materials')) {
+        if (!Schema::hasTable('materials')) {
             return redirect()
                 ->route('tutor.materials.index')
                 ->with('alert', __('Tabel materi belum siap. Jalankan migrasi database terlebih dahulu.'));
         }
 
-        if (! Schema::hasTable('packages')) {
+        if (!Schema::hasTable('packages')) {
             return redirect()
                 ->route('tutor.materials.index')
                 ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
@@ -135,13 +141,13 @@ class MaterialController extends BaseTutorController
 
     public function update(Request $request, Material $material): RedirectResponse
     {
-        if (! Schema::hasTable('materials')) {
+        if (!Schema::hasTable('materials')) {
             return redirect()
                 ->route('tutor.materials.index')
                 ->with('alert', __('Tabel materi belum siap. Jalankan migrasi database terlebih dahulu.'));
         }
 
-        if (! Schema::hasTable('packages')) {
+        if (!Schema::hasTable('packages')) {
             return redirect()
                 ->route('tutor.materials.index')
                 ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
@@ -169,8 +175,8 @@ class MaterialController extends BaseTutorController
             'summary' => $data['summary'],
         ];
 
-        if (! $material->resource_path || $request->hasFile('attachment')) {
-            if ($material->resource_path && ! str_starts_with($material->resource_path, 'http')) {
+        if (!$material->resource_path || $request->hasFile('attachment')) {
+            if ($material->resource_path && !str_starts_with($material->resource_path, 'http')) {
                 Storage::disk('public')->delete($material->resource_path);
             }
 
@@ -213,10 +219,10 @@ class MaterialController extends BaseTutorController
     private function syncObjectives(Material $material, array $objectives): void
     {
         $payloads = collect($objectives)
-            ->map(fn ($value) => trim((string) $value))
+            ->map(fn($value) => trim((string) $value))
             ->filter()
             ->values()
-            ->map(fn ($description, $index) => [
+            ->map(fn($description, $index) => [
                 'description' => $description,
                 'position' => $index + 1,
             ]);
@@ -225,7 +231,7 @@ class MaterialController extends BaseTutorController
             return;
         }
 
-        $payloads->each(fn ($attributes) => $material->objectives()->create($attributes));
+        $payloads->each(fn($attributes) => $material->objectives()->create($attributes));
     }
 
     private function syncChapters(Material $material, array $chapters): void
@@ -237,7 +243,7 @@ class MaterialController extends BaseTutorController
                     'description' => trim((string) ($chapter['description'] ?? '')),
                 ];
             })
-            ->filter(fn ($chapter) => $chapter['title'] !== '' || $chapter['description'] !== '')
+            ->filter(fn($chapter) => $chapter['title'] !== '' || $chapter['description'] !== '')
             ->values()
             ->map(function ($chapter, $index) {
                 return [
@@ -253,14 +259,14 @@ class MaterialController extends BaseTutorController
             return;
         }
 
-        $payloads->each(fn ($attributes) => $material->chapters()->create($attributes));
+        $payloads->each(fn($attributes) => $material->chapters()->create($attributes));
     }
 
     private function serveAttachment(Material $material, bool $download)
     {
         $path = $material->resource_path;
 
-        if (! $path) {
+        if (!$path) {
             return redirect()->route('tutor.materials.index')
                 ->with('alert', __('Tidak ada lampiran untuk materi ini.'));
         }
@@ -269,7 +275,7 @@ class MaterialController extends BaseTutorController
             return redirect()->away($path);
         }
 
-        if (! Storage::disk('public')->exists($path)) {
+        if (!Storage::disk('public')->exists($path)) {
             return redirect()->route('tutor.materials.index')
                 ->with('alert', __('Berkas lampiran tidak ditemukan di penyimpanan.'));
         }

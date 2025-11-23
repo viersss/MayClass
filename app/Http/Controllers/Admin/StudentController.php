@@ -8,6 +8,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -15,7 +16,7 @@ class StudentController extends BaseAdminController
 {
     public function index(): View
     {
-        if (! Schema::hasTable('users')) {
+        if (!Schema::hasTable('users')) {
             $students = collect();
         } else {
             $hasEnrollments = Schema::hasTable('enrollments');
@@ -23,9 +24,11 @@ class StudentController extends BaseAdminController
             $query = User::query()->where('role', 'student')->orderBy('name');
 
             if ($hasEnrollments) {
-                $query->with(['enrollments' => function ($relation) {
-                    $relation->with('package')->orderByDesc('ends_at');
-                }]);
+                $query->with([
+                    'enrollments' => function ($relation) {
+                        $relation->with('package')->orderByDesc('ends_at');
+                    }
+                ]);
             }
 
             $students = $query
@@ -134,4 +137,31 @@ class StudentController extends BaseAdminController
             ->with('status', __('Kata sandi baru berhasil dibuat. Segera bagikan ke siswa melalui kanal resmi.'))
             ->with('generated_password', $newPassword);
     }
+
+    /**
+     * Bulk delete selected students.
+     */
+    public function bulkDelete(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'students' => ['required', 'array'],
+            'students.*' => ['exists:users,id'],
+        ]);
+
+        // Ensure only students are deleted
+        $studentIds = User::whereIn('id', $validated['students'])
+            ->where('role', 'student')
+            ->pluck('id')
+            ->toArray();
+
+        if (!empty($studentIds)) {
+            User::whereIn('id', $studentIds)->delete();
+        }
+
+        return redirect()
+            ->route('admin.students.index')
+            ->with('status', __('Siswa terpilih berhasil dihapus.'));
+    }
+
 }
+

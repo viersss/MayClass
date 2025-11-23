@@ -415,17 +415,95 @@
             <div class="chart-header">
                 <h3>Diagram Pendapatan Bulanan {{ now()->year }}</h3>
             </div>
-            @php $maxValue = max($monthlyRevenue->pluck('value')->all() ?: [1]); @endphp
-            <div class="chart-canvas">
-                @foreach ($monthlyRevenue as $entry)
-                    @php $height = $maxValue > 0 ? max(($entry['value'] / $maxValue) * 100, 5) : 5; @endphp
-                    <div class="chart-col" data-label="{{ $entry['label'] }}: {{ $entry['formatted_short'] ?? $entry['value'] }}">
-                        <div class="chart-bar" style="height: {{ $height }}%;"></div>
-                        <span class="chart-label">{{ $entry['label'] }}</span>
-                    </div>
-                @endforeach
-            </div>
+            <div id="financeRevenueChart" style="min-height: 350px;"></div>
         </div>
+
+        @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const financeData = @json($monthlyRevenue);
+                const labels = financeData.map(item => item.label);
+                const values = financeData.map(item => item.value);
+
+                const options = {
+                    series: [{
+                        name: 'Pendapatan',
+                        data: values
+                    }],
+                    chart: {
+                        type: 'bar',
+                        height: 350,
+                        fontFamily: 'inherit',
+                        toolbar: { show: false },
+                        animations: { enabled: true }
+                    },
+                    colors: ['#0f766e'],
+                    plotOptions: {
+                        bar: {
+                            borderRadius: 4,
+                            columnWidth: '50%',
+                            dataLabels: { position: 'top' } // top, center, bottom
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false,
+                        formatter: function (val) {
+                            if (val === 0) return "";
+                            if (val >= 1000000) return (val / 1000000).toFixed(1) + "Jt";
+                            return val;
+                        },
+                        offsetY: -20,
+                        style: { fontSize: '12px', colors: ["#304758"] }
+                    },
+                    xaxis: {
+                        categories: labels,
+                        position: 'bottom',
+                        axisBorder: { show: false },
+                        axisTicks: { show: false },
+                        crosshairs: {
+                            fill: {
+                                type: 'gradient',
+                                gradient: {
+                                    colorFrom: '#D8E3F0',
+                                    colorTo: '#BED1E6',
+                                    stops: [0, 100],
+                                    opacityFrom: 0.4,
+                                    opacityTo: 0.5,
+                                }
+                            }
+                        },
+                        tooltip: { enabled: true }
+                    },
+                    yaxis: {
+                        axisBorder: { show: false },
+                        axisTicks: { show: false },
+                        labels: {
+                            show: true,
+                            formatter: function (val) {
+                                if (val >= 1000000) return 'Rp ' + (val / 1000000).toFixed(1) + 'Jt';
+                                return 'Rp ' + val.toLocaleString('id-ID');
+                            }
+                        }
+                    },
+                    grid: {
+                        borderColor: '#f1f5f9',
+                        strokeDashArray: 4,
+                    },
+                    tooltip: {
+                        theme: 'light',
+                        y: {
+                            formatter: function (val) {
+                                return 'Rp ' + val.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                };
+
+                const chart = new ApexCharts(document.querySelector("#financeRevenueChart"), options);
+                chart.render();
+            });
+        </script>
+        @endpush
 
         {{-- 5. Verification Table --}}
         <div class="table-card">

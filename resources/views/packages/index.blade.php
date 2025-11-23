@@ -8,8 +8,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
         />
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
         <style>
             :root {
                 /* Palette */
@@ -314,9 +314,60 @@
                 .page-hero h1 { font-size: 2rem; }
                 .grid { grid-template-columns: 1fr; }
             }
+
+            /* --- Responsive Navbar --- */
+            .hamburger-btn {
+                display: none;
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 8px;
+                color: var(--primary);
+                border-radius: 8px;
+            }
+
+            .mobile-nav-expanded {
+                position: absolute;
+                top: 100%;
+                left: 16px;
+                right: 16px;
+                margin-top: 12px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px) saturate(180%);
+                -webkit-backdrop-filter: blur(20px) saturate(180%);
+                border-radius: 24px;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                padding: 20px;
+                z-index: 1000;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .mobile-nav-link {
+                display: block;
+                padding: 12px 16px;
+                border-radius: 12px;
+                color: var(--text-main);
+                font-weight: 600;
+                text-align: center;
+                transition: all 0.2s;
+            }
+
+            .mobile-nav-link:hover {
+                background: var(--primary-light);
+                color: var(--primary);
+            }
+
+            @media (max-width: 768px) {
+                .nav-actions { display: none !important; }
+                .hamburger-btn { display: flex !important; }
+                .brand img { height: 50px; }
+            }
         </style>
     </head>
-    <body>
+    <body x-data="{ mobileMenuOpen: false }">
         @php($profileLink = $profileLink ?? null)
         @php($profileAvatar = $profileAvatar ?? asset('images/avatar-placeholder.svg'))
         @php($studentHasActivePackage = $studentHasActivePackage ?? false)
@@ -344,6 +395,36 @@
                         <a href="{{ route('register') }}" class="btn btn-primary">Daftar</a>
                     </div>
                 @endauth
+
+                <!-- Hamburger Button -->
+                <button class="hamburger-btn" @click="mobileMenuOpen = !mobileMenuOpen">
+                    <svg x-show="!mobileMenuOpen" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="8" x2="20" y2="8"></line><line x1="4" y1="16" x2="20" y2="16"></line></svg>
+                    <svg x-show="mobileMenuOpen" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+
+                <!-- Mobile Dropdown -->
+                <div class="mobile-nav-expanded" x-show="mobileMenuOpen" 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 -translate-y-2"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 -translate-y-2"
+                     style="display: none;">
+                    
+                    <a href="/" class="mobile-nav-link">Beranda</a>
+                    
+                    @auth
+                        <a href="{{ $profileLink ?? route('student.profile') }}" class="mobile-nav-link">Profil Saya</a>
+                        <form method="post" action="{{ route('logout') }}" style="margin:0; width: 100%;">
+                            @csrf
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Keluar</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="mobile-nav-link">Masuk</a>
+                        <a href="{{ route('register') }}" class="btn btn-primary" style="width: 100%;">Daftar Sekarang</a>
+                    @endauth
+                </div>
             </nav>
         </header>
 

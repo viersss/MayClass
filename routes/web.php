@@ -28,6 +28,7 @@ use App\Http\Controllers\Tutor\ScheduleTemplateController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Http\Request;
 use App\Models\Package;
 use App\Support\PackagePresenter;
 use App\Support\ProfileAvatar;
@@ -42,7 +43,7 @@ Route::get('/', function () {
         $query = Package::query()->withQuotaUsage()->orderBy('level')->orderBy('price');
 
         if (Schema::hasTable('package_features')) {
-            $query->with(['cardFeatures' => fn ($features) => $features->orderBy('position')]);
+            $query->with(['cardFeatures' => fn($features) => $features->orderBy('position')]);
         }
 
         $packages = $query->get();
@@ -75,7 +76,7 @@ Route::middleware('guest')->group(function () {
     Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
     Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-    
+
 });
 
 Route::middleware('auth')->group(function () {
@@ -140,6 +141,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/account/password', [AdminAccountController::class, 'updatePassword'])->name('account.password');
 
     Route::get('/students', [AdminStudentController::class, 'index'])->name('students.index');
+    Route::post('/students/bulk-delete', [AdminStudentController::class, 'bulkDelete'])->name('students.bulk-delete');
     Route::get('/students/{student}', [AdminStudentController::class, 'show'])->name('students.show');
     Route::post('/students/{student}/reset-password', [AdminStudentController::class, 'resetPassword'])->name('students.reset-password');
 

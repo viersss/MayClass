@@ -22,6 +22,9 @@ class PackageController extends BaseAdminController
 
         return $this->render('admin.packages.index', [
             'packages' => $packages,
+            'stages' => $this->stageOptions(),
+            'subjectsByLevel' => $this->getSubjectsByLevel(),
+            'tutors' => User::where('role', 'tutor')->where('is_active', true)->orderBy('name')->get(),
         ]);
     }
 
@@ -106,7 +109,7 @@ class PackageController extends BaseAdminController
                     ->route('admin.packages.index')
                     ->with('error', 'Gagal menghapus: Paket ini sudah memiliki riwayat Pesanan (Orders) atau Siswa aktif.');
             }
-            
+
             throw $exception;
         }
 
@@ -162,7 +165,7 @@ class PackageController extends BaseAdminController
     {
         $definitions = config('mayclass.package_stages');
 
-        if (! is_array($definitions) || empty($definitions)) {
+        if (!is_array($definitions) || empty($definitions)) {
             $definitions = [
                 'SD' => ['label' => 'Sekolah Dasar (SD)'],
                 'SMP' => ['label' => 'Sekolah Menengah Pertama (SMP)'],
@@ -185,7 +188,7 @@ class PackageController extends BaseAdminController
 
     private function getSubjectsByLevel(): array
     {
-        if (! Schema::hasTable('subjects')) {
+        if (!Schema::hasTable('subjects')) {
             return [
                 'SD' => collect(),
                 'SMP' => collect(),

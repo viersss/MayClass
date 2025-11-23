@@ -35,10 +35,16 @@ class QuizController extends BaseTutorController
                 ->get()
             : collect();
 
+        // Add packages for modal form
+        $packages = Schema::hasTable('packages')
+            ? Package::orderBy('level')->orderBy('price')->get()
+            : collect();
+
         return $this->render('tutor.quizzes.index', [
             'quizzes' => $quizzes,
             'search' => $search,
             'tableReady' => $tableReady,
+            'packages' => $packages,
         ]);
     }
 
@@ -55,24 +61,24 @@ class QuizController extends BaseTutorController
 
     public function store(Request $request): RedirectResponse
     {
-        if (! Schema::hasTable('quizzes')) {
+        if (!Schema::hasTable('quizzes')) {
             return redirect()
                 ->route('tutor.quizzes.index')
                 ->with('alert', __('Tabel quiz belum siap. Jalankan migrasi database terlebih dahulu.'));
         }
 
-        if (! Schema::hasTable('packages')) {
+        if (!Schema::hasTable('packages')) {
             return redirect()
                 ->route('tutor.quizzes.index')
                 ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
         }
 
-        if (! Schema::hasColumn('quizzes', 'package_id')) {
+        if (!Schema::hasColumn('quizzes', 'package_id')) {
             return redirect()
                 ->route('tutor.quizzes.index')
                 ->with('alert', __('Kolom relasi paket untuk quiz belum tersedia. Jalankan migrasi database terlebih dahulu.'));
         }
-        
+
         $data = $request->validate([
             'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
@@ -134,13 +140,13 @@ class QuizController extends BaseTutorController
 
     public function update(Request $request, Quiz $quiz): RedirectResponse
     {
-        if (! Schema::hasTable('quizzes')) {
+        if (!Schema::hasTable('quizzes')) {
             return redirect()
                 ->route('tutor.quizzes.index')
                 ->with('alert', __('Tabel quiz belum siap. Jalankan migrasi database terlebih dahulu.'));
         }
 
-        if (! Schema::hasTable('packages')) {
+        if (!Schema::hasTable('packages')) {
             return redirect()
                 ->route('tutor.quizzes.index')
                 ->with('alert', __('Tabel paket belum siap. Pastikan migrasi paket sudah dijalankan.'));
@@ -195,10 +201,10 @@ class QuizController extends BaseTutorController
     private function syncLevels(Quiz $quiz, array $levels): void
     {
         $payloads = collect($levels)
-            ->map(fn ($value) => trim((string) $value))
+            ->map(fn($value) => trim((string) $value))
             ->filter()
             ->values()
-            ->map(fn ($label, $index) => [
+            ->map(fn($label, $index) => [
                 'label' => $label,
                 'position' => $index + 1,
             ]);
@@ -207,16 +213,16 @@ class QuizController extends BaseTutorController
             return;
         }
 
-        $payloads->each(fn ($attributes) => $quiz->levels()->create($attributes));
+        $payloads->each(fn($attributes) => $quiz->levels()->create($attributes));
     }
 
     private function syncTakeaways(Quiz $quiz, array $takeaways): void
     {
         $payloads = collect($takeaways)
-            ->map(fn ($value) => trim((string) $value))
+            ->map(fn($value) => trim((string) $value))
             ->filter()
             ->values()
-            ->map(fn ($description, $index) => [
+            ->map(fn($description, $index) => [
                 'description' => $description,
                 'position' => $index + 1,
             ]);
@@ -225,6 +231,6 @@ class QuizController extends BaseTutorController
             return;
         }
 
-        $payloads->each(fn ($attributes) => $quiz->takeaways()->create($attributes));
+        $payloads->each(fn($attributes) => $quiz->takeaways()->create($attributes));
     }
 }

@@ -182,7 +182,8 @@
 
         .tentor-table {
             width: 100%;
-            border-collapse: separate; /* Penting untuk border-radius header */
+            border-collapse: separate;
+            /* Penting untuk border-radius header */
             border-spacing: 0;
             font-size: 0.92rem;
             min-width: 1000px;
@@ -265,8 +266,14 @@
             gap: 2px;
             font-size: 0.85rem;
         }
-        .contact-info span { color: var(--text-main); }
-        .contact-info small { color: var(--text-muted); }
+
+        .contact-info span {
+            color: var(--text-main);
+        }
+
+        .contact-info small {
+            color: var(--text-muted);
+        }
 
         .spec-badge {
             display: inline-block;
@@ -289,14 +296,22 @@
             text-transform: uppercase;
         }
 
-        .status-active { background: #dcfce7; color: #15803d; }
-        .status-inactive { background: #fee2e2; color: #b91c1c; }
+        .status-active {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
 
         /* --- Action Buttons (Text Based & Aligned) --- */
         .action-group {
             display: flex;
             gap: 8px;
-            justify-content: flex-end; /* Pastikan tombol menempel ke kanan */
+            justify-content: flex-end;
+            /* Pastikan tombol menempel ke kanan */
             align-items: center;
         }
 
@@ -315,10 +330,11 @@
 
         /* Tombol Edit */
         .btn-edit {
-            background: #f0f9ff; 
+            background: #f0f9ff;
             color: #0369a1;
             border-color: #bae6fd;
         }
+
         .btn-edit:hover {
             background: #e0f2fe;
             color: #0284c7;
@@ -331,6 +347,7 @@
             color: #b91c1c;
             border-color: #fecaca;
         }
+
         .btn-delete:hover {
             background: #fee2e2;
             color: #dc2626;
@@ -381,14 +398,17 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+
             .btn-add {
                 width: 100%;
                 justify-content: center;
             }
+
             .filter-bar {
                 flex-direction: column;
                 align-items: stretch;
             }
+
             .search-box {
                 max-width: 100%;
             }
@@ -397,7 +417,7 @@
 @endpush
 
 @section('content')
-    <div class="page-container">
+    <div class="page-container" x-data="{ showModal: {{ $errors->any() ? 'true' : 'false' }} }">
 
         {{-- 1. HEADER CARD --}}
         <div class="header-card">
@@ -405,10 +425,12 @@
                 <h1>Manajemen Tentor</h1>
                 <p>Kelola profil, spesialisasi, dan status aktif pengajar di MayClass.</p>
             </div>
-            <a href="{{ route('admin.tentors.create') }}" class="btn-add">
-                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <button @click="showModal = true" class="btn-add">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
                 Tambah Tentor
-            </a>
+            </button>
         </div>
 
         {{-- 2. STATS --}}
@@ -431,7 +453,10 @@
         <div class="filter-bar">
             <form method="GET" action="{{ route('admin.tentors.index') }}" class="search-box">
                 <span class="search-icon">
-                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
                 </span>
                 <input type="text" name="q" value="{{ $filters['query'] }}" placeholder="Cari nama atau email tentor...">
                 <input type="hidden" name="status" value="{{ $filters['status'] }}">
@@ -511,7 +536,9 @@
                                         <a href="{{ route('admin.tentors.edit', $tentor['id']) }}" class="btn-action btn-edit">
                                             Edit
                                         </a>
-                                        <form method="POST" action="{{ route('admin.tentors.destroy', $tentor['id']) }}" onsubmit="return confirm('Hapus tentor ini secara permanen?');" style="display: inline-block; margin: 0;">
+                                        <form method="POST" action="{{ route('admin.tentors.destroy', $tentor['id']) }}"
+                                            onsubmit="return confirm('Hapus tentor ini secara permanen?');"
+                                            style="display: inline-block; margin: 0;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn-action btn-delete">
@@ -532,6 +559,27 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        {{-- MODAL ADD TENTOR --}}
+        <div class="modal-backdrop" :class="{ 'show': showModal }" x-show="showModal" x-transition.opacity x-cloak>
+            <div class="modal-content" @click.away="showModal = false">
+                <div class="modal-header">
+                    <h3 class="modal-title">Tambah Tentor Baru</h3>
+                    <button type="button" class="modal-close" @click="showModal = false">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ route('admin.tentors.store') }}" enctype="multipart/form-data">
+                        @csrf
+                        @include('admin.tentors.partials.form-fields', ['mode' => 'create'])
+                    </form>
+                </div>
             </div>
         </div>
 
