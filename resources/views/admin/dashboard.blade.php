@@ -483,7 +483,7 @@
         {{-- Chart --}}
         <div class="section-card">
             <div class="card-title">
-                <h3>Diagram Pendapatan</h3>
+                <h3>Grafik Pendapatan</h3>
                 <span>{{ now()->year }}</span>
             </div>
             <div id="revenueChart" style="min-height: 300px;"></div>

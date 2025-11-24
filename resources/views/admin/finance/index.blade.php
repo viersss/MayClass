@@ -411,9 +411,12 @@
         </div>
 
         {{-- 4. Chart --}}
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3>Diagram Pendapatan Bulanan {{ now()->year }}</h3>
+        <div class="chart-card" style="padding: 28px; border-radius: 16px;">
+            <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin: 0;">Grafik Pendapatan</h3>
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">{{ now()->year }}</span>
+                </div>
             </div>
             <div id="financeRevenueChart" style="min-height: 350px;"></div>
         </div>
@@ -431,63 +434,43 @@
                         data: values
                     }],
                     chart: {
-                        type: 'bar',
+                        type: 'area',
                         height: 350,
                         fontFamily: 'inherit',
                         toolbar: { show: false },
-                        animations: { enabled: true }
+                        animations: { enabled: true, easing: 'easeinout', speed: 800 }
                     },
                     colors: ['#0f766e'],
-                    plotOptions: {
-                        bar: {
-                            borderRadius: 4,
-                            columnWidth: '50%',
-                            dataLabels: { position: 'top' } // top, center, bottom
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shadeIntensity: 1,
+                            opacityFrom: 0.7,
+                            opacityTo: 0.1,
+                            stops: [0, 90, 100]
                         }
                     },
-                    dataLabels: {
-                        enabled: false,
-                        formatter: function (val) {
-                            if (val === 0) return "";
-                            if (val >= 1000000) return (val / 1000000).toFixed(1) + "Jt";
-                            return val;
-                        },
-                        offsetY: -20,
-                        style: { fontSize: '12px', colors: ["#304758"] }
-                    },
+                    dataLabels: { enabled: false },
+                    stroke: { curve: 'smooth', width: 3 },
                     xaxis: {
                         categories: labels,
-                        position: 'bottom',
                         axisBorder: { show: false },
                         axisTicks: { show: false },
-                        crosshairs: {
-                            fill: {
-                                type: 'gradient',
-                                gradient: {
-                                    colorFrom: '#D8E3F0',
-                                    colorTo: '#BED1E6',
-                                    stops: [0, 100],
-                                    opacityFrom: 0.4,
-                                    opacityTo: 0.5,
-                                }
-                            }
-                        },
-                        tooltip: { enabled: true }
+                        labels: { style: { colors: '#64748b', fontSize: '12px' } }
                     },
                     yaxis: {
-                        axisBorder: { show: false },
-                        axisTicks: { show: false },
                         labels: {
-                            show: true,
-                            formatter: function (val) {
-                                if (val >= 1000000) return 'Rp ' + (val / 1000000).toFixed(1) + 'Jt';
-                                return 'Rp ' + val.toLocaleString('id-ID');
+                            style: { colors: '#64748b', fontSize: '12px' },
+                            formatter: (value) => {
+                                if (value >= 1000000) return 'Rp ' + (value / 1000000).toFixed(1) + 'Jt';
+                                return 'Rp ' + value.toLocaleString('id-ID');
                             }
                         }
                     },
                     grid: {
                         borderColor: '#f1f5f9',
                         strokeDashArray: 4,
+                        padding: { top: 0, right: 0, bottom: 0, left: 10 }
                     },
                     tooltip: {
                         theme: 'light',

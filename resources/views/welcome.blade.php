@@ -396,7 +396,7 @@
                 linear-gradient(to bottom,
                     rgba(0, 0, 0, 0.35),
                     rgba(0, 0, 0, 0.65)),
-                url('/images/stis_contoh.jpeg') center/cover no-repeat;
+                url('{{ isset($hero['hero_image']) ? asset('storage/' . $hero['hero_image']) : '/images/stis_contoh.jpeg' }}') center/cover no-repeat;
         }
 
         .hero-content {
@@ -1446,11 +1446,9 @@
         <div class="hero" id="beranda">
             <div class="hero-content" data-reveal data-reveal-delay="40">
                 <span class="badge">Bimbel MayClass</span>
-                <h1>Langkah Pasti Menuju Prestasi</h1>
+                <h1>{{ $hero['hero_title'] ?? 'Langkah Pasti Menuju Prestasi' }}</h1>
                 <p>
-                    Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel,
-                    dan
-                    penuh dukungan menuju Perguruan Tinggi impianmu.
+                    {{ $hero['hero_description'] ?? 'Bertemu dengan tentor terbaik MayClass dan rasakan perjalanan belajar yang terarah, fleksibel, dan penuh dukungan menuju Perguruan Tinggi impianmu.' }}
                 </p>
             </div>
         </div>
@@ -1467,89 +1465,63 @@
                 </p>
             </div>
             <div class="articles-container">
-                <a href="{{ route('packages.index') }}" class="featured-article-card" data-reveal>
-                    <div class="featured-article-image-wrapper">
-                        <img src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1200&q=80"
-                            alt="Artikel UTBK" />
-                        <div class="featured-article-overlay">
-                            <span class="badge"
-                                style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(4px); margin-bottom: 12px; align-self: flex-start;">Topik
-                                Hangat</span>
-                            <h3>Kenali 7 Subtes UTBK yang Harus Kamu Taklukkan Tahun Ini</h3>
-                            <p>
-                                Panduan lengkap memahami struktur TPS dan Literasi dengan strategi pengerjaan dan
-                                latihan intensif dari mentor MayClass untuk skor maksimal.
-                            </p>
-                            <span class="link-muted-modern">
-                                Baca Selengkapnya
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                </svg>
-                            </span>
+                @if($articles->count() > 0)
+                    @php $featured = $articles->first(); @endphp
+                    <a href="{{ $featured->link ?? '#' }}" class="featured-article-card" data-reveal>
+                        <div class="featured-article-image-wrapper">
+                            <img src="{{ $featured->image ? asset('storage/' . $featured->image) : 'https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1200&q=80' }}"
+                                alt="{{ $featured->title }}" />
+                            <div class="featured-article-overlay">
+                                <span class="badge"
+                                    style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(4px); margin-bottom: 12px; align-self: flex-start;">{{ $featured->category }}</span>
+                                <h3>{{ $featured->title }}</h3>
+                                <p>
+                                    {{ Str::limit($featured->content, 150) }}
+                                </p>
+                                <span class="link-muted-modern">
+                                    Baca Selengkapnya
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </span>
+                            </div>
                         </div>
+                    </a>
+
+                    <div class="standard-articles-list">
+                        @foreach($articles->skip(1) as $article)
+                            <a href="{{ $article->link ?? '#' }}" class="standard-article-card" data-reveal
+                                data-reveal-delay="{{ 150 * $loop->iteration }}">
+                                <div class="standard-article-image">
+                                    <img src="{{ $article->image ? asset('storage/' . $article->image) : 'https://images.unsplash.com/photo-1460518451285-97b6aa326961?auto=format&fit=crop&w=800&q=80' }}"
+                                        alt="{{ $article->title }}" />
+                                </div>
+                                <div class="standard-article-content">
+                                    <span
+                                        style="font-size: 0.85rem; color: var(--primary-main); font-weight: 600; margin-bottom: 8px; display: block;">{{ $article->category }}</span>
+                                    <h3>{{ $article->title }}</h3>
+                                    <p>
+                                        {{ Str::limit($article->content, 100) }}
+                                    </p>
+                                    <span class="link-muted-modern">
+                                        Selengkapnya
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg>
+                                    </span>
+                                </div>
+                            </a>
+                        @endforeach
                     </div>
-                </a>
-
-                <div class="standard-articles-list">
-                    <a href="{{ route('packages.index') }}" class="standard-article-card" data-reveal
-                        data-reveal-delay="150">
-                        <div class="standard-article-image">
-                            <img src="https://images.unsplash.com/photo-1460518451285-97b6aa326961?auto=format&fit=crop&w=800&q=80"
-                                alt="Artikel SKD" />
-                        </div>
-                        <div class="standard-article-content">
-                            <span
-                                style="font-size: 0.85rem; color: var(--primary-main); font-weight: 600; margin-bottom: 8px; display: block;">Tips
-                                & Trik</span>
-                            <h3>Strategi Jitu Lulus SKD ASN &amp; PPPK Bersama Mentor Ahli</h3>
-                            <p>
-                                Kisi-kisi terbaru, teknik manajemen waktu, dan pembahasan soal real untuk skor
-                                tinggi di
-                                seleksi CPNS.
-                            </p>
-                            <span class="link-muted-modern">
-                                Selengkapnya
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                </svg>
-                            </span>
-                        </div>
-                    </a>
-
-                    <a href="{{ route('packages.index') }}" class="standard-article-card" data-reveal
-                        data-reveal-delay="300">
-                        <div class="standard-article-image">
-                            <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80"
-                                alt="Artikel motivasi" />
-                        </div>
-                        <div class="standard-article-content">
-                            <span
-                                style="font-size: 0.85rem; color: var(--primary-main); font-weight: 600; margin-bottom: 8px; display: block;">Inspirasi
-                                Alumni</span>
-                            <h3>Cerita Alumni: Perjuangan Raih Kampus Impian dari Nol</h3>
-                            <p>
-                                Belajar dari kisah inspiratif siswa MayClass yang berhasil menembus PTN favorit
-                                berkat
-                                ketekunan dan program intensif.
-                            </p>
-                            <span class="link-muted-modern">
-                                Selengkapnya
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
-                                </svg>
-                            </span>
-                        </div>
-                    </a>
-                </div>
+                @else
+                    <p class="text-center" style="grid-column: 1 / -1;">Belum ada artikel terbaru.</p>
+                @endif
             </div>
         </div>
     </section>
@@ -1642,30 +1614,14 @@
                 </p>
             </div>
             <div class="highlight-grid">
-                <div class="highlight-card" data-reveal>
-                    <strong>Super Teacher</strong>
-                    <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
-                        Mentor pilihan dengan pengalaman mengajar panjang dan capaian prestisius.
-                    </p>
-                </div>
-                <div class="highlight-card" data-reveal data-reveal-delay="120">
-                    <strong>Materi Lengkap</strong>
-                    <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
-                        Silabus terbaru, bank soal adaptif, dan rekaman kelas siap diputar kapan pun.
-                    </p>
-                </div>
-                <div class="highlight-card" data-reveal data-reveal-delay="200">
-                    <strong>Analisis Mendalam</strong>
-                    <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
-                        Pantau progres lewat laporan mingguan dan rekomendasi belajar personal.
-                    </p>
-                </div>
-                <div class="highlight-card" data-reveal data-reveal-delay="280">
-                    <strong>Komunitas Aktif</strong>
-                    <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
-                        Saling dukung bersama teman sefrekuensi dan dapatkan motivasi harian.
-                    </p>
-                </div>
+                @foreach($advantages as $advantage)
+                    <div class="highlight-card" data-reveal data-reveal-delay="{{ 80 * $loop->iteration }}">
+                        <strong>{{ $advantage->title }}</strong>
+                        <p style="margin: 0; color: rgba(255, 255, 255, 0.82);">
+                            {{ $advantage->description }}
+                        </p>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -1681,80 +1637,30 @@
                 </p>
             </div>
             <div class="testimonials-grid">
-                <article class="testimonial-card" data-reveal>
-                    <div class="testimonial-rating" aria-label="Rating bintang lima">
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                    </div>
-                    <p class="testimonial-quote">
-                        “Mentor MayClass ramah banget dan jelas saat jelasin materi. Setiap sesi dibarengin
-                        <span>roadmap belajar</span>
-                        jadi aku makin percaya diri menembus kampus impian.”
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">
-                            <img src="{{ asset('images/jumbo.jpg') }}" alt="Triangga" />
+                @foreach($testimonials as $testimonial)
+                    <article class="testimonial-card" data-reveal data-reveal-delay="{{ 80 * $loop->iteration }}">
+                        <div class="testimonial-rating" aria-label="Rating bintang lima">
+                            @for($i = 0; $i < $testimonial->rating; $i++)
+                                <span aria-hidden="true">★</span>
+                            @endfor
                         </div>
-                        <div class="testimonial-meta">
-                            <strong>Triangga</strong>
-                            <span>Skor UTBK 740</span>
-                            <span class="testimonial-badge">Angkatan 2024</span>
+                        <p class="testimonial-quote">
+                            “{{ $testimonial->content }}”
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">
+                                <img src="{{ $testimonial->avatar ? asset('storage/' . $testimonial->avatar) : asset('images/avatar-placeholder.svg') }}" alt="{{ $testimonial->name }}" />
+                            </div>
+                            <div class="testimonial-meta">
+                                <strong>{{ $testimonial->name }}</strong>
+                                <span>{{ $testimonial->role }}</span>
+                                @if($testimonial->badge)
+                                    <span class="testimonial-badge">{{ $testimonial->badge }}</span>
+                                @endif
+                            </div>
                         </div>
-                    </div>
-                </article>
-                <article class="testimonial-card" data-reveal data-reveal-delay="140">
-                    <div class="testimonial-rating" aria-label="Rating bintang lima">
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                    </div>
-                    <p class="testimonial-quote">
-                        “Latihan soal dan pembahasan detailnya bantu aku ngejar target CPNS. Dashboard progres bikin
-                        aku
-                        sadar bagian
-                        mana yang harus diperkuat sebelum tes.”
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">
-                            <img src="{{ asset('images/pinguin.jpg') }}" alt="Xavier" />
-                        </div>
-                        <div class="testimonial-meta">
-                            <strong>Xavier</strong>
-                            <span>Skor SKD 480</span>
-                            <span class="testimonial-badge">Lulus CPNS 2023</span>
-                        </div>
-                    </div>
-                </article>
-                <article class="testimonial-card" data-reveal data-reveal-delay="220">
-                    <div class="testimonial-rating" aria-label="Rating bintang lima">
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                        <span aria-hidden="true">★</span>
-                    </div>
-                    <p class="testimonial-quote">
-                        “MayClass bantu aku belajar lebih terarah dan konsisten. Mentor siap review tugas kapan aja
-                        dan
-                        ada sesi konsultasi
-                        karier yang bikin aku mantap pilih jurusan.”
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">
-                            <img src="{{ asset('images/lisa.jpg') }}" alt="Lisa" />
-                        </div>
-                        <div class="testimonial-meta">
-                            <strong>Lisa</strong>
-                            <span>Fasilkom UI</span>
-                            <span class="testimonial-badge">Awardee Beasiswa</span>
-                        </div>
-                    </div>
-                </article>
+                    </article>
+                @endforeach
             </div>
         </div>
     </section>
@@ -1770,54 +1676,31 @@
                 </p>
             </div>
             <div class="mentor-grid">
-                <article class="mentor-profile" data-reveal>
-                    <div class="mentor-avatar">
-                        <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80"
-                            alt="Kak Henny" />
-                    </div>
-                    <div class="mentor-info">
-                        <strong>Kak Henny</strong>
-                        <span class="mentor-role">Mentor Bahasa Indonesia &amp; Inggris</span>
-                    </div>
-                    <p class="mentor-saying">“Bangun mindset juara lewat storytelling dan latihan speaking yang
-                        konsisten.”</p>
-                    <div class="mentor-meta">
-                        <span>8+ tahun mengajar</span>
-                        <span>700+ siswa dibimbing</span>
-                    </div>
-                </article>
-                <article class="mentor-profile" data-reveal data-reveal-delay="160">
-                    <div class="mentor-avatar">
-                        <img src="https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=600&q=80"
-                            alt="Kak Husein" />
-                    </div>
-                    <div class="mentor-info">
-                        <strong>Kak Husein</strong>
-                    </div>
-                    <p class="mentor-saying">“Tidak ada perjalanan sulit jika kita pecah jadi milestone kecil yang
-                        terukur.”</p>
-                    <div class="mentor-meta">
-                        <span>Certified Math Trainer</span>
-                        <span>Rata-rata nilai siswa 87</span>
-                    </div>
-                </article>
-                <article class="mentor-profile" data-reveal data-reveal-delay="240">
-                    <div class="mentor-avatar">
-                        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80"
-                            alt="Kak Pal" />
-                    </div>
-                    <div class="mentor-info">
-                        <strong>Kak Pal</strong>
-                        <span class="mentor-role">Mentor SKD &amp; TPA</span>
-                    </div>
-                    <p class="mentor-saying">“Strategi tepat, simulasi rutin, dan evaluasi detail bikin kamu siap
-                        setiap
-                        ujian.”</p>
-                    <div class="mentor-meta">
-                        <span>Coach CPNS Favorite</span>
-                        <span>95% siswa lulus seleksi</span>
-                    </div>
-                </article>
+                @foreach($mentors as $mentor)
+                    <article class="mentor-profile" data-reveal data-reveal-delay="{{ 80 * $loop->iteration }}">
+                        <div class="mentor-avatar">
+                            <img src="{{ $mentor->avatar ? asset('storage/' . $mentor->avatar) : asset('images/avatar-placeholder.svg') }}"
+                                alt="{{ $mentor->name }}" />
+                        </div>
+                        <div class="mentor-info">
+                            <strong>{{ $mentor->name }}</strong>
+                            @if($mentor->role)
+                                <span class="mentor-role">{{ $mentor->role }}</span>
+                            @endif
+                        </div>
+                        @if($mentor->quote)
+                            <p class="mentor-saying">“{{ $mentor->quote }}”</p>
+                        @endif
+                        <div class="mentor-meta">
+                            @if($mentor->experience)
+                                <span>{{ $mentor->experience }}</span>
+                            @endif
+                            @if($mentor->students_count)
+                                <span>{{ $mentor->students_count }}</span>
+                            @endif
+                        </div>
+                    </article>
+                @endforeach
             </div>
         </div>
     </section>
@@ -1829,50 +1712,14 @@
             </div>
 
             <div class="faq-grid" data-reveal>
-                <details>
-                    <summary>Apakah MayClass menyediakan kelas online dan tatap muka?</summary>
-                    <p>
-                        Ya. Kamu bisa memilih mode belajar sesuai kebutuhan. Tim kami bantu atur jadwal dan mentor
-                        terbaik
-                        untukmu.
-                    </p>
-                </details>
-                <details>
-                    <summary>Bagaimana cara mengakses materi dan rekaman kelas?</summary>
-                    <p>
-                        Siswa dapat login ke dashboard MayClass untuk melihat materi, rekaman kelas, dan rangkuman
-                        progres
-                        belajar.
-                    </p>
-                </details>
-                <details>
-                    <summary>Apakah bisa reschedule jika ada jadwal mendadak?</summary>
-                    <p>
-                        Bisa. Hubungi admin maksimal 24 jam sebelum sesi dimulai dan kami akan bantu atur ulang
-                        jadwalmu.
-                    </p>
-                </details>
-                <details>
-                    <summary>Bagaimana sistem evaluasi progres siswa?</summary>
-                    <p>
-                        Kami menyediakan laporan mingguan, evaluasi tryout, dan coaching pribadi agar target belajar
-                        tercapai.
-                    </p>
-                </details>
-                <details>
-                    <summary>Apakah ada grup diskusi komunitas?</summary>
-                    <p>
-                        Ada. Semua siswa akan bergabung di komunitas eksklusif untuk diskusi, motivasi, dan info
-                        terbaru.
-                    </p>
-                </details>
-                <details>
-                    <summary>Metode pembayaran apa yang tersedia?</summary>
-                    <p>
-                        Pembayaran dapat melalui transfer bank, e-wallet, dan virtual account dengan konfirmasi
-                        otomatis.
-                    </p>
-                </details>
+                @foreach($faqs as $faq)
+                    <details>
+                        <summary>{{ $faq->question }}</summary>
+                        <p>
+                            {{ $faq->answer }}
+                        </p>
+                    </details>
+                @endforeach
             </div>
         </div>
     </section>
@@ -2112,8 +1959,8 @@
                     const target = Math.min(Math.max(desired, 0), maxScroll);
 
                     window.scrollTo({ top: target, behavior: 'smooth' });
+                });
             });
-     });
         });
     </script>
 

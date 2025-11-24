@@ -52,11 +52,25 @@ Route::get('/', function () {
 
     $user = Auth::user();
 
+    // Fetch Dynamic Content
+    $hero = \App\Models\LandingContent::where('key', 'like', 'hero_%')->pluck('value', 'key');
+    $articles = \App\Models\Article::latest()->take(3)->get();
+    $advantages = \App\Models\Advantage::all();
+    $testimonials = \App\Models\Testimonial::all();
+    $mentors = \App\Models\LandingMentor::all();
+    $faqs = \App\Models\Faq::all();
+
     return view('welcome', [
         'landingPackages' => $catalog,
         'stageDefinitions' => $stageDefinitions,
         'profileLink' => ProfileLinkResolver::forUser($user),
         'profileAvatar' => ProfileAvatar::forUser($user),
+        'hero' => $hero,
+        'articles' => $articles,
+        'advantages' => $advantages,
+        'testimonials' => $testimonials,
+        'mentors' => $mentors,
+        'faqs' => $faqs,
     ]);
 });
 
@@ -174,4 +188,28 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/schedule/{session}', [AdminScheduleSessionController::class, 'update'])->name('schedule.sessions.update');
     Route::post('/schedule/{session}/cancel', [AdminScheduleSessionController::class, 'cancel'])->name('schedule.sessions.cancel');
     Route::post('/schedule/{session}/restore', [AdminScheduleSessionController::class, 'restore'])->name('schedule.sessions.restore');
+
+    // Content Management
+    Route::get('/content', [App\Http\Controllers\Admin\ContentController::class, 'index'])->name('content.index');
+    Route::post('/content/hero', [App\Http\Controllers\Admin\ContentController::class, 'updateHero'])->name('content.hero.update');
+
+    Route::post('/content/articles', [App\Http\Controllers\Admin\ContentController::class, 'storeArticle'])->name('content.articles.store');
+    Route::put('/content/articles/{article}', [App\Http\Controllers\Admin\ContentController::class, 'updateArticle'])->name('content.articles.update');
+    Route::delete('/content/articles/{article}', [App\Http\Controllers\Admin\ContentController::class, 'destroyArticle'])->name('content.articles.destroy');
+
+    Route::post('/content/advantages', [App\Http\Controllers\Admin\ContentController::class, 'storeAdvantage'])->name('content.advantages.store');
+    Route::put('/content/advantages/{advantage}', [App\Http\Controllers\Admin\ContentController::class, 'updateAdvantage'])->name('content.advantages.update');
+    Route::delete('/content/advantages/{advantage}', [App\Http\Controllers\Admin\ContentController::class, 'destroyAdvantage'])->name('content.advantages.destroy');
+
+    Route::post('/content/testimonials', [App\Http\Controllers\Admin\ContentController::class, 'storeTestimonial'])->name('content.testimonials.store');
+    Route::put('/content/testimonials/{testimonial}', [App\Http\Controllers\Admin\ContentController::class, 'updateTestimonial'])->name('content.testimonials.update');
+    Route::delete('/content/testimonials/{testimonial}', [App\Http\Controllers\Admin\ContentController::class, 'destroyTestimonial'])->name('content.testimonials.destroy');
+
+    Route::post('/content/mentors', [App\Http\Controllers\Admin\ContentController::class, 'storeMentor'])->name('content.mentors.store');
+    Route::put('/content/mentors/{mentor}', [App\Http\Controllers\Admin\ContentController::class, 'updateMentor'])->name('content.mentors.update');
+    Route::delete('/content/mentors/{mentor}', [App\Http\Controllers\Admin\ContentController::class, 'destroyMentor'])->name('content.mentors.destroy');
+
+    Route::post('/content/faqs', [App\Http\Controllers\Admin\ContentController::class, 'storeFaq'])->name('content.faqs.store');
+    Route::put('/content/faqs/{faq}', [App\Http\Controllers\Admin\ContentController::class, 'updateFaq'])->name('content.faqs.update');
+    Route::delete('/content/faqs/{faq}', [App\Http\Controllers\Admin\ContentController::class, 'destroyFaq'])->name('content.faqs.destroy');
 });

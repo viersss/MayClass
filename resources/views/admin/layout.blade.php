@@ -9,6 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
+    {{-- Bootstrap 4 CSS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    {{-- Font Awesome --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --surface: #ffffff;
@@ -872,6 +877,17 @@
                 border-radius: 0;
             }
         }
+
+        /* Fix Profile Button Hover - No Blue Link Color */
+        .profile-summary:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+
+        .profile-summary:hover strong {
+            color: #fff !important;
+        }
     </style>
     @stack('styles')
 </head>
@@ -926,6 +942,7 @@
                     ['label' => 'Manajemen Paket', 'route' => 'admin.packages.index', 'patterns' => ['admin.packages.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3 7 12 3l9 4v10l-9 4-9-4z" /><path stroke-linecap="round" stroke-linejoin="round" d="m3 7 9 4 9-4" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 11v10" />'],
                     ['label' => 'Mata Pelajaran', 'route' => 'admin.subjects.index', 'patterns' => ['admin.subjects.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />'],
                     ['label' => 'Manajemen Keuangan', 'route' => 'admin.finance.index', 'patterns' => ['admin.finance.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M4 7h14a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9a2 2 0 0 1 2-2z" /><path stroke-linecap="round" stroke-linejoin="round" d="M18 11h3v4h-3a2 2 0 0 1 0-4z" />'],
+                    ['label' => 'Manajemen Konten', 'route' => 'admin.content.index', 'patterns' => ['admin.content.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />'],
                 ];
              @endphp
 
@@ -1008,8 +1025,14 @@
                             'route' => 'admin.finance.index',
                             'patterns' => ['admin.finance.*'],
                         ],
+                        [
+                            'label' => 'Manajemen Konten',
+                            'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>',
+                            'route' => 'admin.content.index',
+                            'patterns' => ['admin.content.*'],
+                        ],
                     ];
-                    $adminSummaryAvatar = \App\Support\ProfileAvatar::forUser($admin);
+                    $adminSummaryAvatar = \App\Support\ProfileAvatar::forUser(Auth::user());
                 @endphp
                 @foreach ($menuItems as $item)
                     @php
@@ -1031,7 +1054,7 @@
                 <a class="profile-summary" href="{{ route('admin.account.edit') }}" title="Kelola profil admin">
                     <img src="{{ $adminSummaryAvatar }}" alt="Foto admin" />
                     <div>
-                        <strong>{{ $admin?->name ?? 'Admin MayClass' }}</strong>
+                        <strong>{{ auth()->user()->name ?? 'Admin MayClass' }}</strong>
                     </div>
                 </a>
                 <form method="POST" action="{{ route('logout') }}" class="logout-btn">
@@ -1073,6 +1096,13 @@
             </main>
         </div>
     </div>
+
+    {{-- Bootstrap 4 JS & Dependencies --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+
     @stack('scripts')
 </body>
 
