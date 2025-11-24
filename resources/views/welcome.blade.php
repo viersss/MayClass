@@ -1782,7 +1782,7 @@
                         <a href="#faq">FAQ (Tanya Jawab)</a>
                         <a href="{{ route('login') }}">Masuk Dashboard</a>
                         <a href="{{ route('join') }}">Daftar Siswa Baru</a>
-                        <a href="https://wa.me/6281234567890" target="_blank">Hubungi Admin</a>
+                        <a href="https://wa.me/6283194085776" target="_blank">Hubungi Admin</a>
                     </div>
                 </div>
 
@@ -1795,7 +1795,7 @@
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
-                            <span>Jl. Pendidikan No. 123, Jakarta Selatan, DKI Jakarta 12430</span>
+                            <span>Jalan Kemayoran Gempol Galindra II No. 27, RT.4/RW.7, Kb. Kosong, Kec. Kemayoran, Jakarta Pusat – 10630</span>
                         </div>
                         <div class="contact-row">
                             <svg class="contact-icon" width="20" height="20" fill="none" stroke="currentColor"
@@ -1804,8 +1804,18 @@
                                     d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.12 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
                                 </path>
                             </svg>
-                            <span>+62 812-3456-7890</span>
+                            <span>0831-9408-5776</span>
                         </div>
+
+                        <div class="contact-row">
+                            <svg class="contact-icon" width="20" height="20" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 6v6l3 3"></path>
+                            </svg>
+                            <span>Jam respons: 08.00–21.00 WIB</span>
+                        </div>
+
                         <div class="contact-row">
                             <svg class="contact-icon" width="20" height="20" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
