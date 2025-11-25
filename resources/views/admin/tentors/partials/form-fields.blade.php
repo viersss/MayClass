@@ -92,7 +92,7 @@
                             @foreach($subjectsByLevel[$level] as $subject)
                                 <label class="checkbox-label">
                                     <input type="checkbox" name="subjects[]" value="{{ $subject->id }}" 
-                                        {{ in_array($subject->id, old('subjects', optional($tentor)->subjects->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}>
+                                        {{ in_array($subject->id, old('subjects', $tentor?->subjects?->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}>
                                     {{ $subject->name }}
                                 </label>
                             @endforeach
