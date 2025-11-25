@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Support\StudentAccess;
-use App\Support\SubjectPalette;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
@@ -26,7 +26,7 @@ class QuizController extends Controller
         $quizLevelsReady = Schema::hasTable('quiz_levels');
         $package = $this->currentPackage();
 
-        if (! $package || ! $quizzesReady) {
+        if (!$package || !$quizzesReady) {
             return view('student.quiz.index', [
                 'page' => 'quiz',
                 'title' => 'Koleksi Quiz',
@@ -44,19 +44,17 @@ class QuizController extends Controller
 
         $quizzes = Quiz::query()
             ->where('package_id', optional($package)->id)
-            ->with('subject')
-            ->when($quizLevelsReady, fn ($query) => $query->with(['levels' => fn ($levels) => $levels->orderBy('position')]))
-            ->orderBy('subject_id')
+            ->when($quizLevelsReady, fn($query) => $query->with(['levels' => fn($levels) => $levels->orderBy('position')]))
             ->orderBy('title')
             ->get();
 
         $collections = $quizzes
-            ->groupBy(fn($quiz) => $quiz->subject->name ?? 'Tanpa Mapel')
-            ->map(function ($items, $subject) use ($quizLink, $quizLevelsReady) {
+            ->groupBy(fn($quiz) => $quiz->class_level ?? 'Umum')
+            ->map(function ($items, $groupName) use ($quizLink, $quizLevelsReady) {
                 return [
-                    'label' => $subject,
-                    'accent' => SubjectPalette::accent($subject),
-                    'items' => $items->map(fn ($quiz) => [
+                    'label' => $groupName,
+                    'accent' => '#37b6ad', // Default accent
+                    'items' => $items->map(fn($quiz) => [
                         'slug' => $quiz->slug,
                         'title' => $quiz->title,
                         'summary' => $quiz->summary,
@@ -72,12 +70,12 @@ class QuizController extends Controller
         $levelSources = $quizzes->pluck('class_level');
 
         if ($quizLevelsReady) {
-            $levelSources = $levelSources->merge($quizzes->flatMap(fn ($quiz) => $quiz->levels->pluck('label')));
+            $levelSources = $levelSources->merge($quizzes->flatMap(fn($quiz) => $quiz->levels->pluck('label')));
         }
 
         $stats = [
             'total' => $quizzes->count(),
-            'total_questions' => $quizzes->sum(fn ($quiz) => (int) $quiz->question_count),
+            'total_questions' => $quizzes->sum(fn($quiz) => (int) $quiz->question_count),
             'levels' => $levelSources->filter()->unique()->values()->all(),
         ];
 
@@ -94,7 +92,7 @@ class QuizController extends Controller
 
     public function show(string $slug): View
     {
-        if (! Schema::hasTable('quizzes')) {
+        if (!Schema::hasTable('quizzes')) {
             abort(404);
         }
 
@@ -106,9 +104,8 @@ class QuizController extends Controller
         $quiz = Quiz::query()
             ->where('slug', $slug)
             ->where('package_id', optional($package)->id)
-            ->with('subject')
-            ->when($levelsReady, fn ($query) => $query->with('levels'))
-            ->when($takeawaysReady, fn ($query) => $query->with('takeaways'))
+            ->when($levelsReady, fn($query) => $query->with('levels'))
+            ->when($takeawaysReady, fn($query) => $query->with('takeaways'))
             ->firstOrFail();
 
         $platformLink = $quiz->link ?? $this->quizLink();
@@ -117,7 +114,7 @@ class QuizController extends Controller
             'page' => 'quiz',
             'title' => $quiz->title,
             'quiz' => [
-                'subject' => $quiz->subject->name ?? 'Tanpa Mapel',
+                'subject' => $quiz->class_level ?? 'Umum',
                 'level' => $quiz->class_level,
                 'title' => $quiz->title,
                 'summary' => $quiz->summary,
@@ -141,7 +138,7 @@ class QuizController extends Controller
     {
         $enrollment = StudentAccess::activeEnrollment(Auth::user());
 
-        if (! $enrollment || ! $enrollment->package) {
+        if (!$enrollment || !$enrollment->package) {
             if ($required) {
                 abort(403);
             }

@@ -1,198 +1,207 @@
 @extends('admin.layout')
 
-@section('title', 'Ubah Paket - MayClass')
-
-@push('styles')
-    <style>
-        .form-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 26px;
-            padding: 28px 32px;
-            border: 1px solid rgba(15, 23, 42, 0.06);
-            box-shadow: 0 24px 48px rgba(15, 23, 42, 0.08);
-            max-width: 780px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 22px;
-        }
-
-        .form-grid .full {
-            grid-column: 1 / -1;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            font-size: 0.92rem;
-            margin-bottom: 8px;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            border-radius: 14px;
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            padding: 12px 14px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            background: rgba(248, 250, 252, 0.9);
-        }
-
-        textarea {
-            min-height: 140px;
-            resize: vertical;
-        }
-
-        .form-actions {
-            margin-top: 28px;
-            display: flex;
-            gap: 16px;
-        }
-
-        .submit-btn {
-            padding: 12px 22px;
-            border-radius: 16px;
-            border: none;
-            background: linear-gradient(135deg, rgba(31, 209, 161, 0.85), rgba(84, 101, 255, 0.85));
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .cancel-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .error-message {
-            margin-top: 6px;
-            color: #dc2626;
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-@endpush
+@section('title', 'Edit Paket Belajar')
 
 @section('content')
-    <a href="{{ route('admin.packages.index') }}" class="cancel-link" style="margin-bottom: 22px;">Kembali ke daftar paket</a>
-
-    @php($stageOptions = $stages ?? [])
-
-    <form action="{{ route('admin.packages.update', $package) }}" method="POST" class="form-card">
-        @csrf
-        @method('PUT')
-        <h2 style="margin-top: 0; font-size: 1.6rem;">Ubah Paket Belajar</h2>
-        <p style="color: var(--text-muted); margin-top: 6px;">Perbarui detail paket untuk menjaga konsistensi informasi.</p>
-
-        <div class="form-grid">
-            <div>
-                <label for="slug">Slug</label>
-                <input type="text" id="slug" name="slug" value="{{ old('slug', $package->slug) }}" required />
-                @error('slug')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="header-content">
+                <h1>Edit Paket Belajar</h1>
+                <p>Perbarui informasi paket belajar MayClass.</p>
             </div>
-            <div>
-                <label for="level">Jenjang Pendidikan</label>
-                <select id="level" name="level" required style="width: 100%; border-radius: 14px; border: 1px solid rgba(15, 23, 42, 0.12); padding: 12px 14px; font-size: 0.95rem; background: rgba(248, 250, 252, 0.9);">
-                    <option value="" disabled {{ old('level', $package->level) ? '' : 'selected' }}>Pilih jenjang</option>
-                    @foreach ($stageOptions as $value => $label)
-                        <option value="{{ $value }}" {{ old('level', $package->level) === $value ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-                @error('level')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            <div>
-                <label for="grade_range">Rentang Kelas</label>
-                <input type="text" id="grade_range" name="grade_range" value="{{ old('grade_range', $package->grade_range) }}" placeholder="Contoh: Kelas 10 - 12 &amp; UTBK" required />
-                @error('grade_range')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            <div>
-                <label for="tag">Tag</label>
-                <input type="text" id="tag" name="tag" value="{{ old('tag', $package->tag) }}" />
-                @error('tag')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            <div>
-                <label for="price">Harga (numerik)</label>
-                <input type="number" id="price" name="price" value="{{ old('price', $package->price) }}" min="0" step="1000" required />
-                @error('price')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            <div>
-                <label for="max_students">Kuota Maksimum (opsional)</label>
-                <input
-                    type="number"
-                    id="max_students"
-                    name="max_students"
-                    value="{{ old('max_students', $package->max_students) }}"
-                    min="1"
-                    step="1"
-                    placeholder="Contoh: 25"
-                />
-                <p style="margin: 6px 0 0; color: var(--text-muted); font-size: 0.85rem;">Biarkan kosong jika kuota tidak dibatasi.</p>
-                @error('max_students')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            <div>
-                <label for="card_price_label">Label Harga Kartu</label>
-                <input type="text" id="card_price_label" name="card_price_label" value="{{ old('card_price_label', $package->card_price_label) }}" required />
-                @error('card_price_label')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            <div>
-                <label for="detail_price_label">Label Harga Detail</label>
-                <input type="text" id="detail_price_label" name="detail_price_label" value="{{ old('detail_price_label', $package->detail_price_label) }}" required />
-                @error('detail_price_label')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            <div class="full">
-                <label for="detail_title">Judul Paket</label>
-                <input type="text" id="detail_title" name="detail_title" value="{{ old('detail_title', $package->detail_title) }}" required />
-                @error('detail_title')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            <div class="full">
-                <label for="image_url">Kunci Gambar (unsplash)</label>
-                <input type="text" id="image_url" name="image_url" value="{{ old('image_url', $package->image_url) }}" required />
-                @error('image_url')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-            <div class="full">
-                <label for="summary">Ringkasan</label>
-                <textarea id="summary" name="summary" required>{{ old('summary', $package->summary) }}</textarea>
-                @error('summary')
-                    <div class="error-message">{{ $message }}</div>
-                @enderror
-            </div>
-
+            <a href="{{ route('admin.packages.index') }}" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
         </div>
 
-        <div class="form-actions">
-            <button type="submit" class="submit-btn">Simpan Perubahan</button>
-            <a href="{{ route('admin.packages.index') }}" class="cancel-link">Batalkan</a>
+        <div class="admin-card">
+            <form action="{{ route('admin.packages.update', $package->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Judul Paket</label>
+                        <input type="text" name="detail_title" class="form-input"
+                            value="{{ old('detail_title', $package->detail_title) }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Jenjang Pendidikan</label>
+                        <select name="level" class="form-select" required>
+                            <option value="" disabled>Pilih jenjang</option>
+                            @foreach ($stages as $value => $label)
+                                <option value="{{ $value }}" {{ old('level', $package->level) == $value ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid-2" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">Rentang Kelas</label>
+                        <input type="text" name="grade_range" class="form-input"
+                            value="{{ old('grade_range', $package->grade_range) }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Harga (Rp)</label>
+                        <input type="number" name="price" class="form-input" value="{{ old('price', $package->price) }}"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kuota Siswa per Kelas (Opsional)</label>
+                        <input type="number" name="max_students" class="form-input"
+                            value="{{ old('max_students', $package->max_students) }}"
+                            placeholder="Kosongkan jika tak terbatas">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Jumlah Kelas Tersedia</label>
+                        <input type="number" name="available_class" class="form-input"
+                            value="{{ old('available_class', $package->available_class ?? 1) }}" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label class="form-label">Ringkasan</label>
+                    <textarea name="summary" class="form-textarea" rows="2"
+                        required>{{ old('summary', $package->summary) }}</textarea>
+                </div>
+
+                <div class="form-grid-2" style="margin-top: 20px;">
+                    <!-- Program Points Dynamic Input -->
+                    <div class="form-group">
+                        <label class="form-label">Program</label>
+                        <div id="program-inputs-container">
+                            @forelse($package->program_points ?? [] as $point)
+                                <div class="dynamic-input-row" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                    <input type="text" name="program_points[]" class="form-input" value="{{ $point }}"
+                                        placeholder="Contoh: 2x kelas live interaktif/minggu" style="flex: 1;">
+                                    <button type="button" class="btn-icon-danger" onclick="this.parentElement.remove()"
+                                        style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            @empty
+                                <div class="dynamic-input-row" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                    <input type="text" name="program_points[]" class="form-input"
+                                        placeholder="Contoh: 2x kelas live interaktif/minggu" style="flex: 1;">
+                                    <button type="button" class="btn-icon-danger" onclick="this.parentElement.remove()"
+                                        style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            @endforelse
+                        </div>
+                        <button type="button"
+                            onclick="addInputRow('program-inputs-container', 'program_points[]', 'Contoh: Modul tematik mingguan')"
+                            style="background: #e0f2fe; color: #0284c7; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer; margin-top: 4px;">
+                            + Tambah Program
+                        </button>
+                    </div>
+
+                    <!-- Facility Points Dynamic Input -->
+                    <div class="form-group">
+                        <label class="form-label">Fasilitas</label>
+                        <div id="facility-inputs-container">
+                            @forelse($package->facility_points ?? [] as $point)
+                                <div class="dynamic-input-row" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                    <input type="text" name="facility_points[]" class="form-input" value="{{ $point }}"
+                                        placeholder="Contoh: Pendampingan belajar 120 menit/sesi" style="flex: 1;">
+                                    <button type="button" class="btn-icon-danger" onclick="this.parentElement.remove()"
+                                        style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            @empty
+                                <div class="dynamic-input-row" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                    <input type="text" name="facility_points[]" class="form-input"
+                                        placeholder="Contoh: Pendampingan belajar 120 menit/sesi" style="flex: 1;">
+                                    <button type="button" class="btn-icon-danger" onclick="this.parentElement.remove()"
+                                        style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            @endforelse
+                        </div>
+                        <button type="button"
+                            onclick="addInputRow('facility-inputs-container', 'facility_points[]', 'Contoh: Bank soal literasi')"
+                            style="background: #e0f2fe; color: #0284c7; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer; margin-top: 4px;">
+                            + Tambah Fasilitas
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 16px;">
+                    <label class="form-label">Jadwal Belajar</label>
+                    <div id="schedule-inputs-container">
+                        @forelse($package->schedule_info ?? [] as $point)
+                            <div class="dynamic-input-row" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" name="schedule_info[]" class="form-input" value="{{ $point }}"
+                                    placeholder="Contoh: Senin (15.30–17.30 WIB)" style="flex: 1;">
+                                <button type="button" class="btn-icon-danger" onclick="this.parentElement.remove()"
+                                    style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        @empty
+                            <div class="dynamic-input-row" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" name="schedule_info[]" class="form-input"
+                                    placeholder="Contoh: Senin (15.30–17.30 WIB)" style="flex: 1;">
+                                <button type="button" class="btn-icon-danger" onclick="this.parentElement.remove()"
+                                    style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        @endforelse
+                    </div>
+                    <button type="button"
+                        onclick="addInputRow('schedule-inputs-container', 'schedule_info[]', 'Contoh: Kamis (15.30–17.30 WIB)')"
+                        style="background: #e0f2fe; color: #0284c7; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer; margin-top: 4px;">
+                        + Tambah Jadwal
+                    </button>
+                </div>
+
+                <div class="admin-card" style="margin-top: 24px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                    <h3 style="font-size: 1rem; margin-bottom: 16px;">Pengaturan Tambahan</h3>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Label Harga Kartu</label>
+                            <input type="text" name="card_price_label" class="form-input"
+                                value="{{ old('card_price_label', $package->card_price_label) }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tag (Opsional)</label>
+                            <input type="text" name="tag" class="form-input" value="{{ old('tag', $package->tag) }}"
+                                placeholder="Contoh: Terpopuler">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions" style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px;">
+                    <a href="{{ route('admin.packages.index') }}" class="btn-secondary">Batal</a>
+                    <button type="submit" class="btn-primary"
+                        style="background: #0f766e; border-color: #0f766e; color: white;">Simpan Perubahan</button>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
+
+    <script>
+        function addInputRow(containerId, inputName, placeholder) {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = 'dynamic-input-row';
+            div.style.cssText = 'display: flex; gap: 8px; margin-bottom: 8px;';
+
+            div.innerHTML = `
+                    <input type="text" name="${inputName}" class="form-input" placeholder="${placeholder}" style="flex: 1;">
+                    <button type="button" class="btn-icon-danger" onclick="this.parentElement.remove()" style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                `;
+
+            container.appendChild(div);
+        }
+    </script>
 @endsection

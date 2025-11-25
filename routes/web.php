@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\ScheduleController as AdminScheduleController;
 use App\Http\Controllers\Admin\ScheduleSessionController as AdminScheduleSessionController;
 use App\Http\Controllers\Admin\ScheduleTemplateController as AdminScheduleTemplateController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
-use App\Http\Controllers\Admin\SubjectController as AdminSubjectController;
+
 use App\Http\Controllers\Admin\TentorController as AdminTentorController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CheckoutController;
@@ -137,8 +137,7 @@ Route::middleware(['auth', 'role:tutor'])->prefix('tutor')->name('tutor.')->grou
     Route::put('/quiz/{quiz:slug}', [TutorQuizController::class, 'update'])->name('quizzes.update');
     Route::delete('/quizzes/{quiz}', [TutorQuizController::class, 'destroy'])->name('quizzes.destroy');
 
-    // API: Get subjects for a package
-    Route::get('/packages/{package}/subjects', [TutorMaterialController::class, 'getPackageSubjects'])->name('packages.subjects');
+
 
     Route::get('/jadwal', [TutorScheduleController::class, 'index'])->name('schedule.index');
 
@@ -167,14 +166,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/packages/{package}/edit', [AdminPackageController::class, 'edit'])->name('packages.edit');
     Route::put('/packages/{package}', [AdminPackageController::class, 'update'])->name('packages.update');
     Route::delete('/packages/{package}', [AdminPackageController::class, 'destroy'])->name('packages.destroy');
-    Route::get('/packages/{package}/subjects', [AdminPackageController::class, 'getSubjects'])->name('packages.subjects');
-
-    Route::get('/subjects', [AdminSubjectController::class, 'index'])->name('subjects.index');
-    Route::get('/subjects/create', [AdminSubjectController::class, 'create'])->name('subjects.create');
-    Route::post('/subjects', [AdminSubjectController::class, 'store'])->name('subjects.store');
-    Route::get('/subjects/{subject}/edit', [AdminSubjectController::class, 'edit'])->name('subjects.edit');
-    Route::put('/subjects/{subject}', [AdminSubjectController::class, 'update'])->name('subjects.update');
-    Route::delete('/subjects/{subject}', [AdminSubjectController::class, 'destroy'])->name('subjects.destroy');
 
     Route::get('/finance', [AdminFinanceController::class, 'index'])->name('finance.index');
     Route::post('/finance/{order}/approve', [AdminFinanceController::class, 'approve'])->name('finance.approve');

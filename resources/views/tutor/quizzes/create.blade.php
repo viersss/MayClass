@@ -60,7 +60,9 @@
             transition: all 0.2s ease;
         }
 
-        input:focus, textarea:focus, select:focus {
+        input:focus,
+        textarea:focus,
+        select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px var(--primary-light);
@@ -184,7 +186,7 @@
             text-decoration: none;
             border: 1px solid transparent;
         }
-        
+
         .btn-cancel:hover {
             background: #f1f5f9;
             color: var(--text-color);
@@ -218,10 +220,12 @@
     @php
         // Handle Old Inputs for Dynamic Fields
         $levelValues = collect(old('levels', ['']))->map(fn($v) => is_string($v) ? $v : '');
-        if ($levelValues->isEmpty()) $levelValues = collect(['']);
+        if ($levelValues->isEmpty())
+            $levelValues = collect(['']);
 
         $takeawayValues = collect(old('takeaways', ['']))->map(fn($v) => is_string($v) ? $v : '');
-        if ($takeawayValues->isEmpty()) $takeawayValues = collect(['']);
+        if ($takeawayValues->isEmpty())
+            $takeawayValues = collect(['']);
     @endphp
 
     <div class="form-card">
@@ -250,24 +254,21 @@
                     @error('package_id') <div class="error-message">{{ $message }}</div> @enderror
                 </label>
 
-                <label>
-                    <span>Mata Pelajaran</span>
-                    <input type="text" name="subject" value="{{ old('subject') }}" placeholder="Cth: Matematika" required />
-                    @error('subject') <div class="error-message">{{ $message }}</div> @enderror
-                </label>
             </div>
 
             {{-- 2. JUDUL & KELAS (Grid 2 Kolom - Judul lebih lebar) --}}
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
                 <label>
                     <span>Judul Quiz</span>
-                    <input type="text" name="title" value="{{ old('title') }}" placeholder="Judul materi quiz..." required />
+                    <input type="text" name="title" value="{{ old('title') }}" placeholder="Judul materi quiz..."
+                        required />
                     @error('title') <div class="error-message">{{ $message }}</div> @enderror
                 </label>
 
                 <label>
                     <span>Kelas / Tingkat</span>
-                    <input type="text" name="class_level" value="{{ old('class_level') }}" placeholder="Cth: 10 SMA" required />
+                    <input type="text" name="class_level" value="{{ old('class_level') }}" placeholder="Cth: 10 SMA"
+                        required />
                     @error('class_level') <div class="error-message">{{ $message }}</div> @enderror
                 </label>
             </div>
@@ -277,21 +278,25 @@
 
                 <label>
                     <span>Durasi Pengerjaan</span>
-                    <input type="text" name="duration_label" value="{{ old('duration_label', '30 menit') }}" placeholder="Cth: 30 menit" required />
-                    <div style="margin-top: 6px; font-size: 0.85rem; color: var(--text-muted);">Tuliskan estimasi waktu agar siswa bisa mempersiapkan diri.</div>
+                    <input type="text" name="duration_label" value="{{ old('duration_label', '30 menit') }}"
+                        placeholder="Cth: 30 menit" required />
+                    <div style="margin-top: 6px; font-size: 0.85rem; color: var(--text-muted);">Tuliskan estimasi waktu agar
+                        siswa bisa mempersiapkan diri.</div>
                     @error('duration_label') <div class="error-message">{{ $message }}</div> @enderror
                 </label>
 
                 <label>
                     <span>Jumlah Soal</span>
-                    <input type="number" min="1" max="200" name="question_count" value="{{ old('question_count', 20) }}" placeholder="Cth: 20" required />
+                    <input type="number" min="1" max="200" name="question_count" value="{{ old('question_count', 20) }}"
+                        placeholder="Cth: 20" required />
                     @error('question_count') <div class="error-message">{{ $message }}</div> @enderror
                 </label>
             </div>
 
             <label>
                 <span>Deskripsi Singkat</span>
-                <textarea name="summary" placeholder="Jelaskan apa yang akan diujikan dalam quiz ini..." required>{{ old('summary') }}</textarea>
+                <textarea name="summary" placeholder="Jelaskan apa yang akan diujikan dalam quiz ini..."
+                    required>{{ old('summary') }}</textarea>
                 @error('summary') <div class="error-message">{{ $message }}</div> @enderror
             </label>
 
@@ -299,13 +304,16 @@
 
             {{-- 4. LEVEL & HIGHLIGHTS (Dynamic Sections) --}}
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
-                
+
                 {{-- Level Kompetensi --}}
                 <div>
                     <div class="section-header">
                         <span class="section-title">Level Kompetensi</span>
                         <button type="button" class="btn-add-sm" data-add-level>
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M12 4v16m8-8H4"></path>
+                            </svg>
                             Tambah
                         </button>
                     </div>
@@ -314,12 +322,16 @@
                             <div class="dynamic-card">
                                 <input type="text" name="levels[]" value="{{ $value }}" placeholder="Cth: Level Dasar / Pemula">
                                 <button type="button" class="btn-remove" data-remove-row title="Hapus baris">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
                                 </button>
                             </div>
                         @endforeach
                     </div>
-                    @if($errors->has('levels.*')) <div class="error-message">Harap isi semua level.</div> @endif
+                    @if($errors->has('levels.*'))
+                    <div class="error-message">Harap isi semua level.</div> @endif
                 </div>
 
                 {{-- Highlights / Takeaways --}}
@@ -327,21 +339,29 @@
                     <div class="section-header">
                         <span class="section-title">Highlight Pembelajaran</span>
                         <button type="button" class="btn-add-sm" data-add-takeaway>
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M12 4v16m8-8H4"></path>
+                            </svg>
                             Tambah
                         </button>
                     </div>
                     <div class="dynamic-list" data-takeaways>
                         @foreach ($takeawayValues as $value)
                             <div class="dynamic-card">
-                                <input type="text" name="takeaways[]" value="{{ $value }}" placeholder="Cth: Memahami konsep dasar...">
+                                <input type="text" name="takeaways[]" value="{{ $value }}"
+                                    placeholder="Cth: Memahami konsep dasar...">
                                 <button type="button" class="btn-remove" data-remove-row title="Hapus baris">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
                                 </button>
                             </div>
                         @endforeach
                     </div>
-                    @if($errors->has('takeaways.*')) <div class="error-message">Harap isi semua highlight.</div> @endif
+                    @if($errors->has('takeaways.*'))
+                    <div class="error-message">Harap isi semua highlight.</div> @endif
                 </div>
             </div>
 
@@ -351,8 +371,10 @@
             <div>
                 <label>
                     <span>Link Quiz / Platform Eksternal</span>
-                    <input type="url" name="link_url" value="{{ old('link_url') }}" placeholder="https://docs.google.com/forms/..." required />
-                    <div style="margin-top: 6px; font-size: 0.85rem; color: var(--text-muted);">Masukkan link Google Form, Quizizz, atau platform lain yang digunakan.</div>
+                    <input type="url" name="link_url" value="{{ old('link_url') }}"
+                        placeholder="https://docs.google.com/forms/..." required />
+                    <div style="margin-top: 6px; font-size: 0.85rem; color: var(--text-muted);">Masukkan link Google Form,
+                        Quizizz, atau platform lain yang digunakan.</div>
                     @error('link_url') <div class="error-message">{{ $message }}</div> @enderror
                 </label>
             </div>
@@ -369,7 +391,7 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            
+
             const trashIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>`;
 
             // --- Helper Template ---
@@ -379,18 +401,18 @@
                 // Animasi masuk
                 div.style.opacity = '0';
                 div.style.transform = 'translateY(5px)';
-                
+
                 div.innerHTML = `
-                    <input type="text" name="${name}" placeholder="${placeholder}" autofocus>
-                    <button type="button" class="btn-remove" data-remove-row title="Hapus baris">${trashIcon}</button>
-                `;
-                
+                        <input type="text" name="${name}" placeholder="${placeholder}" autofocus>
+                        <button type="button" class="btn-remove" data-remove-row title="Hapus baris">${trashIcon}</button>
+                    `;
+
                 // Trigger animasi
                 setTimeout(() => {
                     div.style.opacity = '1';
                     div.style.transform = 'translateY(0)';
                 }, 10);
-                
+
                 return div;
             };
 

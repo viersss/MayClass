@@ -26,13 +26,9 @@ class MaterialController extends BaseTutorController
 
         $materials = $tableReady
             ? Material::query()
-                ->with('subject')
                 ->when($search, function ($query) use ($search) {
                     $query->where(function ($inner) use ($search) {
                         $inner->where('title', 'like', "%{$search}%")
-                            ->orWhereHas('subject', function ($q) use ($search) {
-                                $q->where('name', 'like', "%{$search}%");
-                            })
                             ->orWhere('level', 'like', "%{$search}%");
                     });
                 })
@@ -81,7 +77,6 @@ class MaterialController extends BaseTutorController
         $data = $request->validate([
             'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
-            'subject_id' => ['required', 'exists:subjects,id'],
             'level' => ['required', 'string', 'max:120'],
             'summary' => ['required', 'string'],
             'attachment' => ['nullable', 'file', 'mimes:pdf,ppt,pptx,doc,docx', 'max:10240'],
@@ -108,11 +103,10 @@ class MaterialController extends BaseTutorController
             $material = Material::create([
                 'slug' => $uniqueSlug,
                 'package_id' => $data['package_id'],
-                'subject_id' => $data['subject_id'],
                 'title' => $data['title'],
                 'level' => $data['level'],
                 'summary' => $data['summary'],
-                'thumbnail_url' => UnsplashPlaceholder::material(\App\Models\Subject::find($data['subject_id'])->name ?? 'Material'),
+                'thumbnail_url' => UnsplashPlaceholder::material('Material'),
                 'resource_path' => $path,
             ]);
 
@@ -156,7 +150,6 @@ class MaterialController extends BaseTutorController
         $data = $request->validate([
             'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
-            'subject_id' => ['required', 'exists:subjects,id'],
             'level' => ['required', 'string', 'max:120'],
             'summary' => ['required', 'string'],
             'attachment' => ['nullable', 'file', 'mimes:pdf,ppt,pptx,doc,docx', 'max:10240'],
@@ -169,7 +162,6 @@ class MaterialController extends BaseTutorController
 
         $payload = [
             'package_id' => $data['package_id'],
-            'subject_id' => $data['subject_id'],
             'title' => $data['title'],
             'level' => $data['level'],
             'summary' => $data['summary'],
@@ -185,10 +177,6 @@ class MaterialController extends BaseTutorController
             } else {
                 $payload['resource_path'] = null;
             }
-        }
-
-        if ($material->subject_id !== $data['subject_id']) {
-            $payload['thumbnail_url'] = UnsplashPlaceholder::material(\App\Models\Subject::find($data['subject_id'])->name ?? 'Material');
         }
 
         DB::transaction(function () use ($material, $payload, $request) {
@@ -285,11 +273,5 @@ class MaterialController extends BaseTutorController
         return $download
             ? Storage::disk('public')->download($path, $filename)
             : Storage::disk('public')->response($path, $filename);
-    }
-
-    public function getPackageSubjects(Package $package): \Illuminate\Http\JsonResponse
-    {
-        $subjects = $package->subjects()->select('subjects.id', 'subjects.name', 'subjects.level')->get();
-        return response()->json($subjects);
     }
 }

@@ -940,7 +940,7 @@
                     ['label' => 'Manajemen Siswa', 'route' => 'admin.students.index', 'patterns' => ['admin.students.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M7 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm10 0a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2 20a4.5 4.5 0 0 1 4.5-4.5H9a4.5 4.5 0 0 1 4.5 4.5v1H2zm9.5 1v-1A4.5 4.5 0 0 1 16 15.5h2.5A4.5 4.5 0 0 1 23 20v1z" />'],
                     ['label' => 'Manajemen Tentor', 'route' => 'admin.tentors.index', 'patterns' => ['admin.tentors.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 1 0-6 0 3 3 0 0 0 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 21a4.5 4.5 0 0 0-9 0Zm0 0H21a2 2 0 0 0 2-2v-1a8 8 0 0 0-8-8h-6a8 8 0 0 0-8 8v1a2 2 0 0 0 2 2h1.5" />'],
                     ['label' => 'Manajemen Paket', 'route' => 'admin.packages.index', 'patterns' => ['admin.packages.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3 7 12 3l9 4v10l-9 4-9-4z" /><path stroke-linecap="round" stroke-linejoin="round" d="m3 7 9 4 9-4" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 11v10" />'],
-                    ['label' => 'Mata Pelajaran', 'route' => 'admin.subjects.index', 'patterns' => ['admin.subjects.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />'],
+
                     ['label' => 'Manajemen Keuangan', 'route' => 'admin.finance.index', 'patterns' => ['admin.finance.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M4 7h14a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9a2 2 0 0 1 2-2z" /><path stroke-linecap="round" stroke-linejoin="round" d="M18 11h3v4h-3a2 2 0 0 1 0-4z" />'],
                     ['label' => 'Manajemen Konten', 'route' => 'admin.content.index', 'patterns' => ['admin.content.*'], 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />'],
                 ];
@@ -1013,12 +1013,7 @@
                             'route' => 'admin.packages.index',
                             'patterns' => ['admin.packages.*'],
                         ],
-                        [
-                            'label' => 'Mata Pelajaran',
-                            'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>',
-                            'route' => 'admin.subjects.index',
-                            'patterns' => ['admin.subjects.*'],
-                        ],
+
                         [
                             'label' => 'Manajemen Keuangan',
                             'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h14a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9a2 2 0 0 1 2-2z" /><path stroke-linecap="round" stroke-linejoin="round" d="M18 11h3v4h-3a2 2 0 0 1 0-4z" /></svg>',
