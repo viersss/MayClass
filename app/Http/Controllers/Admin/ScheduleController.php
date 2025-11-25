@@ -35,11 +35,13 @@ class ScheduleController extends BaseAdminController
 
         // 2. Ambil Data Paket
         $packages = Schema::hasTable('packages')
-            ? Package::with('tutor:id,name')
-                ->when($selectedTutorId, fn ($query) => $query->where('tutor_id', $selectedTutorId))
-                ->orderBy('level')
-                ->orderBy('price')
-                ->get(['id', 'detail_title', 'tutor_id'])
+            ? Package::orderBy('level')->orderBy('price')
+                ->when($selectedTutorId, function ($query) use ($selectedTutorId) {
+                    $query->whereHas('tutors', function ($q) use ($selectedTutorId) {
+                        $q->where('user_id', $selectedTutorId);
+                    });
+                })
+                ->get(['id', 'detail_title', 'level'])
             : collect();
 
         // 3. Ambil Data Sesi (Sessions)

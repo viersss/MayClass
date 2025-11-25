@@ -480,7 +480,7 @@
                         <tr>
                             <th>Profil Tentor</th>
                             <th>Kontak</th>
-
+                            <th>Keahlian Mengajar</th>
                             <th>Spesialisasi & Pendidikan</th>
                             <th>Pengalaman</th>
                             <th>Status</th>
@@ -506,6 +506,20 @@
                                     </div>
                                 </td>
 
+                                <td>
+                                    @if($tentor['subjects']->isNotEmpty())
+                                        <div class="subject-pills">
+                                            @foreach($tentor['subjects']->take(3) as $subject)
+                                                <span class="subject-pill">{{ $subject->name }}</span>
+                                            @endforeach
+                                            @if($tentor['subjects']->count() > 3)
+                                                <span class="subject-pill-more">+{{ $tentor['subjects']->count() - 3 }} lainnya</span>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-muted">Belum ada</span>
+                                    @endif
+                                </td>
                                 <td>
                                     <div style="display: flex; flex-direction: column; gap: 4px;">
                                         <span class="spec-badge">{{ $tentor['specializations'] ?? 'Umum' }}</span>
@@ -537,7 +551,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6">
+                                <td colspan="7">
                                     <div class="empty-state">
                                         <p>Belum ada data tentor yang sesuai dengan pencarian.</p>
                                     </div>

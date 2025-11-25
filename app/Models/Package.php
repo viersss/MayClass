@@ -76,6 +76,11 @@ class Package extends Model
         return $this->features()->where('type', 'card')->orderBy('position');
     }
 
+    public function tutors(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)->where('role', 'tutor')->withTimestamps();
+    }
+
     public function inclusions(): HasMany
     {
         return $this->features()->where('type', 'included')->orderBy('position');

@@ -147,4 +147,68 @@ class ScheduleTemplateController extends BaseAdminController
 
         return $payload;
     }
+
+    private function validateNoOverlap(int $userId, int $dayOfWeek, string $startTime, int $durationMinutes, ?int $excludeId = null): void
+    {
+        // Convert start time to minutes since midnight
+        [$hours, $minutes] = explode(':', $startTime);
+        $newStartMinutes = ($hours * 60) + $minutes;
+        $newEndMinutes = $newStartMinutes + $durationMinutes;
+
+        $overlapping = ScheduleTemplate::query()
+            ->where('user_id', $userId)
+            ->where('day_of_week', $dayOfWeek)
+            ->when($excludeId, fn ($query) => $query->where('id', '!=', $excludeId))
+            ->get()
+            ->filter(function (ScheduleTemplate $template) use ($newStartMinutes, $newEndMinutes) {
+                [$hours, $minutes] = explode(':', $template->start_time);
+                $existingStartMinutes = ($hours * 60) + $minutes;
+                $existingEndMinutes = $existingStartMinutes + $template->duration_minutes;
+
+                return $newStartMinutes < $existingEndMinutes && $existingStartMinutes < $newEndMinutes;
+            });
+
+        if ($overlapping->isNotEmpty()) {
+            $conflictTitles = $overlapping->pluck('title')->join(', ');
+            throw new \Illuminate\Validation\ValidationException(
+                validator([], [], [], [], [
+                    'schedule' => "Jadwal bertumpang tindih dengan: {$conflictTitles}"
+                ])
+            );
+        }
+    }
+
+    private function validateSubjectCompatibility(int $userId, int $packageId, int $subjectId): void
+    {
+        $user = User::find($userId);
+        $package = Package::find($packageId);
+        $subject = Subject::find($subjectId);
+
+        // Check if tutor is assigned to this package
+        if (!$user->packages()->where('package_id', $packageId)->exists()) {
+            throw new ValidationException(
+                validator([], [], [], [], [
+                    'package_id' => "Tutor {$user->name} tidak ditugaskan untuk mengajar paket {$package->detail_title}"
+                ])
+            );
+        }
+
+        // Check if tutor can teach this subject
+        if (!$user->subjects()->where('subject_id', $subjectId)->exists()) {
+            throw new ValidationException(
+                validator([], [], [], [], [
+                    'subject_id' => "Tutor {$user->name} tidak kompeten mengajar mata pelajaran {$subject->name}"
+                ])
+            );
+        }
+
+        // Check if package includes this subject
+        if (!$package->subjects()->where('subject_id', $subjectId)->exists()) {
+            throw new ValidationException(
+                validator([], [], [], [], [
+                    'subject_id' => "Paket {$package->detail_title} tidak include mata pelajaran {$subject->name}"
+                ])
+            );
+        }
+    }
 }

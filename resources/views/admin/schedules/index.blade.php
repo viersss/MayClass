@@ -275,6 +275,64 @@
         .btn-cancel { background: #f1f5f9; color: #64748b; }
         .btn-restore { background: #dcfce7; color: #15803d; }
 
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--text-main);
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal-footer button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
         /* --- 4. AGENDA TIMELINE --- */
         .timeline-container {
             display: flex;
@@ -700,11 +758,14 @@
                                         <div class="session-time">
                                             <span class="time-label">Waktu Belajar</span>
                                             <span class="time-range">{{ $session['time_range'] }}</span>
-                                            <form method="POST" action="{{ route('admin.schedule.sessions.cancel', $session['id']) }}" onsubmit="return confirm('Batalkan sesi ini?');" style="margin-top: 6px;">
-                                                @csrf
-                                                <input type="hidden" name="redirect_tutor_id" value="{{ $schedule['activeFilter'] }}">
-                                                <button type="submit" class="btn-sm btn-cancel" style="width: 100%;">Batalkan</button>
-                                            </form>
+                                            <div style="display: flex; gap: 4px; margin-top: 6px;">
+                                                <button type="button" class="btn-sm btn-save" style="flex: 1;" onclick="openEditModal({{ json_encode($session) }})">Edit</button>
+                                                <form method="POST" action="{{ route('admin.schedule.sessions.cancel', $session['id']) }}" onsubmit="return confirm('Batalkan sesi ini?');" style="flex: 1;">
+                                                    @csrf
+                                                    <input type="hidden" name="redirect_tutor_id" value="{{ $schedule['activeFilter'] }}">
+                                                    <button type="submit" class="btn-sm btn-cancel" style="width: 100%;">Batalkan</button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -795,6 +856,45 @@
 
 </div>
 
+{{-- Edit Session Modal --}}
+<div id="editModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Jadwal Sesi</h3>
+        </div>
+        <form id="editSessionForm" method="POST">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="redirect_tutor_id" value="{{ $schedule['activeFilter'] }}">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tanggal</label>
+                    <input type="date" name="start_date" id="edit_start_date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Jam Mulai</label>
+                    <input type="time" name="start_time" id="edit_start_time" class="form-control" required>
+                </div>
+                @if ($schedule['tutors']->count() > 1)
+                    <div class="form-group">
+                        <label>Tutor (Opsional - kosongkan jika tidak ingin mengubah)</label>
+                        <select name="user_id" id="edit_user_id" class="form-control">
+                            <option value="">Tidak diubah</option>
+                            @foreach ($schedule['tutors'] as $tutor)
+                                <option value="{{ $tutor->id }}">{{ $tutor->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeEditModal()">Batal</button>
+                <button type="submit" class="btn-save">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const sessionType = document.getElementById('sessionType');
@@ -818,5 +918,68 @@
             });
         }
     });
+});
+
+// Edit Modal Functions
+function openEditModal(session) {
+    const modal = document.getElementById('editModal');
+    const form = document.getElementById('editSessionForm');
+    
+    // Set form action
+    form.action = `/admin/schedule/${session.id}`;
+    
+    // Parse the start_iso to get date and time
+    if (session.start_iso) {
+        const startDate = new Date(session.start_iso);
+        const dateStr = startDate.toISOString().split('T')[0];
+        const timeStr = startDate.toTimeString().split(' ')[0].substring(0, 5);
+        
+        document.getElementById('edit_start_date').value = dateStr;
+        document.getElementById('edit_start_time').value = timeStr;
+    }
+    
+    // Reset tutor selection if exists
+    const tutorSelect = document.getElementById('edit_user_id');
+    if (tutorSelect) {
+        tutorSelect.value = '';
+    }
+    
+    modal.classList.add('active');
+}
+
+function closeEditModal() {
+    const modal = document.getElementById('editModal');
+    modal.classList.remove('active');
+}
+
+// Close modal when clicking outside
+document.getElementById('editModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeEditModal();
+    }
+});
+
+// Toggle show more/less days
+let showingAll = false;
+function toggleMoreDays() {
+    const days = document.querySelectorAll('.timeline-day');
+    const btn = document.getElementById('toggle-more-btn');
+    
+    showingAll = !showingAll;
+    
+    days.forEach((day, index) => {
+        if (index >= 7) {
+            day.style.display = showingAll ? 'block' : 'none';
+        }
+    });
+    
+    if (showingAll) {
+        btn.textContent = 'Tampilkan Lebih Sedikit';
+    } else {
+        const hiddenCount = days.length - 7;
+        btn.textContent = `Tampilkan Lebih Banyak (${hiddenCount} hari lagi)`;
+    }
+}
+
 </script>
 @endsection

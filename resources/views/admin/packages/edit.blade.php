@@ -1,6 +1,195 @@
 @extends('admin.layout')
 
-@section('title', 'Edit Paket Belajar')
+@section('title', 'Ubah Paket - MayClass')
+
+@push('styles')
+    <style>
+        .form-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 26px;
+            padding: 28px 32px;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            box-shadow: 0 24px 48px rgba(15, 23, 42, 0.08);
+            max-width: 780px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .form-grid .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.92rem;
+            margin-bottom: 8px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            background: rgba(248, 250, 252, 0.9);
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            margin-top: 28px;
+            display: flex;
+            gap: 16px;
+        }
+
+        .submit-btn {
+            padding: 12px 22px;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, rgba(31, 209, 161, 0.85), rgba(84, 101, 255, 0.85));
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .cancel-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .error-message {
+            margin-top: 6px;
+            color: #dc2626;
+            font-size: 0.85rem;
+        }
+
+        .help-text {
+            margin: 6px 0 12px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .subject-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 12px;
+        }
+
+        .subject-group h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 10px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(15, 23, 42, 0.1);
+        }
+
+        .subject-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: rgba(248, 250, 252, 0.5);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .checkbox-label:hover {
+            background: rgba(248, 250, 252, 1);
+            border-color: rgba(15, 23, 42, 0.15);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* Pricing Features Styles */
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .feature-item input {
+            flex: 1;
+        }
+
+        .btn-remove {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: none;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .btn-add {
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(31, 209, 161, 0.15);
+            color: #0f766e;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        .btn-add:hover {
+            background: rgba(31, 209, 161, 0.25);
+        }
+
+        .btn-remove:hover {
+            background: #fecaca;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .subject-checkboxes {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+@endpush
 
 @section('content')
     <div class="dashboard-container">
@@ -9,9 +198,84 @@
                 <h1>Edit Paket Belajar</h1>
                 <p>Perbarui informasi paket belajar MayClass.</p>
             </div>
-            <a href="{{ route('admin.packages.index') }}" class="btn-secondary">
-                <i class="fas fa-arrow-left"></i> Kembali
-            </a>
+
+            <div class="full">
+                <label>Fitur Pricing (Ditampilkan di Kartu Paket)</label>
+                <p class="help-text">Tambahkan fitur-fitur yang akan ditampilkan pada kartu paket di landing page. Contoh: "6x kelas live per bulan", "Tryout AKM & evaluasi mendalam"</p>
+                
+                <div class="feature-list" id="feature-list">
+                    <?php
+                    $existingFeatures = $package->cardFeatures->pluck('label')->toArray();
+                    $oldFeatures = old('card_features', $existingFeatures);
+                    if (empty($oldFeatures)) {
+                        $oldFeatures = [''];
+                    }
+                    ?>
+                    @foreach($oldFeatures as $index => $feature)
+                        <div class="feature-item">
+                            <input type="text" name="card_features[]" value="{{ $feature }}" placeholder="Contoh: 6x kelas live per bulan" />
+                            <button type="button" class="btn-remove" onclick="removeFeature(this)">Hapus</button>
+                        </div>
+                    @endforeach
+                </div>
+                <button type="button" class="btn-add" onclick="addFeature()">+ Tambah Fitur</button>
+                
+                @error('card_features')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="full">
+                <label>Mata Pelajaran yang Termasuk *</label>
+                <p class="help-text">Pilih minimal 1 mata pelajaran yang akan diajarkan dalam paket ini.</p>
+                
+                <div class="subject-selection">
+                    @foreach(['SD', 'SMP', 'SMA'] as $level)
+                        @if($subjectsByLevel[$level]->isNotEmpty())
+                            <div class="subject-group">
+                                <h4>{{ $level }}</h4>
+                                <div class="subject-checkboxes">
+                                    @foreach($subjectsByLevel[$level] as $subject)
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="subjects[]" value="{{ $subject->id }}" 
+                                                {{ in_array($subject->id, old('subjects', $package->subjects->pluck('id')->toArray())) ? 'checked' : '' }}>
+                                            {{ $subject->name }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+                
+                @error('subjects')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="full">
+                <label>Tutor Pengampu (Opsional)</label>
+                <p class="help-text">Pilih tutor yang ditugaskan untuk mengajar paket ini. Tutor yang dipilih akan dapat membuat jadwal untuk paket ini.</p>
+                
+                <div class="subject-selection">
+                    @if($tutors->isEmpty())
+                        <div class="empty-state">Belum ada tutor aktif.</div>
+                    @else
+                        <div class="subject-group">
+                            <h4>Daftar Tutor</h4>
+                            <div class="subject-checkboxes">
+                                @foreach($tutors as $tutor)
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" name="tutors[]" value="{{ $tutor->id }}" 
+                                            {{ in_array($tutor->id, old('tutors', $package->tutors->pluck('id')->toArray())) ? 'checked' : '' }}>
+                                        {{ $tutor->name }}
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
         </div>
 
         <div class="admin-card">
@@ -185,23 +449,28 @@
                 </div>
             </form>
         </div>
-    </div>
+    </form>
 
     <script>
-        function addInputRow(containerId, inputName, placeholder) {
-            const container = document.getElementById(containerId);
-            const div = document.createElement('div');
-            div.className = 'dynamic-input-row';
-            div.style.cssText = 'display: flex; gap: 8px; margin-bottom: 8px;';
+        function addFeature() {
+            const list = document.getElementById('feature-list');
+            const item = document.createElement('div');
+            item.className = 'feature-item';
+            item.innerHTML = `
+                <input type="text" name="card_features[]" placeholder="Contoh: 6x kelas live per bulan" />
+                <button type="button" class="btn-remove" onclick="removeFeature(this)">Hapus</button>
+            `;
+            list.appendChild(item);
+        }
 
-            div.innerHTML = `
-                    <input type="text" name="${inputName}" class="form-input" placeholder="${placeholder}" style="flex: 1;">
-                    <button type="button" class="btn-icon-danger" onclick="this.parentElement.remove()" style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                `;
-
-            container.appendChild(div);
+        function removeFeature(button) {
+            const list = document.getElementById('feature-list');
+            if (list.children.length > 1) {
+                button.parentElement.remove();
+            } else {
+                // Keep at least one input, just clear it
+                button.parentElement.querySelector('input').value = '';
+            }
         }
     </script>
 @endsection
