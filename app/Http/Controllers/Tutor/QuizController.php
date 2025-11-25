@@ -21,10 +21,13 @@ class QuizController extends BaseTutorController
 
         $quizzes = $tableReady
             ? Quiz::query()
+                ->with('subject')
                 ->when($search, function ($query) use ($search) {
                     $query->where(function ($inner) use ($search) {
                         $inner->where('title', 'like', "%{$search}%")
-                            ->orWhere('subject', 'like', "%{$search}%")
+                            ->orWhereHas('subject', function ($q) use ($search) {
+                                $q->where('name', 'like', "%{$search}%");
+                            })
                             ->orWhere('class_level', 'like', "%{$search}%");
                     });
                 })
@@ -90,12 +93,12 @@ class QuizController extends BaseTutorController
             $quiz = Quiz::create([
                 'slug' => $uniqueSlug,
                 'package_id' => $data['package_id'],
-                'subject' => $data['subject'],
+                'subject_id' => $data['subject_id'],
                 'class_level' => $data['class_level'],
                 'title' => $data['title'],
                 'summary' => $data['summary'],
                 'link_url' => $data['link_url'],
-                'thumbnail_url' => UnsplashPlaceholder::quiz($data['subject']),
+                'thumbnail_url' => UnsplashPlaceholder::quiz(\App\Models\Subject::find($data['subject_id'])->name ?? 'Quiz'),
                 'duration_label' => $data['duration_label'],
                 'question_count' => $data['question_count'],
             ]);
@@ -140,7 +143,7 @@ class QuizController extends BaseTutorController
         $data = $request->validate([
             'package_id' => ['required', 'exists:packages,id'],
             'title' => ['required', 'string', 'max:255'],
-            'subject' => ['required', 'string', 'max:120'],
+            'subject_id' => ['required', 'exists:subjects,id'],
             'class_level' => ['required', 'string', 'max:120'],
             'summary' => ['required', 'string'],
             'link_url' => ['required', 'url', 'max:255'],
@@ -154,7 +157,7 @@ class QuizController extends BaseTutorController
 
         $payload = [
             'package_id' => $data['package_id'],
-            'subject' => $data['subject'],
+            'subject_id' => $data['subject_id'],
             'class_level' => $data['class_level'],
             'title' => $data['title'],
             'summary' => $data['summary'],
@@ -163,8 +166,9 @@ class QuizController extends BaseTutorController
             'question_count' => $data['question_count'],
         ];
 
-        if ($quiz->subject !== $data['subject']) {
-            $payload['thumbnail_url'] = UnsplashPlaceholder::quiz($data['subject']);
+        if ($quiz->subject_id !== $data['subject_id']) {
+            $subjectName = \App\Models\Subject::find($data['subject_id'])?->name ?? 'Quiz';
+            $payload['thumbnail_url'] = UnsplashPlaceholder::quiz($subjectName);
         }
 
         DB::transaction(function () use ($quiz, $payload, $request) {

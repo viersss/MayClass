@@ -50,14 +50,15 @@ class MaterialController extends Controller
 
         $materials = Material::query()
             ->where('package_id', optional($package)->id)
+            ->with('subject')
             ->when($objectivesReady, fn ($query) => $query->withCount('objectives'))
             ->when($chaptersReady, fn ($query) => $query->withCount('chapters'))
-            ->orderBy('subject')
+            ->orderBy('subject_id')
             ->orderBy('title')
             ->get();
 
         $collections = $materials
-            ->groupBy('subject')
+            ->groupBy(fn($material) => $material->subject->name ?? 'Tanpa Mapel')
             ->map(function ($items, $subject) use ($chaptersReady, $objectivesReady) {
                 return [
                     'label' => $subject,
@@ -111,6 +112,7 @@ class MaterialController extends Controller
         $material = Material::query()
             ->where('slug', $slug)
             ->where('package_id', optional($package)->id)
+            ->with('subject')
             ->when($objectivesReady, fn ($query) => $query->with('objectives'))
             ->when($chaptersReady, fn ($query) => $query->with('chapters'))
             ->firstOrFail();
@@ -132,7 +134,7 @@ class MaterialController extends Controller
             'page' => 'materials',
             'title' => $material->title,
             'material' => [
-                'subject' => $material->subject,
+                'subject' => $material->subject->name ?? 'Tanpa Mapel',
                 'level' => $material->level,
                 'title' => $material->title,
                 'summary' => $material->summary,

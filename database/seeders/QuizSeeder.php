@@ -6,6 +6,7 @@ use App\Models\Package;
 use App\Models\Quiz;
 use App\Models\QuizLevel;
 use App\Models\QuizTakeaway;
+use App\Models\Subject;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 
@@ -37,6 +38,7 @@ class QuizSeeder extends Seeder
         Quiz::query()->delete();
 
         $packageLookup = Package::query()->pluck('id', 'slug');
+        $subjectLookup = Subject::query()->pluck('id', 'name');
 
         $quizzes = [
             [
@@ -135,7 +137,7 @@ class QuizSeeder extends Seeder
             $quiz = Quiz::create([
                 'slug' => $quizData['slug'],
                 'package_id' => $packageId,
-                'subject' => $quizData['subject'],
+                'subject_id' => $subjectLookup[$quizData['subject']] ?? null,
                 'class_level' => $quizData['class_level'],
                 'title' => $quizData['title'],
                 'summary' => $quizData['summary'],

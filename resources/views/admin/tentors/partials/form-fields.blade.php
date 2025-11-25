@@ -80,6 +80,34 @@
     </div>
 
     <div class="tentor-form-card">
+        <h2>Keahlian Mengajar</h2>
+        <p>Pilih mata pelajaran yang dikuasai oleh tentor ini (minimal 1).</p>
+
+        <div class="subject-selection">
+            @foreach(['SD', 'SMP', 'SMA'] as $level)
+                @if($subjectsByLevel[$level]->isNotEmpty())
+                    <div class="subject-group">
+                        <h4>{{ $level }}</h4>
+                        <div class="subject-checkboxes">
+                            @foreach($subjectsByLevel[$level] as $subject)
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subjects[]" value="{{ $subject->id }}" 
+                                        {{ in_array($subject->id, old('subjects', optional($tentor)->subjects->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}>
+                                    {{ $subject->name }}
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            @endforeach
+        </div>
+        
+        @error('subjects')
+            <p class="helper-text" style="color:#dc2626;">{{ $message }}</p>
+        @enderror
+    </div>
+
+    <div class="tentor-form-card">
         <h2>Keamanan Akun Tentor</h2>
         <p>Atur kata sandi awal atau reset password tentor.</p>
 

@@ -6,6 +6,7 @@ use App\Models\Material;
 use App\Models\MaterialChapter;
 use App\Models\MaterialObjective;
 use App\Models\Package;
+use App\Models\Subject;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 
@@ -37,6 +38,7 @@ class MaterialSeeder extends Seeder
         Material::query()->delete();
 
         $packageLookup = Package::query()->pluck('id', 'slug');
+        $subjectLookup = Subject::query()->pluck('id', 'name');
 
         $materials = [
             [
@@ -167,7 +169,7 @@ class MaterialSeeder extends Seeder
             $material = Material::create([
                 'slug' => $materialData['slug'],
                 'package_id' => $packageId,
-                'subject' => $materialData['subject'],
+                'subject_id' => $subjectLookup[$materialData['subject']] ?? null,
                 'title' => $materialData['title'],
                 'level' => $materialData['level'],
                 'summary' => $materialData['summary'],
