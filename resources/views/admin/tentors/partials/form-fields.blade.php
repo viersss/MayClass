@@ -80,21 +80,22 @@
     </div>
 
     <div class="tentor-form-card">
-        <h2>Penugasan Paket Belajar</h2>
-        <p>Pilih paket yang menjadi tanggung jawab tentor ini. Setiap paket hanya memiliki satu tentor utama.</p>
+        <h2>Keahlian Mengajar</h2>
+        <p>Pilih mata pelajaran yang dikuasai oleh tentor ini (minimal 1).</p>
 
-        @if ($packages->isEmpty())
-            <p class="helper-text">Belum ada paket yang dapat ditugaskan.</p>
-        @else
-            <div class="tentor-form-grid" style="margin-top: 12px;">
-                @foreach ($packages as $package)
-                    <label class="tentor-form-group" style="border:1px solid #e5e7eb; padding:12px; border-radius:12px;">
-                        <div style="display:flex; align-items:center; gap:12px;">
-                            <input type="checkbox" name="packages[]" value="{{ $package->id }}" style="width:18px; height:18px;" @checked(in_array($package->id, old('packages', $selectedPackages?->toArray() ?? [])))>
-                            <div>
-                                <div style="font-weight:700;">{{ $package->detail_title }}</div>
-                                <div class="helper-text" style="margin-top:4px;">{{ optional($package->tutor)->name ? 'Ditugaskan ke ' . $package->tutor->name : 'Belum ada tentor' }}</div>
-                            </div>
+        <div class="subject-selection">
+            @foreach(['SD', 'SMP', 'SMA'] as $level)
+                @if($subjectsByLevel[$level]->isNotEmpty())
+                    <div class="subject-group">
+                        <h4>{{ $level }}</h4>
+                        <div class="subject-checkboxes">
+                            @foreach($subjectsByLevel[$level] as $subject)
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subjects[]" value="{{ $subject->id }}" 
+                                        {{ in_array($subject->id, old('subjects', $tentor?->subjects?->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}>
+                                    {{ $subject->name }}
+                                </label>
+                            @endforeach
                         </div>
                     </label>
                 @endforeach
