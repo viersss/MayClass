@@ -4,309 +4,320 @@
 
 @push('styles')
     <style>
+        /* --- CSS Variables & Reset --- */
         :root {
-            --primary-color: #4f46e5;
-            --primary-light: #eef2ff;
+            /* Colors derived from your request and clean UI standards */
+            --primary-solid: #0f766e; /* Diambil dari warna awal gradasi Anda */
+            --primary-dark: #115e59;
+            --bg-page: #f8fafc;
+            --bg-surface: #ffffff;
+
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --bg-card: #ffffff;
-            --bg-page: #f8fafc;
+            --border-subtle: #e2e8f0;
+
+            --action-blue: #2563eb;
+            --action-blue-hover: #1d4ed8;
+
+            /* Your provided variables */
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+            --radius-lg: 24px;
+            --radius-md: 16px;
         }
 
-        .page-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            gap: 32px;
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
         }
 
-        /* Hero Section */
-        .hero-card {
-            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-            border-radius: 24px;
-            padding: 32px;
-            color: white;
-            display: grid;
-            gap: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        /* --- Page Header Area --- */
+        .page-header {
+            margin-bottom: 32px;
         }
 
-        .hero-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 24px;
-            flex-wrap: wrap;
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-solid);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            background: rgba(15, 118, 110, 0.1); /* Solid color with opacity for subtle badge */
+            padding: 6px 12px;
+            border-radius: 30px;
         }
 
-        .hero-content h1 {
+        .page-header h1 {
             margin: 0 0 8px 0;
             font-size: 2rem;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: -0.025em;
-        }
-
-        .hero-content p {
-            margin: 0;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-            max-width: 600px;
-            line-height: 1.5;
-        }
-
-        .metrics-row {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .metric-pill {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 12px 20px;
-            border-radius: 16px;
-            display: flex;
-            flex-direction: column;
-            min-width: 140px;
-        }
-
-        .metric-pill span {
-            font-size: 0.875rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-        }
-
-        .metric-pill strong {
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        /* Schedule Layout */
-        .schedule-grid {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 32px;
-            align-items: start;
-        }
-
-        .main-schedule {
-            display: grid;
-            gap: 24px;
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
             color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
         }
 
-        .section-title .count-badge {
-            background: var(--primary-light);
-            color: var(--primary-color);
-            font-size: 0.875rem;
-            padding: 2px 10px;
-            border-radius: 999px;
+        .page-subtitle {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            max-width: 600px;
         }
 
-        /* Session Card */
-        .session-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 24px;
+        /* --- Metrics Grid --- */
+        .metrics-grid {
             display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 24px;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
         }
 
-        .session-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-            border-color: var(--primary-color);
-        }
-
-        .date-box {
-            background: var(--primary-light);
-            border-radius: 16px;
-            padding: 16px;
+        .metric-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-width: 90px;
-            text-align: center;
-            border: 1px solid rgba(79, 70, 229, 0.1);
+            gap: 8px;
+            transition: all 0.2s ease;
         }
 
-        .date-box .day {
-            font-size: 0.875rem;
+        .metric-card:hover {
+            box-shadow: var(--card-shadow-hover);
+            border-color: var(--primary-solid);
+            transform: translateY(-2px);
+        }
+
+        .metric-card span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
             font-weight: 600;
-            color: var(--primary-color);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        .date-box .date {
-            font-size: 1.75rem;
+        .metric-card strong {
+            font-size: 2.2rem;
             font-weight: 800;
-            color: var(--text-main);
+            color: var(--primary-solid);
             line-height: 1;
-            margin: 4px 0;
         }
 
-        .date-box .month {
-            font-size: 0.875rem;
+        /* --- Layout & Sections --- */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .schedule-section {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        /* --- Session Cards --- */
+        .session-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .session-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 160px 1fr; /* Fixed width for date column */
+            gap: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .session-card:hover {
+            box-shadow: var(--card-shadow);
+            border-color: var(--primary-solid);
+        }
+
+        .session-time {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding-right: 20px;
+            border-right: 2px solid var(--border-subtle);
+            justify-content: center;
+        }
+
+        .session-day {
+            font-weight: 700;
+            color: var(--primary-solid);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .session-range {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .session-body {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .session-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .session-title {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* --- Badges & Pills --- */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Keeping opacity for status for better visual hierarchy, but colors are cleaner */
+        .status-pill[data-variant='info'] { background: #dbeafe; color: #1e40af; }
+        .status-pill[data-variant='success'] { background: #dcfce7; color: #166534; }
+        .status-pill[data-variant='danger'] { background: #fee2e2; color: #991b1b; }
+        .status-pill[data-variant='warning'] { background: #fef3c7; color: #92400e; } /* Added warning just in case */
+
+        .badge-plain {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: var(--bg-page); /* Solid light gray */
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .session-meta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .participant-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* --- Zoom Actions --- */
+        .zoom-button {
+            background: var(--action-blue);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: fit-content;
+            transition: background 0.2s;
+            border: none;
+            margin-top: 8px;
+        }
+
+        .zoom-button:hover {
+            background: var(--action-blue-hover);
+            color: #fff;
+        }
+
+        .zoom-note {
+            margin-top: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .zoom-note::before {
+            content: 'ℹ️';
+            font-style: normal;
+        }
+
+        /* --- States & Responsive --- */
+        .empty-state {
+            text-align: center;
+            padding: 40px 24px;
+            border: 2px dashed var(--border-subtle);
+            border-radius: var(--radius-md);
+            background: var(--bg-page);
             color: var(--text-muted);
             font-weight: 500;
         }
 
-        .session-details {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .session-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-        }
-
-        .session-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin: 0;
-            line-height: 1.4;
-        }
-
-        .time-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #f1f5f9;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-main);
-        }
-
-        .meta-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .meta-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            background: #f8fafc;
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .meta-item svg {
-            width: 16px;
-            height: 16px;
-            color: #94a3b8;
-        }
-
-        /* History Section (Sidebar) */
-        .history-sidebar {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 24px;
-            height: fit-content;
-        }
-
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .history-item {
-            display: flex;
-            gap: 12px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .history-date {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            min-width: 60px;
-        }
-
-        .history-content h4 {
-            margin: 0 0 4px 0;
-            font-size: 0.95rem;
-            color: var(--text-main);
-        }
-
-        .history-status {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .status-completed { background: #dcfce7; color: #166534; }
-        .status-cancelled { background: #fee2e2; color: #991b1b; }
-
-        .empty-state {
-            text-align: center;
-            padding: 48px 24px;
-            background: #f8fafc;
-            border-radius: 16px;
-            border: 2px dashed var(--border-color);
-            color: var(--text-muted);
-        }
-
-        @media (max-width: 1024px) {
-            .schedule-grid {
+        @media (max-width: 960px) {
+            .layout-grid {
                 grid-template-columns: 1fr;
             }
-        }
 
-        @media (max-width: 640px) {
             .session-card {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr; /* Stack time on top of details on mobile */
+                gap: 16px;
             }
-            
-            .date-box {
+
+            .session-time {
+                border-right: none;
+                border-bottom: 2px solid var(--border-subtle);
+                padding-right: 0;
+                padding-bottom: 16px;
                 flex-direction: row;
-                gap: 12px;
-                padding: 12px;
+                justify-content: space-between;
+                align-items: center;
             }
-            
-            .date-box .date {
-                font-size: 1.25rem;
-                margin: 0;
+
+            .session-range {
+                font-size: 1rem;
             }
         }
     </style>
@@ -314,233 +325,129 @@
 
 @section('content')
     <div class="page-content">
-        <div class="hero-card">
-            <div class="hero-header">
-                <div class="hero-content">
-                    <h1>Agenda Mengajar</h1>
-                    <p>Kelola dan pantau jadwal sesi kelas Anda. Pastikan hadir tepat waktu untuk memberikan pengalaman belajar terbaik.</p>
-                </div>
+        <div class="page-header">
+            <span class="header-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Dashboard Tentor
+            </span>
+            <h1>Agenda Mengajar Anda</h1>
+            <p class="page-subtitle">Semua jadwal diatur oleh admin MayClass. Perubahan waktu, paket, atau siswa akan langsung tercermin di sini.</p>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span>Agenda Mendatang</span>
+                <strong>{{ $metrics['upcoming'] }}</strong>
             </div>
-            <div class="metrics-row">
-                <div class="metric-pill">
-                    <span>Sesi Mendatang</span>
-                    <strong>{{ $metrics['upcoming'] }}</strong>
-                </div>
-                <div class="metric-pill">
-                    <span>Total Sesi</span>
-                    <strong>{{ $metrics['total'] }}</strong>
-                </div>
-                <div class="metric-pill">
-                    <span>Riwayat</span>
-                    <strong>{{ $metrics['history'] }}</strong>
-                </div>
+            <div class="metric-card">
+                <span>Riwayat Sesi</span>
+                <strong>{{ $metrics['history'] }}</strong>
+            </div>
+            <div class="metric-card">
+                <span>Total Selesai</span>
+                <strong>{{ $metrics['total'] }}</strong>
             </div>
         </div>
 
-        <div class="schedule-grid">
-            <!-- Main Column: Upcoming Sessions -->
-            <div class="main-schedule">
-                <!-- Today's Schedule -->
-                <div class="section-title">
-                    Jadwal Hari Ini
-                    <span class="count-badge">{{ $todaySessions->count() }}</span>
+        <div class="layout-grid">
+            <section class="schedule-section">
+                <div class="section-header">
+                    <h2>Agenda Mendatang</h2>
                 </div>
 
-                @if ($todaySessions->isEmpty())
-                    <div class="empty-state" style="margin-bottom: 32px;">
-                        <p>Tidak ada jadwal mengajar hari ini.</p>
-                    </div>
-                @else
-                    <div class="session-list" style="margin-bottom: 32px;">
-                        @foreach ($todaySessions as $session)
-                            @php
-                                $date = $session['start_at'];
-                            @endphp
-                            <div class="session-card" style="border-color: var(--primary-color); background: #f0fdf4;">
-                                <div class="date-box" style="background: #dcfce7; color: #166534; border-color: #bbf7d0;">
-                                    <span class="day" style="color: #166534;">HARI INI</span>
-                                    <span class="date" style="color: #14532d;">{{ $date ? $date->format('d') : '-' }}</span>
-                                    <span class="month" style="color: #166534;">{{ $date ? $date->locale('id')->isoFormat('MMM') : '-' }}</span>
-                                </div>
-                                
-                                <div class="session-details">
-                                    <div class="session-header">
-                                        <h3 class="session-title">{{ $session['title'] }}</h3>
-                                        <div class="time-badge" style="background: #166534; color: white;">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            {{ $session['time_range'] }}
-                                        </div>
-                                    </div>
-
-                                    <div class="meta-row">
-                                        <div class="meta-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                            </svg>
-                                            {{ $session['package'] }}
-                                        </div>
-                                        <div class="meta-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                            </svg>
-                                            {{ $session['subject'] }}
-                                        </div>
-                                        <div class="meta-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                            {{ $session['location'] }}
-                                        </div>
-                                        <div class="meta-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
-                                            {{ $session['participant_summary'] }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
-
-                <!-- Future Schedule -->
-                <div class="section-title">
-                    Jadwal Mendatang
-                    <span class="count-badge">{{ $futureSessions->count() }}</span>
-                </div>
-
-                @if ($futureSessions->isEmpty())
+                @if ($upcomingSessions->isEmpty())
                     <div class="empty-state">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="48" height="48" style="margin-bottom: 16px; color: #cbd5e1;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <p>Belum ada jadwal mendatang lainnya.</p>
+                        Belum ada agenda mengajar mendatang.
+                        <br>Jadwal baru akan muncul setelah admin menugaskannya.
                     </div>
                 @else
-                    <div class="session-list" id="future-sessions-list">
-                        @foreach ($futureSessions as $index => $session)
-                            @php
-                                $date = $session['start_at'];
-                            @endphp
-                            <div class="session-card" data-session-index="{{ $index }}" style="{{ $index >= 10 ? 'display: none;' : '' }}">
-                                <div class="date-box">
-                                    <span class="day">{{ $date ? $date->locale('id')->isoFormat('ddd') : '-' }}</span>
-                                    <span class="date">{{ $date ? $date->format('d') : '-' }}</span>
-                                    <span class="month">{{ $date ? $date->locale('id')->isoFormat('MMM Y') : '-' }}</span>
+                    <div class="session-list">
+                        @foreach ($upcomingSessions as $session)
+                            <article class="session-card">
+                                <div class="session-time">
+                                    <span class="session-day">{{ $session['date_label'] }}</span>
+                                    <span class="session-range">{{ $session['time_range'] }}</span>
                                 </div>
-                                
-                                <div class="session-details">
-                                    <div class="session-header">
+                                <div class="session-body">
+                                    <div class="session-header-row">
                                         <h3 class="session-title">{{ $session['title'] }}</h3>
-                                        <div class="time-badge">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            {{ $session['time_range'] }}
-                                        </div>
+                                        <span class="status-pill" data-variant="{{ $session['status_variant'] }}">{{ $session['status_label'] }}</span>
                                     </div>
 
-                                    <div class="meta-row">
-                                        <div class="meta-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                            </svg>
-                                            {{ $session['package'] }}
-                                        </div>
-                                        <div class="meta-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                            </svg>
-                                            {{ $session['subject'] }}
-                                        </div>
-                                        <div class="meta-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                            {{ $session['location'] }}
-                                        </div>
-                                        <div class="meta-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
-                                            {{ $session['participant_summary'] }}
-                                        </div>
+                                    <div class="session-meta-group">
+                                        <span class="badge-plain">{{ $session['package'] }}</span>
+                                        <span class="badge-plain">{{ $session['subject'] }}</span>
+                                        <span class="badge-plain">📍 {{ $session['location'] }}</span>
                                     </div>
+
+                                    <div class="participant-info">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18" style="color: var(--text-muted)">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        <span>{{ $session['participant_summary'] }}</span>
+                                    </div>
+
+                                    @if (($session['is_online'] ?? false) && ! empty($session['zoom_link']))
+                                        <a href="{{ $session['zoom_link'] }}" class="zoom-button" target="_blank" rel="noopener noreferrer">
+                                            Gabung Zoom Meeting
+                                        </a>
+                                    @elseif (($session['is_online'] ?? false))
+                                        <div class="zoom-note">Sesi Online. Link Zoom belum tersedia, hubungi admin.</div>
+                                    @elseif (! empty($session['zoom_link']))
+                                        <div class="zoom-note">Sesi ini tercatat offline, tidak menggunakan Zoom.</div>
+                                    @endif
                                 </div>
-                            </div>
+                            </article>
                         @endforeach
                     </div>
-                    
-                    @if ($futureSessions->count() > 10)
-                        <div style="text-align: center; margin-top: 24px;">
-                            <button id="toggle-future-btn" onclick="toggleFutureSessions()" style="background: var(--primary-color); color: white; border: none; padding: 12px 32px; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 0.95rem; transition: all 0.2s;">
-                                Tampilkan Lebih Banyak ({{ $futureSessions->count() - 10 }} sesi lagi)
-                            </button>
-                        </div>
-                    @endif
                 @endif
-            </div>
+            </section>
 
-            <!-- Sidebar: History -->
-            <div class="history-sidebar">
-                <div class="section-title">
-                    Riwayat Terakhir
+            <section class="schedule-section">
+                <div class="section-header">
+                    <h2>Riwayat Sesi</h2>
                 </div>
 
                 @if ($historySessions->isEmpty())
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Belum ada riwayat sesi.</p>
+                    <div class="empty-state">Belum ada riwayat sesi yang selesai atau dibatalkan.</div>
                 @else
-                    <div class="history-list">
-                        @foreach ($historySessions->take(5) as $session)
-                            @php
-                                $date = $session['start_at'];
-                            @endphp
-                            <div class="history-item">
-                                <div class="history-date">
-                                    {{ $date ? $date->format('d M') : '-' }}
+                    <div class="session-list">
+                        @foreach ($historySessions as $session)
+                            <article class="session-card" style="opacity: 0.9;"> <div class="session-time">
+                                    <span class="session-day" style="color: var(--text-muted);">{{ $session['date_label'] }}</span>
+                                    <span class="session-range" style="color: var(--text-muted);">{{ $session['time_range'] }}</span>
                                 </div>
-                                <div class="history-content">
-                                    <h4>{{ $session['title'] }}</h4>
-                                    <span class="history-status status-{{ $session['status_variant'] === 'success' ? 'completed' : 'cancelled' }}">
-                                        {{ $session['status_label'] }}
-                                    </span>
+                                <div class="session-body">
+                                    <div class="session-header-row">
+                                        <h3 class="session-title" style="color: var(--text-muted);">{{ $session['title'] }}</h3>
+                                        <span class="status-pill" data-variant="{{ $session['status_variant'] }}">{{ $session['status_label'] }}</span>
+                                    </div>
+
+                                    <div class="session-meta-group">
+                                        <span class="badge-plain">{{ $session['package'] }}</span>
+                                        <span class="badge-plain">{{ $session['subject'] }}</span>
+                                    </div>
+
+                                    <div class="participant-info">
+                                        <span>{{ $session['participant_summary'] }}</span>
+                                    </div>
+
+                                     {{-- Zoom buttons/notes are rarely needed for history, but kept logic intact --}}
+                                     @if (($session['is_online'] ?? false) && ! empty($session['zoom_link']))
+                                        <a href="{{ $session['zoom_link'] }}" class="zoom-button" style="background: var(--text-muted); pointer-events: none;" target="_blank" rel="noopener noreferrer">Link Zoom (Berakhir)</a>
+                                     @elseif (($session['is_online'] ?? false))
+                                        <div class="zoom-note">Sesi Online Berakhir.</div>
+                                     @elseif (! empty($session['zoom_link']))
+                                        <div class="zoom-note">Sesi Offline Berakhir.</div>
+                                     @endif
                                 </div>
-                            </div>
+                            </article>
                         @endforeach
                     </div>
                 @endif
-            </div>
+            </section>
         </div>
     </div>
-
-    <script>
-    // Toggle show more/less future sessions
-    let showingAllFuture = false;
-    function toggleFutureSessions() {
-        const sessions = document.querySelectorAll('[data-session-index]');
-        const btn = document.getElementById('toggle-future-btn');
-        
-        showingAllFuture = !showingAllFuture;
-        
-        sessions.forEach((session, index) => {
-            const sessionIndex = parseInt(session.getAttribute('data-session-index'));
-            if (sessionIndex >= 10) {
-                session.style.display = showingAllFuture ? 'grid' : 'none';
-            }
-        });
-        
-        if (showingAllFuture) {
-            btn.textContent = 'Tampilkan Lebih Sedikit';
-        } else {
-            const totalSessions = sessions.length;
-            const hiddenCount = totalSessions - 10;
-            btn.textContent = `Tampilkan Lebih Banyak (${hiddenCount} sesi lagi)`;
-        }
-    }
-    </script>
 @endsection

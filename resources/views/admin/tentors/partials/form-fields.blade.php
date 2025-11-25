@@ -97,14 +97,10 @@
                                 </label>
                             @endforeach
                         </div>
-                    </div>
-                @endif
-            @endforeach
-        </div>
-        
-        @error('subjects')
-            <p class="helper-text" style="color:#dc2626;">{{ $message }}</p>
-        @enderror
+                    </label>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     <div class="tentor-form-card">

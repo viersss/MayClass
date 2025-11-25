@@ -411,21 +411,82 @@
         </div>
 
         {{-- 4. Chart --}}
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3>Grafik Pendapatan Bulanan {{ now()->year }}</h3>
+        <div class="chart-card" style="padding: 28px; border-radius: 16px;">
+            <div class="chart-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin: 0;">Grafik Pendapatan</h3>
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">{{ now()->year }}</span>
+                </div>
             </div>
-            @php $maxValue = max($monthlyRevenue->pluck('value')->all() ?: [1]); @endphp
-            <div class="chart-canvas">
-                @foreach ($monthlyRevenue as $entry)
-                    @php $height = $maxValue > 0 ? max(($entry['value'] / $maxValue) * 100, 5) : 5; @endphp
-                    <div class="chart-col" data-label="{{ $entry['label'] }}: {{ $entry['formatted_short'] ?? $entry['value'] }}">
-                        <div class="chart-bar" style="height: {{ $height }}%;"></div>
-                        <span class="chart-label">{{ $entry['label'] }}</span>
-                    </div>
-                @endforeach
-            </div>
+            <div id="financeRevenueChart" style="min-height: 350px;"></div>
         </div>
+
+        @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const financeData = @json($monthlyRevenue);
+                const labels = financeData.map(item => item.label);
+                const values = financeData.map(item => item.value);
+
+                const options = {
+                    series: [{
+                        name: 'Pendapatan',
+                        data: values
+                    }],
+                    chart: {
+                        type: 'area',
+                        height: 350,
+                        fontFamily: 'inherit',
+                        toolbar: { show: false },
+                        animations: { enabled: true, easing: 'easeinout', speed: 800 }
+                    },
+                    colors: ['#0f766e'],
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shadeIntensity: 1,
+                            opacityFrom: 0.7,
+                            opacityTo: 0.1,
+                            stops: [0, 90, 100]
+                        }
+                    },
+                    dataLabels: { enabled: false },
+                    stroke: { curve: 'smooth', width: 3 },
+                    xaxis: {
+                        categories: labels,
+                        axisBorder: { show: false },
+                        axisTicks: { show: false },
+                        labels: { style: { colors: '#64748b', fontSize: '12px' } }
+                    },
+                    yaxis: {
+                        labels: {
+                            style: { colors: '#64748b', fontSize: '12px' },
+                            formatter: (value) => {
+                                if (value >= 1000000) return 'Rp ' + (value / 1000000).toFixed(1) + 'Jt';
+                                return 'Rp ' + value.toLocaleString('id-ID');
+                            }
+                        }
+                    },
+                    grid: {
+                        borderColor: '#f1f5f9',
+                        strokeDashArray: 4,
+                        padding: { top: 0, right: 0, bottom: 0, left: 10 }
+                    },
+                    tooltip: {
+                        theme: 'light',
+                        y: {
+                            formatter: function (val) {
+                                return 'Rp ' + val.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                };
+
+                const chart = new ApexCharts(document.querySelector("#financeRevenueChart"), options);
+                chart.render();
+            });
+        </script>
+        @endpush
 
         {{-- 5. Verification Table --}}
         <div class="table-card">

@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Package;
-use App\Models\Subject;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -16,11 +17,13 @@ class PackageController extends BaseAdminController
     public function index(): View
     {
         $packages = Schema::hasTable('packages')
-            ? Package::withQuotaUsage()->with(['subjects', 'tutors'])->orderBy('level')->get()
+            ? Package::withQuotaUsage()->with(['tutors'])->orderBy('level')->get()
             : collect();
 
         return $this->render('admin.packages.index', [
             'packages' => $packages,
+            'stages' => $this->stageOptions(),
+            'tutors' => User::where('role', 'tutor')->where('is_active', true)->orderBy('name')->get(),
         ]);
     }
 
@@ -28,7 +31,6 @@ class PackageController extends BaseAdminController
     {
         return $this->render('admin.packages.create', [
             'stages' => $this->stageOptions(),
-            'subjectsByLevel' => $this->getSubjectsByLevel(),
             'tutors' => User::where('role', 'tutor')->where('is_active', true)->orderBy('name')->get(),
         ]);
     }
@@ -38,11 +40,6 @@ class PackageController extends BaseAdminController
         $data = $this->validatePayload($request);
 
         $package = Package::create($data);
-
-        // Sync subjects
-        if ($request->has('subjects')) {
-            $package->subjects()->sync($request->subjects);
-        }
 
         // Sync tutors
         if ($request->has('tutors')) {
@@ -59,12 +56,11 @@ class PackageController extends BaseAdminController
 
     public function edit(Package $package): View
     {
-        $package->load(['subjects', 'cardFeatures']);
+        $package->load(['cardFeatures']);
 
         return $this->render('admin.packages.edit', [
             'package' => $package,
             'stages' => $this->stageOptions(),
-            'subjectsByLevel' => $this->getSubjectsByLevel(),
             'tutors' => User::where('role', 'tutor')->where('is_active', true)->orderBy('name')->get(),
         ]);
     }
@@ -74,11 +70,6 @@ class PackageController extends BaseAdminController
         $data = $this->validatePayload($request, $package->id);
 
         $package->update($data);
-
-        // Sync subjects
-        if ($request->has('subjects')) {
-            $package->subjects()->sync($request->subjects);
-        }
 
         // Sync tutors
         if ($request->has('tutors')) {
@@ -96,34 +87,92 @@ class PackageController extends BaseAdminController
 
     public function destroy(Package $package): RedirectResponse
     {
-        $package->delete();
+        try {
+            DB::transaction(function () use ($package) {
+                // Force delete related data to allow package deletion
+                $package->orders()->delete();
+                $package->enrollments()->delete();
+                $package->checkoutSessions()->delete();
 
-        return redirect()->route('admin.packages.index')->with('status', __('Paket berhasil dihapus.'));
+                // Detach many-to-many relationships
+                $package->tutors()->detach();
+
+                $package->delete();
+            });
+        } catch (QueryException $exception) {
+            // Fallback if something else blocks it
+            return redirect()
+                ->route('admin.packages.index')
+                ->with('error', 'Gagal menghapus paket: ' . $exception->getMessage());
+        }
+
+        return redirect()->route('admin.packages.index')->with('status', __('Paket dan data terkait berhasil dihapus.'));
     }
 
     private function validatePayload(Request $request, ?int $packageId = null): array
     {
         $stageKeys = array_keys($this->stageOptions());
 
-        return $request->validate([
-            'slug' => ['required', 'string', 'max:255', Rule::unique(Package::class)->ignore($packageId)],
+        $data = $request->validate([
             'level' => ['required', 'string', 'max:255', Rule::in($stageKeys)],
             'grade_range' => ['required', 'string', 'max:255'],
             'tag' => ['nullable', 'string', 'max:50'],
             'card_price_label' => ['required', 'string', 'max:50'],
             'detail_title' => ['required', 'string', 'max:255'],
-            'detail_price_label' => ['required', 'string', 'max:50'],
-            'image_url' => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
             'max_students' => ['nullable', 'integer', 'min:1'],
+            'available_class' => ['nullable', 'integer', 'min:1'],
             'summary' => ['required', 'string'],
-            'subjects' => ['required', 'array', 'min:1'],
-            'subjects.*' => ['exists:subjects,id'],
             'tutors' => ['nullable', 'array'],
-            'tutors.*' => ['exists:users,id'],
             'card_features' => ['nullable', 'array'],
             'card_features.*' => ['nullable', 'string', 'max:255'],
+            'program_points' => ['nullable', 'array'],
+            'program_points.*' => ['nullable', 'string'],
+            'facility_points' => ['nullable', 'array'],
+            'facility_points.*' => ['nullable', 'string'],
+            'schedule_info' => ['nullable', 'array'],
+            'schedule_info.*' => ['nullable', 'string'],
         ]);
+
+        // Auto-generate missing fields
+        if (!$request->has('slug')) {
+            $slug = \Illuminate\Support\Str::slug($data['detail_title']);
+            $count = 1;
+            $originalSlug = $slug;
+            while (Package::where('slug', $slug)->where('id', '!=', $packageId)->exists()) {
+                $slug = $originalSlug . '-' . $count++;
+            }
+            $data['slug'] = $slug;
+        }
+
+        if (!$request->has('image_url')) {
+            $data['image_url'] = 'default-package'; // Or random unsplash key
+        }
+
+        if (!$request->has('detail_price_label')) {
+            $data['detail_price_label'] = $data['card_price_label'];
+        }
+
+        // Filter empty values from arrays
+        if (isset($data['program_points'])) {
+            $data['program_points'] = array_values(array_filter($data['program_points'], fn($value) => !is_null($value) && $value !== ''));
+        } else {
+            $data['program_points'] = [];
+        }
+
+        if (isset($data['facility_points'])) {
+            $data['facility_points'] = array_values(array_filter($data['facility_points'], fn($value) => !is_null($value) && $value !== ''));
+        } else {
+            $data['facility_points'] = [];
+        }
+
+        if (isset($data['schedule_info'])) {
+            $data['schedule_info'] = array_values(array_filter($data['schedule_info'], fn($value) => !is_null($value) && $value !== ''));
+        } else {
+            $data['schedule_info'] = [];
+        }
+
+        return $data;
     }
 
     /**
@@ -150,7 +199,7 @@ class PackageController extends BaseAdminController
     {
         $definitions = config('mayclass.package_stages');
 
-        if (! is_array($definitions) || empty($definitions)) {
+        if (!is_array($definitions) || empty($definitions)) {
             $definitions = [
                 'SD' => ['label' => 'Sekolah Dasar (SD)'],
                 'SMP' => ['label' => 'Sekolah Menengah Pertama (SMP)'],
@@ -169,34 +218,5 @@ class PackageController extends BaseAdminController
         }
 
         return $options;
-    }
-
-    private function getSubjectsByLevel(): array
-    {
-        if (! Schema::hasTable('subjects')) {
-            return [
-                'SD' => collect(),
-                'SMP' => collect(),
-                'SMA' => collect(),
-            ];
-        }
-
-        $subjects = Subject::where('is_active', true)
-            ->orderBy('level')
-            ->orderBy('name')
-            ->get()
-            ->groupBy('level');
-
-        return [
-            'SD' => $subjects->get('SD', collect()),
-            'SMP' => $subjects->get('SMP', collect()),
-            'SMA' => $subjects->get('SMA', collect()),
-        ];
-    }
-
-    public function getSubjects(Package $package): \Illuminate\Http\JsonResponse
-    {
-        $subjects = $package->subjects()->select('id', 'name', 'level')->get();
-        return response()->json($subjects);
     }
 }

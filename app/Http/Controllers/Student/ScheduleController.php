@@ -23,6 +23,7 @@ class ScheduleController extends Controller
         $student = Auth::user();
         $hasEnrollmentsTable = Schema::hasTable('enrollments');
 
+        // 1. Ambil Data Enrollment Siswa
         $enrollments = (! $student || ! $hasEnrollmentsTable)
             ? collect()
             : $student->enrollments()
@@ -46,9 +47,13 @@ class ScheduleController extends Controller
         $packages = $enrollments->pluck('package')->filter();
         $primaryPackage = $packages->count() === 1 ? $packages->first() : null;
 
+        // 2. Ambil Sesi Jadwal
         $sessions = ($packageIds->isEmpty() || ! Schema::hasTable('schedule_sessions'))
             ? collect()
             : ScheduleSession::query()
+                // PERBAIKAN FINAL DISINI:
+                // Hapus 'title' (tidak ada di tabel package)
+                // Hapus 'zoom_link' (karena milik schedule_sessions, bukan package)
                 ->with(['package:id,detail_title'])
                 ->whereIn('package_id', $packageIds)
                 ->when(
@@ -73,20 +78,32 @@ class ScheduleController extends Controller
                 )
                 ->when(
                     Schema::hasColumn('schedule_sessions', 'status'),
-                    fn ($query) => $query->whereNotIn('status', ['cancelled'])
+                    function ($query) {
+                        $query->where(function ($statusQuery) {
+                            $statusQuery
+                                ->whereNull('status')
+                                ->orWhereIn('status', ['scheduled', 'active', 'pending', 'ongoing', 'aktif', 'berlangsung', 'menunggu']);
+                        });
+                    }
                 )
                 ->orderBy('start_at')
                 ->get();
 
+        // 3. Format Data untuk Tampilan (View)
         $viewMode = $this->resolveViewMode($request->query('view'));
         $referenceDate = $this->parseDate($request->query('date'));
 
         $schedule = ScheduleViewData::compose($sessions, $viewMode, $referenceDate);
 
-        $upcomingSessions = $sessions->filter(function ($session) {
-            $start = $this->parseDate($session->start_at ?? null);
+        $now = CarbonImmutable::now();
 
-            return $start ? $start->isFuture() : false;
+        $upcomingSessions = $sessions->filter(function ($session) use ($now) {
+            $start = $this->parseDate($session->start_at ?? null);
+            $status = $this->normalizeStatus($session->status ?? null);
+
+            return $start
+                && $start->greaterThanOrEqualTo($now)
+                && in_array($status, ['scheduled', 'active', 'pending'], true);
         });
 
         $stats = [
@@ -125,5 +142,16 @@ class ScheduleController extends Controller
         } catch (\Throwable $exception) {
             return null;
         }
+    }
+
+    private function normalizeStatus(?string $value): string
+    {
+        return match (strtolower((string) $value)) {
+            'completed', 'done', 'selesai' => 'completed',
+            'cancelled', 'canceled', 'batal', 'dibatalkan' => 'cancelled',
+            'active', 'ongoing', 'aktif', 'berlangsung' => 'active',
+            'pending', 'menunggu', 'tertunda' => 'pending',
+            default => 'scheduled',
+        };
     }
 }

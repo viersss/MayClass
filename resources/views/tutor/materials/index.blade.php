@@ -10,9 +10,9 @@
             --bg-surface: #ffffff;
             --bg-muted: #f8fafc;
             --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-            --shadow-hover: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --radius-lg: 16px;
             --radius-md: 12px;
         }
@@ -60,6 +60,7 @@
             align-items: center;
             gap: 8px;
             border: none;
+            cursor: pointer;
         }
 
         .btn-add:hover {
@@ -81,7 +82,7 @@
 
         .search-input {
             width: 100%;
-            padding: 14px 50px 14px 20px; /* Space for icon on right */
+            padding: 14px 50px 14px 20px;
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
             background: var(--bg-surface);
@@ -141,20 +142,11 @@
             border-color: #cbd5e1;
         }
 
-        .material-thumbnail {
-            width: 100px;
-            height: 100px;
-            flex-shrink: 0;
-            border-radius: 12px;
-            object-fit: cover;
-            background: #f1f5f9;
-        }
-
         .card-content {
             flex: 1;
             display: flex;
             flex-direction: column;
-            min-width: 0; /* Prevent flex text overflow */
+            min-width: 0;
         }
 
         .card-title {
@@ -183,8 +175,15 @@
             letter-spacing: 0.02em;
         }
 
-        .tag-subject { background: #eff6ff; color: #2563eb; }
-        .tag-level { background: #f5f3ff; color: #7c3aed; }
+        .tag-subject {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .tag-level {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
 
         .card-summary {
             font-size: 0.9rem;
@@ -217,13 +216,18 @@
             background: #f1f5f9;
             color: #475569;
         }
-        .btn-secondary:hover { background: #e2e8f0; color: #1e293b; }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
 
         .btn-outline {
             border: 1px solid var(--border-color);
             color: #475569;
             background: white;
         }
+
         .btn-outline:hover {
             border-color: var(--primary-color);
             color: var(--primary-color);
@@ -262,20 +266,20 @@
             .material-card {
                 flex-direction: column;
             }
-            .material-thumbnail {
-                width: 100%;
-                height: 160px;
-            }
+
             .page-header {
                 flex-direction: column;
                 align-items: stretch;
             }
+
             .btn-add {
-                justify-content: center;
+                justify content: center;
             }
+
             .card-actions {
                 flex-direction: row;
             }
+
             .action-btn {
                 flex: 1;
             }
@@ -286,85 +290,104 @@
 @section('content')
     @php($tableReady = $tableReady ?? true)
 
-    {{-- Header Section --}}
-    <div class="page-header">
-        <div class="header-title">
-            <h1>Manajemen Materi</h1>
-            <div class="stats-badge">
-                {{ $tableReady ? $materials->count() : 0 }} Materi Aktif
+    <div x-data="{ showModal: {{ $errors->any() ? 'true' : 'false' }} }">
+        {{-- Header Section --}}
+        <div class="page-header">
+            <div class="header-title">
+                <h1>Manajemen Materi</h1>
+                <div class="stats-badge">
+                    {{ $tableReady ? $materials->count() : 0 }} Materi Aktif
+                </div>
+            </div>
+            <button @click="showModal = true" class="btn-add">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Tambah Materi
+            </button>
+        </div>
+
+        {{-- Search Toolbar --}}
+        <div class="content-toolbar">
+            <form method="GET" class="search-wrapper">
+                <input 
+                    type="search" 
+                    name="q" 
+                    class="search-input" 
+                    value="{{ $search }}" 
+                    placeholder="Cari judul, mata pelajaran, atau jenjang..." 
+                />
+                <button type="submit" class="search-btn" title="Cari">
+                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        {{-- Content Area --}}
+        @if (! $tableReady)
+            <div class="system-alert">
+                <strong>⚠️ Database materi belum siap</strong>
+                <p style="margin: 8px 0;">Jalankan migrasi agar tutor dapat mengelola materi.</p>
+                <code style="background: rgba(255,255,255,0.6); padding: 2px 6px; border-radius: 4px;">php artisan migrate</code>
+            </div>
+        @elseif ($materials->isEmpty())
+            <div class="empty-state">
+                <div style="font-size: 3rem; margin-bottom: 16px;">📚</div>
+                <strong>Belum ada materi terdaftar</strong>
+                <p>Mulai tambahkan materi pertama Anda untuk membagikan modul belajar kepada siswa.</p>
+            </div>
+        @else
+            <div class="material-grid">
+                @foreach ($materials as $material)
+                    <article class="material-card">                    
+                        <div class="card-content">
+                            <h3 class="card-title" title="{{ $material->title }}">{{ $material->title }}</h3>
+                            
+                            <div class="tags-row">
+                                <span class="tag tag-subject">{{ $material->subject->name ?? 'Tanpa Mapel' }}</span>
+                                <span class="tag tag-level">{{ $material->level }}</span>
+                            </div>
+
+                            <p class="card-summary">{{ Str::limit($material->summary, 100) }}</p>
+
+                            <div class="card-actions">
+                                <a href="{{ route('tutor.materials.edit', $material) }}" class="action-btn btn-secondary">
+                                    Edit
+                                </a>
+                                @if ($material->resource_path)
+                                    @php($isExternal = str_starts_with($material->resource_path, 'http'))
+                                    <a href="{{ $isExternal ? $material->resource_path : route('tutor.materials.preview', $material->slug) }}"
+                                       class="action-btn btn-outline"
+                                       target="_blank" rel="noopener">
+                                       Preview
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        @endif
+
+        {{-- MODAL TAMBAH MATERI --}}
+        <div class="modal-backdrop" :class="{ 'show': showModal }" x-show="showModal" x-transition.opacity x-cloak>
+            <div class="modal-content" @click.away="showModal = false">
+                <div class="modal-header">
+                    <h3 class="modal-title">Tambah Materi Baru</h3>
+                    <button type="button" class="modal-close" @click="showModal = false">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @include('tutor.materials.partials.form-modal')
+                </div>
             </div>
         </div>
-        <a href="{{ route('tutor.materials.create') }}" class="btn-add">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Tambah Materi
-        </a>
+
     </div>
-
-    {{-- Search Toolbar --}}
-    <div class="content-toolbar">
-        <form method="GET" class="search-wrapper">
-            <input 
-                type="search" 
-                name="q" 
-                class="search-input" 
-                value="{{ $search }}" 
-                placeholder="Cari judul, mata pelajaran, atau jenjang..." 
-            />
-            <button type="submit" class="search-btn" title="Cari">
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-            </button>
-        </form>
-    </div>
-
-    {{-- Content Area --}}
-    @if (! $tableReady)
-        <div class="system-alert">
-            <strong>⚠️ Database materi belum siap</strong>
-            <p style="margin: 8px 0;">Jalankan migrasi agar tutor dapat mengelola materi.</p>
-            <code style="background: rgba(255,255,255,0.6); padding: 2px 6px; border-radius: 4px;">php artisan migrate</code>
-        </div>
-    @elseif ($materials->isEmpty())
-        <div class="empty-state">
-            <div style="font-size: 3rem; margin-bottom: 16px;">📚</div>
-            <strong>Belum ada materi terdaftar</strong>
-            <p>Mulai tambahkan materi pertama Anda untuk membagikan modul belajar kepada siswa.</p>
-        </div>
-    @else
-        <div class="material-grid">
-            @foreach ($materials as $material)
-                <article class="material-card">
-                    <img src="{{ $material->thumbnail_asset }}" alt="{{ $material->title }}" class="material-thumbnail" />
-                    
-                    <div class="card-content">
-                        <h3 class="card-title" title="{{ $material->title }}">{{ $material->title }}</h3>
-                        
-                        <div class="tags-row">
-                            <span class="tag tag-subject">{{ $material->subject->name ?? 'Tanpa Mapel' }}</span>
-                            <span class="tag tag-level">{{ $material->level }}</span>
-                        </div>
-
-                        <p class="card-summary">{{ Str::limit($material->summary, 100) }}</p>
-
-                        <div class="card-actions">
-                            <a href="{{ route('tutor.materials.edit', $material) }}" class="action-btn btn-secondary">
-                                Edit
-                            </a>
-                            @if ($material->resource_path)
-                                @php($isExternal = str_starts_with($material->resource_path, 'http'))
-                                <a href="{{ $isExternal ? $material->resource_path : route('tutor.materials.preview', $material->slug) }}"
-                                   class="action-btn btn-outline"
-                                   target="_blank" rel="noopener">
-                                   Preview
-                                </a>
-                            @endif
-                        </div>
-                    </div>
-                </article>
-            @endforeach
-        </div>
-    @endif
 @endsection

@@ -6,7 +6,6 @@ use App\Models\Enrollment;
 use App\Models\Material;
 use App\Models\Quiz;
 use App\Models\ScheduleSession;
-use App\Models\ScheduleTemplate;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -16,12 +15,8 @@ class DashboardController extends BaseTutorController
     public function index()
     {
         $tutor = Auth::user();
-        $assignedPackageIds = Schema::hasTable('schedule_templates') && $tutor
-            ? ScheduleTemplate::query()
-                ->where('user_id', $tutor->id)
-                ->pluck('package_id')
-                ->filter()
-                ->unique()
+        $assignedPackageIds = Schema::hasTable('packages') && $tutor
+            ? $tutor->packagesTaught()->pluck('id')
             : collect();
 
         $stats = [
@@ -36,11 +31,11 @@ class DashboardController extends BaseTutorController
 
         $sessions = Schema::hasTable('schedule_sessions')
             ? ScheduleSession::query()
-                ->when($tutor, fn ($query) => $query->where('user_id', $tutor->id))
-                ->when(
-                    $assignedPackageIds->isNotEmpty(),
-                    fn ($query) => $query->whereIn('package_id', $assignedPackageIds)
-                )
+                ->when($tutor, function ($query) use ($tutor) {
+                    $query->whereHas('package', function ($packageQuery) use ($tutor) {
+                        $packageQuery->where('tutor_id', $tutor->id);
+                    });
+                })
                 ->orderBy('start_at')
                 ->get()
             : collect();

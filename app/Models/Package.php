@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Support\ImageRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -23,12 +24,22 @@ class Package extends Model
         'image_url',
         'price',
         'max_students',
+        'available_class',
         'summary',
+        'tutor_id',
+        'zoom_link',
+        'program_points',
+        'facility_points',
+        'schedule_info',
     ];
 
     protected $casts = [
         'price' => 'float',
         'max_students' => 'integer',
+        'available_class' => 'integer',
+        'program_points' => 'array',
+        'facility_points' => 'array',
+        'schedule_info' => 'array',
     ];
 
     public function getImageAssetAttribute(): string
@@ -43,14 +54,26 @@ class Package extends Model
         return $this->hasMany(PackageFeature::class);
     }
 
+    /**
+     * Relasi Tunggal ke Tutor (Legacy/Utama)
+     */
+    public function tutor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'tutor_id');
+    }
+
+    /**
+     * Relasi Banyak ke Tutor (Multiple Tutors per Package)
+     * Memperbaiki error RelationNotFoundException [tutors]
+     */
+    public function tutors(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
     public function cardFeatures(): HasMany
     {
         return $this->features()->where('type', 'card')->orderBy('position');
-    }
-
-    public function tutors(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class)->where('role', 'tutor')->withTimestamps();
     }
 
     public function inclusions(): HasMany
@@ -73,9 +96,14 @@ class Package extends Model
         return $this->hasMany(CheckoutSession::class);
     }
 
-    public function subjects(): BelongsToMany
+    public function scheduleTemplates(): HasMany
     {
-        return $this->belongsToMany(Subject::class)->withTimestamps();
+        return $this->hasMany(ScheduleTemplate::class);
+    }
+
+    public function scheduleSessions(): HasMany
+    {
+        return $this->hasMany(ScheduleSession::class);
     }
 
     public function scopeWithQuotaUsage($query)
@@ -113,7 +141,12 @@ class Package extends Model
 
     public function quotaSnapshot(bool $lock = false): array
     {
-        $limit = $this->max_students !== null ? (int) $this->max_students : null;
+        // Calculate total limit based on quota per class * available classes
+        $perClassLimit = $this->max_students !== null ? (int) $this->max_students : null;
+        $classes = $this->available_class ? (int) $this->available_class : 1;
+
+        $limit = $perClassLimit !== null ? $perClassLimit * $classes : null;
+
         $activeEnrollments = $this->resolvedActiveEnrollmentCount($lock);
         $checkoutHolds = $this->resolvedPendingCheckoutCount($lock);
         $used = $activeEnrollments + $checkoutHolds;
@@ -121,6 +154,8 @@ class Package extends Model
 
         return [
             'limit' => $limit,
+            'per_class_limit' => $perClassLimit,
+            'available_classes' => $classes,
             'active_enrollments' => $activeEnrollments,
             'checkout_holds' => $checkoutHolds,
             'used' => $used,
@@ -148,7 +183,7 @@ class Package extends Model
             $query->lockForUpdate();
         }
 
-        if (! $lock && property_exists($this, 'active_enrollment_count')) {
+        if (!$lock && property_exists($this, 'active_enrollment_count')) {
             return (int) $this->active_enrollment_count;
         }
 
@@ -177,7 +212,7 @@ class Package extends Model
             $query->lockForUpdate();
         }
 
-        if (! $lock && property_exists($this, 'pending_checkout_count')) {
+        if (!$lock && property_exists($this, 'pending_checkout_count')) {
             return (int) $this->pending_checkout_count;
         }
 

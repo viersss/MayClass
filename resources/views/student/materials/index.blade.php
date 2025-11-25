@@ -273,11 +273,8 @@
                     dan {{ number_format(count($stats['levels'])) }} jenjang belajar untuk mendukung prestasimu.
                 </p>
                 <div class="hero-actions">
-                    <a href="{{ $materialsLink }}" target="_blank" rel="noopener" class="btn-hero">
-                        Buka Semua Materi
-                    </a>
                     <a href="{{ route('student.dashboard') }}" class="btn-hero">
-                        Kembali ke Dashboard
+                        Kembali ke Beranda
                     </a>
                 </div>
             </div>
@@ -320,9 +317,6 @@
                                         <a href="{{ route('student.materials.show', $material['slug']) }}" class="btn-sm btn-primary-sm">
                                             Buka Materi
                                         </a>
-                                        <a href="{{ $material['view_url'] }}" target="_blank" rel="noopener" class="btn-sm btn-outline-sm">
-                                            Lihat Sumber
-                                        </a>
                                     </div>
                                 </div>
                             @endforeach
@@ -340,11 +334,6 @@
             <div class="empty-state">
                 <h3>Belum ada materi tercatat</h3>
                 <p>Materi pembelajaran akan muncul di sini setelah diterbitkan oleh tutor atau admin.</p>
-                <div style="margin-top: 20px;">
-                    <a href="{{ $materialsLink }}" target="_blank" rel="noopener" class="btn-sm btn-primary-sm">
-                        Cek Google Drive
-                    </a>
-                </div>
             </div>
         @endif
 

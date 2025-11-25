@@ -7,15 +7,17 @@ use App\Models\ScheduleTemplate;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class ScheduleTemplateGenerator
 {
+    /**
+     * Generate sesi untuk Tutor tertentu (Maintenance rutin).
+     */
     public static function ensureForTutor(User $tutor, int $weeks = 8): void
     {
-        if (! self::ready()) {
-            return;
-        }
+        if (! self::ready()) return;
 
         $templates = ScheduleTemplate::query()
             ->where('user_id', $tutor->id)
@@ -23,18 +25,18 @@ class ScheduleTemplateGenerator
             ->with('package')
             ->get();
 
-        if ($templates->isEmpty()) {
-            return;
-        }
+        if ($templates->isEmpty()) return;
 
-        self::ensureSessions($templates, $weeks);
+        // Default start date hari ini untuk maintenance rutin
+        self::ensureSessions($templates, $weeks, CarbonImmutable::now());
     }
 
+    /**
+     * Generate sesi untuk Paket tertentu.
+     */
     public static function ensureForPackage(int $packageId, int $weeks = 8): void
     {
-        if (! self::ready()) {
-            return;
-        }
+        if (! self::ready()) return;
 
         $templates = ScheduleTemplate::query()
             ->where('package_id', $packageId)
@@ -42,105 +44,137 @@ class ScheduleTemplateGenerator
             ->with('user')
             ->get();
 
-        if ($templates->isEmpty()) {
-            return;
-        }
+        if ($templates->isEmpty()) return;
 
-        self::ensureSessions($templates, $weeks);
+        self::ensureSessions($templates, $weeks, CarbonImmutable::now());
     }
 
-    public static function refreshTemplate(ScheduleTemplate $template, int $weeks = 8): void
+    /**
+     * Generate sesi saat Template baru dibuat atau diupdate.
+     * Menerima parameter $startDate agar jadwal sesuai inputan user (reference_date).
+     */
+    public static function refreshTemplate(ScheduleTemplate $template, int $weeks = 8, ?string $startDate = null): void
     {
-        if (! self::ready()) {
-            return;
-        }
+        if (! self::ready()) return;
 
-        ScheduleSession::query()
-            ->where('schedule_template_id', $template->id)
-            ->where('start_at', '>=', CarbonImmutable::now()->startOfDay())
-            ->delete();
+        DB::transaction(function () use ($template, $weeks, $startDate) {
+            // 1. Tentukan titik mulai. Jika user input tanggal, gunakan itu. Jika tidak, pakai NOW.
+            $startRef = $startDate ? CarbonImmutable::parse($startDate) : CarbonImmutable::now();
 
-        self::ensureSessions(collect([$template->fresh()]), $weeks);
+            // 2. Hapus sesi masa depan agar bersih sebelum generate ulang
+            ScheduleSession::query()
+                ->where('schedule_template_id', $template->id)
+                ->where('start_at', '>=', $startRef->startOfDay())
+                ->where('status', 'scheduled') // Hanya hapus yang statusnya masih terjadwal
+                ->delete();
+
+            // 3. Load relasi user jika belum ada
+            if (!$template->relationLoaded('user')) {
+                $template->load('user');
+            }
+            
+            // 4. Generate sesi baru mulai dari tanggal referensi
+            self::ensureSessions(collect([$template]), $weeks, $startRef);
+        });
     }
 
+    /**
+     * Menghapus sesi masa depan (saat template dihapus).
+     */
     public static function removeTemplateSessions(ScheduleTemplate $template): void
     {
-        if (! self::ready()) {
-            return;
-        }
+        if (! self::ready()) return;
 
         ScheduleSession::query()
             ->where('schedule_template_id', $template->id)
             ->where('start_at', '>=', CarbonImmutable::now()->startOfDay())
+            ->where('status', 'scheduled')
             ->delete();
     }
 
-    private static function ensureSessions(Collection $templates, int $weeks): void
+    /**
+     * Core Logic: Loop mingguan untuk membuat sesi.
+     */
+    private static function ensureSessions(Collection $templates, int $weeks, CarbonImmutable $startFrom): void
     {
-        $now = CarbonImmutable::now();
-        $windowStart = $now->startOfWeek(CarbonImmutable::MONDAY);
-        $windowEnd = $windowStart->addWeeks($weeks)->endOfWeek(CarbonImmutable::SUNDAY);
-
-        $templates->each(function (ScheduleTemplate $template) use ($windowStart, $windowEnd, $weeks) {
-            $tutor = $template->relationLoaded('user') ? $template->user : $template->user()->first();
-
+        // Mulai perhitungan window dari awal minggu tanggal referensi
+        $windowStart = $startFrom->startOfWeek(CarbonImmutable::MONDAY);
+        
+        // Loop template
+        $templates->each(function (ScheduleTemplate $template) use ($windowStart, $weeks, $startFrom) {
+            
+            // Pastikan data user/tutor tersedia
+            $tutor = $template->user; 
             if (! $tutor) {
-                return;
+                $tutor = User::find($template->user_id);
+                if (!$tutor) return; 
             }
 
+            // LOOPING MINGGUAN
             for ($week = 0; $week <= $weeks; $week++) {
-                $weekStart = $windowStart->addWeeks($week);
+                // Hitung minggu ke-n dari start date
+                $weekStart = $windowStart->copy()->addWeeks($week);
+                
+                // Cari tanggal spesifik (Senin/Selasa/dll) di minggu tersebut
                 $candidateDate = self::nextOrSameDay($weekStart, $template->day_of_week);
 
-                if (! $candidateDate || $candidateDate->lt($windowStart) || $candidateDate->gt($windowEnd)) {
+                // Validasi: Tanggal tidak boleh null & harus >= Tanggal Mulai yang diminta user
+                if (! $candidateDate || $candidateDate->startOfDay()->lt($startFrom->startOfDay())) {
                     continue;
                 }
 
-                $startAt = $candidateDate->setTimeFromTimeString($template->start_time);
+                // Gabungkan Tanggal + Jam
+                try {
+                    $startAt = $candidateDate->setTimeFromTimeString($template->start_time);
+                } catch (\Exception $e) {
+                    continue; 
+                }
 
+                // Cek Duplikat
                 $exists = ScheduleSession::query()
                     ->where('schedule_template_id', $template->id)
-                    ->whereDate('start_at', $startAt->toDateString())
-                    ->whereTime('start_at', $startAt->format('H:i:s'))
+                    ->where('start_at', $startAt)
                     ->exists();
 
                 if ($exists) {
                     continue;
                 }
 
+                // Create Session
                 ScheduleSession::create([
                     'schedule_template_id' => $template->id,
-                    'user_id' => $template->user_id,
-                    'package_id' => $template->package_id,
-                    'title' => $template->title,
-                    'category' => $template->category ?? '-',
-                    'class_level' => $template->class_level,
-                    'location' => $template->location,
-                    'student_count' => $template->student_count,
-                    'mentor_name' => $tutor->name,
-                    'start_at' => $startAt,
-                    'duration_minutes' => $template->duration_minutes ?? 90,
-                    'is_highlight' => false,
-                    'status' => 'scheduled',
+                    'user_id'              => $template->user_id,
+                    'package_id'           => $template->package_id,
+                    'title'                => $template->title,
+                    'category'             => $template->category ?? '-',
+                    'class_level'          => $template->class_level,
+                    'location'             => $template->location,
+                    'zoom_link'            => $template->zoom_link,
+                    'student_count'        => $template->student_count,
+                    'mentor_name'          => $tutor->name,
+                    'start_at'             => $startAt,
+                    'duration_minutes'     => $template->duration_minutes ?? 90,
+                    'is_highlight'         => false,
+                    'status'               => 'scheduled',
                 ]);
             }
         });
     }
 
-    private static function nextOrSameDay(CarbonImmutable $date, int $isoDayOfWeek): ?CarbonImmutable
+    private static function nextOrSameDay(CarbonImmutable $date, int $dayOfWeek): ?CarbonImmutable
     {
-        if ($isoDayOfWeek < 1 || $isoDayOfWeek > 7) {
+        if ($dayOfWeek < 0 || $dayOfWeek > 6) {
             return null;
         }
 
-        // Convert ISO (1-7) to Carbon (0-6)
-        $carbonDayOfWeek = $isoDayOfWeek === 7 ? 0 : $isoDayOfWeek;
-
-        if ($date->dayOfWeek === $carbonDayOfWeek) {
+        // Jika hari ini sudah pas, return hari ini
+        if ($date->dayOfWeek === $dayOfWeek) {
             return $date;
         }
 
-        return $date->next($carbonDayOfWeek);
+        // Jika tidak, cari hari tersebut di masa depan (dalam minggu yang sama atau next)
+        // Note: Logika startOfWeek sudah menangani offset minggu
+        return $date->next($dayOfWeek);
     }
 
     private static function ready(): bool

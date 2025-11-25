@@ -169,9 +169,19 @@
             font-weight: 700;
             text-transform: uppercase;
         }
-        
-        .tag-default { background: #f1f5f9; color: #64748b; }
-        .tag-highlight { background: #fff7ed; color: #ea580c; border: 1px solid #ffedd5; } /* Orange for active tags */
+
+        .tag-default {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .tag-highlight {
+            background: #fff7ed;
+            color: #ea580c;
+            border: 1px solid #ffedd5;
+        }
+
+        /* Orange for active tags */
 
         /* Actions */
         .action-group {
@@ -251,6 +261,7 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+
             .btn-add {
                 width: 100%;
                 justify-content: center;
@@ -260,129 +271,304 @@
 @endpush
 
 @section('content')
-    <div class="page-container">
-        
-        {{-- Header --}}
-        <div class="page-header">
-            <div class="header-title">
-                <h2>Manajemen Paket Belajar</h2>
-                <p>Atur penawaran harga, jenjang pendidikan, dan detail paket untuk siswa.</p>
-            </div>
-            <a href="{{ route('admin.packages.create') }}" class="btn-add">
-                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                Tambah Paket Baru
-            </a>
-        </div>
+<div class="page-container">
 
-        {{-- Table --}}
-        <div class="table-card">
-            <div class="table-responsive">
-                <table class="package-table">
-                    <thead>
-                        <tr>
-                            <th>Nama Paket</th>
-                            <th>Jenjang & Kelas</th>
-                            <th>Harga</th>
-                            <th>Kuota</th>
-                            <th>Mata Pelajaran</th>
-                            <th>Tutor</th>
-                            <th>Tag / Label</th>
-                            <th style="text-align: right;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($packages as $package)
-                            <tr>
-                                <td>
-                                    <span class="pkg-name">{{ $package->detail_title }}</span>
-                                    <span class="pkg-price-label">{{ $package->detail_price_label }}</span>
-                                </td>
-                                <td>
-                                    <span class="pkg-level">{{ \App\Support\PackagePresenter::stageLabel($package->level) }}</span>
-                                    @if ($package->grade_range)
-                                        <span class="pkg-grades">{{ $package->grade_range }}</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <span class="pkg-price">Rp {{ number_format($package->price, 0, ',', '.') }}</span>
-                                </td>
-                                <td>
-                                    @php($quota = $package->quotaSnapshot())
-                                    @if ($quota['limit'] === null)
-                                        <span class="tag-pill tag-default">Tak terbatas</span>
-                                    @else
-                                        <div style="display: flex; flex-direction: column; gap: 4px;">
-                                            <strong>{{ $quota['remaining'] }} / {{ $quota['limit'] }} kursi tersisa</strong>
-                                            <small style="color: var(--text-muted);">
-                                                Aktif: {{ $quota['active_enrollments'] }}, Checkout terkunci: {{ $quota['checkout_holds'] }}
-                                            </small>
-                                        </div>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($package->subjects->isNotEmpty())
-                                        <div class="subject-pills">
-                                            @foreach($package->subjects->take(3) as $subject)
-                                                <span class="subject-pill">{{ $subject->name }}</span>
-                                            @endforeach
-                                            @if($package->subjects->count() > 3)
-                                                <span class="subject-pill-more">+{{ $package->subjects->count() - 3 }} lainnya</span>
-                                            @endif
-                                        </div>
-                                    @else
-                                        <span class="text-muted">Belum ada</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($package->tutors->isNotEmpty())
-                                        <div class="subject-pills">
-                                            @foreach($package->tutors->take(3) as $tutor)
-                                                <span class="subject-pill" style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd;">{{ $tutor->name }}</span>
-                                            @endforeach
-                                            @if($package->tutors->count() > 3)
-                                                <span class="subject-pill-more" style="background: #f1f5f9; color: #64748b;">+{{ $package->tutors->count() - 3 }}</span>
-                                            @endif
-                                        </div>
-                                    @else
-                                        <span class="text-muted">Belum ada</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($package->tag)
-                                        <span class="tag-pill tag-highlight">{{ $package->tag }}</span>
-                                    @else
-                                        <span class="tag-pill tag-default">—</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="action-group">
-                                        <a href="{{ route('admin.packages.edit', $package) }}" class="btn-icon" title="Edit Paket">
-                                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                        </a>
-                                        
-                                        <form action="{{ route('admin.packages.destroy', $package) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus paket ini? Data yang dihapus tidak bisa dikembalikan.');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn-icon delete" title="Hapus Paket">
-                                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                            </button>
-                                        </form>
+    {{-- Header --}}
+    <div class="page-header">
+        <div class="header-title">
+            <h2>Manajemen Paket Belajar</h2>
+            <p>Atur penawaran harga, jenjang pendidikan, dan detail paket untuk siswa.</p>
+        </div>
+        <button onclick="openModal('addPackageModal')" class="btn-add">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Tambah Paket Baru
+        </button>
+    </div>
+
+    {{-- Table --}}
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="package-table">
+                <thead>
+                    <tr>
+                        <th>Nama Paket</th>
+                        <th>Jenjang & Kelas</th>
+                        <th>Harga</th>
+                        <th>Kuota</th>
+                        <th style="text-align: right;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($packages as $package)
+                    <tr>
+                        <td>
+                            <span class="pkg-name">{{ $package->detail_title }}</span>
+                        </td>
+                        <td>
+                            <span
+                                class="pkg-level">{{ \App\Support\PackagePresenter::stageLabel($package->level) }}</span>
+                            @if ($package->grade_range)
+                                <span class="pkg-grades">{{ $package->grade_range }}</span>
+                            @endif
+                        </td>
+                        <td>
+                            <span class="pkg-price">Rp {{ number_format($package->price, 0, ',', '.') }}</span>
+                            <span class="pkg-price-label"
+                                style="display: block; font-size: 0.8rem; color: #64748b;">{{ $package->detail_price_label }}</span>
+                        </td>
+                        <td>
+                            @php($quota = $package->quotaSnapshot())
+                            @if ($quota['limit'] === null)
+                                <span class="tag-pill tag-default">Tak terbatas</span>
+                            @else
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                    <strong>{{ $quota['remaining'] }} / {{ $quota['limit'] }} kursi tersisa</strong>
+                                    <small style="color: var(--text-muted);">
+                                        Aktif: {{ $quota['active_enrollments'] }}, Checkout terkunci:
+                                        {{ $quota['checkout_holds'] }}
+                                    </small>
+                                </div>
+                            @endif
+                        </td>
+                        <td>
+                            <div class="action-group">
+                                <a href="{{ route('admin.packages.edit', $package) }}" class="btn-icon"
+                                    title="Edit Paket">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('admin.packages.destroy', $package) }}" method="POST"
+                                    class="d-inline"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus paket ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-icon delete" title="Hapus Paket">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center py-4">Belum ada paket tersedia.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Package Modal -->
+    <div id="addPackageModal" class="modal-backdrop" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tambah Paket Baru</h2>
+                <button type="button" class="close-btn" onclick="closeModal('addPackageModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('admin.packages.store') }}" method="POST">
+                    @csrf
+
+                    <div class="tentor-form-card">
+                        <h2>Informasi Dasar Paket</h2>
+                        <p>Lengkapi judul, jenjang, dan detail harga paket.</p>
+
+                        <div class="tentor-form-grid">
+                            <div class="tentor-form-group">
+                                <label>Judul Paket</label>
+                                <input type="text" name="detail_title" value="{{ old('detail_title') }}"
+                                    placeholder="Contoh: MayClass SD Basic Level" required>
+                            </div>
+                            <div class="tentor-form-group">
+                                <label>Jenjang Pendidikan</label>
+                                <select name="level" required>
+                                    <option value="" disabled selected>Pilih jenjang</option>
+                                    @foreach ($stages as $value => $label)
+                                        <option value="{{ $value }}" {{ old('level') == $value ? 'selected' : '' }}>
+                                            {{ $label }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="tentor-form-group">
+                                <label>Rentang Kelas</label>
+                                <input type="text" name="grade_range" value="{{ old('grade_range') }}"
+                                    placeholder="Contoh: 1-3 SD" required>
+                            </div>
+                            <div class="tentor-form-group">
+                                <label>Harga (Rp)</label>
+                                <input type="number" name="price" value="{{ old('price') }}" required>
+                            </div>
+                        </div>
+
+                        <div class="tentor-form-grid" style="margin-top: 20px;">
+                            <div class="tentor-form-group">
+                                <label>Kuota Siswa per Kelas (Opsional)</label>
+                                <input type="number" name="max_students" value="{{ old('max_students') }}"
+                                    placeholder="Kosongkan jika tak terbatas">
+                            </div>
+                            <div class="tentor-form-group">
+                                <label>Jumlah Kelas Tersedia</label>
+                                <input type="number" name="available_class" value="{{ old('available_class', 1) }}"
+                                    min="1" required>
+                            </div>
+                        </div>
+
+                        <div class="tentor-form-group" style="margin-top: 20px;">
+                            <label>Ringkasan</label>
+                            <textarea name="summary" rows="2" placeholder="Deskripsi singkat paket..."
+                                required>{{ old('summary') }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="tentor-form-card">
+                        <h2>Detail Program & Fasilitas</h2>
+                        <p>Tambahkan poin-poin keunggulan paket ini.</p>
+
+                        <div class="tentor-form-grid">
+                            <!-- Program Points -->
+                            <div class="tentor-form-group">
+                                <label>Program</label>
+                                <div id="program-inputs-container">
+                                    <div class="dynamic-input-row" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                        <input type="text" name="program_points[]"
+                                            placeholder="Contoh: 2x kelas live interaktif/minggu">
+                                        <button type="button" class="btn-icon-danger"
+                                            onclick="this.parentElement.remove()"
+                                            style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
                                     </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6">
-                                    <div class="empty-state">
-                                        <svg style="width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                                        <p>Belum ada paket belajar yang tersedia.</p>
+                                </div>
+                                <button type="button"
+                                    onclick="addInputRow('program-inputs-container', 'program_points[]', 'Contoh: Modul tematik mingguan')"
+                                    style="background: #e0f2fe; color: #0284c7; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer; margin-top: 4px;">
+                                    + Tambah Program
+                                </button>
+                            </div>
+
+                            <!-- Facility Points -->
+                            <div class="tentor-form-group">
+                                <label>Fasilitas</label>
+                                <div id="facility-inputs-container">
+                                    <div class="dynamic-input-row" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                        <input type="text" name="facility_points[]"
+                                            placeholder="Contoh: Pendampingan belajar 120 menit/sesi">
+                                        <button type="button" class="btn-icon-danger"
+                                            onclick="this.parentElement.remove()"
+                                            style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
                                     </div>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                </div>
+                                <button type="button"
+                                    onclick="addInputRow('facility-inputs-container', 'facility_points[]', 'Contoh: Bank soal literasi')"
+                                    style="background: #e0f2fe; color: #0284c7; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer; margin-top: 4px;">
+                                    + Tambah Fasilitas
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="tentor-form-group" style="margin-top: 20px;">
+                            <label>Jadwal Belajar</label>
+                            <div id="schedule-inputs-container">
+                                <div class="dynamic-input-row" style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                    <input type="text" name="schedule_info[]"
+                                        placeholder="Contoh: Senin (15.30–17.30 WIB)">
+                                    <button type="button" class="btn-icon-danger" onclick="this.parentElement.remove()"
+                                        style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button"
+                                onclick="addInputRow('schedule-inputs-container', 'schedule_info[]', 'Contoh: Kamis (15.30–17.30 WIB)')"
+                                style="background: #e0f2fe; color: #0284c7; border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer; margin-top: 4px;">
+                                + Tambah Jadwal
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tentor-form-card">
+                        <h2>Pengaturan Tambahan</h2>
+                        <div class="tentor-form-grid">
+                            <div class="tentor-form-group">
+                                <label>Label Harga Kartu</label>
+                                <input type="text" name="card_price_label"
+                                    value="{{ old('card_price_label', '/Bulan') }}" required>
+                            </div>
+                            <div class="tentor-form-group">
+                                <label>Tag (Opsional)</label>
+                                <input type="text" name="tag" value="{{ old('tag') }}" placeholder="Contoh: Terpopuler">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tentor-form-actions" style="margin-top: 24px;">
+                        <button type="button" class="btn-secondary"
+                            onclick="closeModal('addPackageModal')">Batal</button>
+                        <button type="submit" class="btn-primary">Simpan Paket</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-@endsection
+
+    <script>
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                // Small delay to allow display:flex to apply before opacity transition
+                setTimeout(() => {
+                    modal.classList.add('show');
+                }, 10);
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('show');
+                // Wait for transition to finish before hiding
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300); // Matches CSS transition duration
+            }
+        }
+
+        function addInputRow(containerId, inputName, placeholder, value = '') {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = 'dynamic-input-row';
+            div.style.cssText = 'display: flex; gap: 8px; margin-bottom: 8px;';
+
+            div.innerHTML = `
+                <input type="text" name="${inputName}" value="${value}" placeholder="${placeholder}" style="flex: 1;">
+                <button type="button" class="btn-icon-danger" onclick="this.parentElement.remove()" style="background: #fee2e2; color: #ef4444; border: none; border-radius: 8px; width: 38px; cursor: pointer;">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            `;
+
+            container.appendChild(div);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            if (event.target.classList.contains('modal-backdrop')) {
+                event.target.classList.remove('show');
+                setTimeout(() => {
+                    event.target.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        @if($errors->any())
+            document.addEventListener('DOMContentLoaded', function () {
+                openModal('addPackageModal');
+            });
+        @endif
+    </script>
+    @endsection

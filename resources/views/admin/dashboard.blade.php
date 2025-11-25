@@ -486,22 +486,7 @@
                 <h3>Grafik Pendapatan</h3>
                 <span>{{ now()->year }}</span>
             </div>
-
-            @if ($monthlyRevenue->sum('value') === 0)
-                <div class="empty-state">Belum ada data transaksi untuk ditampilkan</div>
-            @else
-                @php $maxValue = max($monthlyRevenue->pluck('value')->all() ?: [1]); @endphp
-                <div class="chart-container">
-                    @foreach ($monthlyRevenue as $entry)
-                        @php $h = $maxValue > 0 ? max(($entry['value'] / $maxValue) * 100, 5) : 5; @endphp
-                        <div class="chart-col">
-                            {{-- Tooltip data-value added --}}
-                            <div class="chart-bar" style="height: {{ $h }}%;" data-value="{{ $entry['formatted'] }}"></div>
-                            <span class="chart-label">{{ $entry['label'] }}</span>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
+            <div id="revenueChart" style="min-height: 300px;"></div>
         </div>
 
         {{-- Pipeline --}}
@@ -510,34 +495,146 @@
                 <h3>Status Pembayaran</h3>
                 <span>Distribusi Order</span>
             </div>
-
-            @if ($paymentPipeline['total'] === 0)
-                <div class="empty-state">Data tidak tersedia</div>
-            @else
-                <div class="pipeline-list">
-                    @foreach ($paymentPipeline['rows'] as $row)
-                        @php
-                            $color = match($row['status']) {
-                                'paid' => '#22c55e',
-                                'pending' => '#eab308',
-                                'failed' => '#ef4444',
-                                default => '#3b82f6'
-                            };
-                        @endphp
-                        <div class="pipeline-item">
-                            <div class="pipeline-info">
-                                <span>{{ $row['label'] }}</span>
-                                <span>{{ number_format($row['count']) }} ({{ $row['percentage'] }}%)</span>
-                            </div>
-                            <div class="pipeline-bar-bg">
-                                <div class="pipeline-bar-fill" style="width: {{ $row['percentage'] }}%; background: {{ $color }};"></div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @endif
+            <div id="pipelineChart" style="min-height: 300px; display: flex; justify-content: center; align-items: center;"></div>
         </div>
     </section>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- REVENUE CHART (Area) ---
+            const revenueData = @json($monthlyRevenue);
+            const revenueLabels = revenueData.map(item => item.label);
+            const revenueValues = revenueData.map(item => item.value);
+
+            const revenueOptions = {
+                series: [{
+                    name: 'Pendapatan',
+                    data: revenueValues
+                }],
+                chart: {
+                    type: 'area',
+                    height: 320,
+                    fontFamily: 'inherit',
+                    toolbar: { show: false },
+                    animations: { enabled: true, easing: 'easeinout', speed: 800 }
+                },
+                colors: ['#0f766e'],
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.7,
+                        opacityTo: 0.1,
+                        stops: [0, 90, 100]
+                    }
+                },
+                dataLabels: { enabled: false },
+                stroke: { curve: 'smooth', width: 3 },
+                xaxis: {
+                    categories: revenueLabels,
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                    labels: { style: { colors: '#64748b', fontSize: '12px' } }
+                },
+                yaxis: {
+                    labels: {
+                        style: { colors: '#64748b', fontSize: '12px' },
+                        formatter: (value) => {
+                            if (value >= 1000000) return 'Rp ' + (value / 1000000).toFixed(1) + 'Jt';
+                            return 'Rp ' + value.toLocaleString('id-ID');
+                        }
+                    }
+                },
+                grid: {
+                    borderColor: '#f1f5f9',
+                    strokeDashArray: 4,
+                    padding: { top: 0, right: 0, bottom: 0, left: 10 }
+                },
+                tooltip: {
+                    theme: 'light',
+                    y: {
+                        formatter: function (val) {
+                            return 'Rp ' + val.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            };
+
+            const revenueChart = new ApexCharts(document.querySelector("#revenueChart"), revenueOptions);
+            revenueChart.render();
+
+            // --- PIPELINE CHART (Donut) ---
+            const pipelineData = @json($paymentPipeline['rows']);
+            const pipelineLabels = pipelineData.map(item => item.label);
+            const pipelineSeries = pipelineData.map(item => item.count);
+            // Map status to colors
+            const statusColors = {
+                'paid': '#10b981',    // Emerald 500
+                'pending': '#f59e0b', // Amber 500
+                'failed': '#ef4444',  // Red 500
+                'rejected': '#ef4444', // Red 500
+                'initiated': '#cbd5e1' // Slate 300
+            };
+            const pipelineColors = pipelineData.map(item => statusColors[item.status] || '#3b82f6');
+
+            const pipelineOptions = {
+                series: pipelineSeries,
+                labels: pipelineLabels,
+                chart: {
+                    type: 'donut',
+                    height: 320,
+                    fontFamily: 'inherit',
+                },
+                colors: pipelineColors,
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '70%',
+                            labels: {
+                                show: true,
+                                name: { fontSize: '14px', color: '#64748b' },
+                                value: {
+                                    fontSize: '24px',
+                                    fontWeight: 700,
+                                    color: '#1e293b',
+                                    formatter: function (val) { return val }
+                                },
+                                total: {
+                                    show: true,
+                                    label: 'Total',
+                                    color: '#64748b',
+                                    formatter: function (w) {
+                                        return w.globals.seriesTotals.reduce((a, b) => a + b, 0)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                dataLabels: { enabled: false },
+                stroke: { show: false },
+                legend: {
+                    position: 'bottom',
+                    fontFamily: 'inherit',
+                    itemMargin: { horizontal: 10, vertical: 5 }
+                },
+                tooltip: {
+                    enabled: true,
+                    theme: 'light',
+                    y: {
+                        formatter: function(val) {
+                            return val + " Transaksi"
+                        }
+                    }
+                }
+            };
+
+            const pipelineChart = new ApexCharts(document.querySelector("#pipelineChart"), pipelineOptions);
+            pipelineChart.render();
+        });
+    </script>
+    @endpush
 
     {{-- 4. Tables & Lists --}}
     <section class="details-section">
@@ -545,7 +642,7 @@
         <div class="section-card">
             <div class="card-title">
                 <h3>Transaksi Terbaru</h3>
-                <a href="#" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">Lihat Semua &rarr;</a>
+                <a href="#" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 600;">Lihat Semua</a>
             </div>
 
             @if ($recentPayments->isEmpty())

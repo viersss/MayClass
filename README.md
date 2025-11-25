@@ -6,7 +6,7 @@ Proyek ini dikembangkan oleh Tim 1 3SD2 sebagai bagian dari pemenuhan tugas mata
 
 ## Problem
 
-Klien (Bimbel MayClass) saat ini mengelola seluruh operasional secara manual. Informasi seperti jadwal, materi, dan data siswa masih tersebar dalam bentuk file PDF atau tautan Google Drive. Proses ini tidak efisien, menyulitkan siswa dan orang tua untuk mendapatkan informasi terpusat, dan menghambat pendokumentasian progres belajar untuk siswa.
+Client (Bimbel MayClass) untuk saat ini mengelola seluruh operasional secara manual. Informasi seperti jadwal, materi, dan data siswa masih tersebar dalam bentuk file PDF atau tautan Google Drive. Proses ini tidak efisien, menyulitkan siswa dan orang tua untuk mendapatkan informasi terpusat, dan menghambat pendokumentasian progres belajar untuk siswa.
 
 ## 💡 Solusi
 
@@ -19,7 +19,7 @@ Website MayClass ini hadir sebagai platform terintegrasi yang berfungsi sebagai:
 
 ## ✨ Fitur Utama
 
-Sistem ini memiliki 5 peran pengguna utama:
+Sistem ini memiliki 5 peran pengguna utama sebagai:
 
 * **Pengunjung (Publik):**
 

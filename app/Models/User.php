@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -58,12 +59,14 @@ class User extends Authenticatable
         ];
     }
 
-    public function enrollments()
+
+
+    public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);
     }
 
-    public function orders()
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
@@ -73,13 +76,11 @@ class User extends Authenticatable
         return $this->hasOne(TutorProfile::class);
     }
 
-    public function subjects(): BelongsToMany
+    /**
+     * Relasi Paket yang diajar oleh Tutor ini.
+     */
+    public function packagesTaught(): HasMany
     {
-        return $this->belongsToMany(Subject::class)->withTimestamps();
-    }
-
-    public function packages(): BelongsToMany
-    {
-        return $this->belongsToMany(Package::class)->withTimestamps();
+        return $this->hasMany(Package::class, 'tutor_id');
     }
 }

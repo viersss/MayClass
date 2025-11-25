@@ -65,7 +65,8 @@
 
         .search-box input {
             width: 100%;
-            padding: 10px 16px 10px 40px; /* Space for icon */
+            padding: 10px 16px 10px 40px;
+            /* Space for icon */
             border-radius: 99px;
             border: 1px solid var(--border-color);
             background: var(--bg-body);
@@ -252,6 +253,7 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+
             .search-box {
                 width: 100%;
             }
@@ -260,8 +262,8 @@
 @endpush
 
 @section('content')
-    <div class="page-container">
-        
+    <div x-data="{ selected: [] }" class="page-container">
+
         {{-- Header & Filter --}}
         <div class="page-header">
             <div class="header-title">
@@ -271,9 +273,22 @@
             <div class="header-actions">
                 <form class="search-box" action="#" method="GET"> {{-- Tambahkan route search jika ada --}}
                     <span class="search-icon">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
                     </span>
                     <input type="text" name="q" placeholder="Cari nama atau email siswa..." value="{{ request('q') }}">
+                </form>
+
+                <form method="POST" action="{{ route('admin.students.bulk-delete') }}" id="bulk-delete-form" class="ml-2">
+                    @csrf
+                    <template x-for="id in selected" :key="id">
+                        <input type="hidden" name="students[]" :value="id">
+                    </template>
+                    <button type="button"
+                        @click="if(selected.length===0){ alert('Pilih siswa terlebih dahulu'); } else if(confirm('Anda yakin ingin menghapus '+selected.length+' siswa terpilih?')){ document.getElementById('bulk-delete-form').submit(); }"
+                        class="btn-detail" style="background:#ef4444;color:#fff;">Delete Selected</button>
                 </form>
             </div>
         </div>
@@ -284,6 +299,7 @@
                 <table class="students-table">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Profil Siswa</th>
                             <th>ID Siswa</th>
                             <th>Paket Aktif</th>
@@ -295,6 +311,10 @@
                     <tbody>
                         @forelse ($students as $student)
                             <tr>
+                                <td class="px-2">
+                                    <input type="checkbox" name="students[]" value="{{ $student['id'] }}" x-model="selected"
+                                        class="form-checkbox h-4 w-4 text-primary">
+                                </td>
                                 <td>
                                     <div class="student-profile">
                                         {{-- Avatar Inisial --}}
@@ -325,15 +345,23 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <div style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.85rem;">
-                                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <div
+                                        style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.85rem;">
+                                        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
                                         {{ $student['ends_at'] ?? '-' }}
                                     </div>
                                 </td>
                                 <td style="text-align: right;">
                                     <a class="btn-detail" href="{{ route('admin.students.show', $student['id']) }}">
                                         Detail
-                                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 5l7 7-7 7"></path>
+                                        </svg>
                                     </a>
                                 </td>
                             </tr>
@@ -341,7 +369,12 @@
                             <tr>
                                 <td colspan="6">
                                     <div class="empty-state">
-                                        <svg style="width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                                        <svg style="width: 48px; height: 48px; margin-bottom: 16px; color: #cbd5e1;" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                            </path>
+                                        </svg>
                                         <p>Belum ada data siswa yang tersedia.</p>
                                     </div>
                                 </td>

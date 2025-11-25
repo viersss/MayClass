@@ -1,16 +1,3 @@
-<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="avatarGradient" x1="24" y1="18" x2="136" y2="142" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#42B7AD" />
-      <stop offset="1" stop-color="#2C3E86" />
-    </linearGradient>
-    <linearGradient id="avatarHighlight" x1="48" y1="40" x2="112" y2="120" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.32" />
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0" />
-    </linearGradient>
-  </defs>
-  <rect x="4" y="4" width="152" height="152" rx="76" fill="url(#avatarGradient)" />
-  <rect x="4" y="4" width="152" height="152" rx="76" fill="url(#avatarHighlight)" />
-  <path d="M80 48C70.0589 48 62 56.0589 62 66C62 75.9411 70.0589 84 80 84C89.9411 84 98 75.9411 98 66C98 56.0589 89.9411 48 80 48Z" fill="white" fill-opacity="0.92" />
-  <path d="M40 120C46.9064 100.77 62.1203 88 80 88C97.8797 88 113.094 100.77 120 120H40Z" fill="white" fill-opacity="0.9" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#cbd5e1" class="w-6 h-6">
+  <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
 </svg>

@@ -48,7 +48,12 @@ class ScheduleViewData
     {
         $normalizedView = in_array($view, ['day', 'week'], true) ? $view : 'month';
 
-        $validSessions = $sessions->filter(fn ($session) => self::parseDate($session->start_at ?? null));
+        $validSessions = $sessions->filter(function ($session) {
+            $start = self::parseDate($session->start_at ?? null);
+            $status = self::normalizeStatus($session->status ?? null);
+
+            return $start && $status !== 'cancelled';
+        });
 
         $defaultReference = $validSessions
             ->map(fn ($session) => self::parseDate($session->start_at ?? null))
@@ -67,8 +72,12 @@ class ScheduleViewData
         $highlightSession = $validSessions->firstWhere('is_highlight', true)
             ?? $validSessions->firstWhere(function ($session) {
                 $start = self::parseDate($session->start_at ?? null);
+                $status = self::normalizeStatus($session->status ?? null);
 
-                return $start ? $start->isFuture() : false;
+                return $start
+                    ? ($start->greaterThanOrEqualTo(CarbonImmutable::now())
+                        && in_array($status, ['scheduled', 'active', 'pending'], true))
+                    : false;
             })
             ?? $validSessions->first();
 
@@ -80,13 +89,21 @@ class ScheduleViewData
                 'date' => self::formatFullDate($reference),
                 'time' => '-',
                 'mentor' => '-',
+                'location' => null,
+                'is_online' => false,
+                'zoom_link' => null,
+                'has_zoom_link' => false,
             ];
 
         $upcoming = $validSessions
             ->filter(function ($session) {
                 $start = self::parseDate($session->start_at ?? null);
+                $status = self::normalizeStatus($session->status ?? null);
 
-                return $start ? $start->isFuture() : false;
+                return $start
+                    ? ($start->greaterThanOrEqualTo(CarbonImmutable::now())
+                        && in_array($status, ['scheduled', 'active', 'pending'], true))
+                    : false;
             })
             ->sortBy('start_at')
             ->map(fn ($session) => self::formatSession($session))
@@ -130,6 +147,9 @@ class ScheduleViewData
     public static function formatSession(ScheduleSession $session): array
     {
         $startAt = self::parseDate($session->start_at ?? null);
+        $isOnline = self::isOnlineSession($session);
+        $zoomLink = $session->zoom_link;
+        $hasZoomLink = filled($zoomLink);
 
         if (! $startAt) {
             return [
@@ -140,6 +160,10 @@ class ScheduleViewData
                 'mentor' => $session->mentor_name,
                 'start_time' => null,
                 'start_at_iso' => null,
+                'location' => $session->location,
+                'is_online' => $isOnline,
+                'zoom_link' => $zoomLink,
+                'has_zoom_link' => $hasZoomLink,
             ];
         }
 
@@ -155,7 +179,24 @@ class ScheduleViewData
             'mentor' => $session->mentor_name,
             'start_time' => $startAt->format('H.i'),
             'start_at_iso' => $startAt->toIso8601String(),
+            'location' => $session->location,
+            'is_online' => $isOnline,
+            'zoom_link' => $zoomLink,
+            'has_zoom_link' => $hasZoomLink,
         ];
+    }
+
+    private static function isOnlineSession(ScheduleSession $session): bool
+    {
+        $mode = is_string($session->mode ?? null) ? strtolower($session->mode) : null;
+        $explicitFlag = $session->is_online ?? null;
+        $location = is_string($session->location ?? null) ? strtolower($session->location) : '';
+
+        $onlineFromFlag = filter_var($explicitFlag, FILTER_VALIDATE_BOOLEAN);
+        $onlineFromMode = in_array($mode, ['online', 'virtual', 'daring'], true);
+        $onlineFromLocation = str_contains($location, 'online') || str_contains($location, 'virtual');
+
+        return $onlineFromFlag || $onlineFromMode || $onlineFromLocation;
     }
 
     private static function buildCalendarGrid(string $view, CarbonImmutable $referenceDate, Collection $sessionGroups, Collection $sessions): array
@@ -290,6 +331,17 @@ class ScheduleViewData
             self::MONTH_NAMES[$end->month],
             $end->year
         );
+    }
+
+    private static function normalizeStatus(?string $value): string
+    {
+        return match (strtolower((string) $value)) {
+            'completed', 'done', 'selesai' => 'completed',
+            'cancelled', 'canceled', 'batal', 'dibatalkan' => 'cancelled',
+            'active', 'ongoing', 'aktif', 'berlangsung' => 'active',
+            'pending', 'menunggu', 'tertunda' => 'pending',
+            default => 'scheduled',
+        };
     }
 
     private static function parseDate($value): ?CarbonImmutable

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Subject;
+use App\Models\Package;
+use App\Models\ScheduleSession;
+use App\Models\ScheduleTemplate;
+
 use App\Models\TutorProfile;
 use App\Models\User;
 use App\Support\AvatarUploader;
@@ -20,7 +23,7 @@ class TentorController extends BaseAdminController
 {
     public function index(Request $request): View
     {
-        if (! Schema::hasTable('users')) {
+        if (!Schema::hasTable('users')) {
             return $this->render('admin.tentors.index', [
                 'tentors' => collect(),
                 'stats' => ['total' => 0, 'active' => 0, 'inactive' => 0],
@@ -32,7 +35,7 @@ class TentorController extends BaseAdminController
         $queryTerm = trim((string) $request->input('q', ''));
 
         $query = User::query()
-            ->with(['tutorProfile', 'subjects'])
+            ->with(['tutorProfile'])
             ->where('role', 'tutor');
 
         if ($queryTerm !== '') {
@@ -55,7 +58,7 @@ class TentorController extends BaseAdminController
         $tentors = $query
             ->orderBy('name')
             ->get()
-            ->map(fn (User $tentor) => [
+            ->map(fn(User $tentor) => [
                 'id' => $tentor->id,
                 'name' => $tentor->name,
                 'email' => $tentor->email,
@@ -66,7 +69,7 @@ class TentorController extends BaseAdminController
                 'education' => optional($tentor->tutorProfile)->education,
                 'experience_years' => optional($tentor->tutorProfile)->experience_years ?? 0,
                 'is_active' => (bool) $tentor->is_active,
-                'subjects' => $tentor->subjects,
+
             ]);
 
         $stats = $this->tentorStats();
@@ -78,6 +81,12 @@ class TentorController extends BaseAdminController
                 'query' => $queryTerm,
                 'status' => in_array($status, ['all', 'active', 'inactive'], true) ? $status : 'all',
             ],
+            'subjectsByLevel' => $this->getSubjectsByLevel(),
+            'packages' => Package::with('tutor')->orderBy('level')->get(),
+            'avatarPreview' => asset('images/avatar-placeholder.svg'),
+            'tentor' => null,
+            'tentorProfile' => null,
+            'selectedPackages' => collect(),
         ]);
     }
 
@@ -88,6 +97,9 @@ class TentorController extends BaseAdminController
             'tentorProfile' => null,
             'avatarPreview' => asset('images/avatar-placeholder.svg'),
             'subjectsByLevel' => $this->getSubjectsByLevel(),
+            // [PERBAIKAN 1] Mengirim data packages agar tidak error undefined variable
+            'packages' => Package::with('tutor')->orderBy('level')->get(),
+            'selectedPackages' => collect(),
         ]);
     }
 
@@ -114,9 +126,11 @@ class TentorController extends BaseAdminController
 
         $this->syncTutorProfile($user, $data, $avatarPath);
 
-        // Sync subjects
-        if ($request->has('subjects')) {
-            $user->subjects()->sync($request->subjects);
+
+
+        // [PERBAIKAN 3] Menyimpan relasi Paket Belajar
+        if ($request->has('packages')) {
+            $this->syncTutorPackages($user, $request->packages);
         }
 
         return redirect()
@@ -127,13 +141,17 @@ class TentorController extends BaseAdminController
     public function edit(User $tentor): View
     {
         $this->ensureTutor($tentor);
-        $tentor->loadMissing(['tutorProfile', 'subjects']);
+        // Load relasi agar data terpilih muncul (checked)
+        $tentor->loadMissing(['tutorProfile', 'packagesTaught']);
 
         return $this->render('admin.tentors.edit', [
             'tentor' => $tentor,
             'tentorProfile' => $tentor->tutorProfile,
             'avatarPreview' => ProfileAvatar::forUser($tentor),
             'subjectsByLevel' => $this->getSubjectsByLevel(),
+            // [PERBAIKAN 1] Mengirim data packages ke form edit juga
+            'packages' => Package::with('tutor')->orderBy('level')->get(),
+            'selectedPackages' => $tentor->packagesTaught->pluck('id'),
         ]);
     }
 
@@ -162,7 +180,7 @@ class TentorController extends BaseAdminController
             'avatar_path' => $avatarPath,
         ];
 
-        if (! empty($data['password'])) {
+        if (!empty($data['password'])) {
             $updatePayload['password'] = Hash::make($data['password']);
         }
 
@@ -170,10 +188,11 @@ class TentorController extends BaseAdminController
 
         $this->syncTutorProfile($tentor, $data, $avatarPath);
 
-        // Sync subjects
-        if ($request->has('subjects')) {
-            $tentor->subjects()->sync($request->subjects);
-        }
+
+
+        // [PERBAIKAN 3] Update relasi Paket Belajar
+        // Gunakan input('packages', []) agar jika semua di-uncheck (array kosong), data lama terhapus
+        $this->syncTutorPackages($tentor, $request->input('packages', []));
 
         return redirect()
             ->route('admin.tentors.edit', $tentor)
@@ -205,8 +224,9 @@ class TentorController extends BaseAdminController
             'education' => ['nullable', 'string', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
             'avatar' => ['nullable', 'image', 'max:5000'],
-            'subjects' => ['required', 'array', 'min:1'],
-            'subjects.*' => ['exists:subjects,id'],
+
+            'packages' => ['nullable', 'array'], // Validasi array paket
+            'packages.*' => ['exists:packages,id'],
         ];
 
         $rules['password'] = $isCreate
@@ -243,6 +263,55 @@ class TentorController extends BaseAdminController
         );
     }
 
+    private function syncTutorPackages(User $tentor, array $packageIds): void
+    {
+        $packageIds = collect($packageIds)->filter()->unique();
+
+        // Ambil ID paket yang saat ini dipegang (jika ada)
+        $existingIds = $tentor->packagesTaught()->pluck('id');
+
+        // Hitung paket yang dilepas (unchecked)
+        $removeIds = $existingIds->diff($packageIds);
+
+        // 1. Lepaskan paket yang tidak dicentang lagi
+        if ($removeIds->isNotEmpty()) {
+            Package::whereIn('id', $removeIds)->update(['tutor_id' => null]);
+            $this->updateScheduleOwnership($removeIds, null);
+        }
+
+        // 2. Assign paket yang dicentang ke tentor ini
+        if ($packageIds->isNotEmpty()) {
+            Package::whereIn('id', $packageIds)->update(['tutor_id' => $tentor->id]);
+            $this->updateScheduleOwnership($packageIds, $tentor);
+        }
+    }
+
+    private function updateScheduleOwnership($packageIds, ?User $tentor): void
+    {
+        $packageIds = collect($packageIds)->filter();
+
+        if ($packageIds->isEmpty()) {
+            return;
+        }
+
+        $tutorId = $tentor?->id;
+        $mentorName = $tentor?->name;
+
+        if (Schema::hasTable('schedule_templates')) {
+            ScheduleTemplate::whereIn('package_id', $packageIds)->update(['user_id' => $tutorId]);
+        }
+
+        $sessionUpdate = ['user_id' => $tutorId];
+
+        if ($mentorName !== null) {
+            $sessionUpdate['mentor_name'] = $mentorName;
+        }
+
+        if (Schema::hasTable('schedule_sessions')) {
+            ScheduleSession::whereIn('package_id', $packageIds)->update($sessionUpdate);
+        }
+    }
+
     private function generateUniqueSlug(string $name, ?int $ignoreProfileId = null): string
     {
         $base = Str::slug($name) ?: 'tentor';
@@ -260,7 +329,7 @@ class TentorController extends BaseAdminController
     {
         return TutorProfile::query()
             ->where('slug', $slug)
-            ->when($ignoreProfileId, fn ($query) => $query->where('id', '!=', $ignoreProfileId))
+            ->when($ignoreProfileId, fn($query) => $query->where('id', '!=', $ignoreProfileId))
             ->exists();
     }
 
@@ -282,24 +351,10 @@ class TentorController extends BaseAdminController
 
     private function getSubjectsByLevel(): array
     {
-        if (! Schema::hasTable('subjects')) {
-            return [
-                'SD' => collect(),
-                'SMP' => collect(),
-                'SMA' => collect(),
-            ];
-        }
-
-        $subjects = Subject::where('is_active', true)
-            ->orderBy('level')
-            ->orderBy('name')
-            ->get()
-            ->groupBy('level');
-
         return [
-            'SD' => $subjects->get('SD', collect()),
-            'SMP' => $subjects->get('SMP', collect()),
-            'SMA' => $subjects->get('SMA', collect()),
+            'SD' => collect(),
+            'SMP' => collect(),
+            'SMA' => collect(),
         ];
     }
 }

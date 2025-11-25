@@ -4,297 +4,500 @@
 
 @push('styles')
     <style>
+        :root {
+            --primary: #0f766e;
+            --primary-light: #f0fdfa;
+            --border-color: #e2e8f0;
+            --text-color: #0f172a;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --bg-card: #ffffff;
+            --bg-body: #f8fafc;
+        }
+
         .form-card {
-            background: #fff;
+            background: var(--bg-card);
             border-radius: 24px;
             padding: 32px;
-            box-shadow: 0 22px 55px rgba(15, 23, 42, 0.08);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
         }
 
         .form-card h1 {
             margin-top: 0;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
         .form-grid {
             display: grid;
-            gap: 18px;
+            gap: 24px;
             margin-top: 24px;
         }
 
+        /* --- INPUT STYLES --- */
         label span {
             display: block;
             font-weight: 600;
             margin-bottom: 8px;
+            color: var(--text-color);
+            font-size: 0.9rem;
         }
 
         input[type="text"],
-        input[type="email"],
         input[type="number"],
+        input[type="url"],
+        select,
         textarea {
             width: 100%;
-            padding: 14px 18px;
-            border: 1px solid #d9e0ea;
-            border-radius: 16px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             font-family: inherit;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            background-color: #fff;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
         }
 
         textarea {
-            min-height: 140px;
+            min-height: 100px;
             resize: vertical;
         }
 
-        .dynamic-group {
-            border: 1px solid #e5e7eb;
-            border-radius: 18px;
-            padding: 18px;
-            background: rgba(249, 250, 251, 0.8);
-        }
-
-        .dynamic-group__header {
+        /* --- DYNAMIC SECTIONS (Objectives & Chapters) --- */
+        .section-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
-        .dynamic-group__header span {
-            font-weight: 600;
+        .section-title {
+            font-weight: 700;
             font-size: 1rem;
+            color: var(--text-color);
         }
 
-        .dynamic-group__items {
-            display: grid;
-            gap: 12px;
-        }
-
-        .dynamic-item {
-            display: grid;
-            gap: 12px;
-            padding: 14px;
-            border-radius: 14px;
-            background: #fff;
-            border: 1px solid #e5e7eb;
-        }
-
-        .dynamic-item__row {
-            display: grid;
-            gap: 12px;
-        }
-
-        .dynamic-item__actions {
+        .btn-add-sm {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
             display: flex;
-            justify-content: flex-end;
+            align-items: center;
+            gap: 6px;
         }
 
-        .dynamic-item__remove {
-            appearance: none;
-            border: none;
-            background: transparent;
-            color: #ef4444;
-            font-weight: 600;
-            cursor: pointer;
+        .btn-add-sm:hover {
+            background: #ccfbf1;
         }
 
-        .dynamic-add {
-            appearance: none;
-            border: none;
+        .dynamic-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .dynamic-card {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 10px 18px;
-            background: rgba(61, 183, 173, 0.12);
-            color: var(--primary-dark);
-            font-weight: 600;
-            cursor: pointer;
+            padding: 16px;
+            position: relative;
+            transition: transform 0.1s;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
         }
 
-        .upload-field {
-            border: 2px dashed #d9e0ea;
-            border-radius: 18px;
-            padding: 28px;
-            text-align: center;
-            color: #6b7280;
+        /* INPUT DI DALAM CARD */
+        .dynamic-card input[type="text"],
+        .dynamic-card textarea {
+            background: transparent;
+            border: 1px solid transparent;
+            /* Border transparan supaya layout stabil */
+            padding: 8px;
+            margin: 0;
             font-size: 0.95rem;
         }
 
+        .dynamic-card input[type="text"]:focus,
+        .dynamic-card textarea:focus {
+            background: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* --- TOMBOL HAPUS (REVISI: LEBIH JELAS & RAPI) --- */
+        .btn-remove {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #94a3b8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-remove:hover {
+            background: var(--danger-light);
+            color: var(--danger);
+            border-color: #fecaca;
+            transform: scale(1.05);
+        }
+
+        .btn-remove svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
+        }
+
+        /* --- RESOURCES SECTION --- */
+        .resources-container {
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            background: #fafafa;
+        }
+
+        .resources-toolbar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .btn-resource-add {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            font-weight: 600;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-resource-add:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .resource-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .icon-file {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .icon-link {
+            background: #f3e8ff;
+            color: #9333ea;
+        }
+
+        .resource-content {
+            flex-grow: 1;
+        }
+
+        .custom-file-input::before {
+            content: 'Pilih File';
+            display: inline-block;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 6px 12px;
+            outline: none;
+            white-space: nowrap;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            margin-right: 10px;
+        }
+
+        /* --- FOOTER ACTIONS --- */
         .form-actions {
             display: flex;
+            justify-content: flex-end;
             gap: 16px;
-            margin-top: 28px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
         }
 
-        .form-actions a,
-        .form-actions button {
-            padding: 14px 24px;
-            border-radius: 16px;
+        .btn-cancel {
+            padding: 12px 24px;
+            border-radius: 12px;
             font-weight: 600;
-            font-family: inherit;
-            cursor: pointer;
+            color: var(--text-muted);
+            text-decoration: none;
+            border: 1px solid transparent;
         }
 
-        .form-actions a {
-            border: 1px solid #d9e0ea;
-            color: #1f2937;
+        .btn-cancel:hover {
+            background: #f1f5f9;
+            color: var(--text-color);
         }
 
-        .form-actions button {
-            border: none;
+        .btn-submit {
+            padding: 12px 24px;
+            border-radius: 12px;
             background: var(--primary);
             color: #fff;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.2);
+            transition: background 0.2s;
         }
 
-        .error-text {
-            color: #dc2626;
-            font-size: 0.9rem;
-            margin-top: 6px;
+        .btn-submit:hover {
+            background: #115e59;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 4px;
         }
     </style>
 @endpush
 
 @section('content')
+    {{-- Data preparation for dynamic fields --}}
     @php
-        $objectiveValues = collect(old('objectives', ['']))->map(fn($value) => is_string($value) ? $value : '');
-        if ($objectiveValues->isEmpty()) {
+        $objectiveValues = collect(old('objectives', ['']))->map(fn($v) => is_string($v) ? $v : '');
+        if ($objectiveValues->isEmpty())
             $objectiveValues = collect(['']);
-        }
 
-        $chapterValues = collect(old('chapters', [['title' => '', 'description' => '']]))
-            ->map(function ($chapter) {
-                return [
-                    'title' => is_array($chapter) ? ($chapter['title'] ?? '') : '',
-                    'description' => is_array($chapter) ? ($chapter['description'] ?? '') : '',
-                ];
-            });
-
-        if ($chapterValues->isEmpty()) {
+        $chapterValues = collect(old('chapters', [['title' => '', 'description' => '']]));
+        if ($chapterValues->isEmpty())
             $chapterValues = collect([['title' => '', 'description' => '']]);
-        }
-
-        $chapterNextIndex = $chapterValues->keys()->map(fn ($key) => (int) $key)->max();
-        $chapterNextIndex = is_null($chapterNextIndex) ? $chapterValues->count() : $chapterNextIndex + 1;
+        $nextChapterIndex = $chapterValues->keys()->max() + 1;
     @endphp
+
     <div class="form-card">
-        <h1>Tambah Materi Baru</h1>
-        <p>Buat materi pembelajaran untuk siswa MayClass.</p>
+        <div style="margin-bottom: 32px;">
+            <h1>Tambah Materi Baru</h1>
+            <p style="color: var(--text-muted);">Buat materi pembelajaran yang komprehensif dengan video, dokumen, dan link
+                referensi.</p>
+        </div>
 
         <form method="POST" action="{{ route('tutor.materials.store') }}" enctype="multipart/form-data" class="form-grid">
             @csrf
-            <label>
-                <span>Paket Belajar</span>
-                <select name="package_id" required style="width: 100%; padding: 14px 18px; border: 1px solid #d9e0ea; border-radius: 16px; font-family: inherit; font-size: 1rem;">
-                    <option value="">Pilih paket yang tersedia</option>
-                    @forelse ($packages as $package)
-                        <option value="{{ $package->id }}" @selected(old('package_id') == $package->id)>
-                            {{ $package->detail_title ?? $package->title }}
-                        </option>
-                    @empty
-                        <option value="" disabled>Belum ada paket yang tersedia</option>
-                    @endforelse
-                </select>
-                @error('package_id')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
 
-            <label>
-                <span>Judul Materi</span>
-                <input type="text" name="title" value="{{ old('title') }}" placeholder="Contoh: Persamaan Linear Satu Variabel" required />
-                @error('title')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
+            {{-- 1. INFO DASAR --}}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <label>
+                    <span>Paket Belajar</span>
+                    <select name="package_id" required>
+                        <option value="">-- Pilih Paket --</option>
+                        @forelse ($packages as $package)
+                            <option value="{{ $package->id }}" @selected(old('package_id') == $package->id)>
+                                {{ $package->detail_title ?? $package->title }}
+                            </option>
+                        @empty
+                            <option value="" disabled>Tidak ada paket tersedia</option>
+                        @endforelse
+                    </select>
+                    @error('package_id') <div class="error-message">{{ $message }}</div> @enderror
+                </label>
 
-            <label>
-                <span>Mata Pelajaran</span>
-                <select name="subject_id" id="subject-select" required style="width: 100%; padding: 14px 18px; border: 1px solid #d9e0ea; border-radius: 16px; font-family: inherit; font-size: 1rem;">
-                    <option value="">Pilih paket terlebih dahulu</option>
-                </select>
-                @error('subject_id')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <label>
-                <span>Kelas</span>
-                <input type="text" name="level" value="{{ old('level') }}" placeholder="Contoh: Kelas 10A" required />
-                @error('level')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <label>
-                <span>Deskripsi Materi</span>
-                <textarea name="summary" placeholder="Jelaskan isi materi..." required>{{ old('summary') }}</textarea>
-                @error('summary')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <div class="dynamic-group">
-                <div class="dynamic-group__header">
-                    <span>Tujuan Pembelajaran</span>
-                    <button class="dynamic-add" data-add-objective>Tambah tujuan</button>
-                </div>
-                <div class="dynamic-group__items" data-objectives>
-                    @foreach ($objectiveValues as $value)
-                        <div class="dynamic-item" data-objective-row>
-                            <div class="dynamic-item__row">
-                                <input type="text" name="objectives[]" value="{{ $value }}" placeholder="Contoh: Memahami konsep persamaan linear" />
-                            </div>
-                            <div class="dynamic-item__actions">
-                                <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                @php
-                    $objectiveError = $errors->first('objectives') ?: $errors->first('objectives.*');
-                @endphp
-                @if ($objectiveError)
-                    <div class="error-text" style="margin-top: 10px;">{{ $objectiveError }}</div>
-                @endif
             </div>
 
-            <div class="dynamic-group">
-                <div class="dynamic-group__header">
-                    <span>Rangkuman Bab</span>
-                    <button class="dynamic-add" data-add-chapter>Tambah bab</button>
-                </div>
-                <div class="dynamic-group__items" data-chapters data-next-index="{{ $chapterNextIndex }}">
-                    @foreach ($chapterValues as $index => $chapter)
-                        <div class="dynamic-item" data-chapter-row>
-                            <div class="dynamic-item__row">
-                                <input type="text" name="chapters[{{ $index }}][title]" value="{{ $chapter['title'] }}" placeholder="Judul bab" />
-                                <textarea name="chapters[{{ $index }}][description]" placeholder="Ringkasan singkat bab">{{ $chapter['description'] }}</textarea>
-                            </div>
-                            <div class="dynamic-item__actions">
-                                <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                @php
-                    $chapterError = $errors->first('chapters') ?: $errors->first('chapters.*.title') ?: $errors->first('chapters.*.description');
-                @endphp
-                @if ($chapterError)
-                    <div class="error-text" style="margin-top: 10px;">{{ $chapterError }}</div>
-                @endif
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                <label>
+                    <span>Judul Materi</span>
+                    <input type="text" name="title" value="{{ old('title') }}" placeholder="Judul lengkap materi..."
+                        required />
+                    @error('title') <div class="error-message">{{ $message }}</div> @enderror
+                </label>
+
+                <label>
+                    <span>Kelas / Tingkat</span>
+                    <input type="text" name="level" value="{{ old('level') }}" placeholder="Cth: 12 SMA" required />
+                    @error('level') <div class="error-message">{{ $message }}</div> @enderror
+                </label>
             </div>
 
             <label>
-                <span>Upload File (PDF, PPT, DOC)</span>
-                <div class="upload-field">
-                    <input type="file" name="attachment" accept=".pdf,.ppt,.pptx,.doc,.docx" />
-                    <div style="margin-top: 8px; font-size: 0.85rem;">Ukuran maksimal 10MB.</div>
-                </div>
-                @error('attachment')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
+                <span>Deskripsi Singkat</span>
+                <textarea name="summary" placeholder="Jelaskan ringkasan materi ini agar siswa paham gambaran besarnya..."
+                    required>{{ old('summary') }}</textarea>
+                @error('summary') <div class="error-message">{{ $message }}</div> @enderror
             </label>
 
+            <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 8px 0;">
+
+            {{-- 2. TUJUAN & BAB --}}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+
+                {{-- Tujuan Pembelajaran --}}
+                <div>
+                    <div class="section-header">
+                        <span class="section-title">Tujuan Pembelajaran</span>
+                        <button type="button" class="btn-add-sm" data-add-objective>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Tambah
+                        </button>
+                    </div>
+                    <div class="dynamic-list" data-objectives>
+                        @foreach ($objectiveValues as $value)
+                            <div class="dynamic-card">
+                                <div style="flex-grow:1;">
+                                    <input type="text" name="objectives[]" value="{{ $value }}"
+                                        placeholder="Poin tujuan belajar..." style="width:100%;">
+                                </div>
+                                <button type="button" class="btn-remove" data-remove-row title="Hapus baris">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Outline Bab --}}
+                <div>
+                    <div class="section-header">
+                        <span class="section-title">Rangkuman Bab</span>
+                        <button type="button" class="btn-add-sm" data-add-chapter>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Tambah Bab
+                        </button>
+                    </div>
+                    <div class="dynamic-list" data-chapters data-next-index="{{ $nextChapterIndex }}">
+                        @foreach ($chapterValues as $index => $chapter)
+                            <div class="dynamic-card">
+                                <div style="flex-grow:1; display:flex; flex-direction:column; gap:8px;">
+                                    <input type="text" name="chapters[{{ $index }}][title]"
+                                        value="{{ $chapter['title'] ?? '' }}" placeholder="Judul Bab" style="font-weight:600;">
+                                    <textarea name="chapters[{{ $index }}][description]" placeholder="Ringkasan isi bab..."
+                                        style="min-height:60px;">{{ $chapter['description'] ?? '' }}</textarea>
+                                </div>
+                                <button type="button" class="btn-remove" data-remove-row title="Hapus bab">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 8px 0;">
+
+            {{-- 3. RESOURCES (MULTIPLE FILES & LINKS) --}}
+            <div>
+                <div style="text-align: center; margin-bottom: 16px;">
+                    <span class="section-title" style="font-size: 1.1rem;">File Materi & Referensi</span>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Tambahkan dokumen (PDF/PPT)
+                        atau link (YouTube/Drive) sebanyak yang dibutuhkan.</p>
+                </div>
+
+                <div class="resources-container">
+                    <div class="resources-toolbar">
+                        <button type="button" class="btn-resource-add" id="add-file-btn">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                            Upload File
+                        </button>
+                        <button type="button" class="btn-resource-add" id="add-link-btn">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path
+                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                </path>
+                            </svg>
+                            Tambah Link
+                        </button>
+                    </div>
+
+                    <div id="resources-list">
+                        {{-- Resource items will be appended here via JS --}}
+                    </div>
+
+                    {{-- Template pesan kosong --}}
+                    <div id="empty-resources-msg" style="text-align:center; color:var(--text-muted); padding: 20px;">
+                        Belum ada materi yang ditambahkan.
+                    </div>
+                </div>
+            </div>
+
+            {{-- FOOTER --}}
             <div class="form-actions">
-                <a href="{{ route('tutor.materials.index') }}">Batal</a>
-                <button type="submit">Simpan Draft</button>
+                <a href="{{ route('tutor.materials.index') }}" class="btn-cancel">Batalkan</a>
+                <button type="submit" class="btn-submit">Simpan Materi</button>
             </div>
         </form>
     </div>
@@ -303,120 +506,106 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const objectiveContainer = document.querySelector('[data-objectives]');
-            const chapterContainer = document.querySelector('[data-chapters]');
 
-            const templateObjective = () => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'dynamic-item';
-                wrapper.dataset.objectiveRow = 'true';
-                wrapper.innerHTML = `
-                    <div class="dynamic-item__row">
-                        <input type="text" name="objectives[]" placeholder="Contoh: Memahami konsep persamaan linear" />
-                    </div>
-                    <div class="dynamic-item__actions">
-                        <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
-                    </div>
-                `;
-                return wrapper;
-            };
+            const trashIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>`;
 
-            const templateChapter = (index) => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'dynamic-item';
-                wrapper.dataset.chapterRow = 'true';
-                wrapper.innerHTML = `
-                    <div class="dynamic-item__row">
-                        <input type="text" name="chapters[${index}][title]" placeholder="Judul bab" />
-                        <textarea name="chapters[${index}][description]" placeholder="Ringkasan singkat bab"></textarea>
-                    </div>
-                    <div class="dynamic-item__actions">
-                        <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
-                    </div>
-                `;
-                return wrapper;
-            };
-
-            document.querySelectorAll('[data-remove-row]').forEach((button) => {
-                button.addEventListener('click', () => {
-                    const row = button.closest('.dynamic-item');
-                    if (row && row.parentElement.children.length > 1) {
-                        row.remove();
-                    }
-                });
+            // --- 1. OBJECTIVES LOGIC ---
+            const objectiveList = document.querySelector('[data-objectives]');
+            document.querySelector('[data-add-objective]').addEventListener('click', () => {
+                const div = document.createElement('div');
+                div.className = 'dynamic-card';
+                div.innerHTML = `
+                        <div style="flex-grow:1;">
+                            <input type="text" name="objectives[]" placeholder="Poin tujuan belajar..." style="width:100%;">
+                        </div>
+                        <button type="button" class="btn-remove" data-remove-row title="Hapus baris">${trashIcon}</button>
+                    `;
+                objectiveList.appendChild(div);
             });
 
-            const addObjectiveBtn = document.querySelector('[data-add-objective]');
-            addObjectiveBtn?.addEventListener('click', (event) => {
-                event.preventDefault();
-                if (!objectiveContainer) return;
+            // --- 2. CHAPTERS LOGIC ---
+            const chapterList = document.querySelector('[data-chapters]');
+            let chapIdx = parseInt(chapterList.dataset.nextIndex);
 
-                const row = templateObjective();
-                objectiveContainer.appendChild(row);
-                row.querySelector('[data-remove-row]')?.addEventListener('click', () => {
-                    if (row.parentElement.children.length > 1) {
-                        row.remove();
-                    }
-                });
+            document.querySelector('[data-add-chapter]').addEventListener('click', () => {
+                const div = document.createElement('div');
+                div.className = 'dynamic-card';
+                div.innerHTML = `
+                        <div style="flex-grow:1; display:flex; flex-direction:column; gap:8px;">
+                            <input type="text" name="chapters[${chapIdx}][title]" placeholder="Judul Bab" style="font-weight:600;">
+                            <textarea name="chapters[${chapIdx}][description]" placeholder="Ringkasan isi bab..." style="min-height:60px;"></textarea>
+                        </div>
+                        <button type="button" class="btn-remove" data-remove-row title="Hapus bab">${trashIcon}</button>
+                    `;
+                chapterList.appendChild(div);
+                chapIdx++;
             });
 
-            const addChapterBtn = document.querySelector('[data-add-chapter]');
-            let nextChapterIndex = Number(chapterContainer?.dataset.nextIndex || chapterContainer?.children.length || 0);
-
-            addChapterBtn?.addEventListener('click', (event) => {
-                event.preventDefault();
-                if (!chapterContainer) return;
-
-                const row = templateChapter(nextChapterIndex++);
-                chapterContainer.appendChild(row);
-                row.querySelector('[data-remove-row]')?.addEventListener('click', () => {
-                    if (row.parentElement.children.length > 1) {
-                        row.remove();
+            // --- 3. GLOBAL REMOVE ROW ---
+            document.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-remove-row]');
+                if (btn) {
+                    const row = btn.closest('.dynamic-card') || btn.closest('.resource-item');
+                    // Animasi hapus
+                    if (row) {
+                        row.style.opacity = '0';
+                        row.style.transform = 'translateY(10px)';
+                        setTimeout(() => {
+                            row.remove();
+                            checkEmptyResources();
+                        }, 200);
                     }
-                });
-                if (chapterContainer) {
-                    chapterContainer.dataset.nextIndex = String(nextChapterIndex);
                 }
             });
 
-            // AJAX Subject Dropdown
-            const packageSelect = document.querySelector('select[name="package_id"]');
-            const subjectSelect = document.getElementById('subject-select');
+            // --- 4. RESOURCES LOGIC (MIXED FILES & LINKS) ---
+            const resourceList = document.getElementById('resources-list');
+            const emptyMsg = document.getElementById('empty-resources-msg');
 
-            if (packageSelect && subjectSelect) {
-                packageSelect.addEventListener('change', function() {
-                    const packageId = this.value;
-                    subjectSelect.innerHTML = '<option value="">Memuat...</option>';
-                    subjectSelect.disabled = true;
-
-                    if (packageId) {
-                        fetch(`/tutor/packages/${packageId}/subjects`)
-                            .then(response => response.json())
-                            .then(data => {
-                                subjectSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-                                data.forEach(subject => {
-                                    const option = document.createElement('option');
-                                    option.value = subject.id;
-                                    option.textContent = subject.name + ' (' + subject.level + ')';
-                                    subjectSelect.appendChild(option);
-                                });
-                                subjectSelect.disabled = false;
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                subjectSelect.innerHTML = '<option value="">Gagal memuat mata pelajaran</option>';
-                            });
-                    } else {
-                        subjectSelect.innerHTML = '<option value="">Pilih paket terlebih dahulu</option>';
-                        subjectSelect.disabled = true;
-                    }
-                });
-
-                // Trigger change if package is already selected (e.g. validation error)
-                if (packageSelect.value) {
-                    packageSelect.dispatchEvent(new Event('change'));
+            function checkEmptyResources() {
+                if (resourceList.children.length === 0) {
+                    emptyMsg.style.display = 'block';
+                } else {
+                    emptyMsg.style.display = 'none';
                 }
             }
+
+            // Add File
+            document.getElementById('add-file-btn').addEventListener('click', () => {
+                const div = document.createElement('div');
+                div.className = 'resource-item';
+                div.innerHTML = `
+                        <div class="resource-icon icon-file">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <div class="resource-content">
+                            <label style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; display:block;">Upload Dokumen</label>
+                            <input type="file" name="attachments[]" class="custom-file-input" accept=".pdf,.ppt,.pptx,.doc,.docx" style="border:none; padding:0; width:100%;">
+                        </div>
+                        <button type="button" class="btn-remove" data-remove-row title="Hapus">${trashIcon}</button>
+                    `;
+                resourceList.appendChild(div);
+                checkEmptyResources();
+            });
+
+            // Add Link
+            document.getElementById('add-link-btn').addEventListener('click', () => {
+                const div = document.createElement('div');
+                div.className = 'resource-item';
+                div.innerHTML = `
+                        <div class="resource-icon icon-link">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                        <div class="resource-content">
+                            <label style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; display:block;">URL Referensi</label>
+                            <input type="url" name="resource_urls[]" placeholder="https://..." style="border:1px solid #e2e8f0;">
+                        </div>
+                        <button type="button" class="btn-remove" data-remove-row title="Hapus">${trashIcon}</button>
+                    `;
+                resourceList.appendChild(div);
+                checkEmptyResources();
+            });
+
         });
     </script>
 @endpush

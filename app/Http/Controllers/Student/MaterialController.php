@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Material;
 use App\Support\StudentAccess;
-use App\Support\SubjectPalette;
+
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -32,7 +32,7 @@ class MaterialController extends Controller
         $chaptersReady = Schema::hasTable('material_chapters');
         $objectivesReady = Schema::hasTable('material_objectives');
 
-        if (! $package || ! $materialsReady) {
+        if (!$package || !$materialsReady) {
             return view('student.materials.index', [
                 'page' => 'materials',
                 'title' => 'Materi Pembelajaran',
@@ -50,19 +50,17 @@ class MaterialController extends Controller
 
         $materials = Material::query()
             ->where('package_id', optional($package)->id)
-            ->with('subject')
-            ->when($objectivesReady, fn ($query) => $query->withCount('objectives'))
-            ->when($chaptersReady, fn ($query) => $query->withCount('chapters'))
-            ->orderBy('subject_id')
+            ->when($objectivesReady, fn($query) => $query->withCount('objectives'))
+            ->when($chaptersReady, fn($query) => $query->withCount('chapters'))
             ->orderBy('title')
             ->get();
 
         $collections = $materials
-            ->groupBy(fn($material) => $material->subject->name ?? 'Tanpa Mapel')
-            ->map(function ($items, $subject) use ($chaptersReady, $objectivesReady) {
+            ->groupBy(fn($material) => $material->level ?? 'Umum')
+            ->map(function ($items, $groupName) use ($chaptersReady, $objectivesReady) {
                 return [
-                    'label' => $subject,
-                    'accent' => SubjectPalette::accent($subject),
+                    'label' => $groupName,
+                    'accent' => '#37b6ad', // Default accent
                     'items' => $items->map(function ($material) use ($chaptersReady, $objectivesReady) {
                         $resource = $this->resourceEndpoints($material);
 
@@ -100,7 +98,7 @@ class MaterialController extends Controller
 
     public function show(string $slug): View
     {
-        if (! Schema::hasTable('materials')) {
+        if (!Schema::hasTable('materials')) {
             abort(404);
         }
 
@@ -112,15 +110,14 @@ class MaterialController extends Controller
         $material = Material::query()
             ->where('slug', $slug)
             ->where('package_id', optional($package)->id)
-            ->with('subject')
-            ->when($objectivesReady, fn ($query) => $query->with('objectives'))
-            ->when($chaptersReady, fn ($query) => $query->with('chapters'))
+            ->when($objectivesReady, fn($query) => $query->with('objectives'))
+            ->when($chaptersReady, fn($query) => $query->with('chapters'))
             ->firstOrFail();
 
         $resource = $this->resourceEndpoints($material);
 
         $chapters = $chaptersReady
-            ? $material->chapters->map(fn ($chapter) => [
+            ? $material->chapters->map(fn($chapter) => [
                 'title' => $chapter->title,
                 'description' => $chapter->description,
             ])->values()->all()
@@ -134,7 +131,7 @@ class MaterialController extends Controller
             'page' => 'materials',
             'title' => $material->title,
             'material' => [
-                'subject' => $material->subject->name ?? 'Tanpa Mapel',
+                'subject' => $material->level ?? 'Umum',
                 'level' => $material->level,
                 'title' => $material->title,
                 'summary' => $material->summary,
@@ -155,7 +152,7 @@ class MaterialController extends Controller
 
         $path = $material->resource_path;
 
-        if (! $path) {
+        if (!$path) {
             return redirect()->away($this->materialsLink());
         }
 
@@ -163,20 +160,20 @@ class MaterialController extends Controller
             return redirect()->away($path);
         }
 
-        if (! Storage::disk('public')->exists($path)) {
+        if (!Storage::disk('public')->exists($path)) {
             abort(404);
         }
 
-        return Storage::disk('public')->response($path, $this->downloadFilename($material, $path));
+        return response()->file(Storage::disk('public')->path($path));
     }
 
-    public function download(string $slug): StreamedResponse|RedirectResponse
+    public function download(string $slug)
     {
         $material = $this->resolveMaterialForAccess($slug);
 
         $path = $material->resource_path;
 
-        if (! $path) {
+        if (!$path) {
             return redirect()->away($this->materialsLink());
         }
 
@@ -184,11 +181,11 @@ class MaterialController extends Controller
             return redirect()->away($path);
         }
 
-        if (! Storage::disk('public')->exists($path)) {
+        if (!Storage::disk('public')->exists($path)) {
             abort(404);
         }
 
-        return Storage::disk('public')->download($path, $this->downloadFilename($material, $path));
+        return response()->download(Storage::disk('public')->path($path), $this->downloadFilename($material, $path));
     }
 
     private function materialsLink(): string
@@ -200,7 +197,7 @@ class MaterialController extends Controller
     {
         $enrollment = StudentAccess::activeEnrollment(Auth::user());
 
-        if (! $enrollment || ! $enrollment->package) {
+        if (!$enrollment || !$enrollment->package) {
             if ($required) {
                 abort(403);
             }
@@ -213,7 +210,7 @@ class MaterialController extends Controller
 
     private function resolveMaterialForAccess(string $slug): Material
     {
-        if (! Schema::hasTable('materials')) {
+        if (!Schema::hasTable('materials')) {
             abort(404);
         }
 
@@ -229,7 +226,7 @@ class MaterialController extends Controller
     {
         $path = $material->resource_path;
 
-        if (! $path) {
+        if (!$path) {
             $fallback = $this->materialsLink();
 
             return [
