@@ -359,55 +359,6 @@
                     @error('package_id') <div class="error-message">{{ $message }}</div> @enderror
                 </label>
 
-            <label>
-                <span>Mata Pelajaran</span>
-                <select name="subject_id" id="subject-select" required style="width: 100%; padding: 14px 18px; border: 1px solid #d9e0ea; border-radius: 16px; font-family: inherit; font-size: 1rem;">
-                    <option value="">Pilih paket terlebih dahulu</option>
-                </select>
-                @error('subject_id')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <label>
-                <span>Kelas</span>
-                <input type="text" name="level" value="{{ old('level') }}" placeholder="Contoh: Kelas 10A" required />
-                @error('level')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <label>
-                <span>Deskripsi Materi</span>
-                <textarea name="summary" placeholder="Jelaskan isi materi..." required>{{ old('summary') }}</textarea>
-                @error('summary')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <div class="dynamic-group">
-                <div class="dynamic-group__header">
-                    <span>Tujuan Pembelajaran</span>
-                    <button class="dynamic-add" data-add-objective>Tambah tujuan</button>
-                </div>
-                <div class="dynamic-group__items" data-objectives>
-                    @foreach ($objectiveValues as $value)
-                        <div class="dynamic-item" data-objective-row>
-                            <div class="dynamic-item__row">
-                                <input type="text" name="objectives[]" value="{{ $value }}" placeholder="Contoh: Memahami konsep persamaan linear" />
-                            </div>
-                            <div class="dynamic-item__actions">
-                                <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                @php
-                    $objectiveError = $errors->first('objectives') ?: $errors->first('objectives.*');
-                @endphp
-                @if ($objectiveError)
-                    <div class="error-text" style="margin-top: 10px;">{{ $objectiveError }}</div>
-                @endif
             </div>
 
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
@@ -607,44 +558,54 @@
                 }
             });
 
-            // AJAX Subject Dropdown
-            const packageSelect = document.querySelector('select[name="package_id"]');
-            const subjectSelect = document.getElementById('subject-select');
+            // --- 4. RESOURCES LOGIC (MIXED FILES & LINKS) ---
+            const resourceList = document.getElementById('resources-list');
+            const emptyMsg = document.getElementById('empty-resources-msg');
 
-            if (packageSelect && subjectSelect) {
-                packageSelect.addEventListener('change', function() {
-                    const packageId = this.value;
-                    subjectSelect.innerHTML = '<option value="">Memuat...</option>';
-                    subjectSelect.disabled = true;
-
-                    if (packageId) {
-                        fetch(`/tutor/packages/${packageId}/subjects`)
-                            .then(response => response.json())
-                            .then(data => {
-                                subjectSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-                                data.forEach(subject => {
-                                    const option = document.createElement('option');
-                                    option.value = subject.id;
-                                    option.textContent = subject.name + ' (' + subject.level + ')';
-                                    subjectSelect.appendChild(option);
-                                });
-                                subjectSelect.disabled = false;
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                subjectSelect.innerHTML = '<option value="">Gagal memuat mata pelajaran</option>';
-                            });
-                    } else {
-                        subjectSelect.innerHTML = '<option value="">Pilih paket terlebih dahulu</option>';
-                        subjectSelect.disabled = true;
-                    }
-                });
-
-                // Trigger change if package is already selected (e.g. validation error)
-                if (packageSelect.value) {
-                    packageSelect.dispatchEvent(new Event('change'));
+            function checkEmptyResources() {
+                if (resourceList.children.length === 0) {
+                    emptyMsg.style.display = 'block';
+                } else {
+                    emptyMsg.style.display = 'none';
                 }
             }
+
+            // Add File
+            document.getElementById('add-file-btn').addEventListener('click', () => {
+                const div = document.createElement('div');
+                div.className = 'resource-item';
+                div.innerHTML = `
+                        <div class="resource-icon icon-file">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <div class="resource-content">
+                            <label style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; display:block;">Upload Dokumen</label>
+                            <input type="file" name="attachments[]" class="custom-file-input" accept=".pdf,.ppt,.pptx,.doc,.docx" style="border:none; padding:0; width:100%;">
+                        </div>
+                        <button type="button" class="btn-remove" data-remove-row title="Hapus">${trashIcon}</button>
+                    `;
+                resourceList.appendChild(div);
+                checkEmptyResources();
+            });
+
+            // Add Link
+            document.getElementById('add-link-btn').addEventListener('click', () => {
+                const div = document.createElement('div');
+                div.className = 'resource-item';
+                div.innerHTML = `
+                        <div class="resource-icon icon-link">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </div>
+                        <div class="resource-content">
+                            <label style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; display:block;">URL Referensi</label>
+                            <input type="url" name="resource_urls[]" placeholder="https://..." style="border:1px solid #e2e8f0;">
+                        </div>
+                        <button type="button" class="btn-remove" data-remove-row title="Hapus">${trashIcon}</button>
+                    `;
+                resourceList.appendChild(div);
+                checkEmptyResources();
+            });
+
         });
     </script>
 @endpush

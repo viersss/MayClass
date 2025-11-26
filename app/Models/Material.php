@@ -15,7 +15,6 @@ class Material extends Model
     protected $fillable = [
         'slug',
         'package_id',
-        'subject_id',
         'title',
         'level',
         'summary',
@@ -58,11 +57,6 @@ class Material extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(Package::class);
-    }
-
-    public function subject(): BelongsTo
-    {
-        return $this->belongsTo(Subject::class);
     }
 }
 

@@ -876,106 +876,29 @@
                 max-height: 100vh;
                 border-radius: 0;
             }
-        </style>
-        @stack('styles')
-    </head>
-    <body>
-        <div class="dashboard-shell">
-            <aside class="nav-panel">
-                <nav class="navigation">
-                    @php
-                        $currentRoute = request()->route() ? request()->route()->getName() : null;
-                        $menuItems = [
-                            [
-                                'label' => 'Beranda',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 11.5 12 4l9 7.5" /><path stroke-linecap="round" stroke-linejoin="round" d="M5 10v9h4v-5h6v5h4v-9" /></svg>',
-                                'route' => 'admin.dashboard',
-                                'patterns' => ['admin.dashboard'],
-                            ],
-                            [
-                                'label' => 'Manajemen Jadwal',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M8 3v2m8-2v2" /><rect width="18" height="16" x="3" y="5" rx="2" /><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18" /></svg>',
-                                'route' => 'admin.schedules.index',
-                                'patterns' => ['admin.schedules.*', 'admin.schedule.*'],
-                            ],
-                            [
-                                'label' => 'Manajemen Siswa',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M7 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm10 0a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" /><path stroke-linecap="round" stroke-linejoin="round" d="M2 20a4.5 4.5 0 0 1 4.5-4.5H9a4.5 4.5 0 0 1 4.5 4.5v1H2zm9.5 1v-1A4.5 4.5 0 0 1 16 15.5h2.5A4.5 4.5 0 0 1 23 20v1z" /></svg>',
-                                'route' => 'admin.students.index',
-                                'patterns' => ['admin.students.*'],
-                            ],
-                            [
-                                'label' => 'Manajemen Tentor',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 1 0-6 0 3 3 0 0 0 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 21a4.5 4.5 0 0 0-9 0Zm0 0H21a2 2 0 0 0 2-2v-1a8 8 0 0 0-8-8h-6a8 8 0 0 0-8 8v1a2 2 0 0 0 2 2h1.5" /></svg>',
-                                'route' => 'admin.tentors.index',
-                                'patterns' => ['admin.tentors.*'],
-                            ],
-                            [
-                                'label' => 'Manajemen Paket',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7 12 3l9 4v10l-9 4-9-4z" /><path stroke-linecap="round" stroke-linejoin="round" d="m3 7 9 4 9-4" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 11v10" /></svg>',
-                                'route' => 'admin.packages.index',
-                                'patterns' => ['admin.packages.*'],
-                            ],
-                            [
-                                'label' => 'Mata Pelajaran',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>',
-                                'route' => 'admin.subjects.index',
-                                'patterns' => ['admin.subjects.*'],
-                            ],
-                            [
-                                'label' => 'Manajemen Keuangan',
-                                'icon' => '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h14a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V9a2 2 0 0 1 2-2z" /><path stroke-linecap="round" stroke-linejoin="round" d="M18 11h3v4h-3a2 2 0 0 1 0-4z" /></svg>',
-                                'route' => 'admin.finance.index',
-                                'patterns' => ['admin.finance.*'],
-                            ],
-                        ];
-                        $adminSummaryAvatar = \App\Support\ProfileAvatar::forUser($admin);
-                    @endphp
-                    @foreach ($menuItems as $item)
-                        @php
-                            $isActive = false;
-                            foreach ($item['patterns'] as $pattern) {
-                                if ($currentRoute && \Illuminate\Support\Str::is($pattern, $currentRoute)) {
-                                    $isActive = true;
-                                    break;
-                                }
-                            }
-                        @endphp
-                        <a href="{{ route($item['route']) }}" class="nav-link" data-active="{{ $isActive ? 'true' : 'false' }}">
-                            <span class="nav-icon" aria-hidden="true">{!! $item['icon'] !!}</span>
-                            <span>{{ $item['label'] }}</span>
-                        </a>
-                    @endforeach
-                </nav>
-                <div class="nav-footer">
-                    <a class="profile-summary" href="{{ route('admin.account.edit') }}" title="Kelola profil admin">
-                        <img
-                            src="{{ $adminSummaryAvatar }}"
-                            alt="Foto admin"
-                        />
-                        <div>
-                            <strong>{{ $admin?->name ?? 'Admin MayClass' }}</strong>
-                        </div>
-                    </a>
-                    <form method="POST" action="{{ route('logout') }}" class="logout-btn">
-                        @csrf
-                        <button type="submit" title="Keluar dari dashboard">
-                            <span>Keluar</span>
-                        </button>
-                    </form>
-                </div>
-            </aside>
-            <div class="main-area">
-                <main>
-                    <div class="page-wrapper">
-                        <div class="page-content">
-                            @if (session('status'))
-                                <div class="flash-message">{{ session('status') }}</div>
-                            @endif
-                            @yield('content')
-                        </div>
-                    </div>
-                </main>
+        }
+
+        /* Fix Profile Button Hover - No Blue Link Color */
+        .profile-summary:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: inherit !important;
+            text-decoration: none !important;
+        }
+
+        .profile-summary:hover strong {
+            color: #fff !important;
+        }
+    </style>
+    @stack('styles')
+</head>
+
+<body>
+    <div class="dashboard-shell" x-data="{ mobileMenuOpen: false }">
+        <!-- Mobile Header -->
+        <header class="mobile-admin-header">
+            <div class="mobile-brand">
+                <img src="{{ asset('images/Logo_MayClass.png') }}" alt="Logo">
+                <span>Admin Panel</span>
             </div>
             <button class="hamburger-btn" @click="mobileMenuOpen = !mobileMenuOpen">
                 <svg x-show="!mobileMenuOpen" width="28" height="28" viewBox="0 0 24 24" fill="none"

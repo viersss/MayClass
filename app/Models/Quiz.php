@@ -15,7 +15,6 @@ class Quiz extends Model
     protected $fillable = [
         'slug',
         'package_id',
-        'subject_id',
         'class_level',
         'title',
         'summary',
@@ -49,11 +48,6 @@ class Quiz extends Model
     public function package(): BelongsTo
     {
         return $this->belongsTo(Package::class);
-    }
-
-    public function subject(): BelongsTo
-    {
-        return $this->belongsTo(Subject::class);
     }
 }
 

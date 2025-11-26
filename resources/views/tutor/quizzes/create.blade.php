@@ -254,69 +254,6 @@
                     @error('package_id') <div class="error-message">{{ $message }}</div> @enderror
                 </label>
 
-            <label>
-                <span>Mata Pelajaran</span>
-                <select name="subject_id" id="subject-select" required style="width: 100%; padding: 14px 18px; border: 1px solid #d9e0ea; border-radius: 16px; font-family: inherit; font-size: 1rem;">
-                    <option value="">Pilih paket terlebih dahulu</option>
-                </select>
-                @error('subject_id')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <label>
-                <span>Kelas</span>
-                <input type="text" name="class_level" value="{{ old('class_level') }}" placeholder="Contoh: Kelas 10A" required />
-                @error('class_level')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <label>
-                <span>Durasi Pengerjaan</span>
-                <input type="text" name="duration_label" value="{{ old('duration_label', '45 Menit') }}" placeholder="Contoh: 45 Menit" required />
-                @error('duration_label')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <label>
-                <span>Jumlah Soal</span>
-                <input type="number" min="1" max="200" name="question_count" value="{{ old('question_count', 20) }}" placeholder="Contoh: 20" required />
-                @error('question_count')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <label>
-                <span>Deskripsi</span>
-                <textarea name="summary" placeholder="Tuliskan deskripsi singkat quiz..." required>{{ old('summary') }}</textarea>
-                @error('summary')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <div class="dynamic-group">
-                <div class="dynamic-group__header">
-                    <span>Level atau Kompetensi</span>
-                    <button class="dynamic-add" data-add-level>Tambah level</button>
-                </div>
-                <div class="dynamic-group__items" data-levels>
-                    @foreach ($levelValues as $value)
-                        <div class="dynamic-item" data-level-row>
-                            <input type="text" name="levels[]" value="{{ $value }}" placeholder="Contoh: Level Dasar" />
-                            <div class="dynamic-item__actions">
-                                <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                @php
-                    $levelError = $errors->first('levels') ?: $errors->first('levels.*');
-                @endphp
-                @if ($levelError)
-                    <div class="error-text" style="margin-top: 10px;">{{ $levelError }}</div>
-                @endif
             </div>
 
             {{-- 2. JUDUL & KELAS (Grid 2 Kolom - Judul lebih lebar) --}}
@@ -506,44 +443,6 @@
                     }
                 }
             });
-
-            // AJAX Subject Dropdown
-            const packageSelect = document.querySelector('select[name="package_id"]');
-            const subjectSelect = document.getElementById('subject-select');
-
-            if (packageSelect && subjectSelect) {
-                packageSelect.addEventListener('change', function() {
-                    const packageId = this.value;
-                    subjectSelect.innerHTML = '<option value="">Memuat...</option>';
-                    subjectSelect.disabled = true;
-
-                    if (packageId) {
-                        fetch(`/tutor/packages/${packageId}/subjects`)
-                            .then(response => response.json())
-                            .then(data => {
-                                subjectSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-                                data.forEach(subject => {
-                                    const option = document.createElement('option');
-                                    option.value = subject.id;
-                                    option.textContent = subject.name + ' (' + subject.level + ')';
-                                    subjectSelect.appendChild(option);
-                                });
-                                subjectSelect.disabled = false;
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                subjectSelect.innerHTML = '<option value="">Gagal memuat mata pelajaran</option>';
-                            });
-                    } else {
-                        subjectSelect.innerHTML = '<option value="">Pilih paket terlebih dahulu</option>';
-                        subjectSelect.disabled = true;
-                    }
-                });
-
-                if (packageSelect.value) {
-                    packageSelect.dispatchEvent(new Event('change'));
-                }
-            }
         });
     </script>
 @endpush

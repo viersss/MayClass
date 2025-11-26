@@ -50,16 +50,14 @@ class MaterialController extends Controller
 
         $materials = Material::query()
             ->where('package_id', optional($package)->id)
-            ->with('subject')
-            ->when($objectivesReady, fn ($query) => $query->withCount('objectives'))
-            ->when($chaptersReady, fn ($query) => $query->withCount('chapters'))
-            ->orderBy('subject_id')
+            ->when($objectivesReady, fn($query) => $query->withCount('objectives'))
+            ->when($chaptersReady, fn($query) => $query->withCount('chapters'))
             ->orderBy('title')
             ->get();
 
         $collections = $materials
-            ->groupBy(fn($material) => $material->subject->name ?? 'Tanpa Mapel')
-            ->map(function ($items, $subject) use ($chaptersReady, $objectivesReady) {
+            ->groupBy(fn($material) => $material->level ?? 'Umum')
+            ->map(function ($items, $groupName) use ($chaptersReady, $objectivesReady) {
                 return [
                     'label' => $groupName,
                     'accent' => '#37b6ad', // Default accent
@@ -112,9 +110,8 @@ class MaterialController extends Controller
         $material = Material::query()
             ->where('slug', $slug)
             ->where('package_id', optional($package)->id)
-            ->with('subject')
-            ->when($objectivesReady, fn ($query) => $query->with('objectives'))
-            ->when($chaptersReady, fn ($query) => $query->with('chapters'))
+            ->when($objectivesReady, fn($query) => $query->with('objectives'))
+            ->when($chaptersReady, fn($query) => $query->with('chapters'))
             ->firstOrFail();
 
         $resource = $this->resourceEndpoints($material);
@@ -134,7 +131,7 @@ class MaterialController extends Controller
             'page' => 'materials',
             'title' => $material->title,
             'material' => [
-                'subject' => $material->subject->name ?? 'Tanpa Mapel',
+                'subject' => $material->level ?? 'Umum',
                 'level' => $material->level,
                 'title' => $material->title,
                 'summary' => $material->summary,

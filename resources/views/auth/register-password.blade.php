@@ -355,17 +355,6 @@
         {{-- Form Set Password --}}
         <form method="post" action="{{ route('register.perform') }}" novalidate>
             @csrf
-            
-            {{-- reCAPTCHA --}}
-            <div class="input-group" style="margin-top: 20px;">
-                <div class="recaptcha-wrapper">
-                    <div 
-                        class="g-recaptcha" 
-                        data-sitekey="{{ config('services.recaptcha.key') }}"
-                    ></div>
-                </div>
-                @error('g-recaptcha-response') <p class="error-msg" style="text-align:center">{{ $message }}</p> @enderror
-            </div>
 
             <div class="input-group">
                 <label class="label" for="register-password">Password Baru</label>
