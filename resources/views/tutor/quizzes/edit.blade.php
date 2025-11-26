@@ -159,7 +159,8 @@
             @method('PUT')
             <label>
                 <span>Paket Belajar</span>
-                <select name="package_id" required style="width: 100%; padding: 14px 18px; border: 1px solid #d9e0ea; border-radius: 16px; font-family: inherit; font-size: 1rem;">
+                <select name="package_id" required
+                    style="width: 100%; padding: 14px 18px; border: 1px solid #d9e0ea; border-radius: 16px; font-family: inherit; font-size: 1rem;">
                     <option value="">Pilih paket yang tersedia</option>
                     @forelse ($packages as $package)
                         <option value="{{ $package->id }}" @selected(old('package_id', $quiz->package_id) == $package->id)>
@@ -183,16 +184,6 @@
             </label>
 
             <label>
-                <span>Mata Pelajaran</span>
-                <select name="subject_id" id="subject-select" required style="width: 100%; padding: 14px 18px; border: 1px solid #d9e0ea; border-radius: 16px; font-family: inherit; font-size: 1rem;">
-                    <option value="">Memuat...</option>
-                </select>
-                @error('subject_id')
-                    <div class="error-text">{{ $message }}</div>
-                @enderror
-            </label>
-
-            <label>
                 <span>Kelas</span>
                 <input type="text" name="class_level" value="{{ old('class_level', $quiz->class_level) }}" required />
                 @error('class_level')
@@ -202,7 +193,8 @@
 
             <label>
                 <span>Durasi Pengerjaan</span>
-                <input type="text" name="duration_label" value="{{ old('duration_label', $quiz->duration_label) }}" required />
+                <input type="text" name="duration_label" value="{{ old('duration_label', $quiz->duration_label) }}"
+                    required />
                 @error('duration_label')
                     <div class="error-text">{{ $message }}</div>
                 @enderror
@@ -210,7 +202,8 @@
 
             <label>
                 <span>Jumlah Soal</span>
-                <input type="number" min="1" max="200" name="question_count" value="{{ old('question_count', $quiz->question_count) }}" required />
+                <input type="number" min="1" max="200" name="question_count"
+                    value="{{ old('question_count', $quiz->question_count) }}" required />
                 @error('question_count')
                     <div class="error-text">{{ $message }}</div>
                 @enderror
@@ -255,7 +248,8 @@
                 <div class="dynamic-group__items" data-takeaways>
                     @foreach ($takeawayValues as $value)
                         <div class="dynamic-item" data-takeaway-row>
-                            <input type="text" name="takeaways[]" value="{{ $value }}" placeholder="Contoh: Evaluasi persamaan linear" />
+                            <input type="text" name="takeaways[]" value="{{ $value }}"
+                                placeholder="Contoh: Evaluasi persamaan linear" />
                             <div class="dynamic-item__actions">
                                 <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
                             </div>
@@ -296,11 +290,11 @@
                 const wrapper = document.createElement('div');
                 wrapper.className = 'dynamic-item';
                 wrapper.innerHTML = `
-                    <input type="text" name="${name}" placeholder="${placeholder}" />
-                    <div class="dynamic-item__actions">
-                        <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
-                    </div>
-                `;
+                        <input type="text" name="${name}" placeholder="${placeholder}" />
+                        <div class="dynamic-item__actions">
+                            <button type="button" class="dynamic-item__remove" data-remove-row>Hapus</button>
+                        </div>
+                    `;
                 return wrapper;
             };
 
@@ -340,51 +334,6 @@
                 takeawayContainer.appendChild(row);
                 bindRemoval(row);
             });
-
-            // AJAX Subject Dropdown
-            const packageSelect = document.querySelector('select[name="package_id"]');
-            const subjectSelect = document.getElementById('subject-select');
-            const currentSubjectId = "{{ old('subject_id', $quiz->subject_id) }}";
-
-            if (packageSelect && subjectSelect) {
-                const loadSubjects = (packageId, selectedId = null) => {
-                    subjectSelect.innerHTML = '<option value="">Memuat...</option>';
-                    subjectSelect.disabled = true;
-
-                    if (packageId) {
-                        fetch(`/tutor/packages/${packageId}/subjects`)
-                            .then(response => response.json())
-                            .then(data => {
-                                subjectSelect.innerHTML = '<option value="">Pilih Mata Pelajaran</option>';
-                                data.forEach(subject => {
-                                    const option = document.createElement('option');
-                                    option.value = subject.id;
-                                    option.textContent = subject.name + ' (' + subject.level + ')';
-                                    if (selectedId && String(subject.id) === String(selectedId)) {
-                                        option.selected = true;
-                                    }
-                                    subjectSelect.appendChild(option);
-                                });
-                                subjectSelect.disabled = false;
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                subjectSelect.innerHTML = '<option value="">Gagal memuat mata pelajaran</option>';
-                            });
-                    } else {
-                        subjectSelect.innerHTML = '<option value="">Pilih paket terlebih dahulu</option>';
-                        subjectSelect.disabled = true;
-                    }
-                };
-
-                packageSelect.addEventListener('change', function() {
-                    loadSubjects(this.value);
-                });
-
-                if (packageSelect.value) {
-                    loadSubjects(packageSelect.value, currentSubjectId);
-                }
-            }
         });
     </script>
 @endpush

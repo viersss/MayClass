@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Tutor;
 
 use App\Models\Package;
 use App\Models\ScheduleTemplate;
-use App\Models\Subject;
+
 use App\Models\User;
 use App\Support\ScheduleTemplateGenerator;
 use Illuminate\Http\RedirectResponse;
@@ -17,7 +17,7 @@ class ScheduleTemplateController extends BaseTutorController
 {
     public function store(Request $request): RedirectResponse
     {
-        if (! Schema::hasTable('schedule_templates')) {
+        if (!Schema::hasTable('schedule_templates')) {
             return redirect()->route('tutor.schedule.index')
                 ->with('alert', __('Tabel jadwal belum siap. Jalankan migrasi terbaru.'));
         }
@@ -72,7 +72,6 @@ class ScheduleTemplateController extends BaseTutorController
     {
         $payload = $request->validate([
             'package_id' => ['required', 'exists:packages,id'],
-            'subject_id' => ['required', 'exists:subjects,id'],
             'title' => ['required', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:120'],
             'class_level' => ['nullable', 'string', 'max:120'],
@@ -82,13 +81,6 @@ class ScheduleTemplateController extends BaseTutorController
             'duration_minutes' => ['required', 'integer', 'min:30', 'max:240'],
             'student_count' => ['nullable', 'integer', 'min:1', 'max:200'],
         ]);
-
-        // Check tutor competency and package compatibility
-        $this->validateSubjectCompatibility(
-            $userId,
-            $payload['package_id'],
-            $payload['subject_id']
-        );
 
         // Check for overlapping schedules
         $this->validateNoOverlap(
@@ -114,7 +106,7 @@ class ScheduleTemplateController extends BaseTutorController
         $overlapping = ScheduleTemplate::query()
             ->where('user_id', $userId)
             ->where('day_of_week', $dayOfWeek)
-            ->when($excludeId, fn ($query) => $query->where('id', '!=', $excludeId))
+            ->when($excludeId, fn($query) => $query->where('id', '!=', $excludeId))
             ->get()
             ->filter(function (ScheduleTemplate $template) use ($newStartMinutes, $newEndMinutes) {
                 [$hours, $minutes] = explode(':', $template->start_time);
@@ -129,31 +121,6 @@ class ScheduleTemplateController extends BaseTutorController
             throw new ValidationException(
                 validator([], [], [], [], [
                     'schedule' => "Jadwal bertumpang tindih dengan: {$conflictTitles}"
-                ])
-            );
-        }
-    }
-
-    private function validateSubjectCompatibility(int $userId, int $packageId, int $subjectId): void
-    {
-        $user = User::find($userId);
-        $package = Package::find($packageId);
-        $subject = Subject::find($subjectId);
-
-        // Check if tutor can teach this subject
-        if (!$user->subjects()->where('subject_id', $subjectId)->exists()) {
-            throw new ValidationException(
-                validator([], [], [], [], [
-                    'subject_id' => "Anda tidak kompeten mengajar mata pelajaran {$subject->name}"
-                ])
-            );
-        }
-
-        // Check if package includes this subject
-        if (!$package->subjects()->where('subject_id', $subjectId)->exists()) {
-            throw new ValidationException(
-                validator([], [], [], [], [
-                    'subject_id' => "Paket {$package->detail_title} tidak include mata pelajaran {$subject->name}"
                 ])
             );
         }
