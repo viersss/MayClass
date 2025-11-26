@@ -19,7 +19,7 @@ Website MayClass ini hadir sebagai platform terintegrasi yang berfungsi sebagai:
 
 ## ✨ Fitur Utama
 
-Sistem ini memiliki 5 peran pengguna utama sebagai:
+Sistem ini memiliki 5 peran pengguna utama:
 
 * **Pengunjung (Publik):**
 
