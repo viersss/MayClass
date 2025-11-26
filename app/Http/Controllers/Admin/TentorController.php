@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Package;
 use App\Models\ScheduleSession;
 use App\Models\ScheduleTemplate;
-
+use App\Models\Subject;
 use App\Models\TutorProfile;
 use App\Models\User;
 use App\Support\AvatarUploader;
@@ -35,7 +35,7 @@ class TentorController extends BaseAdminController
         $queryTerm = trim((string) $request->input('q', ''));
 
         $query = User::query()
-            ->with(['tutorProfile'])
+            ->with(['tutorProfile', 'subjects'])
             ->where('role', 'tutor');
 
         if ($queryTerm !== '') {
@@ -69,7 +69,7 @@ class TentorController extends BaseAdminController
                 'education' => optional($tentor->tutorProfile)->education,
                 'experience_years' => optional($tentor->tutorProfile)->experience_years ?? 0,
                 'is_active' => (bool) $tentor->is_active,
-
+                'subjects' => $tentor->subjects,
             ]);
 
         $stats = $this->tentorStats();
@@ -126,7 +126,10 @@ class TentorController extends BaseAdminController
 
         $this->syncTutorProfile($user, $data, $avatarPath);
 
-
+        // [PERBAIKAN 2] Menyimpan relasi Mata Pelajaran
+        if ($request->has('subjects')) {
+            $user->subjects()->sync($request->subjects);
+        }
 
         // [PERBAIKAN 3] Menyimpan relasi Paket Belajar
         if ($request->has('packages')) {
@@ -142,7 +145,7 @@ class TentorController extends BaseAdminController
     {
         $this->ensureTutor($tentor);
         // Load relasi agar data terpilih muncul (checked)
-        $tentor->loadMissing(['tutorProfile', 'packagesTaught']);
+        $tentor->loadMissing(['tutorProfile', 'subjects', 'packagesTaught']);
 
         return $this->render('admin.tentors.edit', [
             'tentor' => $tentor,
@@ -188,7 +191,10 @@ class TentorController extends BaseAdminController
 
         $this->syncTutorProfile($tentor, $data, $avatarPath);
 
-
+        // [PERBAIKAN 2] Update relasi Mata Pelajaran
+        if ($request->has('subjects')) {
+            $tentor->subjects()->sync($request->subjects);
+        }
 
         // [PERBAIKAN 3] Update relasi Paket Belajar
         // Gunakan input('packages', []) agar jika semua di-uncheck (array kosong), data lama terhapus
@@ -224,7 +230,8 @@ class TentorController extends BaseAdminController
             'education' => ['nullable', 'string', 'max:255'],
             'is_active' => ['sometimes', 'boolean'],
             'avatar' => ['nullable', 'image', 'max:5000'],
-
+            'subjects' => ['required', 'array', 'min:1'],
+            'subjects.*' => ['exists:subjects,id'],
             'packages' => ['nullable', 'array'], // Validasi array paket
             'packages.*' => ['exists:packages,id'],
         ];
@@ -351,10 +358,24 @@ class TentorController extends BaseAdminController
 
     private function getSubjectsByLevel(): array
     {
+        if (!Schema::hasTable('subjects')) {
+            return [
+                'SD' => collect(),
+                'SMP' => collect(),
+                'SMA' => collect(),
+            ];
+        }
+
+        $subjects = Subject::where('is_active', true)
+            ->orderBy('level')
+            ->orderBy('name')
+            ->get()
+            ->groupBy('level');
+
         return [
-            'SD' => collect(),
-            'SMP' => collect(),
-            'SMA' => collect(),
+            'SD' => $subjects->get('SD', collect()),
+            'SMP' => $subjects->get('SMP', collect()),
+            'SMA' => $subjects->get('SMA', collect()),
         ];
     }
 }

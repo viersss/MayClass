@@ -319,7 +319,33 @@
                 @enderror
             </div>
 
-
+            <div class="full">
+                <label>Mata Pelajaran yang Termasuk *</label>
+                <p class="help-text">Pilih minimal 1 mata pelajaran yang akan diajarkan dalam paket ini.</p>
+                
+                <div class="subject-selection">
+                    @foreach(['SD', 'SMP', 'SMA'] as $level)
+                        @if($subjectsByLevel[$level]->isNotEmpty())
+                            <div class="subject-group">
+                                <h4>{{ $level }}</h4>
+                                <div class="subject-checkboxes">
+                                    @foreach($subjectsByLevel[$level] as $subject)
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="subjects[]" value="{{ $subject->id }}" 
+                                                {{ in_array($subject->id, old('subjects', [])) ? 'checked' : '' }}>
+                                            {{ $subject->name }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+                
+                @error('subjects')
+                    <div class="error-message">{{ $message }}</div>
+                @enderror
+            </div>
 
             <div class="full">
                 <label>Tutor Pengampu (Opsional)</label>

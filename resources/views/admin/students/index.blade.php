@@ -283,9 +283,6 @@
 
                 <form method="POST" action="{{ route('admin.students.bulk-delete') }}" id="bulk-delete-form" class="ml-2">
                     @csrf
-                    <template x-for="id in selected" :key="id">
-                        <input type="hidden" name="students[]" :value="id">
-                    </template>
                     <button type="button"
                         @click="if(selected.length===0){ alert('Pilih siswa terlebih dahulu'); } else if(confirm('Anda yakin ingin menghapus '+selected.length+' siswa terpilih?')){ document.getElementById('bulk-delete-form').submit(); }"
                         class="btn-detail" style="background:#ef4444;color:#fff;">Delete Selected</button>

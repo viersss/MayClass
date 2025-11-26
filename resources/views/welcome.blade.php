@@ -1567,46 +1567,14 @@
                                             {{ $package['summary'] }}
                                         </p>
                                     @endif
-
-                                    {{-- Program Points --}}
-                                    @if (!empty($package['program_points']))
-                                        <div style="margin-top: 12px;">
-                                            <strong style="font-size: 0.9rem; color: var(--ink-strong);">Program:</strong>
-                                            <ul class="pricing-features">
-                                                @foreach ($package['program_points'] as $point)
-                                                    <li>{{ $point }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
+                                    @if ($features->isNotEmpty())
+                                        <ul class="pricing-features">
+                                            @foreach ($features as $feature)
+                                                <li>{{ $feature }}</li>
+                                            @endforeach
+                                        </ul>
                                     @endif
-
-                                    {{-- Facility Points --}}
-                                    @if (!empty($package['facility_points']))
-                                        <div style="margin-top: 12px;">
-                                            <strong style="font-size: 0.9rem; color: var(--ink-strong);">Fasilitas:</strong>
-                                            <ul class="pricing-features">
-                                                @foreach ($package['facility_points'] as $point)
-                                                    <li>{{ $point }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-
-                                    {{-- Schedule Info --}}
-                                    @if (!empty($package['schedule_info']))
-                                        <div style="margin-top: 12px; font-size: 0.9rem; color: var(--ink-soft);">
-                                            <strong
-                                                style="font-size: 0.9rem; color: var(--ink-strong); display: block; margin-bottom: 4px;">Jadwal
-                                                Belajar:</strong>
-                                            <ul class="pricing-features">
-                                                @foreach ($package['schedule_info'] as $info)
-                                                    <li>{{ $info }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-
-                                    <div class="pricing-actions" style="margin-top: auto; padding-top: 20px;">
+                                    <div class="pricing-actions">
                                         <a class="btn btn-primary" href="{{ route('packages.show', $package['slug']) }}">Detail
                                             Paket</a>
                                     </div>
@@ -1681,8 +1649,7 @@
                         </p>
                         <div class="testimonial-author">
                             <div class="testimonial-avatar">
-                                <img src="{{ $testimonial->avatar ? asset('storage/' . $testimonial->avatar) : asset('images/avatar-placeholder.svg') }}"
-                                    alt="{{ $testimonial->name }}" />
+                                <img src="{{ $testimonial->avatar ? asset('storage/' . $testimonial->avatar) : asset('images/avatar-placeholder.svg') }}" alt="{{ $testimonial->name }}" />
                             </div>
                             <div class="testimonial-meta">
                                 <strong>{{ $testimonial->name }}</strong>
@@ -1828,8 +1795,7 @@
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
-                            <span>Jalan Kemayoran Gempol Galindra II No. 27, RT.4/RW.7, Kb. Kosong, Kec. Kemayoran,
-                                Jakarta Pusat – 10630</span>
+                            <span>Jalan Kemayoran Gempol Galindra II No. 27, RT.4/RW.7, Kb. Kosong, Kec. Kemayoran, Jakarta Pusat – 10630</span>
                         </div>
                         <div class="contact-row">
                             <svg class="contact-icon" width="20" height="20" fill="none" stroke="currentColor"

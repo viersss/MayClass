@@ -59,7 +59,14 @@ class User extends Authenticatable
         ];
     }
 
-
+    /**
+     * Relasi Mata Pelajaran (Khusus Tutor)
+     * Wajib ada agar sync subjects berhasil.
+     */
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class);
+    }
 
     public function enrollments(): HasMany
     {

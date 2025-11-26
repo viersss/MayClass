@@ -60,9 +60,7 @@
             transition: all 0.2s ease;
         }
 
-        input:focus,
-        textarea:focus,
-        select:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px var(--primary-light);
@@ -125,17 +123,16 @@
         }
 
         /* INPUT DI DALAM CARD */
-        .dynamic-card input[type="text"],
+        .dynamic-card input[type="text"], 
         .dynamic-card textarea {
             background: transparent;
-            border: 1px solid transparent;
-            /* Border transparan supaya layout stabil */
+            border: 1px solid transparent; /* Border transparan supaya layout stabil */
             padding: 8px;
             margin: 0;
             font-size: 0.95rem;
         }
 
-        .dynamic-card input[type="text"]:focus,
+        .dynamic-card input[type="text"]:focus, 
         .dynamic-card textarea:focus {
             background: #fff;
             border-color: var(--primary);
@@ -198,7 +195,7 @@
             color: var(--text-color);
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .btn-resource-add:hover {
@@ -220,15 +217,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .resource-icon {
@@ -241,15 +231,8 @@
             flex-shrink: 0;
         }
 
-        .icon-file {
-            background: #e0f2fe;
-            color: #0284c7;
-        }
-
-        .icon-link {
-            background: #f3e8ff;
-            color: #9333ea;
-        }
+        .icon-file { background: #e0f2fe; color: #0284c7; }
+        .icon-link { background: #f3e8ff; color: #9333ea; }
 
         .resource-content {
             flex-grow: 1;
@@ -289,7 +272,7 @@
             text-decoration: none;
             border: 1px solid transparent;
         }
-
+        
         .btn-cancel:hover {
             background: #f1f5f9;
             color: var(--text-color);
@@ -323,20 +306,17 @@
     {{-- Data preparation for dynamic fields --}}
     @php
         $objectiveValues = collect(old('objectives', ['']))->map(fn($v) => is_string($v) ? $v : '');
-        if ($objectiveValues->isEmpty())
-            $objectiveValues = collect(['']);
+        if ($objectiveValues->isEmpty()) $objectiveValues = collect(['']);
 
         $chapterValues = collect(old('chapters', [['title' => '', 'description' => '']]));
-        if ($chapterValues->isEmpty())
-            $chapterValues = collect([['title' => '', 'description' => '']]);
+        if ($chapterValues->isEmpty()) $chapterValues = collect([['title' => '', 'description' => '']]);
         $nextChapterIndex = $chapterValues->keys()->max() + 1;
     @endphp
 
     <div class="form-card">
         <div style="margin-bottom: 32px;">
             <h1>Tambah Materi Baru</h1>
-            <p style="color: var(--text-muted);">Buat materi pembelajaran yang komprehensif dengan video, dokumen, dan link
-                referensi.</p>
+            <p style="color: var(--text-muted);">Buat materi pembelajaran yang komprehensif dengan video, dokumen, dan link referensi.</p>
         </div>
 
         <form method="POST" action="{{ route('tutor.materials.store') }}" enctype="multipart/form-data" class="form-grid">
@@ -359,13 +339,17 @@
                     @error('package_id') <div class="error-message">{{ $message }}</div> @enderror
                 </label>
 
+                <label>
+                    <span>Mata Pelajaran</span>
+                    <input type="text" name="subject" value="{{ old('subject') }}" placeholder="Cth: Matematika Wajib" required />
+                    @error('subject') <div class="error-message">{{ $message }}</div> @enderror
+                </label>
             </div>
 
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
                 <label>
                     <span>Judul Materi</span>
-                    <input type="text" name="title" value="{{ old('title') }}" placeholder="Judul lengkap materi..."
-                        required />
+                    <input type="text" name="title" value="{{ old('title') }}" placeholder="Judul lengkap materi..." required />
                     @error('title') <div class="error-message">{{ $message }}</div> @enderror
                 </label>
 
@@ -378,8 +362,7 @@
 
             <label>
                 <span>Deskripsi Singkat</span>
-                <textarea name="summary" placeholder="Jelaskan ringkasan materi ini agar siswa paham gambaran besarnya..."
-                    required>{{ old('summary') }}</textarea>
+                <textarea name="summary" placeholder="Jelaskan ringkasan materi ini agar siswa paham gambaran besarnya..." required>{{ old('summary') }}</textarea>
                 @error('summary') <div class="error-message">{{ $message }}</div> @enderror
             </label>
 
@@ -387,16 +370,13 @@
 
             {{-- 2. TUJUAN & BAB --}}
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
-
+                
                 {{-- Tujuan Pembelajaran --}}
                 <div>
                     <div class="section-header">
                         <span class="section-title">Tujuan Pembelajaran</span>
                         <button type="button" class="btn-add-sm" data-add-objective>
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path d="M12 4v16m8-8H4"></path>
-                            </svg>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
                             Tambah
                         </button>
                     </div>
@@ -404,14 +384,10 @@
                         @foreach ($objectiveValues as $value)
                             <div class="dynamic-card">
                                 <div style="flex-grow:1;">
-                                    <input type="text" name="objectives[]" value="{{ $value }}"
-                                        placeholder="Poin tujuan belajar..." style="width:100%;">
+                                    <input type="text" name="objectives[]" value="{{ $value }}" placeholder="Poin tujuan belajar..." style="width:100%;">
                                 </div>
                                 <button type="button" class="btn-remove" data-remove-row title="Hapus baris">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                 </button>
                             </div>
                         @endforeach
@@ -423,10 +399,7 @@
                     <div class="section-header">
                         <span class="section-title">Rangkuman Bab</span>
                         <button type="button" class="btn-add-sm" data-add-chapter>
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path d="M12 4v16m8-8H4"></path>
-                            </svg>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
                             Tambah Bab
                         </button>
                     </div>
@@ -434,16 +407,11 @@
                         @foreach ($chapterValues as $index => $chapter)
                             <div class="dynamic-card">
                                 <div style="flex-grow:1; display:flex; flex-direction:column; gap:8px;">
-                                    <input type="text" name="chapters[{{ $index }}][title]"
-                                        value="{{ $chapter['title'] ?? '' }}" placeholder="Judul Bab" style="font-weight:600;">
-                                    <textarea name="chapters[{{ $index }}][description]" placeholder="Ringkasan isi bab..."
-                                        style="min-height:60px;">{{ $chapter['description'] ?? '' }}</textarea>
+                                    <input type="text" name="chapters[{{ $index }}][title]" value="{{ $chapter['title'] ?? '' }}" placeholder="Judul Bab" style="font-weight:600;">
+                                    <textarea name="chapters[{{ $index }}][description]" placeholder="Ringkasan isi bab..." style="min-height:60px;">{{ $chapter['description'] ?? '' }}</textarea>
                                 </div>
                                 <button type="button" class="btn-remove" data-remove-row title="Hapus bab">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                 </button>
                             </div>
                         @endforeach
@@ -457,28 +425,17 @@
             <div>
                 <div style="text-align: center; margin-bottom: 16px;">
                     <span class="section-title" style="font-size: 1.1rem;">File Materi & Referensi</span>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Tambahkan dokumen (PDF/PPT)
-                        atau link (YouTube/Drive) sebanyak yang dibutuhkan.</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Tambahkan dokumen (PDF/PPT) atau link (YouTube/Drive) sebanyak yang dibutuhkan.</p>
                 </div>
 
                 <div class="resources-container">
                     <div class="resources-toolbar">
                         <button type="button" class="btn-resource-add" id="add-file-btn">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             Upload File
                         </button>
                         <button type="button" class="btn-resource-add" id="add-link-btn">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
-                                </path>
-                            </svg>
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                             Tambah Link
                         </button>
                     </div>
@@ -486,7 +443,7 @@
                     <div id="resources-list">
                         {{-- Resource items will be appended here via JS --}}
                     </div>
-
+                    
                     {{-- Template pesan kosong --}}
                     <div id="empty-resources-msg" style="text-align:center; color:var(--text-muted); padding: 20px;">
                         Belum ada materi yang ditambahkan.
@@ -506,7 +463,7 @@
 @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-
+            
             const trashIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>`;
 
             // --- 1. OBJECTIVES LOGIC ---
@@ -515,28 +472,28 @@
                 const div = document.createElement('div');
                 div.className = 'dynamic-card';
                 div.innerHTML = `
-                        <div style="flex-grow:1;">
-                            <input type="text" name="objectives[]" placeholder="Poin tujuan belajar..." style="width:100%;">
-                        </div>
-                        <button type="button" class="btn-remove" data-remove-row title="Hapus baris">${trashIcon}</button>
-                    `;
+                    <div style="flex-grow:1;">
+                        <input type="text" name="objectives[]" placeholder="Poin tujuan belajar..." style="width:100%;">
+                    </div>
+                    <button type="button" class="btn-remove" data-remove-row title="Hapus baris">${trashIcon}</button>
+                `;
                 objectiveList.appendChild(div);
             });
 
             // --- 2. CHAPTERS LOGIC ---
             const chapterList = document.querySelector('[data-chapters]');
             let chapIdx = parseInt(chapterList.dataset.nextIndex);
-
+            
             document.querySelector('[data-add-chapter]').addEventListener('click', () => {
                 const div = document.createElement('div');
                 div.className = 'dynamic-card';
                 div.innerHTML = `
-                        <div style="flex-grow:1; display:flex; flex-direction:column; gap:8px;">
-                            <input type="text" name="chapters[${chapIdx}][title]" placeholder="Judul Bab" style="font-weight:600;">
-                            <textarea name="chapters[${chapIdx}][description]" placeholder="Ringkasan isi bab..." style="min-height:60px;"></textarea>
-                        </div>
-                        <button type="button" class="btn-remove" data-remove-row title="Hapus bab">${trashIcon}</button>
-                    `;
+                    <div style="flex-grow:1; display:flex; flex-direction:column; gap:8px;">
+                        <input type="text" name="chapters[${chapIdx}][title]" placeholder="Judul Bab" style="font-weight:600;">
+                        <textarea name="chapters[${chapIdx}][description]" placeholder="Ringkasan isi bab..." style="min-height:60px;"></textarea>
+                    </div>
+                    <button type="button" class="btn-remove" data-remove-row title="Hapus bab">${trashIcon}</button>
+                `;
                 chapterList.appendChild(div);
                 chapIdx++;
             });
@@ -547,7 +504,7 @@
                 if (btn) {
                     const row = btn.closest('.dynamic-card') || btn.closest('.resource-item');
                     // Animasi hapus
-                    if (row) {
+                    if(row) {
                         row.style.opacity = '0';
                         row.style.transform = 'translateY(10px)';
                         setTimeout(() => {
@@ -575,15 +532,15 @@
                 const div = document.createElement('div');
                 div.className = 'resource-item';
                 div.innerHTML = `
-                        <div class="resource-icon icon-file">
-                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        </div>
-                        <div class="resource-content">
-                            <label style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; display:block;">Upload Dokumen</label>
-                            <input type="file" name="attachments[]" class="custom-file-input" accept=".pdf,.ppt,.pptx,.doc,.docx" style="border:none; padding:0; width:100%;">
-                        </div>
-                        <button type="button" class="btn-remove" data-remove-row title="Hapus">${trashIcon}</button>
-                    `;
+                    <div class="resource-icon icon-file">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <div class="resource-content">
+                        <label style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; display:block;">Upload Dokumen</label>
+                        <input type="file" name="attachments[]" class="custom-file-input" accept=".pdf,.ppt,.pptx,.doc,.docx" style="border:none; padding:0; width:100%;">
+                    </div>
+                    <button type="button" class="btn-remove" data-remove-row title="Hapus">${trashIcon}</button>
+                `;
                 resourceList.appendChild(div);
                 checkEmptyResources();
             });
@@ -593,15 +550,15 @@
                 const div = document.createElement('div');
                 div.className = 'resource-item';
                 div.innerHTML = `
-                        <div class="resource-icon icon-link">
-                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                        </div>
-                        <div class="resource-content">
-                            <label style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; display:block;">URL Referensi</label>
-                            <input type="url" name="resource_urls[]" placeholder="https://..." style="border:1px solid #e2e8f0;">
-                        </div>
-                        <button type="button" class="btn-remove" data-remove-row title="Hapus">${trashIcon}</button>
-                    `;
+                    <div class="resource-icon icon-link">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </div>
+                    <div class="resource-content">
+                        <label style="font-size:0.85rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; display:block;">URL Referensi</label>
+                        <input type="url" name="resource_urls[]" placeholder="https://..." style="border:1px solid #e2e8f0;">
+                    </div>
+                    <button type="button" class="btn-remove" data-remove-row title="Hapus">${trashIcon}</button>
+                `;
                 resourceList.appendChild(div);
                 checkEmptyResources();
             });

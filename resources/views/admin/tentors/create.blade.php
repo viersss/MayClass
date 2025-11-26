@@ -339,7 +339,32 @@
                     </div>
                 </div>
 
-
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Mata Pelajaran yang Diampu</h3>
+                    </div>
+                    <div class="form-group">
+                        <p class="helper-text" style="margin-bottom: 12px;">Pilih mata pelajaran yang dikuasai tentor ini.
+                        </p>
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+                            @foreach($subjectsByLevel as $level => $subjects)
+                                @if($subjects->isNotEmpty())
+                                    <div style="grid-column: 1 / -1; font-weight: 700; color: var(--primary); margin-top: 8px;">
+                                        {{ $level }}</div>
+                                    @foreach($subjects as $subject)
+                                        <label
+                                            style="display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; background: #fff;">
+                                            <input type="checkbox" name="subjects[]" value="{{ $subject->id }}" {{ in_array($subject->id, old('subjects', [])) ? 'checked' : '' }}>
+                                            <span style="font-size: 0.9rem;">{{ $subject->name }}</span>
+                                        </label>
+                                    @endforeach
+                                @endif
+                            @endforeach
+                        </div>
+                        @error('subjects') <p class="helper-text" style="color: #ef4444;">{{ $message }}</p> @enderror
+                    </div>
+                </div>
 
                 <div class="card">
                     <div class="card-header">

@@ -24,22 +24,14 @@ class Package extends Model
         'image_url',
         'price',
         'max_students',
-        'available_class',
         'summary',
         'tutor_id',
         'zoom_link',
-        'program_points',
-        'facility_points',
-        'schedule_info',
     ];
 
     protected $casts = [
         'price' => 'float',
         'max_students' => 'integer',
-        'available_class' => 'integer',
-        'program_points' => 'array',
-        'facility_points' => 'array',
-        'schedule_info' => 'array',
     ];
 
     public function getImageAssetAttribute(): string
@@ -69,6 +61,14 @@ class Package extends Model
     public function tutors(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
+    }
+
+    /**
+     * Relasi ke Subjects (Mata Pelajaran)
+     */
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class);
     }
 
     public function cardFeatures(): HasMany
@@ -141,12 +141,7 @@ class Package extends Model
 
     public function quotaSnapshot(bool $lock = false): array
     {
-        // Calculate total limit based on quota per class * available classes
-        $perClassLimit = $this->max_students !== null ? (int) $this->max_students : null;
-        $classes = $this->available_class ? (int) $this->available_class : 1;
-
-        $limit = $perClassLimit !== null ? $perClassLimit * $classes : null;
-
+        $limit = $this->max_students !== null ? (int) $this->max_students : null;
         $activeEnrollments = $this->resolvedActiveEnrollmentCount($lock);
         $checkoutHolds = $this->resolvedPendingCheckoutCount($lock);
         $used = $activeEnrollments + $checkoutHolds;
@@ -154,8 +149,6 @@ class Package extends Model
 
         return [
             'limit' => $limit,
-            'per_class_limit' => $perClassLimit,
-            'available_classes' => $classes,
             'active_enrollments' => $activeEnrollments,
             'checkout_holds' => $checkoutHolds,
             'used' => $used,
@@ -183,7 +176,7 @@ class Package extends Model
             $query->lockForUpdate();
         }
 
-        if (!$lock && property_exists($this, 'active_enrollment_count')) {
+        if (! $lock && property_exists($this, 'active_enrollment_count')) {
             return (int) $this->active_enrollment_count;
         }
 
@@ -212,7 +205,7 @@ class Package extends Model
             $query->lockForUpdate();
         }
 
-        if (!$lock && property_exists($this, 'pending_checkout_count')) {
+        if (! $lock && property_exists($this, 'pending_checkout_count')) {
             return (int) $this->pending_checkout_count;
         }
 

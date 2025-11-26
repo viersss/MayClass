@@ -154,30 +154,13 @@ class StudentController extends BaseAdminController
             ->pluck('id')
             ->toArray();
 
-        if (empty($studentIds)) {
-            return redirect()
-                ->route('admin.students.index')
-                ->with('status', __('Tidak ada siswa yang dipilih.'));
-        }
-
-        try {
+        if (!empty($studentIds)) {
             User::whereIn('id', $studentIds)->delete();
-
-            return redirect()
-                ->route('admin.students.index')
-                ->with('status', __('Siswa terpilih berhasil dihapus.'));
-        } catch (\Illuminate\Database\QueryException $e) {
-            // Check for foreign key constraint violation (Code 23000 is standard SQL state for integrity constraint violation)
-            if ($e->getCode() === '23000') {
-                return redirect()
-                    ->route('admin.students.index')
-                    ->with('error', __('Gagal menghapus beberapa siswa karena data mereka masih terkait dengan transaksi atau aktivitas lain (misal: pesanan, kuis).'));
-            }
-
-            return redirect()
-                ->route('admin.students.index')
-                ->with('error', __('Terjadi kesalahan saat menghapus siswa.'));
         }
+
+        return redirect()
+            ->route('admin.students.index')
+            ->with('status', __('Siswa terpilih berhasil dihapus.'));
     }
 
 }

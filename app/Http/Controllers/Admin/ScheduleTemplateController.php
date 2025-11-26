@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Package;
 use App\Models\ScheduleTemplate;
-
+use App\Models\Subject;
 use App\Models\User;
 use App\Support\ScheduleTemplateGenerator;
 use Carbon\CarbonImmutable;
@@ -18,7 +18,7 @@ class ScheduleTemplateController extends BaseAdminController
 {
     public function store(Request $request): RedirectResponse
     {
-        if (!Schema::hasTable('schedule_templates')) {
+        if (! Schema::hasTable('schedule_templates')) {
             return redirect()->route('admin.schedules.index')
                 ->with('alert', __('Tabel template jadwal belum tersedia. Jalankan migrasi terbaru.'));
         }
@@ -26,7 +26,7 @@ class ScheduleTemplateController extends BaseAdminController
         $data = $this->validatedData($request);
         $package = Package::with('tutor')->find($data['package_id']);
 
-        if (!$package || !$package->tutor_id) {
+        if (! $package || ! $package->tutor_id) {
             return redirect()->route('admin.schedules.index')
                 ->with('alert', __('Paket harus memiliki tentor terlebih dahulu sebelum membuat jadwal.'));
         }
@@ -81,6 +81,7 @@ class ScheduleTemplateController extends BaseAdminController
     {
         $payload = $request->validate([
             'package_id' => ['required', 'exists:packages,id'],
+            'subject_id' => ['required', 'exists:subjects,id'],
             'title' => ['required', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:120'],
             'class_level' => ['nullable', 'string', 'max:120'],
@@ -96,42 +97,15 @@ class ScheduleTemplateController extends BaseAdminController
         $dayOfWeek = $reference->dayOfWeek === 0 ? 7 : $reference->dayOfWeek;
 
         // Check tutor competency and package compatibility
-        // We assume user_id is already set in store/update before calling this or we need to pass it.
-        // Wait, validatedData doesn't get user_id from request validation, it gets it from package->tutor_id in store method.
-        // But validateSubjectCompatibility uses $payload['user_id'] which is NOT in payload yet in store method?
-        // Ah, look at store method: $data['user_id'] = $package->tutor_id; happens AFTER validatedData.
-        // So validateSubjectCompatibility call in validatedData would fail if it relies on payload['user_id'].
-        // Let's check the original code again.
-        // Original:
-        // $this->validateSubjectCompatibility($payload['user_id'], ...)
-        // But user_id is NOT in $payload returned by validate.
-        // It seems the original code might have been buggy or I missed where user_id comes from.
-        // Ah, request might have user_id? No, store method sets it.
-
-        // Actually, looking at lines 34: $data['user_id'] = $package->tutor_id;
-        // And validatedData is called at line 26.
-        // So validatedData doesn't have user_id.
-        // But wait, line 101: $payload['user_id'].
-        // If 'user_id' is not in validate rules, it's not in $payload.
-        // Unless it's passed in request and we just didn't validate it? No, validate returns only validated data.
-
-        // I will just remove the validateSubjectCompatibility call for now as it seems problematic or I'm misreading.
-        // And since we are removing Subject, we don't need to check subject compatibility.
-        // We might still want to check Package-Tutor compatibility if needed.
-
-        // For now, I will just remove the subject checks.
+        $this->validateSubjectCompatibility(
+            $payload['user_id'],
+            $payload['package_id'],
+            $payload['subject_id']
+        );
 
         // Check for overlapping schedules
-        // We need user_id for this. If user_id is not in payload, how does this work?
-        // Maybe I should look at how user_id is retrieved.
-        // In store: $package = Package::find($data['package_id']); $data['user_id'] = $package->tutor_id;
-        // So we can get user_id from package.
-
-        $package = Package::find($payload['package_id']);
-        $userId = $package->tutor_id;
-
         $this->validateNoOverlap(
-            $userId,
+            $payload['user_id'],
             $dayOfWeek,
             $payload['start_time'],
             $payload['duration_minutes'],
@@ -146,5 +120,69 @@ class ScheduleTemplateController extends BaseAdminController
         unset($payload['reference_date']);
 
         return $payload;
+    }
+
+    private function validateNoOverlap(int $userId, int $dayOfWeek, string $startTime, int $durationMinutes, ?int $excludeId = null): void
+    {
+        // Convert start time to minutes since midnight
+        [$hours, $minutes] = explode(':', $startTime);
+        $newStartMinutes = ($hours * 60) + $minutes;
+        $newEndMinutes = $newStartMinutes + $durationMinutes;
+
+        $overlapping = ScheduleTemplate::query()
+            ->where('user_id', $userId)
+            ->where('day_of_week', $dayOfWeek)
+            ->when($excludeId, fn ($query) => $query->where('id', '!=', $excludeId))
+            ->get()
+            ->filter(function (ScheduleTemplate $template) use ($newStartMinutes, $newEndMinutes) {
+                [$hours, $minutes] = explode(':', $template->start_time);
+                $existingStartMinutes = ($hours * 60) + $minutes;
+                $existingEndMinutes = $existingStartMinutes + $template->duration_minutes;
+
+                return $newStartMinutes < $existingEndMinutes && $existingStartMinutes < $newEndMinutes;
+            });
+
+        if ($overlapping->isNotEmpty()) {
+            $conflictTitles = $overlapping->pluck('title')->join(', ');
+            throw new \Illuminate\Validation\ValidationException(
+                validator([], [], [], [], [
+                    'schedule' => "Jadwal bertumpang tindih dengan: {$conflictTitles}"
+                ])
+            );
+        }
+    }
+
+    private function validateSubjectCompatibility(int $userId, int $packageId, int $subjectId): void
+    {
+        $user = User::find($userId);
+        $package = Package::find($packageId);
+        $subject = Subject::find($subjectId);
+
+        // Check if tutor is assigned to this package
+        if (!$user->packages()->where('package_id', $packageId)->exists()) {
+            throw new ValidationException(
+                validator([], [], [], [], [
+                    'package_id' => "Tutor {$user->name} tidak ditugaskan untuk mengajar paket {$package->detail_title}"
+                ])
+            );
+        }
+
+        // Check if tutor can teach this subject
+        if (!$user->subjects()->where('subject_id', $subjectId)->exists()) {
+            throw new ValidationException(
+                validator([], [], [], [], [
+                    'subject_id' => "Tutor {$user->name} tidak kompeten mengajar mata pelajaran {$subject->name}"
+                ])
+            );
+        }
+
+        // Check if package includes this subject
+        if (!$package->subjects()->where('subject_id', $subjectId)->exists()) {
+            throw new ValidationException(
+                validator([], [], [], [], [
+                    'subject_id' => "Paket {$package->detail_title} tidak include mata pelajaran {$subject->name}"
+                ])
+            );
+        }
     }
 }
